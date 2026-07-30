@@ -54,3 +54,36 @@
 - Decision: 遠征終了時に討伐跡、累計遠征、最高討伐数を`WorldLegacy v1`として保存し、次の遠征の地図へ最大12件の跡を再表示する。
 - Consequences: 最小規模でも前回の行動が次回90秒以内に見える。装備奪還、宿敵、価格、勢力の永続化は同じsession境界へ後から追加する。
 - Supersedes: none
+
+---
+
+## ADR-006: Replace arena autofire with a manual action route
+
+- Date: 2026-07-30
+- Status: accepted
+- Context: Prototype 0.1はlocalで完成したが、ユーザー評価は約20点だった。固定arenaと常時自動遠隔攻撃が、求める放浪・ハクスラ体験と一致しなかった。
+- Decision: Prototype Bでは、町―三叉路―廃区の連続scroll route、手動攻撃、guard、回避、遺物、item、武器持替を遊びの中心にする。自動攻撃は初期標準操作から外す。
+- Consequences: playerの判断と敵予兆がgameplayになる。操作数とbalance検証は増える。Prototype 0.1は比較用に保持する。
+- Supersedes: Prototype 0.1のfirst playable combat loop
+
+---
+
+## ADR-007: Use a fixed Three.js voxel renderer for Prototype B
+
+- Date: 2026-07-30
+- Status: accepted
+- Context: 画像生成したdot絵では品質と一貫性が不足し、固定cameraの立体表現を計算生成したい。
+- Decision: 16×16×16をasset authoring gridとし、隠れ面を除去したgeometryをThree.jsで固定斜め俯瞰表示する。cameraは回転させずplayerへ追従し、low-resolution canvasを拡大する。Phaserは旧版query routeだけに残す。
+- Consequences: 同じrecipeからcharacter、object、effectを一貫して生成できる。WebGL resource管理と実機performance gateが必要になる。
+- Supersedes: ADR-002のrenderer選定部分。browser-first delivery自体は継続
+
+---
+
+## ADR-008: Treat SF relic explanation and sound as gameplay information
+
+- Date: 2026-07-30
+- Status: accepted
+- Context: ラグランジュポイントの武器・SF設定・soundと、謎の道具を具体的に解説する面白さが新たなtaste signalとして確認された。
+- Decision: 遺物dataを効果、原理仮説、副作用、使用者メモへ分け、loot取得時に表示する。武器、guard、遺物、危険、結果へ固有のprocedural audio cueを割り当てる。
+- Consequences: 数値itemにも世界内の意味を持たせられ、将来のAI候補生成schemaになる。音の判別性はiPhone speakerで別途検証する。
+- Supersedes: none

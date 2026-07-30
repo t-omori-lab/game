@@ -1,7 +1,7 @@
 "use strict";
 
 const CACHE_PREFIX = "small-persistent-world-shell-";
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`;
 const SCOPE_URL = new URL("./", self.registration.scope);
 const ROOT_URL = new URL("./", SCOPE_URL).href;

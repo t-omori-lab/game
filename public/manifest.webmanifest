@@ -1,16 +1,16 @@
 {
   "id": "./",
-  "name": "境界調査録",
-  "short_name": "境界記録",
-  "description": "短い遠征の痕跡が次の旅人の世界へ残る、小さな永続世界ローグライト。",
+  "name": "辺境遺物録",
+  "short_name": "辺境遺物",
+  "description": "正体不明のSF遺物を拾い、手動戦闘と選択で辺境の履歴を作る固定俯瞰ボクセル・ハクスラ原型。",
   "lang": "ja",
   "dir": "ltr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "landscape-primary",
-  "background_color": "#07110f",
-  "theme_color": "#07110f",
+  "background_color": "#080c0c",
+  "theme_color": "#080c0c",
   "categories": ["games", "entertainment"],
   "icons": [
     {
