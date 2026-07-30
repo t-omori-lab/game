@@ -18,6 +18,8 @@ Last updated: 2026-07-31
 - quest分岐の必要itemは、対峙triggerより十分外で取得可能かを配置invariantと初期地点からの連続移動testで検証する。選択modalにも探索へ戻る出口が必要。
 - mobileの縦向き案内は画面を覆うだけでなく、simulationと保持入力も止める。Web Audioのschedulerはmute／background復帰時に過去時刻を再生せず現在時刻へrebaseする。
 - local browserで戦闘せず街道のlootへ向かうと、最初の敵に敗北した。手動対応を要求する設計は成立している一方、練習敵としての強さは実機試遊で調整が必要。
+- GitHub Pagesのproject siteでは、Viteの`base`とWeb App Manifestの`id`を公開subpathへ固定する。asset URLが偶然動いても、manifestの相対`id`は別の基準で解決され、PWA identityがorigin rootを指し得る。
+- 新規repositoryのPages sourceをGitHub Actionsへ切り替える前に初回workflowを走らせると、buildが正しくてもdeployは失敗する。source保存後に再実行し、最新commitの成功runと公開HTTP応答を別々に確認する。
 
 ## Improvement candidates
 

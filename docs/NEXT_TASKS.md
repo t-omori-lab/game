@@ -5,6 +5,7 @@ Last updated: 2026-07-31
 ## P0
 
 - [ ] Prototype BをiPhone 16 Pro実機で10分通し試遊する。
+  - 公開URL: `https://t-omori-lab.github.io/game/`
   - 開始、依頼板、移動、二武器、guard／回避、遺物、item、loot、名付き反響体、帰還の順に確認する。
   - Done when: 操作不能、誤入力、文字、safe area、音の判別、発熱、fps低下、もう一度遊びたいか、100点中の評価を記録する。
 - [ ] 実機結果を基に、最初の敵とtouch操作を一度だけ調整する。
@@ -24,7 +25,7 @@ Last updated: 2026-07-31
 - [ ] 名前、噂、依頼文、VoxelRecipe、遺物解説を生成するoffline AI pipelineを設計する。
   - AI出力はJSON schema検査と人間の採否を通し、runtime判定へ直接つながない。
 - [ ] 「死亡旅人の遺物を宿敵が拾い、次回に奪還する」永続sliceをPrototype Bへ移植する。
-- [ ] HTTPS previewでホーム画面追加、offline再起動、Prototype B saveを確認する。
+- [ ] 公開URLをiPhoneのホーム画面へ追加し、offline再起動、Prototype B saveを確認する。
 
 ## P2
 
@@ -39,3 +40,4 @@ Last updated: 2026-07-31
 - [x] 町―三叉路―廃区、名付き反響体、三結果、procedural soundを実装 — 2026-07-30
 - [x] Vitest 85件、strict TypeScript、production build、mobile相当browser QAを合格 — 2026-07-31
 - [x] 分岐鍵の経路、探索へ戻る導線、縦画面pause、防御／回避、keyboard、音声復帰をreview修正 — 2026-07-31
+- [x] `t-omori-lab/game`を作成し、GitHub PagesへPrototype Bを公開 — 2026-07-31
