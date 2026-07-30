@@ -1,0 +1,23 @@
+{
+  "id": "./",
+  "name": "境界調査録",
+  "short_name": "境界記録",
+  "description": "短い遠征の痕跡が次の旅人の世界へ残る、小さな永続世界ローグライト。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape-primary",
+  "background_color": "#07110f",
+  "theme_color": "#07110f",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

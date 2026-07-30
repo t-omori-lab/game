@@ -1,0 +1,15 @@
+export const PLAYER_BASE_STATS = {
+  radius: 12,
+  maxHp: 100,
+  speed: 156,
+  attackDamage: 20,
+  attackRange: 390,
+  attackIntervalTicks: 18,
+  projectileSpeed: 420,
+  projectileRadius: 4,
+  skillDamage: 40,
+  skillRadius: 112,
+  skillCooldownTicks: 180,
+  skillDurationTicks: 12,
+  xpToNext: 40,
+} as const;
