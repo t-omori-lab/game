@@ -1,0 +1,25 @@
+# OS and editor files
+.DS_Store
+*.swp
+*.tmp
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+.codex/config.toml
+
+# Common dependency and build directories
+node_modules/
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+dist/
+build/
+
+# Large or reproducible generated files
+outputs/*
+!outputs/README.md
