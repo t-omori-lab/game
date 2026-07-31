@@ -56,3 +56,120 @@ Prototype 0.1「境界調査録」は、移動、自動攻撃、強化選択、�
 ## Checkpoint Rule
 
 `work/CHECKPOINT.md` は、各phaseが検証済みの独立再開点になったとき、または計画的な中断前だけ更新する。
+
+---
+
+## Current Iteration: Visual Pass C — daylight ruins and expressive voxels
+
+### Goal
+
+公開Prototype Bを、暗い終末画面から「人間には過酷だが、自然と光に満ちた崩壊世界」へ転換し、主人公をSFC後期RPGのspriteに近い判別力を持つ3D voxel characterへ更新する。
+
+### Phases
+
+- [x] Phase 1: 現行のlighting、palette、overlay、voxel制約とmobile描画budgetを監査する
+- [x] Phase 2: 独自のdaylight ruin paletteと可変character grid規格を`work/visual_direction_v2.md`へ固定する
+- [x] Phase 3: world lighting、地面、遺構、植生、水、screen effect、HUD透過を実装する
+- [x] Phase 4: 主人公を高密度voxel recipeへ更新し、顔、髪、服、装備、向き、action silhouetteを改善する
+- [x] Phase 5: unit test、strict TypeScript、production build、852×393 visual QA、draw-call／triangle budgetを検証する
+- [ ] Phase 6: project docs、postflight、scope限定commit、承認済みGitHub Pages deployを行う
+
+### Key Questions
+
+1. gameplayの危険度をHUD、enemy予兆、音で保ちつつ、worldそのものを明るく色鮮やかにできるか。
+2. 16³を普遍的制限にせず、playerだけ高密度化してもmesh統合と共有geometryで60fps budgetを保てるか。
+3. 852×393で、主人公の頭、顔、髪、胴、手足、主武器が一目で分かるか。
+
+### Decisions Made
+
+- 『NieR:Automata』から固有の色、衣装、構図を写さず、「淡い昼光の遺構を自然が侵食し、危険と美しさが同居する」という構造だけを参照する。
+- 『FINAL FANTASY VI』からspriteを複製せず、小画面でも頭身、顔、髪、服、装備、pose差が読める情報階層を参照する。
+- 暗さは全画面filterで作らず、危険はenemy予兆、局所影、音、UIへ移す。
+- 高密度化は全object一括ではなく、player、主要NPC、名付きenemyを優先し、背景objectは現行密度を維持する。
+- voxel recipe schemaを可変`width × height × depth`へ更新し、legacy assetは16³、playerは16×24×12／voxel size 8/3とする。
+
+### Errors Encountered
+
+- 現時点なし。
+
+### Status
+
+**Currently in Phase 6** — local implementationとbrowser visual QAは合格した。project docs、review、postflightを終え、public deployは明示承認を待つ。
+
+---
+
+## Current Iteration: Visual Pass D — commercial-quality art slice
+
+### Trigger
+
+2026-07-31、ユーザーはVisual Pass Cについて、map、building、objectが大きなbox中心で「Minecraftのまま」、鮮やかさと魅力も不足していると評価した。目標をprototype内の相対改善ではなく、『OCTOPATH TRAVELER』など商業HD-2D作品を基準に置き直す。
+
+### Goal
+
+開始地点の一画面を、地面、建築、小物、自然、光、空気、playerまで含むcommercial-quality vertical art sliceへ作り直す。将来の同行者candidateも同じ品質でasset化するが、開始時は主人公単独とする。全worldへ薄く広げる前に、一画面で品質規格を合格させる。
+
+### Phases
+
+- [x] Phase D1: official HD-2D production insightと現rendererの表現／performance制約を監査する
+- [x] Phase D2: start-town art sliceのcolor script、depth layers、lighting、asset density、camera scaleを固定する
+- [x] Phase D3: ground microdetail、broken multi-part architecture、high-density props、自然侵食を実装する
+- [x] Phase D4: lit material、directional／hemisphere／effect light、tone mapping、atmosphereを実装する
+- [x] Phase D5: playerを再高密度化し、同行者roster候補をpreview-only assetとして追加する
+- [x] Phase D6: 852×393 visual QA、combat readability、touch、fps、calls、triangles、heat-riskを検証する
+- [ ] Phase D7: user review後に表現規格を全mapへ展開する。承認前はdeployしない
+
+### Decisions Made
+
+- Visual Pass Cはbrightness／readabilityの中間成果として保持するが、art acceptanceには不合格。
+- densityはvoxel数だけでなく、material breakup、silhouette、depth、light／shadow、atmosphere、compositionの積で作る。
+- map全域を一度に高密度化せず、start-townの一画面をquality gateにする。
+- reference作品のasset、建物、character、palette、effectを複製せず、high-resolution map、organic detail、dynamic lighting、light-linked effectというproduction principleだけを参照する。
+- 同行者は開始時の固定相棒にせず、world内で発見／加入し、複数候補から交代できるroster構造にする。今回の調査灯型robotは候補asset一体であり通常画面には表示しない。
+
+### Status
+
+**Superseded after local review** — 構造、生活感、光、hero密度は改善したが、ユーザー評価ではantialiasと実textureを欠き、commercial HD-2Dの美しさへ未到達。D7の全map展開は行わず、Visual Pass Eのhybrid routeへ移る。
+
+---
+
+## Current Iteration: Visual Pass E — hybrid HD-2D foundation
+
+### Trigger
+
+2026-07-31、ユーザーはVisual Pass Dを「まだ全く美しくない」と評価し、特にmap、背景、地面texture、antialiasをcommercial HD-2D水準へ上げるよう求めた。固定視点で矛盾しないなら、map／objectを3D voxelへ固定しない方針も承認された。その後、最新中間候補のGitHub Pages deployが明示承認された。
+
+### Goal
+
+主人公、item、interactive silhouette、shadow／occlusionはrealtime 3Dとして保ち、地面、遠景、建物表面は高解像度生成texture／baked layerを使えるhybrid rendererへ移行する。今回は開始町のfirst layerとしてMSAA、高い内部解像度、HDR-like color pipeline、generated ground albedoを公開し、iPhone実機で次のart passを判断できる中間版にする。
+
+### Phases
+
+- [x] Phase E1: user feedbackをhybrid HD-2D contract、HDR-like contract、asset-generation contractへ記録する
+- [x] Phase E2: MSAA、1041×480相当の内部解像度、AgX tone mapping、sRGB baseline／Display P3 progressive enhancementを実装する
+- [x] Phase E3: 開発時生成した高解像度ground albedoを最適化・provenance記録し、continuous groundへ適用する
+- [x] Phase E4: solid-looking town decorとauthoritative collisionを一致させ、route／interactionを再検証する
+- [x] Phase E5: world bible／generation rules／project docsを完成し、tests、type、build、browser QA、postflightを通す
+- [ ] Phase E6: exact-scope commitをmainへpushし、GitHub Pages workflowとpublic URLを確認する
+
+### Decisions Made
+
+- fixed cameraは制約ではなくbake可能性として使う。地面／遠景／建物surfaceは2D texture、normal／roughness map、baked detailを許可する。
+- realtime 3Dに残すのは、移動するhero／enemy／item、collisionへ影響するsilhouette、characterを隠すoccluder、dynamic shadowが必要な形。
+- 2D／3Dの矛盾はworld scale、camera、palette、light direction、material response、depth／occlusion maskを共有して防ぐ。
+- `antialias: true`のMSAAを有効化し、内部canvasを852×393 CSSに対して1041×480へ上げる。
+- true HDRを必須にせず、AgX tone mappingとlinear lightingをbaselineにする。Display P3はscreenとWebGL contextがともに対応するときだけ有効化する。
+- 最初のgenerated groundは人間が選別したalbedo candidate。最終commercial assetではなく、将来はalbedo／normal／roughness／macro maskを一つのscale contractから生成する。
+
+### Errors Encountered
+
+- `sips`はこの環境でAVIF書出しをadvertiseしたが実行時に`Can't write format`で失敗した。bundled `sharp`で1024×1024 WebP quality 88へ変換し、約3.1 MBのPNGを約453 KBへ削減した。
+- visual probe初回はlocal Vite停止により`ERR_CONNECTION_REFUSED`。serverを5174で再起動し、同一probeを再実行した。
+- start-town receiverを非表示にした直後、underlying world groundの外周がcameraへ露出した。continuous ground geometryをworld外へoverscanし、textureを継続させて解決した。
+- collision test初版はmovement stepが境界へぴったり着地すると仮定し、1 unit差で失敗した。禁止境界を越えず、一tick幅6 unit以内で停止するinvariantへ修正した。
+- pre-deploy reviewで、sRGB authoring paletteを255除算した値がLinear-sRGB頂点色として渡っていたことを検出した。sRGB EOTF変換と`0x808080`の回帰testを追加した。
+- start-town ground receiver削除後、life-pass testの固定draw-call期待値が12のまま残り1件失敗した。可視batch 11件へ期待値を更新し、全116件を再実行した。
+- 最終browser QA初回はsystem tempの`ENOSPC`、次はpreview停止による`ERR_CONNECTION_REFUSED`で中断した。作業用`/private/tmp`へ一時領域を切り替え、production previewを再起動して同じprobeを合格させた。
+
+### Status
+
+**Currently in Phase E6** — collision整合、色管理、texture precache／fallback、durable docs、Vitest 116件、strict TypeScript、production build、852×393 production preview、postflightは合格済み。exact-scope commit、main push、GitHub Pagesとpublic URLの確認を続行する。

@@ -2,7 +2,7 @@
 
 Last updated: 2026-07-31  
 Status: active  
-Phase: Prototype B public playable
+Phase: Prototype B public baseline / Visual Pass E local deployment candidate
 
 ## Purpose
 
@@ -11,13 +11,13 @@ Phase: Prototype B public playable
 ## Confirmed current state
 
 - 既定起動をPrototype B「辺境遺物録」へ切り替えた。Prototype 0.1「境界調査録」は比較用に`?prototype=0.1`で起動できる。
-- Prototype Bは、町―三叉路―聴取廃区を連続scrollする3,600×1,800のworld、固定斜め俯瞰camera、16³ authoring grid由来のrealtime voxelを持つ。
+- Prototype Bは、町―三叉路―聴取廃区を連続scrollする3,600×1,800のworldと固定斜め俯瞰cameraを持つ。moving character、collision silhouette、occluder、dynamic shadowはrealtime 3Dを維持し、地面、背景、建物面は高解像度の生成／baked surfaceを併用できるhybrid HD-2Dへ移行した。playerの現行authoring gridは24×32×16。
 - 30Hzの決定論的simulationに、手動攻撃、guard／just guard、回避、遺物skill、回復item、武器持替、敵予兆、loot、地形collisionを実装した。
 - 武器は、速く間合いの長い測量刃と、遅く高威力・高knockbackの杭打機の二系統。
 - 通常敵3種と名付き反響体1体があり、名付き反響体は破壊、鎮静、接続の三経路で解決できる。結果を町へ報告すると異なる帰還記録が出る。
 - lootは6種。各SF遺物を、効果、世界内の原理仮説、副作用、使用者の所感に分けて表示する。
 - 音はWeb Audioによる独自のprocedural soundscapeで、探索pulse、危険layer、武器2種、予兆、guard、回避、遺物、item、三結果を分けた。
-- 2026-07-31時点でVitest 87件、strict TypeScript、production buildが合格。
+- 2026-07-31時点のVisual Pass E候補はVitest 116件、strict TypeScript、production buildが合格した。公開結果はlocal verificationと分けて記録する。
 - 公開repositoryは`https://github.com/t-omori-lab/game`。GitHub Pagesの公開URLは`https://t-omori-lab.github.io/game/`。
 - GitHub Actions run #3でcommit `3375470`のbuild／deploy成功を確認し、公開URL、manifest、service worker、共有画像がHTTPSで200応答することを確認した。
 - 公開URLをChromeで開き、タイトル、縦向き案内、PWA install候補の表示を確認した。
@@ -26,6 +26,18 @@ Phase: Prototype B public playable
 - 852×393相当のlocal browserで、60fps表示、開始、依頼受注、武器切替、scroll移動、敵接近、敗北、再開を確認。観測値は初期画面で約25 draw calls／約18k triangles。browser consoleのerror／warningは0件。
 - スマホ実機でdouble tapすると拡大したまま戻せない報告を受け、固定倍率のviewport指定を外し、全UIへ`touch-action: manipulation`、joystick／action buttonへ`touch-action: none`を直接適用した。852×393のlocal mobile Chromeではdouble tap前後ともscale 1、offset 0を維持した。
 - GitHub Actions run #5でcommit `da3b8cf`のbuild／deploy成功を確認した。公開URLを852×393のmobile Chromeで開き、double tap前後ともscale 1、offset 0を維持した。
+- ユーザー評価を受け、local Visual Pass Cで暗い終末画面を淡い昼光、白化した遺構、sageの地面、青緑の水、錆、草花へ転換した。危険は全画面の暗さではなく、赤橙の敵予兆と局所contrastで示す。
+- playerは16³／368 voxelsから16×24×12／583 voxelsへ再設計した。髪、顔、上着、左右の腕、分離した脚、boots、scarf、weapon anchorを持ち、bodyは1 draw call／1,484 triangles。
+- 852×393のlocal mobile ChromeでVisual Pass Cを確認し、上下左右のsilhouette、worldの視認性、60fps表示、26 draw calls、22,148 trianglesを観測した。double tap後もscale 1、offset 0を維持した。
+- ユーザーはVisual Pass Cを、map／building／objectが大きなbox中心でMinecraft的、鮮やかさと魅力も不足すると評価した。次のquality barは『OCTOPATH TRAVELER』等の商業HD-2D作品であり、Visual Pass Cはart acceptanceに未達。
+- Visual Pass Dではstart-townへmulti-part architecture、修理跡、畑、洗濯、作業台、道具、生活小物と24×32×16 playerを追加した。しかしユーザーは、antialiasingの不足、平坦な地面／背景texture、map全体の粗さを理由に「まだ全く美しくない」と明確に評価し、Visual Pass Dをcommercial-quality art gateとして却下した。
+- Visual Pass Eのlocal中間候補では、WebGL MSAA、高精度shader、854×480基準の内部解像度、AgX tone mapping、mipmap／anisotropyを備えた1024×1024の開発時生成meadow textureを導入した。出力はsRGBをbaselineとし、Display-P3はdeviceとWebGL contextの両方が対応するときだけ有効にする。
+- Visual Pass Eは、固定cameraを活かし、地面／背景／建物面を2D生成・bakeできるhybrid HD-2Dの最初の技術候補である。現時点では地面albedo一枚が主なsurface改善で、商業HD-2Dと同等の仕上がりを意味しない。
+- start-townで見た目上solidな掲示板、作業場、修理台、街灯、菜園、crate群の6区画をsimulation colliderへ接続し、表示物をすり抜けない状態にした。町の主要routeと掲示板interactionはtestで到達可能を維持した。
+- 同行者は開始時の固定相棒にせず、world内で発見／加入し、複数候補から交代するroster構想へ変更した。調査灯型robotは候補assetとして保持するが、通常の開始画面では非表示にする。
+- Visual Pass Eの852×393 local mobile Chromeでは、約47〜54fps、35 draw calls、約48〜49k visible trianglesを観測した。double tap前後はscale 1、offset 0を維持し、browser errorは観測されなかった。60fps目標への到達とiPhone 16 Pro実機性能は未確認。
+- 最終production previewでは60fps表示、35〜37 draw calls、49,520〜49,616 visible triangles、ground textureの`ready`、double tap前後scale 1／offset 0、browser error 0件を確認した。texture要求を遮断した別検査では`fallback`へ移行した。いずれもiPhone実機性能の証明ではない。
+- 世界、人物、地図、遺跡、item、monster、同行者の状態と出典を分離する`docs/WORLD_BIBLE.md`と、開発時生成、schema、seed、provenance、検証、人間採否、fallbackを定める`docs/GENERATION_RULES.md`をv0.1 draftとして追加した。
 
 ## Creative reference notes
 
@@ -37,12 +49,17 @@ Phase: Prototype B public playable
 - Prototype Bは新しい遊びの核を評価する原型であり、完成ゲームではない。
 - local mobile相当browserの結果は、iPhone 16 Pro実機性能、発熱、touch感触、音量balance、Safari/PWA適合の証明ではない。
 - double tap修正は公開mobile Chromeで確認済みだが、iPhone 16 ProのSafari／ホーム画面PWAでの再確認は未完了。
+- Visual Pass Cはlocal browserでのみ確認済みで、ユーザーのart acceptanceには不合格。GitHub Pagesへは反映しない。
+- Visual Pass Dはユーザーreviewで不合格となり、Visual Pass Eのhybrid方針へ置き換えた。
+- Visual Pass Eはlocalの中間公開候補であり、GitHub Pagesへの反映、公開assetの応答、service worker更新、公開画面の一致はまだ確認していない。
+- AgX tone mapping、広い色域、明るいemissiveはHDR的な見え方を助けるが、現在のWebGL出力をtrue HDRと断定しない。Display-P3は対応device／browserだけのprogressive enhancementである。
+- Visual Pass Eのlocal計測は60fps目標を下回る観測を含む。iPhone 16 Proでのfps、発熱、battery、Safari/PWA color出力は未確認。
 - 三つの依頼結果はsimulation testで到達確認済みだが、local browserで開始から帰還までの10分通し試遊は未完了。
 - Prototype 0.1の`WorldLegacy v1`、A/B save、IndexedDBはrepository内に残るが、Prototype Bの依頼結果／途中状態にはまだ接続していない。
 - PWA shellは公開HTTPS上で配信され、Chromeのinstall候補までは確認済み。iPhoneでのホーム画面追加、offline再起動、Prototype B asset cacheは実機未確認。
 - 世界観、舞台、主人公、妖怪と電脳怪異の比率は未確定。現在のSF辺境は着せ替え可能な仮設定。
-- AI生成はまだruntimeへ接続していない。後続ではschema検査済みのVoxelRecipe、名前、噂、依頼、遺物解説候補へ限定する。
-- Git remoteとGitHub Pagesへのpublic deployは完了した。Steam公開は行っていない。
+- 生成ガバナンスは文書化したが、offline generator、schema検査、candidate registry、human curation UIは未実装。runtime AIは接続していない。
+- Git remoteと従来版のGitHub Pages公開は完了している。Visual Pass Eの公開とSteam公開は確認していない。
 
 ## Canonical handoff
 

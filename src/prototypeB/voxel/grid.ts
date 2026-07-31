@@ -1,41 +1,50 @@
 import {
-  VOXEL_GRID_SIZE,
-  VOXEL_GRID_VOLUME,
+  DEFAULT_VOXEL_DIMENSIONS,
+  isValidVoxelDimensions,
   type AuthoredVoxel,
+  type VoxelDimensions,
   type VoxelGrid,
   type VoxelPalette,
   type VoxelPoint,
   type VoxelRecipe,
+  voxelGridVolume,
 } from "./types";
 import { assertValidVoxelRecipe } from "./validator";
 
 export const EMPTY_VOXEL = 0;
 
 export function isVoxelCoordinateInBounds(
+  dimensions: VoxelDimensions,
   x: number,
   y: number,
   z: number,
 ): boolean {
   return (
+    isValidVoxelDimensions(dimensions) &&
     Number.isInteger(x) &&
     Number.isInteger(y) &&
     Number.isInteger(z) &&
     x >= 0 &&
-    x < VOXEL_GRID_SIZE &&
+    x < dimensions.width &&
     y >= 0 &&
-    y < VOXEL_GRID_SIZE &&
+    y < dimensions.height &&
     z >= 0 &&
-    z < VOXEL_GRID_SIZE
+    z < dimensions.depth
   );
 }
 
-export function voxelIndex(x: number, y: number, z: number): number {
-  if (!isVoxelCoordinateInBounds(x, y, z)) {
+export function voxelIndex(
+  dimensions: VoxelDimensions,
+  x: number,
+  y: number,
+  z: number,
+): number {
+  if (!isVoxelCoordinateInBounds(dimensions, x, y, z)) {
     throw new RangeError(
-      `Voxel coordinate (${x}, ${y}, ${z}) is outside the ${VOXEL_GRID_SIZE}×${VOXEL_GRID_SIZE}×${VOXEL_GRID_SIZE} grid.`,
+      `Voxel coordinate (${x}, ${y}, ${z}) is outside the ${dimensions.width}×${dimensions.height}×${dimensions.depth} grid.`,
     );
   }
-  return x + VOXEL_GRID_SIZE * (z + VOXEL_GRID_SIZE * y);
+  return x + dimensions.width * (z + dimensions.depth * y);
 }
 
 function createPaletteLookup(palette: VoxelPalette): ReadonlyMap<string, number> {
@@ -68,13 +77,21 @@ function createPaletteLookup(palette: VoxelPalette): ReadonlyMap<string, number>
 export function createVoxelGrid(
   palette: VoxelPalette,
   options: {
+    readonly dimensions?: VoxelDimensions;
     readonly anchors?: readonly VoxelGrid["anchors"][number][];
     readonly recipeId?: string;
   } = {},
 ): VoxelGrid {
+  const dimensions = options.dimensions ?? DEFAULT_VOXEL_DIMENSIONS;
+  if (!isValidVoxelDimensions(dimensions)) {
+    throw new RangeError(
+      "Voxel dimensions must use positive integer axes no larger than 64 and contain no more than 32,768 cells.",
+    );
+  }
+
   return {
-    size: VOXEL_GRID_SIZE,
-    cells: new Uint16Array(VOXEL_GRID_VOLUME),
+    dimensions: { ...dimensions },
+    cells: new Uint16Array(voxelGridVolume(dimensions)),
     palette,
     paletteIndexById: createPaletteLookup(palette),
     anchors: options.anchors ?? [],
@@ -85,6 +102,7 @@ export function createVoxelGrid(
 export function copyVoxelGrid(grid: VoxelGrid): VoxelGrid {
   return {
     ...grid,
+    dimensions: { ...grid.dimensions },
     cells: grid.cells.slice(),
     anchors: grid.anchors.map((anchor) => ({ ...anchor })),
   };
@@ -96,7 +114,7 @@ export function getVoxelPaletteIndex(
   y: number,
   z: number,
 ): number {
-  return grid.cells[voxelIndex(x, y, z)] ?? EMPTY_VOXEL;
+  return grid.cells[voxelIndex(grid.dimensions, x, y, z)] ?? EMPTY_VOXEL;
 }
 
 export function getVoxel(
@@ -119,7 +137,7 @@ export function setVoxel(
   z: number,
   paletteId: string | null,
 ): void {
-  const index = voxelIndex(x, y, z);
+  const index = voxelIndex(grid.dimensions, x, y, z);
   if (paletteId === null) {
     grid.cells[index] = EMPTY_VOXEL;
     return;
@@ -147,8 +165,8 @@ export function fillVoxelBox(
   paletteId: string,
 ): void {
   if (
-    !isVoxelCoordinateInBounds(from.x, from.y, from.z) ||
-    !isVoxelCoordinateInBounds(to.x, to.y, to.z)
+    !isVoxelCoordinateInBounds(grid.dimensions, from.x, from.y, from.z) ||
+    !isVoxelCoordinateInBounds(grid.dimensions, to.x, to.y, to.z)
   ) {
     throw new RangeError("Voxel box endpoints must both be inside the grid.");
   }
@@ -181,8 +199,8 @@ export function fillVoxelLine(
   paletteId: string,
 ): void {
   if (
-    !isVoxelCoordinateInBounds(from.x, from.y, from.z) ||
-    !isVoxelCoordinateInBounds(to.x, to.y, to.z)
+    !isVoxelCoordinateInBounds(grid.dimensions, from.x, from.y, from.z) ||
+    !isVoxelCoordinateInBounds(grid.dimensions, to.x, to.y, to.z)
   ) {
     throw new RangeError("Voxel line endpoints must both be inside the grid.");
   }
@@ -225,9 +243,9 @@ export function countVoxels(grid: VoxelGrid): number {
 
 export function gridToVoxels(grid: VoxelGrid): readonly AuthoredVoxel[] {
   const voxels: AuthoredVoxel[] = [];
-  for (let y = 0; y < VOXEL_GRID_SIZE; y += 1) {
-    for (let z = 0; z < VOXEL_GRID_SIZE; z += 1) {
-      for (let x = 0; x < VOXEL_GRID_SIZE; x += 1) {
+  for (let y = 0; y < grid.dimensions.height; y += 1) {
+    for (let z = 0; z < grid.dimensions.depth; z += 1) {
+      for (let x = 0; x < grid.dimensions.width; x += 1) {
         const paletteIndex = getVoxelPaletteIndex(grid, x, y, z);
         if (paletteIndex === EMPTY_VOXEL) {
           continue;
@@ -254,6 +272,7 @@ export function buildVoxelGrid(
   }
 
   const grid = createVoxelGrid(recipe.palette, {
+    dimensions: recipe.dimensions,
     anchors: recipe.anchors,
     recipeId: recipe.id,
   });

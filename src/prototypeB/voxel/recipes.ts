@@ -6,15 +6,37 @@ import {
   setVoxel,
 } from "./grid";
 import {
-  VOXEL_GRID_SIZE,
+  DEFAULT_VOXEL_DIMENSIONS,
   defineVoxelPalette,
   defineVoxelRecipe,
   type VoxelAnchor,
   type VoxelAssetKind,
+  type VoxelDimensions,
   type VoxelGrid,
   type VoxelRecipe,
 } from "./types";
 import { assertValidVoxelRecipe } from "./validator";
+import {
+  COMPANION_RECIPE,
+  PLAYER_RECIPE,
+} from "./heroRecipes";
+
+export {
+  COMPANION_RECIPE,
+  COMPANION_TRIANGLE_CAP,
+  COMPANION_VISUAL_HEIGHT,
+  COMPANION_VOXEL_CAP,
+  COMPANION_VOXEL_DIMENSIONS,
+  COMPANION_VOXEL_PALETTE,
+  COMPANION_VOXEL_SIZE,
+  PLAYER_RECIPE,
+  PLAYER_TRIANGLE_CAP,
+  PLAYER_VISUAL_HEIGHT,
+  PLAYER_VOXEL_CAP,
+  PLAYER_VOXEL_DIMENSIONS,
+  PLAYER_VOXEL_PALETTE,
+  PLAYER_VOXEL_SIZE,
+} from "./heroRecipes";
 
 export const FRONTIER_VOXEL_PALETTE = defineVoxelPalette([
   { id: "shadow", color: 0x17201f, label: "Mineral shadow" },
@@ -35,6 +57,7 @@ interface RecipeDraft<Id extends string> {
   readonly id: Id;
   readonly name: string;
   readonly kind: VoxelAssetKind;
+  readonly dimensions?: VoxelDimensions;
   readonly anchors: readonly VoxelAnchor[];
   readonly requiredAnchors: readonly string[];
   readonly author: (grid: VoxelGrid) => void;
@@ -43,14 +66,15 @@ interface RecipeDraft<Id extends string> {
 function authorRecipe<const Id extends string>(
   draft: RecipeDraft<Id>,
 ): VoxelRecipe & { readonly id: Id } {
-  const grid = createVoxelGrid(FRONTIER_VOXEL_PALETTE);
+  const dimensions = draft.dimensions ?? DEFAULT_VOXEL_DIMENSIONS;
+  const grid = createVoxelGrid(FRONTIER_VOXEL_PALETTE, { dimensions });
   draft.author(grid);
   const recipe = defineVoxelRecipe({
-    schemaVersion: 1,
+    schemaVersion: 2,
     id: draft.id,
     name: draft.name,
     kind: draft.kind,
-    gridSize: VOXEL_GRID_SIZE,
+    dimensions,
     palette: FRONTIER_VOXEL_PALETTE,
     voxels: gridToVoxels(grid),
     anchors: draft.anchors,
@@ -64,37 +88,6 @@ function authorRecipe<const Id extends string>(
   assertValidVoxelRecipe(recipe);
   return recipe;
 }
-
-export const PLAYER_RECIPE = authorRecipe({
-  id: "player-wayfarer",
-  name: "Wayfarer",
-  kind: "player",
-  anchors: [
-    { id: "ground", x: 7, y: 0, z: 7 },
-    { id: "weapon", x: 12, y: 7, z: 7 },
-    { id: "focus", x: 7, y: 10, z: 7 },
-  ],
-  requiredAnchors: ["ground", "weapon", "focus"],
-  author: (grid) => {
-    fillVoxelBox(grid, { x: 5, y: 0, z: 6 }, { x: 6, y: 1, z: 8 }, "shadow");
-    fillVoxelBox(grid, { x: 9, y: 0, z: 6 }, { x: 10, y: 1, z: 8 }, "shadow");
-    fillVoxelBox(grid, { x: 5, y: 2, z: 6 }, { x: 6, y: 5, z: 8 }, "cloth");
-    fillVoxelBox(grid, { x: 9, y: 2, z: 6 }, { x: 10, y: 5, z: 8 }, "cloth");
-    fillVoxelBox(grid, { x: 5, y: 5, z: 6 }, { x: 10, y: 7, z: 9 }, "rust");
-    fillVoxelBox(grid, { x: 4, y: 7, z: 6 }, { x: 11, y: 11, z: 9 }, "cloth");
-    fillVoxelBox(grid, { x: 3, y: 7, z: 6 }, { x: 4, y: 10, z: 8 }, "cloth");
-    fillVoxelBox(grid, { x: 11, y: 7, z: 6 }, { x: 12, y: 10, z: 8 }, "cloth");
-    fillVoxelBox(grid, { x: 3, y: 6, z: 6 }, { x: 4, y: 7, z: 8 }, "bone");
-    fillVoxelBox(grid, { x: 11, y: 6, z: 6 }, { x: 12, y: 7, z: 8 }, "bone");
-    fillVoxelBox(grid, { x: 7, y: 11, z: 7 }, { x: 8, y: 12, z: 8 }, "bone");
-    fillVoxelBox(grid, { x: 6, y: 12, z: 6 }, { x: 9, y: 15, z: 9 }, "bone");
-    fillVoxelBox(grid, { x: 6, y: 15, z: 6 }, { x: 9, y: 15, z: 9 }, "shadow");
-    fillVoxelBox(grid, { x: 6, y: 13, z: 9 }, { x: 9, y: 15, z: 9 }, "shadow");
-    setVoxel(grid, 7, 14, 6, "cyan");
-    setVoxel(grid, 8, 14, 6, "cyan");
-    fillVoxelBox(grid, { x: 5, y: 9, z: 6 }, { x: 10, y: 9, z: 6 }, "rust");
-  },
-});
 
 export const BLADE_WEAPON_RECIPE = authorRecipe({
   id: "weapon-signal-blade",
@@ -309,6 +302,7 @@ export const WISP_ENEMY_RECIPE = MURMUR_ENEMY_RECIPE;
 
 export const VOXEL_RECIPES = [
   PLAYER_RECIPE,
+  COMPANION_RECIPE,
   BLADE_WEAPON_RECIPE,
   IMPACT_WEAPON_RECIPE,
   SCRAP_HOUND_ENEMY_RECIPE,
@@ -326,6 +320,7 @@ export type PredefinedVoxelRecipeId = PredefinedVoxelRecipe["id"];
 export type VoxelRecipeLookupId =
   | PredefinedVoxelRecipeId
   | "player"
+  | "companion"
   | "blade"
   | "impact"
   | "named-anomaly"
@@ -361,6 +356,7 @@ export const VOXEL_RECIPE_BY_ID = Object.freeze(
       VOXEL_RECIPES.map((recipe) => [recipe.id, recipe]),
     ),
     player: PLAYER_RECIPE,
+    companion: COMPANION_RECIPE,
     ...WEAPON_VOXEL_RECIPES,
     ...ENEMY_VOXEL_RECIPES,
     ...PROP_VOXEL_RECIPES,
@@ -375,4 +371,12 @@ export function findVoxelRecipe(id: string): VoxelRecipe | undefined {
   return Object.hasOwn(VOXEL_RECIPE_BY_ID, id)
     ? VOXEL_RECIPE_BY_ID[id as VoxelRecipeLookupId]
     : undefined;
+}
+
+export function getVoxelRecipe(id: string): VoxelRecipe {
+  const recipe = findVoxelRecipe(id);
+  if (recipe === undefined) {
+    throw new RangeError(`Unknown voxel recipe "${id}".`);
+  }
+  return recipe;
 }

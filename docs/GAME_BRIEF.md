@@ -2,6 +2,13 @@
 
 Last updated: 2026-07-31
 
+## Document map
+
+- 世界、人物、地図、遺跡、item、monster、同行者の設定status: [WORLD_BIBLE.md](./WORLD_BIBLE.md)
+- 開発時生成、科学的／世界内制約、schema、provenance、人間採否: [GENERATION_RULES.md](./GENERATION_RULES.md)
+- 現在の実装事実、local／public／実機の確認境界: [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md)
+- 長期判断と置換関係: [DECISIONS.md](./DECISIONS.md)
+
 ## Product promise
 
 正体不明の遺物が残る辺境を自由に歩き、自分で武器、防御、道具を使い、敵を倒すか別の方法で対処し、その選択が次の旅へ巡る生活型ハクスラを作る。
@@ -22,12 +29,15 @@ Last updated: 2026-07-31
 local実装済み:
 
 - 町―三叉路―聴取廃区を連続scrollするworld。
-- fixed orthographic cameraと16³ voxel character／object。
+- fixed orthographic cameraと、realtime 3D character／collision／occlusionに高解像度生成／baked surfaceを組み合わせるhybrid renderer。
+- 24×32×16 playerと、開始時には表示しない高密度companion候補asset。
 - 測量刃、杭打機、guard／just guard、回避、斥力環、回復item。
 - 通常敵3種、名付き反響体1体、loot 6種。
 - 破壊、鎮静、接続の三結果と町への帰還。
 - 効果、原理仮説、副作用、使用者メモを持つSF遺物dossier。
 - procedural exploration／danger／combat sound。
+- Visual Pass Eのlocal中間候補として、MSAA、854×480基準の内部解像度、AgX、sRGB baseline、条件付きDisplay-P3、生成meadow texture、生活小物、表示と一致する町colliderを統合した。
+- Vitest 116件、strict TypeScript、production build、production previewが合格した。
 
 未実装:
 
@@ -35,7 +45,9 @@ local実装済み:
 - 宿敵が死亡旅人の装備を拾い、次回に奪還する仕組み。
 - 複数依頼、生活技能、経済、NPC関係、長期build。
 - AIによる検査済みcontent pipeline。
+- 地面、道、建物面、背景をcommercial benchmarkまで仕上げる複数surface material pipeline。
 - iPhone 16 Pro実機の10分性能合格、HTTPS PWA install、Steam包装。
+- Visual Pass EのGitHub Pages反映とユーザーart acceptance。
 
 ## Confirmed taste signals
 
@@ -46,11 +58,22 @@ local実装済み:
 - ラグランジュポイントのように、武器system、SF設定、soundが一体で記憶に残る。
 - 攻殻機動隊、Cyberpunk 2077、Watch Dogsにある、監視、network、身体拡張、都市の裏側という題材が好みに合う。
 - 『少女終末旅行』『世界が終わっても生きるのって楽しい』『ウスズミの果て』のように、文明の残骸を旅しながら、食事、修理、補給、休息、小さな発見に生活の楽しさが宿る。
+- 人類は危機にあっても常時悲壮的にはせず、「まだ負けていない」と、荒廃へ現実的かつ楽天的に対応する。
+- 死や喪失は起きるが、世界全体を長い哀歌にしない。死はときに予告も美化もなく、あっさり訪れる。
 - 『リビルドワールド』のように、危険地帯の旧世界遺物を回収し、解析、換金、装備更新、次の探索へ循環させる。
 - 謎のSF道具を妙に具体的な原理と副作用で説明する面白さがある。
 - 計算で描くvoxel、線、円弧、粒子を中心にしつつ、画面として美しい。
 
 参考作の固有設定、文章、人物、画面、音楽は複製せず、system上の役割と情報構造だけを抽出する。
+
+## World tone contract
+
+- 平時の感情baselineは、悲しみではなく好奇心、実用、生活、乾いた冗談、前進。
+- 廃墟は「過去が死んだ記念碑」だけでなく、屋根を継ぎ、洗濯物を干し、畑を作り、古い機械で湯を沸かす現在の生活場所として描く。
+- 人々は危機を理解しているが、毎回深刻な演説をせず、修理、商売、食事、依頼、移動へ普通に取り組む。
+- 明るさは危険の否定ではない。敵の予兆、負傷、resource不足、突然の死は簡潔かつ明確に扱う。
+- 死を長い感傷演出や英雄化で包まず、残された装備、空いた寝床、短い噂などworld stateの変化で後から効かせる。
+- humorは緊張を壊すための漫才ではなく、奇妙な遺物の副作用、現場の工夫、生活者の慣れから自然に生む。
 
 ## Prototype B playable loop
 
@@ -104,11 +127,16 @@ local実装済み:
 ## Visual direction
 
 - fixed isometric寄りのorthographic camera。自由回転しない。
-- 16×16×16 authoring grid、1character 4〜6色、silhouette優先。
-- hidden faceを除去したgeometryをrealtime描画する。
-- low-resolution world canvasをnearest-neighbor拡大し、HUDはcrispなHTML/CSS。
-- 土、錆、暗い鉱物色をbaseに、signal cyan、warning amber、danger redだけを限定使用する。
-- dynamic shadow mapではなくblob shadow、面色、fog、attack arc、ring、voxel burstを使う。
+- 背景小物は16³を維持できるが、hero assetは可変grid。playerは24×32×16、同行者候補も役割に応じて高密度化する。
+- 小画面でのsilhouette、negative space、前後差を優先し、hero paletteはmatte／metal／emissiveの役割を分ける。
+- moving character、collision silhouette、occluder、dynamic shadow、interactive effectは、hidden faceを除去したgeometryを含むrealtime 3Dで描画する。
+- 地面、道、背景、建物面はvoxelへ固執せず、高解像度の生成／baked albedo、normal、roughness、detail layerを使える。ただし固定camera内でscale、palette、light direction、contact shadowを3D assetと一致させる。
+- world canvasはMSAAと十分な内部解像度をbaselineにし、HUDはcrispなHTML/CSSに分離する。低解像度nearest-neighbor拡大を画面全体の標準にはしない。
+- tone mappingはAgX、色出力はsRGBをbaselineとする。Display-P3はdeviceとWebGL contextの対応時だけ有効化し、HDR的な明暗と色を目指してもtrue HDR達成済みとは扱わない。
+- textureはmipmap、anisotropy、適切なUV scaleを持ち、seam、反復pattern、圧縮artifact、戦闘視認性を852×393 previewで検査する。
+- sage、花、淡い石、陽光、錆、陶器、修理布を使い、荒廃の中に生活と色を残す。signal cyan、warning amber、danger redは意味色として限定する。
+- hemisphere／directional key light、限定shadow、blob shadow、fog、effect-linked point light、attack arc、ring、voxel burstを使う。
+- 生活の痕跡として、修理跡、掲示物、容器、配線、鉢植え、洗濯、食事や仕事の道具を、戦闘視認性を壊さない範囲で置く。
 - 「neon on black」だけの既視感あるcyberpunkへ寄せない。
 
 ## Relic information model
@@ -125,22 +153,27 @@ local実装済み:
 ## AI boundary
 
 - 戦闘判定、数値、報酬、world stateへruntime生成AIを使わない。
-- 名前、噂、依頼、VoxelRecipe、遺物解説、来歴の候補生成に使う。
-- 出力はschema検査と人間の採否を通したJSONだけを収録する。
+- 人物、地図、遺跡、item、武器、monster、名前、噂、依頼、VoxelRecipe、遺物解説、来歴、visual、audioは、原則として開発時に候補生成する。
+- deterministic codeが物理／energy／熱／stress、合成可否、数値、到達性、報酬を決める。AIは許可されたsemantic fieldの候補だけを提案する。
+- 出力はstable ID、seed、generator version、hash、source、validation、人間の採否を持ち、`accept`された固定dataだけを収録する。実装契約は[GENERATION_RULES.md](./GENERATION_RULES.md)に従う。
 - 固有作品の文体模倣、クライアントへのAPI key、無検査live生成は初版対象外。
 
-## Post-prototype concept: companion robot
+## Post-prototype concept: discoverable companion roster
 
-Prototype Bの評価後に検討し、現行scopeへは追加しない。
+現行prototypeでは候補assetだけを保持し、通常の開始画面では非表示にする。開始時の固定相棒やgameplay能力は追加しない。正式な同行者は旅の途中で発見、救助、雇用、依頼、交渉などを通じて加入する。
 
 - 主人公: 移動、回避、近距離物理、遠距離物理の主体。
-- 随伴robot: 機械的／技術的遺物の解析、module組込み、特殊技／大技。
-- robotの能力は使用回数またはenergy制とし、補給、修理、充電、遺物分解などの回復判断を作る。
-- 現行の斥力環は、robot moduleへ移行できる最初の候補。
-- 目的は自動戦闘を増やすことではなく、playerの通常actionと有限resourceの大技を分けること。
-- 随伴機の参考感覚はあるが、既存作品の外見、性格、台詞、設定は模倣しない。
+- 同行者は一体だけの固有partnerではなく、加入済みrosterから旅へ連れていく相手を入れ替えられる。
+- 候補は人型robot、生活する犬や猫、犬型／猫型robot、遺物解析機、各地の人物など。生物と機械を同じ外見へ揃えない。
+- 各同行者は固有の加入経緯、性格、得意行動、装備またはmodule、会話反応、関係変化を持つ。
+- 初期版の同行枠数は未決定。少なくとも一体を選んで交代でき、待機中の仲間もworld内に居場所を持つ構造を優先する。
+- 技術系同行者は、機械的／技術的遺物の解析、module組込み、特殊技／大技を担当できる。
+- 特殊能力は使用回数またはenergy制とし、補給、修理、充電、食事、休息など、種別に応じた回復判断を作る。
+- 現行の斥力環は、技術系同行者moduleへ移行できる最初の候補。
+- 目的は自動戦闘を増やすことではなく、playerの通常actionと、命令する有限resource行動を分けること。
+- 既存作品からは「旅の途中で仲間になり、一緒に行動し、交代できる」という構造だけを参照し、外見、人物像、台詞、設定は模倣しない。
 
-この相棒案は、終末的な辺境でも「生きることが楽しい」旅の生活感と接続する。戦闘以外にも、充電、修理、遺物の鑑定、野営時の短い反応を通じ、移動そのものを一回の冒険にする。
+このroster案は、終末的な辺境でも「生きることが楽しい」旅の生活感と接続する。戦闘以外にも、食事、充電、修理、遺物の鑑定、野営時の短い反応を通じ、誰と移動するかを一回ごとの冒険の選択にする。
 
 ## Success gates
 

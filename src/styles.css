@@ -176,13 +176,13 @@ body {
 .prototype-b-shell {
   --relic-void: #080c0c;
   --relic-rock: #161d1c;
-  --relic-iron: #24302d;
-  --relic-paper: #e7ddbd;
-  --relic-dim: #8d947f;
+  --relic-iron: #31423b;
+  --relic-paper: #f4ecd1;
+  --relic-dim: #bec3a7;
   --relic-signal: #61e5d1;
   --relic-amber: #f4a950;
-  --relic-danger: #e95445;
-  --relic-line: rgb(231 221 189 / 20%);
+  --relic-danger: #ff4a3d;
+  --relic-line: rgb(244 236 209 / 28%);
   background:
     radial-gradient(circle at 18% 18%, rgb(97 229 209 / 8%), transparent 24%),
     linear-gradient(145deg, #0c1110, #050707);
@@ -212,10 +212,10 @@ body {
   overflow: hidden;
   border: 1px solid var(--relic-line);
   border-radius: 10px;
-  background: #111817;
+  background: #c4d3c7;
   box-shadow:
-    0 28px 100px rgb(0 0 0 / 70%),
-    0 0 0 1px rgb(97 229 209 / 5%);
+    0 24px 70px rgb(0 0 0 / 38%),
+    0 0 0 1px rgb(97 229 209 / 10%);
   container-type: size;
   isolation: isolate;
 }
@@ -241,12 +241,13 @@ body {
   z-index: 3;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgb(3 6 6 / 34%), transparent 7% 93%, rgb(3 6 6 / 40%)),
-    radial-gradient(ellipse at center, transparent 45%, rgb(1 4 4 / 42%) 100%),
+    linear-gradient(135deg, rgb(255 248 218 / 8%), transparent 42%),
+    linear-gradient(90deg, rgb(15 31 26 / 8%), transparent 8% 92%, rgb(15 31 26 / 10%)),
+    radial-gradient(ellipse at center, transparent 65%, rgb(12 29 24 / 11%) 100%),
     repeating-linear-gradient(
       0deg,
       transparent 0 3px,
-      rgb(255 255 255 / 1.5%) 4px,
+      rgb(255 255 255 / 0.8%) 4px,
       transparent 5px
     );
   mix-blend-mode: normal;
@@ -264,7 +265,7 @@ body {
   padding: 13px 16px 11px;
   border-bottom: 1px solid var(--relic-line);
   background:
-    linear-gradient(180deg, rgb(8 12 12 / 94%), rgb(8 12 12 / 74%) 75%, transparent);
+    linear-gradient(180deg, rgb(24 39 34 / 82%), rgb(24 39 34 / 52%) 72%, transparent);
   pointer-events: none;
 }
 
@@ -417,7 +418,7 @@ body {
   z-index: 1;
   padding: 5px 7px;
   border: 1px solid var(--relic-line);
-  background: rgb(8 12 12 / 45%);
+  background: rgb(28 45 39 / 62%);
   color: var(--relic-dim);
   font: 700 clamp(7px, 1.2cqh, 10px)/1 "Avenir Next Condensed", sans-serif;
   letter-spacing: 0.08em;
@@ -445,7 +446,7 @@ body {
   padding: 8px 10px;
   border: 1px solid var(--relic-line);
   background:
-    linear-gradient(100deg, rgb(8 12 12 / 86%), rgb(8 12 12 / 58%));
+    linear-gradient(100deg, rgb(29 45 39 / 76%), rgb(29 45 39 / 40%));
   backdrop-filter: blur(4px);
 }
 
@@ -503,8 +504,8 @@ body {
   gap: 8px;
   padding: 7px 11px;
   border: 1px solid rgb(97 229 209 / 50%);
-  background: rgb(8 12 12 / 82%);
-  box-shadow: 0 5px 25px rgb(0 0 0 / 45%);
+  background: rgb(29 45 39 / 76%);
+  box-shadow: 0 5px 22px rgb(0 0 0 / 28%);
   opacity: 0;
   pointer-events: none;
   transform: translate(-50%, 8px);
@@ -554,10 +555,10 @@ body {
   border-radius: 50%;
   background:
     radial-gradient(circle, rgb(97 229 209 / 6%) 0 20%, transparent 21%),
-    rgb(8 12 12 / 38%);
+    rgb(28 45 39 / 34%);
   box-shadow:
-    inset 0 0 28px rgb(0 0 0 / 42%),
-    0 0 0 8px rgb(8 12 12 / 12%);
+    inset 0 0 24px rgb(11 24 20 / 28%),
+    0 0 0 8px rgb(28 45 39 / 10%);
   pointer-events: auto;
   touch-action: none;
 }
@@ -592,7 +593,7 @@ body {
   border-radius: 50%;
   background:
     repeating-linear-gradient(45deg, rgb(97 229 209 / 14%) 0 2px, transparent 2px 5px),
-    rgb(8 12 12 / 88%);
+    rgb(25 43 37 / 74%);
   box-shadow: 0 0 20px rgb(97 229 209 / 18%);
   transform: translate(
     calc(-50% + var(--move-x)),
@@ -629,11 +630,11 @@ body {
   border-radius: 50%;
   background:
     radial-gradient(circle at 35% 30%, rgb(231 221 189 / 10%), transparent 45%),
-    rgb(8 12 12 / 72%);
+    rgb(28 45 39 / 62%);
   color: var(--relic-paper);
   box-shadow:
-    inset 0 0 0 4px rgb(8 12 12 / 60%),
-    0 8px 24px rgb(0 0 0 / 32%);
+    inset 0 0 0 4px rgb(15 29 25 / 42%),
+    0 8px 22px rgb(0 0 0 / 24%);
   font: 700 clamp(9px, 1.6cqh, 12px)/1 "Hiragino Sans", sans-serif;
   letter-spacing: 0.05em;
   place-content: center;
@@ -673,8 +674,8 @@ body {
   height: clamp(66px, 13.5cqh, 92px);
   border-color: rgb(244 169 80 / 72%);
   box-shadow:
-    inset 0 0 0 5px rgb(8 12 12 / 58%),
-    0 0 26px rgb(244 169 80 / 11%);
+    inset 0 0 0 5px rgb(15 29 25 / 40%),
+    0 0 26px rgb(244 169 80 / 16%);
 }
 
 .relic-action--guard {
@@ -716,7 +717,7 @@ body {
   max-width: min(76%, 560px);
   padding: 9px 14px;
   border-left: 2px solid var(--relic-signal);
-  background: rgb(8 12 12 / 84%);
+  background: rgb(29 45 39 / 76%);
   color: var(--relic-paper);
   font-size: clamp(10px, 1.8cqh, 14px);
   letter-spacing: 0.08em;
@@ -1058,7 +1059,7 @@ body {
   z-index: 9;
   right: 11px;
   bottom: 9px;
-  color: rgb(231 221 189 / 34%);
+  color: rgb(23 48 40 / 60%);
   font-size: 8px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.1em;
@@ -1129,6 +1130,9 @@ body {
 
 @media (max-width: 980px) and (orientation: landscape) {
   .relic-stage {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
     border: 0;
     border-radius: 0;
     box-shadow: none;

@@ -4,8 +4,8 @@ import {
   getVoxelPaletteIndex,
 } from "./grid";
 import {
-  VOXEL_GRID_SIZE,
   type VoxelGrid,
+  type VoxelMaterialRole,
   type VoxelPoint,
   type VoxelRecipe,
 } from "./types";
@@ -117,28 +117,45 @@ export interface VoxelMeshData {
   readonly faceCount: number;
   readonly vertexCount: number;
   readonly triangleCount: number;
+  readonly materialGroups: readonly {
+    readonly role: VoxelMaterialRole;
+    readonly start: number;
+    readonly count: number;
+  }[];
   readonly bounds: {
     readonly min: readonly [x: number, y: number, z: number];
     readonly max: readonly [x: number, y: number, z: number];
   } | null;
 }
 
+const MATERIAL_ROLE_ORDER = [
+  "matte",
+  "metal",
+  "emissive",
+] as const satisfies readonly VoxelMaterialRole[];
+
+function srgbChannelToLinear(channel: number): number {
+  return channel <= 0.04045
+    ? channel / 12.92
+    : ((channel + 0.055) / 1.055) ** 2.4;
+}
+
 function colorChannels(color: number): readonly [number, number, number] {
   return [
-    ((color >> 16) & 0xff) / 255,
-    ((color >> 8) & 0xff) / 255,
-    (color & 0xff) / 255,
+    srgbChannelToLinear(((color >> 16) & 0xff) / 255),
+    srgbChannelToLinear(((color >> 8) & 0xff) / 255),
+    srgbChannelToLinear((color & 0xff) / 255),
   ];
 }
 
 function isOccupied(grid: VoxelGrid, x: number, y: number, z: number): boolean {
   if (
     x < 0 ||
-    x >= VOXEL_GRID_SIZE ||
+    x >= grid.dimensions.width ||
     y < 0 ||
-    y >= VOXEL_GRID_SIZE ||
+    y >= grid.dimensions.height ||
     z < 0 ||
-    z >= VOXEL_GRID_SIZE
+    z >= grid.dimensions.depth
   ) {
     return false;
   }
@@ -182,7 +199,11 @@ export function meshVoxelGrid(
   const positions: number[] = [];
   const normals: number[] = [];
   const colors: number[] = [];
-  const indices: number[] = [];
+  const indicesByMaterialRole: Record<VoxelMaterialRole, number[]> = {
+    matte: [],
+    metal: [],
+    emissive: [],
+  };
   let voxelCount = 0;
   let faceCount = 0;
   let minimumX = Number.POSITIVE_INFINITY;
@@ -192,9 +213,9 @@ export function meshVoxelGrid(
   let maximumY = Number.NEGATIVE_INFINITY;
   let maximumZ = Number.NEGATIVE_INFINITY;
 
-  for (let y = 0; y < VOXEL_GRID_SIZE; y += 1) {
-    for (let z = 0; z < VOXEL_GRID_SIZE; z += 1) {
-      for (let x = 0; x < VOXEL_GRID_SIZE; x += 1) {
+  for (let y = 0; y < grid.dimensions.height; y += 1) {
+    for (let z = 0; z < grid.dimensions.depth; z += 1) {
+      for (let x = 0; x < grid.dimensions.width; x += 1) {
         const paletteIndex = getVoxelPaletteIndex(grid, x, y, z);
         if (paletteIndex === EMPTY_VOXEL) {
           continue;
@@ -243,7 +264,8 @@ export function meshVoxelGrid(
             maximumZ = Math.max(maximumZ, positionZ);
           }
 
-          indices.push(
+          const role = paletteEntry.materialRole ?? "matte";
+          indicesByMaterialRole[role].push(
             vertexOffset,
             vertexOffset + 1,
             vertexOffset + 2,
@@ -257,6 +279,25 @@ export function meshVoxelGrid(
     }
   }
 
+  const indices: number[] = [];
+  const materialGroups: {
+    role: VoxelMaterialRole;
+    start: number;
+    count: number;
+  }[] = [];
+  for (const role of MATERIAL_ROLE_ORDER) {
+    const groupIndices = indicesByMaterialRole[role];
+    if (groupIndices.length === 0) {
+      continue;
+    }
+    materialGroups.push({
+      role,
+      start: indices.length,
+      count: groupIndices.length,
+    });
+    indices.push(...groupIndices);
+  }
+
   const vertexCount = positions.length / 3;
   return {
     positions: new Float32Array(positions),
@@ -267,6 +308,7 @@ export function meshVoxelGrid(
     faceCount,
     vertexCount,
     triangleCount: indices.length / 3,
+    materialGroups,
     bounds:
       vertexCount === 0
         ? null
@@ -282,4 +324,35 @@ export function meshVoxelRecipe(
   options: VoxelMeshOptions = {},
 ): VoxelMeshData {
   return meshVoxelGrid(buildVoxelGrid(recipe), options);
+}
+
+/**
+ * Returns the center of an authored anchor cell in the same X/Z-centered local
+ * coordinate system used by the Three.js recipe mesh.
+ */
+export function voxelAnchorPosition(
+  recipe: VoxelRecipe,
+  anchorId: string,
+  voxelSize = 1,
+): VoxelPoint {
+  if (!Number.isFinite(voxelSize) || voxelSize <= 0) {
+    throw new RangeError("Voxel size must be a positive finite number.");
+  }
+
+  const anchor = recipe.anchors.find((candidate) => candidate.id === anchorId);
+  if (anchor === undefined) {
+    throw new RangeError(
+      `Voxel recipe "${recipe.id}" has no anchor named "${anchorId}".`,
+    );
+  }
+
+  return {
+    x:
+      (anchor.x + 0.5 - recipe.dimensions.width / 2) *
+      voxelSize,
+    y: (anchor.y + 0.5) * voxelSize,
+    z:
+      (anchor.z + 0.5 - recipe.dimensions.depth / 2) *
+      voxelSize,
+  };
 }

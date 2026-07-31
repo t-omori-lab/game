@@ -93,3 +93,88 @@
 - iPhone 16 Pro実機10分試遊、HTTPS PWA install、offline実機再起動は未確認。
 
 確認済みの現在状態は最終的に `docs/PROJECT_CONTEXT.md`、長期的な判断は `docs/DECISIONS.md` へ移します。
+
+## Visual Pass C input and evidence
+
+- 2026-07-31、ユーザーは公開プレイ画面を「全体的に暗すぎる」と評価した。
+- 求める世界は、状況そのものは人間にとってシビアでも、崩壊した文明を自然が侵食し、光、植物、水、錆などが色鮮やかに共存するもの。
+- 『NieR:Automata』は固有表現の模倣ではなく、淡い昼光、崩壊した人工物、回復する自然、静けさと危険の同居を参照する。
+- 16×16×16 voxel characterは表現力不足と評価された。3D voxelは維持しつつ、『FINAL FANTASY VI』のcharacter sprite程度に、頭身、顔、髪、服、装備、pose差を読めることが目標。
+- 公開版を852×393で撮影すると、worldの大半が黒緑のscreen effectとHUD overlayに覆われ、地面と建物の明度差が小さい。playerは中心にいるが、髪、顔、胴、脚、武器が一つの暗い塊に見える。
+- 現画面のperformance表示は約25 draw calls／約18k triangles。高密度characterは全objectではなく重要characterへ限定できる余地がある。
+
+### External structural references
+
+- Square Enix公式NieR BlogのE3 screenshotは、崩壊した都市をsoft daylightと植生の中に置き、終末を黒一色にしない構造の参照になる。
+  - https://blog.jp.square-enix.com/nier/2016/06/20/nierautomatae3.html
+- Square Enix公式FINAL FANTASY Pixel Remaster FAQは、original pixel spriteの感触を保ちながら、現代の高解像度画面で明瞭に読めるようcharacterを再設計したと説明している。
+  - https://finalfantasypixelremaster.square-enix-games.com/en_GB/faq
+- いずれも画像、character、palette、構図を複製せず、情報階層と体験構造だけを抽出する。
+
+### Visual Pass C local result
+
+- 暗さの主因はlight不足ではなく、camera距離約991に対する暗色`FogExp2(0.00088)`、低明度のsource palette、最大約65%まで重なるscreen edge darkeningだった。
+- rendererをpale gray-green daylight `#c4d3c7`／fog density `0.00025`へ変更し、sage ground、pale concrete、blue-green water、orange rust、deterministic grass／flowerを実装した。
+- screen edge darkening、HUD／loadout／touch controlsを明るい半透明slateへ弱め、enemy telegraphをred-orange `#ed4034`へ強化した。
+- voxel recipeをschema v2の可変`width × height × depth`へ更新。legacy 10 assetsは16³／cell順／voxel数を維持し、playerだけ16×24×12とした。
+- 新playerは583 voxels、742 exposed faces、1,484 triangles、7 functional colors。髪、顔、scarf、coat、左右の腕、脚間のnegative space、boots、weapon／focus anchorsを持つ。
+- Vitest 94/94、strict TypeScript、production build、diff checkが合格。
+- 852×393 local mobile Chromeで、up／right／down／leftのsilhouetteを確認。60fps表示、26 draw calls、22,148 triangles。double tap後もscale 1、offset 0。
+- local screenshot: `/tmp/game-public-current.png`。public GitHub PagesとiPhone 16 Pro実機には未反映／未確認。
+
+## Visual Pass D input and official production evidence
+
+- 2026-07-31、ユーザーはVisual Pass Cのmap、building、objectについて、大きなbox中心でMinecraftのまま、鮮やかさと魅力が不足していると評価した。
+- quality barはprototype内の改善ではなく、『OCTOPATH TRAVELER』など商業gameのHD-2D表現。
+- playerとcompanion robotは特に美しさが必要であり、現在のplayer 16×24×12を下限として再高密度化を検討する。
+- Official Unreal Engine／Acquire interviewでは、HD-2Dをpixel表現と3D環境の融合と説明し、続編の改善としてhigh-resolution mapのorganic pixel appearance、dynamic day／night lighting、より密度の高いactionを支えるcharacter proportionを挙げる。
+  - https://www.unrealengine.com/developer-interviews/octopath-traveler-ii-builds-a-bigger-bolder-world-in-its-stunning-hd-2d-style?lang=ja
+- Original production interviewでは、effectだけでは不足し、point lightを同期させてcharacter shadowをenvironmentへ落とし、light／shadowの印象を強めたと説明する。
+  - https://www.unrealengine.com/spotlights/octopath-traveler-s-hd-2d-art-style-and-story-make-for-a-jrpg-dream-come-true?lang=ja
+- したがってdensityはvoxel countだけでなく、ground microdetail、multi-part architecture、props、material response、directional light、effect-linked light、atmosphere、camera compositionの積として再設計する。
+
+## Discoverable companion roster clarification
+
+- 2026-07-31、ユーザーは同行者を開始時からいる一体だけのpartnerにしない方針を明確化した。
+- 同行者はworld内で発見、合流、加入し、複数候補から交代できる。候補は人型robotに限らず、犬、猫、犬型／猫型robot、人物など幅を持たせる。
+- 参照するのは『Oblivion』『Skyrim』等の「旅の途中で仲間になり同行する」構造であり、固有characterやquestは模倣しない。
+- Visual Pass Dで作った調査灯型robotはroster候補asset一体として保持するが、通常の開始画面では表示しない。加入stateと同行者gameplayは後続scope。
+
+## Optimistic post-apocalypse tone clarification
+
+- 2026-07-31、ユーザーは人類が危機にある荒廃worldでも、常時つらく悲しい雰囲気にはせず、まだ負けていないという楽天性を求めた。
+- 人々は状況へあっけらかんと実務的に対応し、食事、修理、商売、探索、小さな楽しみを続ける。
+- deathは起こり、ときにあっさりしている。通常の画面や演出は哀歌ではなく、陽光、自然、生活痕、乾いたhumorをbaselineにする。
+
+## World bible and generation-law clarification
+
+- 2026-07-31、ユーザーはworld、人物、世界地図、遺跡、item、monsterなどをMarkdownの設定資料へまとめ始める方針を示した。
+- 原則としてcontentは開発中に生成して収録する。play中にその場で無制限生成する方式にはせず、deterministicな規則、schema検査、出典、human reviewを通す。
+- 生成物は「それらしいflavor text」だけで正当化しない。材料、構造、energy源、作用対象、作用scale、出力、副作用、interface、環境条件を持たせ、少なくとも世界内の科学または明示された固有法則で説明可能にする。
+- 武器／itemの文字rankは技術帯域の目安に留め、実際の強さはdamage、penetration、heat、range、energy cost、precision、stability、riskなど複数の数値で管理する。
+- 仮の技術帯域では、Eは刃、質量、弾性、燃焼など機械／物理作用。上位は熱、電磁、化学、分子scaleへ広がる。psychic作用を採る場合も万能魔法にせず、観測可能な入力、出力、限界、反作用を持つ世界固有の仮説として定義する。
+- 合成可否は名前やrarityだけで決めず、機構とinterfaceの相性、保存則、電力／熱／応力budget、故障mode、game balanceを同時に満たすかで判定する。
+- 遺跡／dungeon生成は世界設定だけでなく、入口、予告、選択、報酬、撤退、route redundancy、landmark、combat／rest／puzzleのcadence、重要item到達可能性を検証してから採用する。
+- 詳細は`docs/WORLD_BIBLE.md`と`docs/GENERATION_RULES.md`をdurable sourceにする。
+
+## HDR-like visual direction clarification
+
+- 2026-07-31、ユーザーは画面品質としてHDR的な美しさを追求し、smartphoneで成立するなら採用する方針を示した。
+- baselineはtrue HDR専用表示ではなく、linear lighting、強いが白飛びしないsunlight、warm highlight／cool shadow、emissive accent、tone mapping、color separationで全対応端末へHDR-likeな画を作る。
+- Display P3やtrue HDR outputはbrowser／OS／display capabilityで分岐するprogressive enhancementとし、未対応端末の色やreadabilityを壊さない。
+- bloomやfull-screen post processはmobile heat／battery／combat readabilityを含めて測り、開始町のquality gateでは最大2 pass、実機で余裕がなければ削る。
+
+## Music reference clarification
+
+- 2026-07-31、ユーザーは探索BGMの参考として`Go, Go, Heartbreaker! / MYUKKE.`に加え、`.conf / ariiol`を挙げた。
+- 固有のmelody、arrangement、soundを模倣せず、tempo、音色、余白、反復、展開密度、感情温度へ分解し、「明るい終末を移動する」音響設計へ使う。
+- 既存曲そのものを収録する場合は、game利用、複製、配信、Steam／Web公開、地域、期間を含む権利条件を確認するまで未決定とする。
+
+## Visual Pass E pre-deploy review
+
+- authored voxel paletteの16進色をLinear-sRGBへ変換してからvertex attributeへ渡す。`0x808080`は約`0.216`であることを回帰testへ追加した。
+- 依頼板の描画、prop、collider、interactionを`TOWN_CONTRACT_BOARD_POSITION`へ一本化した。
+- fixture collision testは対象colliderだけをworldへ残し、隣接colliderによる偽陽性を除いた。
+- generated meadowへ置換済みの旧start-town ground receiverを生成しないようにし、draw callを12から11へ削減した。
+- built HTMLのpreloadからhash付きWebPをservice workerのprecache対象へ含め、TextureLoader失敗時はvertex-color地面へfallbackする。
+- Vitest 116件、strict TypeScript、production build、852×393 production previewを通過。previewは60fps表示、35〜37 draw calls、49,520〜49,616 triangles、MSAA、AgX、texture `ready`、double tap scale 1、browser error 0件。asset遮断時はtexture `fallback`を確認した。

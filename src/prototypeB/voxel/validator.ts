@@ -1,14 +1,18 @@
 import {
   MAX_VOXELS,
-  VOXEL_GRID_SIZE,
+  isValidVoxelDimensions,
   type AuthoredVoxel,
+  type VoxelDimensions,
+  type VoxelMaterialRole,
   type VoxelPoint,
   type VoxelRecipe,
   type VoxelValidationRules,
+  voxelGridVolume,
 } from "./types";
 
 export type VoxelValidationIssueCode =
-  | "grid-size"
+  | "schema-version"
+  | "grid-dimensions"
   | "palette"
   | "voxel-count"
   | "voxel-bounds"
@@ -42,6 +46,11 @@ const NEIGHBOR_OFFSETS: readonly VoxelPoint[] = [
   { x: 0, y: 0, z: 1 },
   { x: 0, y: 0, z: -1 },
 ];
+const VOXEL_MATERIAL_ROLES: ReadonlySet<VoxelMaterialRole> = new Set([
+  "matte",
+  "metal",
+  "emissive",
+]);
 
 function coordinateKey(point: VoxelPoint): string {
   return `${point.x},${point.y},${point.z}`;
@@ -55,15 +64,18 @@ function isIntegerPoint(point: VoxelPoint): boolean {
   );
 }
 
-function isPointInBounds(point: VoxelPoint): boolean {
+function isPointInBounds(
+  point: VoxelPoint,
+  dimensions: VoxelDimensions,
+): boolean {
   return (
     isIntegerPoint(point) &&
     point.x >= 0 &&
-    point.x < VOXEL_GRID_SIZE &&
+    point.x < dimensions.width &&
     point.y >= 0 &&
-    point.y < VOXEL_GRID_SIZE &&
+    point.y < dimensions.height &&
     point.z >= 0 &&
-    point.z < VOXEL_GRID_SIZE
+    point.z < dimensions.depth
   );
 }
 
@@ -109,6 +121,18 @@ function addPaletteIssues(
         message: "Palette colors must be integers from 0x000000 to 0xFFFFFF.",
       });
     }
+
+    if (
+      entry.materialRole !== undefined &&
+      !VOXEL_MATERIAL_ROLES.has(entry.materialRole)
+    ) {
+      issues.push({
+        code: "palette",
+        path: `${path}.materialRole`,
+        message:
+          'Palette material roles must be "matte", "metal", or "emissive".',
+      });
+    }
   });
 
   return paletteIds;
@@ -116,6 +140,7 @@ function addPaletteIssues(
 
 function addVoxelIssues(
   recipe: VoxelRecipe,
+  dimensions: VoxelDimensions | null,
   paletteIds: ReadonlySet<string>,
   issues: VoxelValidationIssue[],
 ): Map<string, AuthoredVoxel> {
@@ -123,11 +148,14 @@ function addVoxelIssues(
 
   recipe.voxels.forEach((voxel, index) => {
     const path = `voxels[${index}]`;
-    if (!isPointInBounds(voxel)) {
+    if (dimensions === null || !isPointInBounds(voxel, dimensions)) {
       issues.push({
         code: "voxel-bounds",
         path,
-        message: `Voxel coordinates must be integers inside the ${VOXEL_GRID_SIZE}×${VOXEL_GRID_SIZE}×${VOXEL_GRID_SIZE} grid.`,
+        message:
+          dimensions === null
+            ? "Voxel coordinates require valid recipe dimensions."
+            : `Voxel coordinates must be integers inside the ${dimensions.width}×${dimensions.height}×${dimensions.depth} grid.`,
       });
       return;
     }
@@ -157,6 +185,7 @@ function addVoxelIssues(
 
 function addAnchorIssues(
   recipe: VoxelRecipe,
+  dimensions: VoxelDimensions | null,
   requiredAnchors: readonly string[],
   issues: VoxelValidationIssue[],
 ): void {
@@ -176,11 +205,14 @@ function addAnchorIssues(
     }
     anchorIds.add(anchor.id);
 
-    if (!isPointInBounds(anchor)) {
+    if (dimensions === null || !isPointInBounds(anchor, dimensions)) {
       issues.push({
         code: "anchor-bounds",
         path,
-        message: `Anchor coordinates must be integers inside the ${VOXEL_GRID_SIZE}×${VOXEL_GRID_SIZE}×${VOXEL_GRID_SIZE} grid.`,
+        message:
+          dimensions === null
+            ? "Anchor coordinates require valid recipe dimensions."
+            : `Anchor coordinates must be integers inside the ${dimensions.width}×${dimensions.height}×${dimensions.depth} grid.`,
       });
     }
   });
@@ -234,13 +266,24 @@ export function validateVoxelRecipe(
   options: ValidateVoxelRecipeOptions = {},
 ): VoxelValidationResult {
   const issues: VoxelValidationIssue[] = [];
-  if (recipe.gridSize !== VOXEL_GRID_SIZE) {
+  if (recipe.schemaVersion !== 2) {
     issues.push({
-      code: "grid-size",
-      path: "gridSize",
-      message: `Voxel recipes must use a ${VOXEL_GRID_SIZE}×${VOXEL_GRID_SIZE}×${VOXEL_GRID_SIZE} authoring grid.`,
+      code: "schema-version",
+      path: "schemaVersion",
+      message: `Voxel recipe schema version ${String(recipe.schemaVersion)} is unsupported; expected version 2.`,
     });
   }
+  const dimensionsValid = isValidVoxelDimensions(recipe.dimensions);
+  if (!dimensionsValid) {
+    issues.push({
+      code: "grid-dimensions",
+      path: "dimensions",
+      message:
+        "Voxel dimensions must use positive integer axes no larger than 64 and contain no more than 32,768 cells.",
+    });
+  }
+  const dimensions = dimensionsValid ? recipe.dimensions : null;
+  const gridVolume = dimensions === null ? 0 : voxelGridVolume(dimensions);
 
   const minVoxelCount = resolvedRule(
     options.minVoxelCount,
@@ -250,13 +293,14 @@ export function validateVoxelRecipe(
   const maxVoxelCount = resolvedRule(
     options.maxVoxelCount,
     recipe.validation?.maxVoxelCount,
-    MAX_VOXELS,
+    gridVolume,
   );
   if (
     !Number.isInteger(minVoxelCount) ||
     !Number.isInteger(maxVoxelCount) ||
     minVoxelCount < 0 ||
     maxVoxelCount > MAX_VOXELS ||
+    maxVoxelCount > gridVolume ||
     minVoxelCount > maxVoxelCount ||
     recipe.voxels.length < minVoxelCount ||
     recipe.voxels.length > maxVoxelCount
@@ -264,12 +308,17 @@ export function validateVoxelRecipe(
     issues.push({
       code: "voxel-count",
       path: "voxels",
-      message: `Voxel count ${recipe.voxels.length} must be between ${minVoxelCount} and ${maxVoxelCount}, with an absolute maximum of ${MAX_VOXELS}.`,
+      message: `Voxel count ${recipe.voxels.length} must be between ${minVoxelCount} and ${maxVoxelCount}; the grid contains ${gridVolume} cells and the absolute cap is ${MAX_VOXELS}.`,
     });
   }
 
   const paletteIds = addPaletteIssues(recipe, issues);
-  const validVoxels = addVoxelIssues(recipe, paletteIds, issues);
+  const validVoxels = addVoxelIssues(
+    recipe,
+    dimensions,
+    paletteIds,
+    issues,
+  );
 
   const requireGroundContact = resolvedRule(
     options.requireGroundContact,
@@ -305,7 +354,7 @@ export function validateVoxelRecipe(
     recipe.validation?.requiredAnchors,
     [],
   );
-  addAnchorIssues(recipe, requiredAnchors, issues);
+  addAnchorIssues(recipe, dimensions, requiredAnchors, issues);
 
   return {
     valid: issues.length === 0,

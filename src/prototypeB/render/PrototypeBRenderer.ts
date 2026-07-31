@@ -11,34 +11,71 @@ import {
 import {
   BLADE_WEAPON_RECIPE,
   CHEST_RECIPE,
+  COMPANION_RECIPE,
+  COMPANION_VOXEL_SIZE,
   IMPACT_WEAPON_RECIPE,
   MURMUR_ENEMY_RECIPE,
   NAMED_ANOMALY_RECIPE,
   PLAYER_RECIPE,
+  PLAYER_VOXEL_SIZE,
   RELAY_SHELL_ENEMY_RECIPE,
   RELIC_RECIPE,
   ROCK_RECIPE,
   SCRAP_HOUND_ENEMY_RECIPE,
   TREE_RECIPE,
-  VOXEL_GRID_SIZE,
   meshVoxelRecipe,
+  type VoxelMaterialRole,
   type VoxelRecipe,
+  voxelAnchorPosition,
 } from "../voxel";
+import {
+  createStartTownArtSlice,
+  type StartTownArtSlice,
+} from "./startTownArt";
+import { configureDisplayColor } from "./displayColor";
+import reclaimedMeadowTextureUrl from "./assets/reclaimed-meadow-v1.webp";
 
-const INTERNAL_WIDTH = 640;
-const INTERNAL_HEIGHT = 360;
-const CAMERA_VIEW_HEIGHT = 660;
-const CAMERA_VIEW_WIDTH =
+const INTERNAL_WIDTH = 854;
+const INTERNAL_HEIGHT = 480;
+const CAMERA_VIEW_HEIGHT = 600;
+const MAX_INTERNAL_WIDTH = 1_075;
+const DEFAULT_CAMERA_VIEW_WIDTH =
   CAMERA_VIEW_HEIGHT * (INTERNAL_WIDTH / INTERNAL_HEIGHT);
 const CAMERA_OFFSET = new THREE.Vector3(510, 680, 510);
-const PLAYER_VOXEL_SIZE = 4;
+const BLADE_VOXEL_SIZE = 2.1;
+const IMPACT_VOXEL_SIZE = 2;
 const ENEMY_VOXEL_SIZE = 4;
 const PROP_VOXEL_SIZE = 3.4;
-const GROUND_TILE_SIZE = 80;
+const GROUND_PATCH_SIZE = 64;
+const DAYLIGHT_FOG_COLOR = 0xd7e1d3;
+const PLAYER_WEAPON_ANCHOR = voxelAnchorPosition(
+  PLAYER_RECIPE,
+  "weapon",
+  PLAYER_VOXEL_SIZE,
+);
+const BLADE_GRIP_ANCHOR = voxelAnchorPosition(
+  BLADE_WEAPON_RECIPE,
+  "grip",
+  BLADE_VOXEL_SIZE,
+);
+const IMPACT_GRIP_ANCHOR = voxelAnchorPosition(
+  IMPACT_WEAPON_RECIPE,
+  "grip",
+  IMPACT_VOXEL_SIZE,
+);
+const heldWeaponGripOffset = new THREE.Vector3();
+
+type HeroVoxelMesh = THREE.Mesh<
+  THREE.BufferGeometry,
+  THREE.Material[]
+>;
 
 type EntityVisual = {
   readonly group: THREE.Group;
-  readonly body: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>;
+  readonly body: THREE.Mesh<
+    THREE.BufferGeometry,
+    THREE.MeshStandardMaterial
+  >;
   readonly telegraph: THREE.Mesh<
     THREE.RingGeometry,
     THREE.MeshBasicMaterial
@@ -61,6 +98,16 @@ type BurstEffect = {
   readonly duration: number;
 };
 
+type GrowthPlacement = {
+  readonly x: number;
+  readonly y: number;
+  readonly z: number;
+  readonly rotation: number;
+  readonly scaleX: number;
+  readonly scaleY: number;
+  readonly scaleZ: number;
+};
+
 export type PrototypeBRenderStats = {
   readonly calls: number;
   readonly triangles: number;
@@ -71,27 +118,36 @@ export type PrototypeBRenderStats = {
 export interface PrototypeBRendererOptions {
   readonly onContextLost?: () => void;
   readonly onContextRestored?: () => void;
+  /**
+   * Art-review only. Gameplay starts without a companion until a future
+   * discovery/roster state explicitly selects one.
+   */
+  readonly companionPreview?: boolean;
 }
 
 export class PrototypeBRenderer {
   private readonly renderer: THREE.WebGLRenderer;
   private readonly scene = new THREE.Scene();
   private readonly camera: THREE.OrthographicCamera;
+  private readonly startTownArt: StartTownArtSlice;
   private readonly cameraTarget = new THREE.Vector3();
   private readonly playerGroup = new THREE.Group();
-  private readonly playerBody: THREE.Mesh<
-    THREE.BufferGeometry,
-    THREE.MeshBasicMaterial
-  >;
+  private readonly playerBody: HeroVoxelMesh;
   private readonly bladeMesh: THREE.Mesh<
     THREE.BufferGeometry,
-    THREE.MeshBasicMaterial
+    THREE.MeshStandardMaterial
   >;
   private readonly impactMesh: THREE.Mesh<
     THREE.BufferGeometry,
-    THREE.MeshBasicMaterial
+    THREE.MeshStandardMaterial
   >;
   private readonly playerShadow: THREE.Mesh<
+    THREE.CircleGeometry,
+    THREE.MeshBasicMaterial
+  >;
+  private readonly companionGroup = new THREE.Group();
+  private readonly companionBody: HeroVoxelMesh;
+  private readonly companionShadow: THREE.Mesh<
     THREE.CircleGeometry,
     THREE.MeshBasicMaterial
   >;
@@ -103,10 +159,27 @@ export class PrototypeBRenderer {
   private readonly reusablePosition = new THREE.Vector3();
   private readonly reusableQuaternion = new THREE.Quaternion();
   private readonly reusableScale = new THREE.Vector3(1, 1, 1);
+  private readonly keyLight = new THREE.DirectionalLight(0xffe8bd, 2.45);
+  private readonly keyLightTarget = new THREE.Object3D();
+  private readonly effectLight = new THREE.PointLight(
+    0x61e5d1,
+    0,
+    390,
+    2,
+  );
   private readonly contextLostHandler: (event: Event) => void;
   private readonly contextRestoredHandler: () => void;
+  private groundTexture: THREE.Texture | null = null;
   private attackAnimation = 0;
   private attackWeapon: WeaponId = "blade";
+  private effectLightEnergy = 0;
+  private internalRenderWidth = INTERNAL_WIDTH;
+  private viewportCssWidth = 0;
+  private viewportCssHeight = 0;
+  private resizeObserver: ResizeObserver | null = null;
+  private windowResizeHandler: (() => void) | null = null;
+  private companionInitialized = false;
+  private companionReaction = 0;
   private elapsed = 0;
   private disposed = false;
 
@@ -116,17 +189,23 @@ export class PrototypeBRenderer {
     options: PrototypeBRendererOptions = {},
   ) {
     this.renderer = new THREE.WebGLRenderer({
-      antialias: false,
+      antialias: true,
       alpha: false,
       depth: true,
       powerPreference: "high-performance",
-      precision: "mediump",
+      precision: "highp",
       preserveDrawingBuffer: false,
     });
-    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    configureDisplayColor(this.renderer);
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.setPixelRatio(1);
     this.renderer.setSize(INTERNAL_WIDTH, INTERNAL_HEIGHT, false);
     this.renderer.domElement.dataset.testid = "game-canvas";
+    this.renderer.domElement.dataset.antialias =
+      this.renderer.getContextAttributes().antialias === true
+        ? "msaa"
+        : "none";
     this.renderer.domElement.setAttribute(
       "aria-label",
       "辺境遺物録 ボクセルゲーム画面",
@@ -149,46 +228,75 @@ export class PrototypeBRenderer {
       this.contextRestoredHandler,
     );
 
-    this.scene.background = new THREE.Color(0x111817);
-    this.scene.fog = new THREE.FogExp2(0x111817, 0.00088);
+    this.scene.background = new THREE.Color(DAYLIGHT_FOG_COLOR);
+    this.scene.fog = new THREE.Fog(DAYLIGHT_FOG_COLOR, 900, 2_450);
+    this.createLighting();
 
     this.camera = new THREE.OrthographicCamera(
-      -CAMERA_VIEW_WIDTH / 2,
-      CAMERA_VIEW_WIDTH / 2,
+      -DEFAULT_CAMERA_VIEW_WIDTH / 2,
+      DEFAULT_CAMERA_VIEW_WIDTH / 2,
       CAMERA_VIEW_HEIGHT / 2,
       -CAMERA_VIEW_HEIGHT / 2,
       1,
       3_200,
     );
+    this.initializeViewportSync(mount);
 
     this.createGround(initialState);
-    this.createTerrain(initialState);
-    this.createProps(initialState);
+    this.startTownArt = createStartTownArtSlice();
+    this.scene.add(this.startTownArt.group);
+    this.createFieldGrowth(
+      initialState,
+      this.startTownArt.replacedTerrainIds,
+    );
+    this.createTerrain(
+      initialState,
+      this.startTownArt.replacedTerrainIds,
+    );
+    this.createProps(
+      initialState,
+      this.startTownArt.replacedPropIds,
+    );
     this.createLandmarkSignals(initialState);
 
-    this.playerBody = createVoxelMesh(
+    this.playerBody = createHeroVoxelMesh(
       PLAYER_RECIPE,
       PLAYER_VOXEL_SIZE,
-      1,
     );
     this.playerGroup.add(this.playerBody);
+    this.playerBody.castShadow = true;
+    this.playerBody.receiveShadow = true;
     this.bladeMesh = createVoxelMesh(
       BLADE_WEAPON_RECIPE,
-      2.1,
+      BLADE_VOXEL_SIZE,
       1,
     );
     this.impactMesh = createVoxelMesh(
       IMPACT_WEAPON_RECIPE,
-      2,
+      IMPACT_VOXEL_SIZE,
       1,
     );
     configureHeldWeapon(this.bladeMesh, "blade");
     configureHeldWeapon(this.impactMesh, "impact");
+    this.bladeMesh.castShadow = true;
+    this.impactMesh.castShadow = true;
     this.playerGroup.add(this.bladeMesh, this.impactMesh);
 
     this.playerShadow = createBlobShadow(38, 22, 0.32);
     this.playerGroup.add(this.playerShadow);
     this.scene.add(this.playerGroup);
+
+    this.companionBody = createHeroVoxelMesh(
+      COMPANION_RECIPE,
+      COMPANION_VOXEL_SIZE,
+    );
+    this.companionBody.castShadow = true;
+    this.companionBody.receiveShadow = true;
+    this.companionShadow = createBlobShadow(24, 15, 0.24);
+    this.companionGroup.name = "visual-only-companion";
+    this.companionGroup.add(this.companionBody, this.companionShadow);
+    this.companionGroup.visible = options.companionPreview === true;
+    this.scene.add(this.companionGroup);
 
     this.syncEnemies(initialState);
     this.syncLoot(initialState);
@@ -210,12 +318,84 @@ export class PrototypeBRenderer {
     this.elapsed += deltaSeconds;
     this.handleEvents(events);
     this.syncPlayer(state, deltaSeconds);
+    this.syncCompanion(state, deltaSeconds);
     this.syncEnemies(state);
     this.syncLoot(state);
     this.updateEffects(deltaSeconds);
     this.updateCamera(state, deltaSeconds);
     this.updateAmbientMotion(state, timeMs / 1_000);
     this.renderer.render(this.scene, this.camera);
+  }
+
+  private initializeViewportSync(mount: HTMLElement): void {
+    this.updateViewportSize(mount.clientWidth, mount.clientHeight);
+
+    if (typeof ResizeObserver !== "undefined") {
+      this.resizeObserver = new ResizeObserver((entries) => {
+        const entry = entries.find(
+          (candidate) => candidate.target === mount,
+        );
+        if (entry === undefined) {
+          return;
+        }
+
+        this.updateViewportSize(
+          entry.contentRect.width,
+          entry.contentRect.height,
+        );
+      });
+      this.resizeObserver.observe(mount);
+      return;
+    }
+
+    if (typeof window !== "undefined") {
+      this.windowResizeHandler = (): void => {
+        this.updateViewportSize(mount.clientWidth, mount.clientHeight);
+      };
+      window.addEventListener("resize", this.windowResizeHandler, {
+        passive: true,
+      });
+    }
+  }
+
+  private updateViewportSize(cssWidth: number, cssHeight: number): void {
+    if (this.disposed) {
+      return;
+    }
+
+    if (cssWidth <= 0 || cssHeight <= 0) {
+      return;
+    }
+
+    if (
+      Math.abs(cssWidth - this.viewportCssWidth) < 0.5 &&
+      Math.abs(cssHeight - this.viewportCssHeight) < 0.5
+    ) {
+      return;
+    }
+
+    this.viewportCssWidth = cssWidth;
+    this.viewportCssHeight = cssHeight;
+    const aspect = THREE.MathUtils.clamp(
+      cssWidth / cssHeight,
+      16 / 9,
+      2.24,
+    );
+    const nextWidth = THREE.MathUtils.clamp(
+      Math.round(INTERNAL_HEIGHT * aspect),
+      INTERNAL_WIDTH,
+      MAX_INTERNAL_WIDTH,
+    );
+    if (nextWidth === this.internalRenderWidth) {
+      return;
+    }
+
+    this.internalRenderWidth = nextWidth;
+    this.renderer.setSize(nextWidth, INTERNAL_HEIGHT, false);
+    const cameraWidth = CAMERA_VIEW_HEIGHT * (nextWidth / INTERNAL_HEIGHT);
+    this.camera.left = -cameraWidth / 2;
+    this.camera.right = cameraWidth / 2;
+    this.camera.updateProjectionMatrix();
   }
 
   public getStats(): PrototypeBRenderStats {
@@ -241,11 +421,27 @@ export class PrototypeBRenderer {
       "webglcontextrestored",
       this.contextRestoredHandler,
     );
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+    if (
+      this.windowResizeHandler !== null &&
+      typeof window !== "undefined"
+    ) {
+      window.removeEventListener("resize", this.windowResizeHandler);
+      this.windowResizeHandler = null;
+    }
+    this.startTownArt.dispose();
+    this.groundTexture?.dispose();
+    this.groundTexture = null;
 
     const geometries = new Set<THREE.BufferGeometry>();
     const materials = new Set<THREE.Material>();
 
     this.scene.traverse((object) => {
+      if (object instanceof THREE.InstancedMesh) {
+        object.dispose();
+      }
+
       if (
         object instanceof THREE.Mesh ||
         object instanceof THREE.InstancedMesh ||
@@ -268,80 +464,522 @@ export class PrototypeBRenderer {
     this.renderer.domElement.remove();
   }
 
+  private createLighting(): void {
+    const skyFill = new THREE.HemisphereLight(
+      0xf6f0d2,
+      0x355a43,
+      1.55,
+    );
+    skyFill.name = "daylight-sky-fill";
+
+    this.keyLight.name = "daylight-key";
+    this.keyLight.position.set(40, 820, 360);
+    this.keyLightTarget.name = "daylight-key-target";
+    this.keyLightTarget.position.set(390, 0, 900);
+    this.keyLight.target = this.keyLightTarget;
+    this.keyLight.castShadow = true;
+    this.keyLight.shadow.mapSize.set(512, 512);
+    this.keyLight.shadow.bias = -0.0012;
+    this.keyLight.shadow.normalBias = 1.4;
+    this.keyLight.shadow.camera.left = -460;
+    this.keyLight.shadow.camera.right = 460;
+    this.keyLight.shadow.camera.top = 460;
+    this.keyLight.shadow.camera.bottom = -460;
+    this.keyLight.shadow.camera.near = 160;
+    this.keyLight.shadow.camera.far = 1_420;
+
+    this.effectLight.name = "signal-effect-light";
+    this.effectLight.position.set(430, 58, 900);
+
+    this.scene.add(
+      skyFill,
+      this.keyLightTarget,
+      this.keyLight,
+      this.effectLight,
+    );
+  }
+
   private createGround(state: PrototypeBState): void {
-    const columns = Math.ceil(state.world.width / GROUND_TILE_SIZE);
-    const rows = Math.ceil(state.world.height / GROUND_TILE_SIZE);
-    const geometry = new THREE.BoxGeometry(
-      GROUND_TILE_SIZE - 3,
-      10,
-      GROUND_TILE_SIZE - 3,
-    );
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      vertexColors: false,
-    });
-    const ground = new THREE.InstancedMesh(
-      geometry,
-      material,
-      columns * rows,
-    );
-    ground.name = "voxel-ground";
-
-    const matrix = new THREE.Matrix4();
+    const minimumX = -480;
+    const maximumX = state.world.width + 480;
+    const minimumZ = -240;
+    const maximumZ = state.world.height + 240;
+    const groundWidth = maximumX - minimumX;
+    const groundHeight = maximumZ - minimumZ;
+    const columns = Math.ceil(groundWidth / GROUND_PATCH_SIZE);
+    const rows = Math.ceil(groundHeight / GROUND_PATCH_SIZE);
+    const positions: number[] = [];
+    const colors: number[] = [];
+    const uvs: number[] = [];
+    const indices: number[] = [];
     const color = new THREE.Color();
-    let index = 0;
+    const white = new THREE.Color(0xffffff);
 
-    for (let row = 0; row < rows; row += 1) {
-      for (let column = 0; column < columns; column += 1) {
-        const x = column * GROUND_TILE_SIZE + GROUND_TILE_SIZE / 2;
-        const z = row * GROUND_TILE_SIZE + GROUND_TILE_SIZE / 2;
-        matrix.makeTranslation(x, -5, z);
-        ground.setMatrixAt(index, matrix);
-        color.setHex(groundColorAt(x, z, index));
-        ground.setColorAt(index, color);
-        index += 1;
+    for (let row = 0; row <= rows; row += 1) {
+      const z = Math.min(
+        maximumZ,
+        minimumZ + row * GROUND_PATCH_SIZE,
+      );
+      for (let column = 0; column <= columns; column += 1) {
+        const x = Math.min(
+          maximumX,
+          minimumX + column * GROUND_PATCH_SIZE,
+        );
+        const seed = growthSeed(column + 401, row + 809, 17);
+        const undulation =
+          -3.8 + (((seed >>> 9) & 0xff) / 255 - 0.5) * 2.2;
+        positions.push(x, undulation, z);
+        uvs.push(
+          (x - minimumX) / groundWidth,
+          1 - (z - minimumZ) / groundHeight,
+        );
+
+        color.setHex(
+          groundColorAt(x, z, row * (columns + 1) + column),
+        );
+        color.offsetHSL(
+          (((seed >>> 19) & 0x0f) / 15 - 0.5) * 0.012,
+          (((seed >>> 4) & 0x0f) / 15 - 0.5) * 0.035,
+          (((seed >>> 13) & 0x0f) / 15 - 0.5) * 0.055,
+        );
+        color.lerp(white, 0.72);
+        colors.push(color.r, color.g, color.b);
       }
     }
 
-    ground.instanceMatrix.needsUpdate = true;
-    if (ground.instanceColor !== null) {
-      ground.instanceColor.needsUpdate = true;
+    for (let row = 0; row < rows; row += 1) {
+      for (let column = 0; column < columns; column += 1) {
+        const topLeft = row * (columns + 1) + column;
+        const topRight = topLeft + 1;
+        const bottomLeft = topLeft + columns + 1;
+        const bottomRight = bottomLeft + 1;
+        if ((row + column) % 2 === 0) {
+          indices.push(
+            topLeft,
+            bottomLeft,
+            topRight,
+            topRight,
+            bottomLeft,
+            bottomRight,
+          );
+        } else {
+          indices.push(
+            topLeft,
+            bottomLeft,
+            bottomRight,
+            topLeft,
+            bottomRight,
+            topRight,
+          );
+        }
+      }
     }
-    ground.computeBoundingSphere();
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3),
+    );
+    geometry.setAttribute(
+      "color",
+      new THREE.Float32BufferAttribute(colors, 3),
+    );
+    geometry.setAttribute(
+      "uv",
+      new THREE.Float32BufferAttribute(uvs, 2),
+    );
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    geometry.computeBoundingBox();
+    geometry.computeBoundingSphere();
+
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      vertexColors: true,
+      roughness: 0.96,
+      metalness: 0,
+      dithering: true,
+    });
+    const configureGroundTexture = (texture: THREE.Texture): void => {
+      texture.name = "generated-reclaimed-meadow-v1";
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(
+        groundWidth / 720,
+        groundHeight / 720,
+      );
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.anisotropy = Math.min(
+        4,
+        this.renderer.capabilities.getMaxAnisotropy(),
+      );
+    };
+
+    this.renderer.domElement.dataset.groundTexture = "loading";
+    const requestedGroundTexture = new THREE.TextureLoader().load(
+      reclaimedMeadowTextureUrl,
+      (loadedTexture) => {
+        if (this.disposed) {
+          loadedTexture.dispose();
+          return;
+        }
+
+        configureGroundTexture(loadedTexture);
+        this.groundTexture = loadedTexture;
+        material.map = loadedTexture;
+        material.color.setHex(0xffffff);
+        material.needsUpdate = true;
+        this.renderer.domElement.dataset.groundTexture = "ready";
+      },
+      undefined,
+      () => {
+        this.groundTexture?.dispose();
+        this.groundTexture = null;
+
+        if (this.disposed) {
+          return;
+        }
+
+        material.map = null;
+        material.color.setHex(0xa7b88d);
+        material.needsUpdate = true;
+        this.renderer.domElement.dataset.groundTexture = "fallback";
+      },
+    );
+    configureGroundTexture(requestedGroundTexture);
+    this.groundTexture = requestedGroundTexture;
+    material.map = requestedGroundTexture;
+
+    const ground = new THREE.Mesh(geometry, material);
+    ground.name = "continuous-reclaimed-ground";
+    ground.receiveShadow = true;
     this.scene.add(ground);
 
     const worldBorder = new THREE.LineSegments(
       new THREE.EdgesGeometry(
-        new THREE.BoxGeometry(state.world.width, 24, state.world.height),
+        new THREE.BoxGeometry(state.world.width, 8, state.world.height),
       ),
       new THREE.LineBasicMaterial({
-        color: 0x61e5d1,
+        color: 0x628d72,
         transparent: true,
         opacity: 0.12,
       }),
     );
     worldBorder.position.set(
       state.world.width / 2,
-      -11,
+      -7,
       state.world.height / 2,
     );
     this.scene.add(worldBorder);
   }
 
-  private createTerrain(state: PrototypeBState): void {
-    const materials: Record<TerrainKind, THREE.MeshBasicMaterial> = {
-      building: new THREE.MeshBasicMaterial({ color: 0x3a4742 }),
-      wall: new THREE.MeshBasicMaterial({ color: 0x303a37 }),
-      rock: new THREE.MeshBasicMaterial({ color: 0x4c514a }),
-      pillar: new THREE.MeshBasicMaterial({ color: 0x443c43 }),
-      water: new THREE.MeshBasicMaterial({
-        color: 0x224b4d,
+  private createFieldGrowth(
+    state: PrototypeBState,
+    excludedTerrainIds: ReadonlySet<string> = new Set(),
+  ): void {
+    const spacing = 142;
+    const columns = Math.ceil(state.world.width / spacing);
+    const rows = Math.ceil(state.world.height / spacing);
+    const placements: GrowthPlacement[] = [];
+    const addGrowth = (
+      x: number,
+      y: number,
+      z: number,
+      seed: number,
+      scaleX = 1,
+      scaleZ = 1,
+      scaleY = 1,
+    ): void => {
+      placements.push({
+        x,
+        y,
+        z,
+        rotation: ((seed >>> 8) % 16) * (Math.PI / 8),
+        scaleX:
+          scaleX * (0.78 + ((seed >>> 3) % 7) * 0.055),
+        scaleY:
+          scaleY * (0.82 + ((seed >>> 19) % 6) * 0.06),
+        scaleZ:
+          scaleZ * (0.8 + ((seed >>> 13) % 7) * 0.05),
+      });
+    };
+
+    for (let row = 0; row < rows; row += 1) {
+      for (let column = 0; column < columns; column += 1) {
+        const seed =
+          (Math.imul(column + 11, 73_856_093) ^
+            Math.imul(row + 17, 19_349_663)) >>>
+          0;
+
+        if (seed % 100 > 15) {
+          continue;
+        }
+
+        const x =
+          (column + 0.5) * spacing +
+          (((seed >>> 3) & 0xff) / 255 - 0.5) * 52;
+        const z =
+          (row + 0.5) * spacing +
+          (((seed >>> 11) & 0xff) / 255 - 0.5) * 52;
+
+        if (
+          x < 24 ||
+          z < 24 ||
+          x > state.world.width - 24 ||
+          z > state.world.height - 24 ||
+          Math.abs(z - 900) < 88 ||
+          state.world.terrain.some((terrain) => {
+            const margin = 10;
+            return (
+              x > terrain.bounds.x - margin &&
+              x < terrain.bounds.x + terrain.bounds.width + margin &&
+              z > terrain.bounds.y - margin &&
+              z < terrain.bounds.y + terrain.bounds.height + margin
+            );
+          })
+        ) {
+          continue;
+        }
+
+        addGrowth(
+          x,
+          0.8,
+          z,
+          seed,
+          0.84 + ((seed >>> 21) % 4) * 0.1,
+          0.82 + ((seed >>> 25) % 4) * 0.1,
+          0.82,
+        );
+      }
+    }
+
+    state.world.terrain.forEach((terrain, terrainIndex) => {
+      if (excludedTerrainIds.has(terrain.id)) {
+        return;
+      }
+
+      const bounds = terrain.bounds;
+      const left = bounds.x;
+      const right = bounds.x + bounds.width;
+      const near = bounds.y;
+      const far = bounds.y + bounds.height;
+      const centerX = left + bounds.width / 2;
+      const centerZ = near + bounds.height / 2;
+      const baseSeed = growthSeed(terrainIndex + 31, bounds.x, bounds.y);
+
+      switch (terrain.kind) {
+        case "building": {
+          const roofY = terrain.height + 10.5;
+          addGrowth(
+            left + bounds.width * 0.2,
+            roofY,
+            near + bounds.height * 0.22,
+            baseSeed,
+            1.25,
+            1,
+            0.78,
+          );
+          addGrowth(
+            right - bounds.width * 0.16,
+            roofY,
+            far - bounds.height * 0.2,
+            baseSeed ^ 0x5bd1e995,
+            1.38,
+            0.92,
+            0.9,
+          );
+          addGrowth(
+            centerX + bounds.width * 0.08,
+            roofY,
+            far - bounds.height * 0.1,
+            baseSeed ^ 0xd3a2646c,
+            2.05,
+            0.7,
+            0.52,
+          );
+          addGrowth(
+            left - 3,
+            0.8,
+            centerZ - bounds.height * 0.2,
+            baseSeed ^ 0x27d4eb2d,
+            1.15,
+            1.32,
+          );
+          addGrowth(
+            right + 2,
+            0.8,
+            centerZ + bounds.height * 0.22,
+            baseSeed ^ 0x165667b1,
+            1.1,
+            1.26,
+          );
+          break;
+        }
+        case "wall": {
+          const runsEastWest = bounds.width >= bounds.height;
+          for (let offsetIndex = 0; offsetIndex < 3; offsetIndex += 1) {
+            const progress = 0.16 + offsetIndex * 0.34;
+            const seed = baseSeed ^ Math.imul(offsetIndex + 7, 0x45d9f3b);
+            addGrowth(
+              runsEastWest
+                ? left + bounds.width * progress
+                : centerX,
+              terrain.height + 0.8,
+              runsEastWest
+                ? centerZ
+                : near + bounds.height * progress,
+              seed,
+              runsEastWest ? 1.42 : 0.82,
+              runsEastWest ? 0.82 : 1.42,
+              0.72,
+            );
+          }
+          addGrowth(
+            runsEastWest ? centerX + bounds.width * 0.26 : left - 3,
+            0.8,
+            runsEastWest ? far + 2 : centerZ + bounds.height * 0.2,
+            baseSeed ^ 0x9e3779b9,
+            runsEastWest ? 1.25 : 0.94,
+            runsEastWest ? 0.94 : 1.25,
+          );
+          break;
+        }
+        case "pillar":
+          addGrowth(
+            centerX,
+            terrain.height + 0.8,
+            centerZ,
+            baseSeed,
+            1.02,
+            1.02,
+            0.72,
+          );
+          addGrowth(
+            right + 1,
+            0.8,
+            far - bounds.height * 0.12,
+            baseSeed ^ 0x7f4a7c15,
+            1.2,
+            1.2,
+          );
+          break;
+        case "rock":
+          addGrowth(
+            centerX + bounds.width * 0.25,
+            terrain.height + 0.8,
+            centerZ + bounds.height * 0.3,
+            baseSeed,
+            1.28,
+            1.14,
+            0.9,
+          );
+          break;
+        case "water": {
+          const bankPoints = [
+            [left + bounds.width * 0.12, near - 2, false],
+            [left + bounds.width * 0.48, near - 4, false],
+            [right - bounds.width * 0.12, near + 1, true],
+            [right + 2, near + bounds.height * 0.28, false],
+            [right - 1, far - bounds.height * 0.18, true],
+            [left + bounds.width * 0.64, far + 2, false],
+            [left + bounds.width * 0.26, far - 1, true],
+            [left - 3, near + bounds.height * 0.54, false],
+          ] as const;
+
+          bankPoints.forEach(([x, z, inWater], bankIndex) => {
+            addGrowth(
+              x,
+              inWater ? terrain.height + 0.5 : 0.8,
+              z,
+              baseSeed ^ Math.imul(bankIndex + 13, 0x27d4eb2d),
+              1.02,
+              1.24,
+              0.92,
+            );
+          });
+          break;
+        }
+      }
+    });
+
+    if (placements.length === 0) {
+      return;
+    }
+
+    const geometry = createGrowthClusterGeometry();
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      vertexColors: true,
+      roughness: 0.88,
+      metalness: 0,
+    });
+    const growth = new THREE.InstancedMesh(
+      geometry,
+      material,
+      placements.length,
+    );
+    const matrix = new THREE.Matrix4();
+    const position = new THREE.Vector3();
+    const rotation = new THREE.Quaternion();
+    const scale = new THREE.Vector3();
+    const up = new THREE.Vector3(0, 1, 0);
+
+    placements.forEach((placement, index) => {
+      position.set(placement.x, placement.y, placement.z);
+      rotation.setFromAxisAngle(up, placement.rotation);
+      scale.set(
+        placement.scaleX,
+        placement.scaleY,
+        placement.scaleZ,
+      );
+      matrix.compose(position, rotation, scale);
+      growth.setMatrixAt(index, matrix);
+    });
+
+    growth.instanceMatrix.needsUpdate = true;
+    growth.computeBoundingSphere();
+    growth.name = "reclaiming-growth";
+    growth.receiveShadow = true;
+    this.scene.add(growth);
+  }
+
+  private createTerrain(
+    state: PrototypeBState,
+    excludedIds: ReadonlySet<string> = new Set(),
+  ): void {
+    const materials: Record<TerrainKind, THREE.MeshStandardMaterial> = {
+      building: new THREE.MeshStandardMaterial({
+        color: 0xa9aa8e,
+        roughness: 0.92,
+      }),
+      wall: new THREE.MeshStandardMaterial({
+        color: 0x94968a,
+        roughness: 0.96,
+      }),
+      rock: new THREE.MeshStandardMaterial({
+        color: 0x7f917b,
+        roughness: 0.98,
+      }),
+      pillar: new THREE.MeshStandardMaterial({
+        color: 0x95879a,
+        roughness: 0.9,
+      }),
+      water: new THREE.MeshStandardMaterial({
+        color: 0x4d91a1,
         transparent: true,
-        opacity: 0.75,
+        opacity: 0.82,
+        roughness: 0.28,
+        metalness: 0.04,
       }),
     };
 
     for (const placement of state.world.terrain) {
+      if (excludedIds.has(placement.id)) {
+        continue;
+      }
+
       const geometry = new THREE.BoxGeometry(
         placement.bounds.width,
         placement.height,
@@ -354,6 +992,11 @@ export class PrototypeBRenderer {
         placement.bounds.y + placement.bounds.height / 2,
       );
       mesh.name = placement.id;
+      mesh.receiveShadow = placement.kind !== "water";
+      mesh.castShadow =
+        placement.kind === "building" ||
+        placement.kind === "wall" ||
+        placement.kind === "pillar";
       this.scene.add(mesh);
 
       if (placement.kind !== "water") {
@@ -361,9 +1004,9 @@ export class PrototypeBRenderer {
           new THREE.EdgesGeometry(geometry),
           new THREE.LineBasicMaterial({
             color:
-              placement.kind === "pillar" ? 0x8269a5 : 0xa39a7d,
+              placement.kind === "pillar" ? 0x70577b : 0x626d5d,
             transparent: true,
-            opacity: 0.22,
+            opacity: 0.34,
           }),
         );
         outline.position.copy(mesh.position);
@@ -377,20 +1020,32 @@ export class PrototypeBRenderer {
             10,
             placement.bounds.height + 18,
           ),
-          new THREE.MeshBasicMaterial({ color: 0x6f4735 }),
+          new THREE.MeshStandardMaterial({
+            color: 0xb76c49,
+            roughness: 0.86,
+          }),
         );
         roof.position.set(
           mesh.position.x,
           placement.height + 5,
           mesh.position.z,
         );
+        roof.castShadow = true;
+        roof.receiveShadow = true;
         this.scene.add(roof);
       }
     }
   }
 
-  private createProps(state: PrototypeBState): void {
+  private createProps(
+    state: PrototypeBState,
+    excludedIds: ReadonlySet<string> = new Set(),
+  ): void {
     for (const prop of state.world.props) {
+      if (excludedIds.has(prop.id)) {
+        continue;
+      }
+
       const recipe = recipeForProp(prop.kind);
       const mesh = createVoxelMesh(recipe, PROP_VOXEL_SIZE, 1);
       const group = new THREE.Group();
@@ -439,7 +1094,7 @@ export class PrototypeBRenderer {
     const player = state.player;
     this.playerGroup.position.x = player.x;
     this.playerGroup.position.z = player.y;
-    this.playerGroup.position.y = Math.sin(this.elapsed * 6) * 2;
+    this.playerGroup.position.y = Math.sin(this.elapsed * 5.2) * 0.6;
     this.playerGroup.rotation.y = Math.atan2(
       -player.facingX,
       -player.facingY,
@@ -458,11 +1113,63 @@ export class PrototypeBRenderer {
       : 0;
     this.bladeMesh.rotation.z = -0.42 - swing;
     this.impactMesh.rotation.z = -0.28 - swing;
-    this.playerBody.material.color.setHex(
+    alignHeldWeapon(this.bladeMesh, "blade");
+    alignHeldWeapon(this.impactMesh, "impact");
+    setHeroMeshTint(
+      this.playerBody,
       player.invulnerableTicks > 0 && state.tick % 2 === 0
         ? 0xb8fff4
         : 0xffffff,
     );
+  }
+
+  private syncCompanion(
+    state: PrototypeBState,
+    deltaSeconds: number,
+  ): void {
+    const player = state.player;
+    const facingLength = Math.hypot(player.facingX, player.facingY);
+    const facingX =
+      facingLength > Number.EPSILON ? player.facingX / facingLength : 0;
+    const facingY =
+      facingLength > Number.EPSILON ? player.facingY / facingLength : -1;
+    const desiredX = player.x - facingX * 32 - facingY * 38;
+    const desiredZ = player.y - facingY * 32 + facingX * 38;
+    const distanceSquared =
+      (this.companionGroup.position.x - desiredX) ** 2 +
+      (this.companionGroup.position.z - desiredZ) ** 2;
+
+    if (!this.companionInitialized || distanceSquared > 140 ** 2) {
+      this.companionGroup.position.x = desiredX;
+      this.companionGroup.position.z = desiredZ;
+      this.companionInitialized = true;
+    } else {
+      const follow = 1 - Math.exp(-6.4 * deltaSeconds);
+      this.companionGroup.position.x = THREE.MathUtils.lerp(
+        this.companionGroup.position.x,
+        desiredX,
+        follow,
+      );
+      this.companionGroup.position.z = THREE.MathUtils.lerp(
+        this.companionGroup.position.z,
+        desiredZ,
+        follow,
+      );
+    }
+
+    this.companionGroup.position.y =
+      1.2 + Math.sin(this.elapsed * 4.4 + 0.8) * 0.7;
+    this.companionGroup.rotation.y = Math.atan2(-facingX, -facingY);
+    this.companionReaction = Math.max(
+      0,
+      this.companionReaction - deltaSeconds * 2.6,
+    );
+    const reactionPulse =
+      1 +
+      Math.sin((1 - this.companionReaction) * Math.PI * 3) *
+        this.companionReaction *
+        0.045;
+    this.companionGroup.scale.setScalar(reactionPulse);
   }
 
   private syncEnemies(state: PrototypeBState): void {
@@ -514,11 +1221,11 @@ export class PrototypeBRenderer {
           pulse * ((definition.attackRange + enemy.radius) / 58),
         );
         visual.telegraph.material.opacity =
-          0.22 +
+          0.34 +
           (1 -
             enemy.attack.ticksRemaining /
               Math.max(1, definition.telegraphTicks)) *
-            0.48;
+            0.5;
       }
     }
 
@@ -542,9 +1249,9 @@ export class PrototypeBRenderer {
     const telegraph = new THREE.Mesh(
       new THREE.RingGeometry(43, 54, 32),
       new THREE.MeshBasicMaterial({
-        color: 0xe95445,
+        color: 0xed4034,
         transparent: true,
-        opacity: 0.42,
+        opacity: 0.48,
         side: THREE.DoubleSide,
         depthWrite: false,
       }),
@@ -599,6 +1306,12 @@ export class PrototypeBRenderer {
           this.attackAnimation = 1;
           this.attackWeapon = event.weaponId;
           this.addAttackRing(event);
+          this.pulseEffectLight(
+            event.x,
+            event.y,
+            event.weaponId === "blade" ? 0xffe4ac : 0xf4a950,
+            event.weaponId === "blade" ? 0.58 : 0.82,
+          );
           break;
         case "enemy-damaged": {
           const enemy = this.enemyVisuals.get(event.enemyId);
@@ -613,6 +1326,16 @@ export class PrototypeBRenderer {
                   : 0xe7ddbd,
               event.source === "impact" ? 13 : 8,
             );
+            this.pulseEffectLight(
+              enemy.group.position.x,
+              enemy.group.position.z,
+              event.source === "relic"
+                ? 0x61e5d1
+                : event.source === "impact"
+                  ? 0xf4a950
+                  : 0xffe4ac,
+              event.source === "relic" ? 1 : 0.62,
+            );
           }
           break;
         }
@@ -622,6 +1345,12 @@ export class PrototypeBRenderer {
             this.playerGroup.position.z,
             0xe95445,
             10,
+          );
+          this.pulseEffectLight(
+            this.playerGroup.position.x,
+            this.playerGroup.position.z,
+            0xff5c48,
+            0.9,
           );
           break;
         case "guard-resolved":
@@ -634,8 +1363,15 @@ export class PrototypeBRenderer {
             0.28,
             1.8,
           );
+          this.pulseEffectLight(
+            this.playerGroup.position.x,
+            this.playerGroup.position.z,
+            event.justGuard ? 0x61e5d1 : 0xffe4ac,
+            event.justGuard ? 0.92 : 0.5,
+          );
           break;
         case "relic-activated":
+          this.companionReaction = 1;
           this.addRing(
             event.x,
             event.y,
@@ -645,16 +1381,30 @@ export class PrototypeBRenderer {
             0.5,
             1.9,
           );
+          this.pulseEffectLight(
+            event.x,
+            event.y,
+            0x61e5d1,
+            1,
+          );
           break;
         case "loot-picked":
+          this.companionReaction = 0.82;
           this.addBurst(
             this.playerGroup.position.x,
             this.playerGroup.position.z,
             0x61e5d1,
             9,
           );
+          this.pulseEffectLight(
+            this.playerGroup.position.x,
+            this.playerGroup.position.z,
+            0x61e5d1,
+            0.72,
+          );
           break;
         case "anomaly-resolved":
+          this.companionReaction = 1;
           this.addRing(
             this.playerGroup.position.x,
             this.playerGroup.position.z,
@@ -668,11 +1418,32 @@ export class PrototypeBRenderer {
             1.1,
             2.4,
           );
+          this.pulseEffectLight(
+            this.playerGroup.position.x,
+            this.playerGroup.position.z,
+            event.outcome === "destroy"
+              ? 0xff5c48
+              : event.outcome === "calm"
+                ? 0xf4a950
+                : 0x61e5d1,
+            1,
+          );
           break;
         default:
           break;
       }
     }
+  }
+
+  private pulseEffectLight(
+    x: number,
+    z: number,
+    color: number,
+    energy: number,
+  ): void {
+    this.effectLight.position.set(x, 54, z);
+    this.effectLight.color.setHex(color);
+    this.effectLightEnergy = Math.max(this.effectLightEnergy, energy);
   }
 
   private addAttackRing(
@@ -779,6 +1550,13 @@ export class PrototypeBRenderer {
   }
 
   private updateEffects(deltaSeconds: number): void {
+    this.effectLightEnergy = Math.max(
+      0,
+      this.effectLightEnergy - deltaSeconds * 3.8,
+    );
+    this.effectLight.intensity =
+      this.effectLightEnergy * this.effectLightEnergy * 155;
+
     for (let index = this.ringEffects.length - 1; index >= 0; index -= 1) {
       const effect = this.ringEffects[index];
       if (effect === undefined) {
@@ -835,6 +1613,7 @@ export class PrototypeBRenderer {
 
       if (progress >= 1) {
         this.scene.remove(effect.mesh);
+        effect.mesh.dispose();
         effect.mesh.geometry.dispose();
         disposeMaterial(effect.mesh.material);
         this.burstEffects.splice(index, 1);
@@ -906,18 +1685,23 @@ export class PrototypeBRenderer {
   }
 }
 
-function createVoxelMesh(
+function buildVoxelGeometry(
   recipe: VoxelRecipe,
   voxelSize: number,
-  opacity: number,
-): THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial> {
-  const extent = VOXEL_GRID_SIZE * voxelSize;
+  groupByMaterialRole: boolean,
+): {
+  readonly geometry: THREE.BufferGeometry;
+  readonly data: ReturnType<typeof meshVoxelRecipe>;
+} {
+  const extentX = recipe.dimensions.width * voxelSize;
+  const extentZ = recipe.dimensions.depth * voxelSize;
   const data = meshVoxelRecipe(recipe, {
     voxelSize,
+    shadeFaces: false,
     origin: {
-      x: -extent / 2,
+      x: -extentX / 2,
       y: 0,
-      z: -extent / 2,
+      z: -extentZ / 2,
     },
   });
   const geometry = new THREE.BufferGeometry();
@@ -934,17 +1718,85 @@ function createVoxelMesh(
     new THREE.BufferAttribute(data.colors, 3),
   );
   geometry.setIndex(new THREE.BufferAttribute(data.indices, 1));
+  if (groupByMaterialRole) {
+    data.materialGroups.forEach((group, materialIndex) => {
+      geometry.addGroup(group.start, group.count, materialIndex);
+    });
+  }
   geometry.computeBoundingSphere();
+  return { geometry, data };
+}
 
-  const material = new THREE.MeshBasicMaterial({
+function createVoxelMesh(
+  recipe: VoxelRecipe,
+  voxelSize: number,
+  opacity: number,
+): THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial> {
+  const { geometry } = buildVoxelGeometry(recipe, voxelSize, false);
+  const material = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     vertexColors: true,
     transparent: opacity < 1,
     opacity,
+    roughness: 0.78,
+    metalness: 0.04,
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = recipe.id;
   return mesh;
+}
+
+function createHeroVoxelMesh(
+  recipe: VoxelRecipe,
+  voxelSize: number,
+): HeroVoxelMesh {
+  const { geometry, data } = buildVoxelGeometry(
+    recipe,
+    voxelSize,
+    true,
+  );
+  const materials = data.materialGroups.map((group) =>
+    createHeroMaterial(group.role)
+  );
+  const mesh = new THREE.Mesh(geometry, materials);
+  mesh.name = recipe.id;
+  return mesh;
+}
+
+function createHeroMaterial(role: VoxelMaterialRole): THREE.Material {
+  switch (role) {
+    case "matte":
+      return new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        vertexColors: true,
+        roughness: 0.84,
+        metalness: 0,
+      });
+    case "metal":
+      return new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        vertexColors: true,
+        roughness: 0.38,
+        metalness: 0.68,
+      });
+    case "emissive":
+      return new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        vertexColors: true,
+        toneMapped: false,
+      });
+  }
+}
+
+function setHeroMeshTint(mesh: HeroVoxelMesh, color: number): void {
+  for (const material of mesh.material) {
+    if (
+      material instanceof THREE.MeshStandardMaterial ||
+      material instanceof THREE.MeshBasicMaterial
+    ) {
+      material.color.setHex(color);
+    }
+  }
 }
 
 function createBlobShadow(
@@ -954,9 +1806,9 @@ function createBlobShadow(
 ): THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial> {
   const geometry = new THREE.CircleGeometry(1, 24);
   const material = new THREE.MeshBasicMaterial({
-    color: 0x030505,
+    color: 0x243832,
     transparent: true,
-    opacity,
+    opacity: opacity * 0.72,
     depthWrite: false,
   });
   const mesh = new THREE.Mesh(geometry, material);
@@ -966,18 +1818,138 @@ function createBlobShadow(
   return mesh;
 }
 
+function createGrowthClusterGeometry(): THREE.BufferGeometry {
+  const components = [
+    {
+      size: [26, 3.5, 18] as const,
+      position: [0, 1.75, 0] as const,
+      color: 0x397a3f,
+    },
+    {
+      size: [15, 5, 21] as const,
+      position: [-7, 4.25, 4] as const,
+      color: 0x4d9143,
+    },
+    {
+      size: [12, 11, 12] as const,
+      position: [5, 7.5, -3] as const,
+      color: 0x2f7040,
+    },
+    {
+      size: [10, 8, 10] as const,
+      position: [-5, 8, 5] as const,
+      color: 0x6aa34e,
+    },
+    {
+      size: [4.5, 4.5, 4.5] as const,
+      position: [5, 15.5, 0] as const,
+      color: 0xf0c94c,
+    },
+    {
+      size: [4, 4, 4] as const,
+      position: [-7, 13, 7] as const,
+      color: 0xe46f68,
+    },
+  ];
+  const positions: number[] = [];
+  const normals: number[] = [];
+  const colors: number[] = [];
+  const shadedColor = new THREE.Color();
+
+  for (const component of components) {
+    const box = new THREE.BoxGeometry(
+      component.size[0],
+      component.size[1],
+      component.size[2],
+    ).toNonIndexed();
+    box.translate(
+      component.position[0],
+      component.position[1],
+      component.position[2],
+    );
+    const boxPositions = box.getAttribute("position");
+    const boxNormals = box.getAttribute("normal");
+
+    for (let index = 0; index < boxPositions.count; index += 1) {
+      const normalY = boxNormals.getY(index);
+      const normalX = Math.abs(boxNormals.getX(index));
+      const shade =
+        normalY > 0.5
+          ? 1
+          : normalY < -0.5
+            ? 0.58
+            : normalX > 0.5
+              ? 0.82
+              : 0.72;
+      shadedColor.setHex(component.color).multiplyScalar(shade);
+      positions.push(
+        boxPositions.getX(index),
+        boxPositions.getY(index),
+        boxPositions.getZ(index),
+      );
+      normals.push(
+        boxNormals.getX(index),
+        boxNormals.getY(index),
+        boxNormals.getZ(index),
+      );
+      colors.push(shadedColor.r, shadedColor.g, shadedColor.b);
+    }
+
+    box.dispose();
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions, 3),
+  );
+  geometry.setAttribute(
+    "normal",
+    new THREE.Float32BufferAttribute(normals, 3),
+  );
+  geometry.setAttribute(
+    "color",
+    new THREE.Float32BufferAttribute(colors, 3),
+  );
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  return geometry;
+}
+
+function growthSeed(first: number, second: number, third: number): number {
+  return (
+    Math.imul(Math.trunc(first) + 101, 73_856_093) ^
+    Math.imul(Math.trunc(second) + 211, 19_349_663) ^
+    Math.imul(Math.trunc(third) + 307, 83_492_791)
+  ) >>> 0;
+}
+
 function configureHeldWeapon(
   mesh: THREE.Mesh,
   weapon: WeaponId,
 ): void {
-  mesh.position.set(
-    weapon === "blade" ? 24 : 25,
-    weapon === "blade" ? 23 : 17,
-    -3,
-  );
   mesh.rotation.x = weapon === "blade" ? 0.12 : 0.04;
   mesh.rotation.z = weapon === "blade" ? -0.42 : -0.28;
   mesh.scale.setScalar(weapon === "blade" ? 0.9 : 0.86);
+  alignHeldWeapon(mesh, weapon);
+}
+
+export function alignHeldWeapon(mesh: THREE.Mesh, weapon: WeaponId): void {
+  const gripAnchor =
+    weapon === "blade" ? BLADE_GRIP_ANCHOR : IMPACT_GRIP_ANCHOR;
+  heldWeaponGripOffset.set(
+    gripAnchor.x,
+    gripAnchor.y,
+    gripAnchor.z,
+  )
+    .multiply(mesh.scale)
+    .applyEuler(mesh.rotation);
+
+  mesh.position.set(
+    PLAYER_WEAPON_ANCHOR.x - heldWeaponGripOffset.x,
+    PLAYER_WEAPON_ANCHOR.y - heldWeaponGripOffset.y,
+    PLAYER_WEAPON_ANCHOR.z - heldWeaponGripOffset.z,
+  );
 }
 
 function recipeForEnemy(kind: EnemyKind): VoxelRecipe {
@@ -1011,19 +1983,19 @@ function recipeForProp(kind: string): VoxelRecipe {
 
 function groundColorAt(x: number, z: number, index: number): number {
   if (x < 760 && z > 430 && z < 1_370) {
-    return index % 3 === 0 ? 0x303b35 : 0x28332f;
+    return index % 3 === 0 ? 0x729469 : 0x607e58;
   }
 
   if (x > 2_420 && x < 3_330 && z > 380 && z < 1_420) {
-    return index % 4 === 0 ? 0x332f38 : 0x282a31;
+    return index % 4 === 0 ? 0x85867c : 0x767a72;
   }
 
   if (Math.abs(z - 900) < 145) {
-    return index % 3 === 0 ? 0x4c4033 : 0x43372f;
+    return index % 3 === 0 ? 0x9a7859 : 0x87684f;
   }
 
   const variation = ((Math.floor(x / 80) * 17 + Math.floor(z / 80) * 31) >>> 0) % 4;
-  return [0x1b2822, 0x202d27, 0x243027, 0x1b2521][variation] ?? 0x1b2822;
+  return [0x477744, 0x4f8048, 0x5b8951, 0x68965a][variation] ?? 0x477744;
 }
 
 function disposeMaterial(

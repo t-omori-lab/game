@@ -193,7 +193,6 @@ export function startPrototypeB(root: HTMLElement): PrototypeBApplication {
     layout.titleOverlay.inert = true;
     controls.setEnabled(controlsMayRun());
     lastFrameAt = performance.now();
-    showToast(layout, "依頼板を調べ、東の廃区へ向かえ。", lastFrameAt);
     announceStatus(
       "調査開始。町の依頼板に近づき、調査ボタンを押してください。",
       lastFrameAt,

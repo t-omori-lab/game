@@ -11,6 +11,7 @@ import {
   PROP_PLACEMENTS,
   TERRAIN_PLACEMENTS,
   TICK_RATE,
+  TOWN_CONTRACT_BOARD_POSITION,
   WEAPON_DEFINITIONS,
   WORLD_HEIGHT,
   WORLD_WIDTH,
@@ -241,6 +242,141 @@ describe("Prototype B world contract", () => {
     expect(state.quest.phase).toBe("confrontation");
     expect(state.quest.objective).toContain("Orison");
     expect(state.status).toBe("playing");
+  });
+
+  it("keeps the z=900 town route open while the aligned board remains reachable", () => {
+    let state = createPrototypeBState("town-board-route");
+    state = {
+      ...state,
+      enemies: [],
+    };
+
+    const boardProp = PROP_PLACEMENTS.find(
+      (prop) => prop.id === "town-contract-board",
+    );
+    const boardCollider = TERRAIN_PLACEMENTS.find(
+      (terrain) => terrain.id === "town-board-collider",
+    );
+
+    expect(LANDMARKS.town.interactionPoint).toEqual(
+      TOWN_CONTRACT_BOARD_POSITION,
+    );
+    expect(boardProp).toMatchObject(TOWN_CONTRACT_BOARD_POSITION);
+    expect(boardCollider?.bounds.x).toBe(
+      TOWN_CONTRACT_BOARD_POSITION.x - 46,
+    );
+    expect(boardCollider?.bounds.y).toBe(
+      TOWN_CONTRACT_BOARD_POSITION.y - 10,
+    );
+
+    const accepted = stepPrototypeB(state, { interact: true });
+    expect(accepted.state.quest.phase).toBe("travel-to-fork");
+
+    state = accepted.state;
+    for (let tick = 0; tick < 65; tick += 1) {
+      state = stepPrototypeB(state, {
+        moveX: 1,
+        guard: true,
+      }).state;
+    }
+
+    expect(state.player.y).toBeCloseTo(900);
+    expect(state.player.x).toBeGreaterThan(700);
+  });
+
+  it("blocks movement through solid-looking start-town fixtures", () => {
+    const cases = [
+      {
+        id: "town-board-collider",
+        start: { x: 500, y: 921 },
+        command: { moveY: 1, guard: true },
+        boundary: 922,
+        axis: "y",
+        direction: 1,
+      },
+      {
+        id: "town-hall-workyard-collider",
+        start: { x: 430, y: 688 },
+        command: { moveY: 1, guard: true },
+        boundary: 689,
+        axis: "y",
+        direction: 1,
+      },
+      {
+        id: "town-repair-bench-collider",
+        start: { x: 644, y: 815 },
+        command: { moveX: -1, guard: true },
+        boundary: 643,
+        axis: "x",
+        direction: -1,
+      },
+      {
+        id: "town-south-lamp-collider",
+        start: { x: 499, y: 1_041 },
+        command: { moveX: -1, guard: true },
+        boundary: 498,
+        axis: "x",
+        direction: -1,
+      },
+      {
+        id: "town-kitchen-garden-collider",
+        start: { x: 499, y: 1_155 },
+        command: { moveX: -1, guard: true },
+        boundary: 498,
+        axis: "x",
+        direction: -1,
+      },
+      {
+        id: "town-south-crates-collider",
+        start: { x: 465, y: 1_212 },
+        command: { moveX: -1, guard: true },
+        boundary: 464,
+        axis: "x",
+        direction: -1,
+      },
+    ] as const;
+
+    for (const testCase of cases) {
+      const placement = TERRAIN_PLACEMENTS.find(
+        (terrain) => terrain.id === testCase.id,
+      );
+      expect(placement).toMatchObject({ solid: true, height: 0 });
+
+      let state = createPrototypeBState(`collision-${testCase.id}`);
+      const targetTerrain = state.world.terrain.find(
+        (terrain) => terrain.id === testCase.id,
+      );
+
+      if (targetTerrain === undefined) {
+        throw new Error(`Missing fixture collider: ${testCase.id}`);
+      }
+
+      state = {
+        ...state,
+        enemies: [],
+        world: {
+          ...state.world,
+          terrain: [targetTerrain],
+        },
+        player: {
+          ...state.player,
+          ...testCase.start,
+        },
+      };
+
+      for (let tick = 0; tick < 16; tick += 1) {
+        state = stepPrototypeB(state, testCase.command).state;
+      }
+
+      const position = state.player[testCase.axis];
+      if (testCase.direction > 0) {
+        expect(position).toBeLessThanOrEqual(testCase.boundary);
+        expect(position).toBeGreaterThanOrEqual(testCase.boundary - 6);
+      } else {
+        expect(position).toBeGreaterThanOrEqual(testCase.boundary);
+        expect(position).toBeLessThanOrEqual(testCase.boundary + 6);
+      }
+    }
   });
 
   it("collects both outcome keys on a continuous route before confrontation", () => {

@@ -21,6 +21,22 @@ Last updated: 2026-07-31
 - GitHub Pagesのproject siteでは、Viteの`base`とWeb App Manifestの`id`を公開subpathへ固定する。asset URLが偶然動いても、manifestの相対`id`は別の基準で解決され、PWA identityがorigin rootを指し得る。
 - 新規repositoryのPages sourceをGitHub Actionsへ切り替える前に初回workflowを走らせると、buildが正しくてもdeployは失敗する。source保存後に再実行し、最新commitの成功runと公開HTTP応答を別々に確認する。
 - fullscreen web gameでは、外枠だけの`touch-action: none`と`user-scalable=no`へ依存すると、iOSで拡大だけ成立し縮小操作を失う可能性がある。local mobile Chromeでは、通常UIの実touch対象を`manipulation`、joystickや同時押しactionだけを`none`に分けると、double tap、pinch復帰、multi-touch操作のgesture policyを分離できた。iOS Safari／PWAでの有効性は実機再確認が必要。
+- 終末世界の過酷さを暗いfog、低明度palette、強いvignetteで画面全体へ掛けると、探索したい世界とplayer判読性まで失われる。環境は昼光、自然、水、錆で美しく保ち、危険をenemy silhouette、赤橙の予兆、音へ局所化すると、深刻さと旅の魅力を分離できる。
+- `MeshBasicMaterial`中心のrendererではlightやexposureを足しても主因は変わらない。今回の暗さはcamera距離に対して強すぎる`FogExp2`、地面自体の低明度、screen overlayの三重掛けであり、fog density、source palette、overlay opacityを同時に直す必要があった。
+- 16³を全assetの上限にせず、recipe固有のwidth／height／depthへすると、背景資産を壊さず重要characterだけを高密度化できる。16×24×12 playerは1 mesh／1,484 trianglesで、local 852×393では26 draw calls／22,148 triangles／60fps表示を維持しながら、顔、髪、手足、coat、weaponの判読性を増やせた。実機性能の証明ではない。
+- voxel数、props、生活小物を増やしても、低い内部解像度、antialiasing不足、大きな単色面、surface texture不足が残ればcommercial-qualityには見えない。Visual Pass Dのユーザー不合格から、geometry密度と最終画面の美しさは別のgateとして評価する必要がある。
+- 生成textureは、画像を作っただけでは製品assetにならない。source、生成条件、禁止事項、用途、scale、採否を記録し、Web向けformatへ変換したうえで、UV repeat、mipmap、anisotropy、seam、反復pattern、gameplay readabilityを実画面で確認する。
+- AgX tone mapping、emissive、Display-P3は画面改善の手段だが、true HDRの証明ではない。sRGBをbaselineにし、広色域はdeviceの`color-gamut`とWebGL drawing bufferの対応を確認できる場合だけ段階的に有効化すると、unsupported環境の色崩れを避けられる。
+- Three.jsの頂点色attributeはLinear-sRGB値を前提とする。authoring paletteの16進sRGBを単純に255除算するとAgX／lit material経路で中間色が白っぽくなるため、sRGB EOTFで線形化してからface shadeを掛ける。`0x808080`が約`0.216`になる回帰testを持たせる。
+- JavaScriptからimportした生成textureは、HTMLの`href`／`src`だけを探索するservice workerでは初回precacheから漏れる。Viteがhash付きURLへ変換する画像preloadをbuilt HTMLへ置き、さらにTextureLoaderのerror時はvertex-color地面へ戻すと、初回installとasset障害を別々に守れる。
+- rendererだけにsolid-looking fixtureを足すと、見た目では塞がっているのにsimulationでは通過できる。visual fixtureごとにcollision ID、interaction reachability、退路を紐付け、追加した6区画を移動testへ入れることで表示とruleの乖離を防げた。
+- 未加入のcompanion候補を開始画面へ置くと「最初から固定相棒」という別の仕様に見える。asset previewとgameplay spawn条件を分離し、加入eventが実装されるまでは通常開始画面で非表示にする。
+- Visual Pass Eの852×393 local browserは35 draw calls／約48〜49k visible trianglesで約47〜54fpsだった。旧Visual Pass Cの60fps表示より重く、内部解像度、texture、shadowの増加は同じlocal budget内でもfpsへ効く。local Chromeの数値からiPhone 16 Proの性能を推定せず、実機Safari／PWAで測る。
+
+## Working hypotheses to validate
+
+- fixed cameraでは、moving character、collision、occlusion、dynamic shadowだけをrealtime 3Dへ残し、地面、道、背景、建物面を高解像度生成／baked layerへ分けることで、見える面へquality budgetを集中できる可能性が高い。まだユーザーのart acceptanceは得ていない。light direction、palette、scale、contact shadowを同一camera previewで検査し、2D／3Dの貼り合わせ感が出ないか確かめる。
+- MSAA、高い内部解像度、AgX、生成textureの組合せがVisual Pass Dより商業HD-2D基準へ近づくかは未確認である。公開後のユーザーreviewをquality gateにする。
 
 ## Improvement candidates
 

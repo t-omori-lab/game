@@ -16,6 +16,10 @@ import type {
 export const TICK_RATE = 30;
 export const WORLD_WIDTH = 3_600;
 export const WORLD_HEIGHT = 1_800;
+export const TOWN_CONTRACT_BOARD_POSITION = {
+  x: 500,
+  y: 950,
+} as const;
 
 export const LANDMARKS = {
   town: {
@@ -23,7 +27,7 @@ export const LANDMARKS = {
     name: "Dustwake Town",
     bounds: { x: 80, y: 500, width: 620, height: 800 },
     center: { x: 390, y: 900 },
-    interactionPoint: { x: 500, y: 900 },
+    interactionPoint: TOWN_CONTRACT_BOARD_POSITION,
   },
   fork: {
     id: "fork",
@@ -68,6 +72,56 @@ export const TERRAIN_PLACEMENTS = [
     bounds: { x: 150, y: 1_090, width: 230, height: 130 },
     solid: true,
     height: 78,
+  },
+  // Renderer-authored town fixtures use these zero-height terrain entries
+  // only as deterministic movement colliders. Their visible geometry is
+  // supplied by startTownArt and excluded from the fallback terrain renderer.
+  {
+    id: "town-board-collider",
+    kind: "rock",
+    bounds: {
+      x: TOWN_CONTRACT_BOARD_POSITION.x - 46,
+      y: TOWN_CONTRACT_BOARD_POSITION.y - 10,
+      width: 92,
+      height: 20,
+    },
+    solid: true,
+    height: 0,
+  },
+  {
+    id: "town-hall-workyard-collider",
+    kind: "rock",
+    bounds: { x: 380, y: 707, width: 100, height: 64 },
+    solid: true,
+    height: 0,
+  },
+  {
+    id: "town-repair-bench-collider",
+    kind: "rock",
+    bounds: { x: 510, y: 777, width: 115, height: 76 },
+    solid: true,
+    height: 0,
+  },
+  {
+    id: "town-south-lamp-collider",
+    kind: "rock",
+    bounds: { x: 460, y: 1_030, width: 20, height: 23 },
+    solid: true,
+    height: 0,
+  },
+  {
+    id: "town-kitchen-garden-collider",
+    kind: "rock",
+    bounds: { x: 405, y: 1_110, width: 75, height: 90 },
+    solid: true,
+    height: 0,
+  },
+  {
+    id: "town-south-crates-collider",
+    kind: "rock",
+    bounds: { x: 385, y: 1_186, width: 61, height: 53 },
+    solid: true,
+    height: 0,
   },
   {
     id: "fork-boulder",
@@ -131,8 +185,8 @@ export const PROP_PLACEMENTS = [
   {
     id: "town-contract-board",
     kind: "contract-board",
-    x: 500,
-    y: 900,
+    x: TOWN_CONTRACT_BOARD_POSITION.x,
+    y: TOWN_CONTRACT_BOARD_POSITION.y,
     rotation: 0,
     landmarkId: "town",
     interactive: true,

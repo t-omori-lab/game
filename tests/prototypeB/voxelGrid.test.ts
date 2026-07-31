@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DEFAULT_VOXEL_DIMENSIONS,
   EMPTY_VOXEL,
   VOXEL_GRID_SIZE,
   buildVoxelGrid,
@@ -17,6 +18,12 @@ import {
   type VoxelRecipe,
 } from "../../src/prototypeB/voxel";
 
+const TALL_DIMENSIONS = {
+  width: 16,
+  height: 24,
+  depth: 12,
+} as const;
+
 const TEST_PALETTE = defineVoxelPalette([
   { id: "dark", color: 0x102030 },
   { id: "light", color: 0xa0b0c0 },
@@ -24,11 +31,11 @@ const TEST_PALETTE = defineVoxelPalette([
 
 function validRecipe(): VoxelRecipe {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     id: "test-column",
     name: "Test Column",
     kind: "prop",
-    gridSize: VOXEL_GRID_SIZE,
+    dimensions: DEFAULT_VOXEL_DIMENSIONS,
     palette: TEST_PALETTE,
     voxels: [
       { x: 1, y: 0, z: 1, paletteId: "dark" },
@@ -41,14 +48,40 @@ function validRecipe(): VoxelRecipe {
 
 describe("voxel grid helpers", () => {
   it("uses a stable x-major index inside a fixed 16-cube", () => {
-    expect(voxelIndex(0, 0, 0)).toBe(0);
-    expect(voxelIndex(1, 0, 0)).toBe(1);
-    expect(voxelIndex(0, 0, 1)).toBe(VOXEL_GRID_SIZE);
-    expect(voxelIndex(0, 1, 0)).toBe(
+    expect(voxelIndex(DEFAULT_VOXEL_DIMENSIONS, 0, 0, 0)).toBe(0);
+    expect(voxelIndex(DEFAULT_VOXEL_DIMENSIONS, 1, 0, 0)).toBe(1);
+    expect(voxelIndex(DEFAULT_VOXEL_DIMENSIONS, 0, 0, 1)).toBe(
+      VOXEL_GRID_SIZE,
+    );
+    expect(voxelIndex(DEFAULT_VOXEL_DIMENSIONS, 0, 1, 0)).toBe(
       VOXEL_GRID_SIZE * VOXEL_GRID_SIZE,
     );
-    expect(() => voxelIndex(16, 0, 0)).toThrow(RangeError);
-    expect(() => voxelIndex(0.5, 0, 0)).toThrow(RangeError);
+    expect(() =>
+      voxelIndex(DEFAULT_VOXEL_DIMENSIONS, 16, 0, 0),
+    ).toThrow(RangeError);
+    expect(() =>
+      voxelIndex(DEFAULT_VOXEL_DIMENSIONS, 0.5, 0, 0),
+    ).toThrow(RangeError);
+    expect(() =>
+      voxelIndex({ width: 15.5, height: 16, depth: 16 }, 0, 0, 0),
+    ).toThrow(RangeError);
+  });
+
+  it("uses rectangular width and depth strides without changing legacy order", () => {
+    const grid = createVoxelGrid(TEST_PALETTE, {
+      dimensions: TALL_DIMENSIONS,
+    });
+
+    expect(grid.dimensions).toEqual(TALL_DIMENSIONS);
+    expect(grid.cells).toHaveLength(16 * 24 * 12);
+    expect(voxelIndex(TALL_DIMENSIONS, 0, 0, 1)).toBe(16);
+    expect(voxelIndex(TALL_DIMENSIONS, 0, 1, 0)).toBe(16 * 12);
+    expect(voxelIndex(TALL_DIMENSIONS, 15, 23, 11)).toBe(
+      16 * 24 * 12 - 1,
+    );
+    expect(() => voxelIndex(TALL_DIMENSIONS, 16, 0, 0)).toThrow(RangeError);
+    expect(() => voxelIndex(TALL_DIMENSIONS, 0, 24, 0)).toThrow(RangeError);
+    expect(() => voxelIndex(TALL_DIMENSIONS, 0, 0, 12)).toThrow(RangeError);
   });
 
   it("sets, replaces, clears, and reads palette-indexed voxels", () => {
@@ -113,12 +146,38 @@ describe("voxel grid helpers", () => {
     ).toThrow(RangeError);
   });
 
+  it("rejects zero, fractional, oversized-axis, and oversized-volume dimensions", () => {
+    expect(() =>
+      createVoxelGrid(TEST_PALETTE, {
+        dimensions: { width: 0, height: 16, depth: 16 },
+      }),
+    ).toThrow(RangeError);
+    expect(() =>
+      createVoxelGrid(TEST_PALETTE, {
+        dimensions: { width: 16, height: 23.5, depth: 12 },
+      }),
+    ).toThrow(RangeError);
+    expect(() =>
+      createVoxelGrid(TEST_PALETTE, {
+        dimensions: { width: 65, height: 1, depth: 1 },
+      }),
+    ).toThrow(RangeError);
+    expect(() =>
+      createVoxelGrid(TEST_PALETTE, {
+        dimensions: { width: 64, height: 64, depth: 64 },
+      }),
+    ).toThrow(RangeError);
+  });
+
   it("builds a recipe into an isolated grid and serializes in stable order", () => {
     const recipe = validRecipe();
     const grid = buildVoxelGrid(recipe);
     const copy = copyVoxelGrid(grid);
 
     expect(grid.recipeId).toBe(recipe.id);
+    expect(grid.dimensions).toEqual(recipe.dimensions);
+    expect(copy.dimensions).toEqual(recipe.dimensions);
+    expect(copy.dimensions).not.toBe(grid.dimensions);
     expect(grid.anchors).toEqual(recipe.anchors);
     expect(gridToVoxels(grid)).toEqual(recipe.voxels);
 
