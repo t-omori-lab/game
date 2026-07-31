@@ -10,7 +10,9 @@ Status: v0.1 draft
 runtimeが行ってよいのは、承認済みdataの読込、seed済みsimulation、承認済みVoxelRecipeからのgeometry構築、承認済み音響presetの再生／合成である。これはcontent生成ではなく、固定仕様のmaterializationとする。
 
 - 世界設定とstatus: [WORLD_BIBLE.md](./WORLD_BIBLE.md)
+- 作品方針と次のproof: [GAME_CONSTITUTION.md](./GAME_CONSTITUTION.md)
 - 遊びの約束: [GAME_BRIEF.md](./GAME_BRIEF.md)
+- 因果生成、StyleProfile、AssetDNAの統合設計: [DESIGN_SYNTHESIS.md](./DESIGN_SYNTHESIS.md)
 - deterministic simulation方針: [DECISIONS.md](./DECISIONS.md)
 
 ### 1.1 必須条件
@@ -195,7 +197,7 @@ ID、seed、timestamp以外の自由文字列にもlength上限を置く。AI利
 
 - graph reachability、strongly connected components、critical path、travel cost、resource収支をcodeで検査する。
 - 同一seedでnode、edge、landmark、配置hashが一致することを確認する。
-- 人はgraph overlay、通常camera、minimap、852×393 previewで読みやすさを確認する。
+- 人はgraph overlay、通常camera、minimap、iPhone実`visualViewport`で読みやすさを確認する。desktopの固定viewportは回帰用であり実機合格の代替にしない。
 - 開発時に採用したmapだけを固定dataとして収録し、runtimeで地図を再抽選しない。
 
 ## 8. 遺跡・dungeon生成
@@ -401,7 +403,7 @@ BALANCE_ENVELOPE_EXCEEDED
 
 - 背景assetの16³は選択肢であり上限ではない。hero assetは役割に応じて可変gridを使う。
 - paletteはsurface role、material response、emissive、danger signalを分離する。
-- character／monsterはfaceまたはsensor、手足／manipulator、装備、前後、action silhouetteを852×393で確認する。
+- character／monsterはfaceまたはsensor、手足／manipulator、装備、前後、action silhouetteをiPhone実`visualViewport`で確認する。
 - mapはterrain、material breakup、architecture、life props、light／atmosphereの5層をpreviewする。
 - hidden-face geometry、voxel数、exposed face、triangle、draw call、anchor、collision boundsをvalidation reportへ出す。
 - AI画像を完成assetとして直接採用せず、構造候補からschema済みVoxelRecipeを作り、人が全方向previewで採否を決める。
@@ -426,7 +428,7 @@ BALANCE_ENVELOPE_EXCEEDED
 | World consistency | status、theme、timeline、community relation | 明るく実務的なtoneと生活感 |
 | Mechanics | simulation、interface、budget、counterplay | 操作、読みやすさ、面白さ |
 | Map / dungeon | reachability、locks、route、dead end | landmark、cadence、撤退判断 |
-| Visual | bounds、anchor、triangle、draw call | 852×393のsilhouetteと密度 |
+| Visual | bounds、anchor、triangle、draw call | iPhone実`visualViewport`のsilhouetteと密度 |
 | Originality | reference name、string similarity、asset hash | 固有表現やstyle模倣がない |
 | Release | approved catalogのみbuildへ含む | 採用理由、権利、未決定点 |
 
@@ -474,3 +476,19 @@ type Generator<TSpec, TCandidate> = {
 - [ ] 著作物の固有表現やstyleを模倣していない。
 - [ ] 人間の`accept`記録と採用理由がある。
 - [ ] 承認済み固定dataだけが製品buildへ入る。
+
+## 18. v0.2候補: 単品生成から因果生成へ
+
+`設計提案・未実装`
+
+次版では、重要contentへ次の三つの親contractを追加する。詳細schemaと根拠は[DESIGN_SYNTHESIS.md](./DESIGN_SYNTHESIS.md)を正本とする。
+
+1. **GameplayContract** — player verb、前提、cost、risk、effect、counterplay、world-law参照、visual／sound cue、test。
+2. **Causal World Cell** — 旧用途、現在資源、actor need、衝突、証拠、複数対処、reward、world mutation、future hook、mission graph、space graph。
+3. **StyleProfile** — camera、world scale、light、palette、material family、texel density、edge、shadow、彩度、摩耗、LOD、effect密度。
+
+Character、item、monster、ruin、quest、visual、audioは同じcellとcontractのstable IDを参照し、説明文から性能を後付けしない。重要contentがgameplay contractを持てない場合は不採用とし、環境演出だけは承認済み`AmbientPurpose`で例外化する。
+
+Material dataは実在材ならSI単位、基準温度、出典／測定条件を持つ。架空材は`*_sim`または`world_calibrated_sim`と明記し、実測物性と呼ばない。どの値もheat、fracture、sound、handling、craftの少なくとも一つへ接続する。
+
+夏版はWorld Cell一件を人が構造化し、最小schema、stable ID参照、seed、provenance、hard validationだけを通す。geometry、PBR、rig、soundまで含む汎用compiler化はGate A＋B合格後に、繰り返しcostが実測できた工程だけへ適用する。

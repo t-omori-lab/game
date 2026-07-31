@@ -8,6 +8,8 @@ Status: v0.1 draft
 本書は、世界を拡張するときに守る感情・生活・設定の基準である。固有名を増やすための設定集ではなく、現時点の「確定」「仮説」「未決定」を分け、人物、地域、遺跡、道具、敵、同行者を同じ台帳で扱う。
 
 - 遊びの約束と現在の範囲: [GAME_BRIEF.md](./GAME_BRIEF.md)
+- 確定要求、提案中の作品核、次のproof: [GAME_CONSTITUTION.md](./GAME_CONSTITUTION.md)
+- 因果生成とvisual／asset統合案: [DESIGN_SYNTHESIS.md](./DESIGN_SYNTHESIS.md)
 - 実装済み事実と未確認事項: [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md)
 - 開発時generatorの規則: [GENERATION_RULES.md](./GENERATION_RULES.md)
 
@@ -61,7 +63,8 @@ open_questions:
 |---|---|---|---|---|---|
 | `tone.product.baseline` | confirmed | baselineは悲嘆ではなく、好奇心、仕事、修理、商売、食事、乾いたhumor | `sunlit-resilience`, `practical` | `GAME_BRIEF.md / World tone contract` | accepted |
 | `state.product.humanity` | confirmed | 人類は危機にあるが、まだ敗北していない | `crisis`, `not-defeated` | user direction, 2026-07-31 | accepted |
-| `tone.product.death` | confirmed | 死は突然かつ簡潔でよい。美化や長い哀歌ではなくworld stateへ残す | `brief-death`, `persistent-trace` | `work/notes.md / Optimistic post-apocalypse tone clarification` | accepted |
+| `tone.product.death` | confirmed | 死は突然かつ簡潔でよい。常に長い感傷や英雄化で包まない | `brief-death` | `work/notes.md / Optimistic post-apocalypse tone clarification` | accepted |
+| `system.product.death_trace` | hypothesis | 喪失を装備、仕事、寝床、噂、価格等のworld stateへ残す | `persistent-trace` | `DESIGN_SYNTHESIS.md / Death` | draft |
 | `lore.product.collapse_cause` | undecided | 文明崩壊の原因、年代、責任主体 | `collapse`, `open` | `PROJECT_CONTEXT.md / Boundaries` | draft |
 | `theme.product.primary_profile` | undecided | 妖怪、電脳怪異、旧文明技術の正式比率 | `theme-profile`, `open` | `GAME_BRIEF.md / Theme abstraction` | draft |
 
@@ -86,12 +89,12 @@ open_questions:
 ### 4.1 確定
 
 - `person.product.protagonist`: 開始時は単独。移動、近距離／遠距離物理、guard、回避、item、最終判断の主体。
-- 主人公は「選ばれた英雄」より、仕事と装備を得ながら生き方を選ぶ旅人を基準にする。
-- NPCは世界説明のためだけに立たせず、修理、調理、回収、交易、警戒、記録など現在の仕事を持つ。
-- 人物の死亡や離脱は、台詞だけでなく仕事、関係、在庫、居場所の変化へ接続する。
 
 ### 4.2 仮説
 
+- 主人公は「選ばれた英雄」より、仕事と装備を得ながら生き方を選ぶ旅人を比較案にする。
+- NPCは世界説明のためだけに立たせず、修理、調理、回収、交易、警戒、記録など現在の仕事を持つ。
+- 人物の死亡や離脱は、台詞だけでなく仕事、関係、在庫、居場所の変化へ接続する。
 - 人物roleは、回収者、修理者、調査者、運び手、商人、調理者、見張り、記録者など生活loopから作る。
 - 各人物は「いま必要なもの」「提供できるもの」「避けたい危険」「短い日課」を最低一つずつ持つ。
 - 背景説明より、依頼、交換、同行、修理、噂の更新を通して性格を見せる。

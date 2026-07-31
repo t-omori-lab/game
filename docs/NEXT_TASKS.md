@@ -4,13 +4,38 @@ Last updated: 2026-07-31
 
 ## P0
 
+- [ ] `GAME_CONSTITUTION.md`と`DESIGN_SYNTHESIS.md`をユーザーreviewし、二つの作品核を別々に判断する。
+  - Gate Aの「近接主体の手動hack-and-slash＋loot／build」と、Gate Bの「自由な放浪＋world memory」をそれぞれ`accepted`／`revise`／`reject`にする。
+  - death／継承、主人公一人か複数旅人か、残響基盤案、遠距離攻撃の位置、summer同行者一体か二体かは、核の承認後に決める。
+  - Done when: 各項目が`accepted`または比較testへ送られ、推奨defaultを無言で確定しない。
+- [ ] Gate Aの`Combat Feel Contract`、`Loot／Build Contract`、`Mobile Interaction Contract`を数値化する。
+  - aim assist、attack移動／cancel、間合い、hit stop、guard／dodge受付、敵予兆、tap／hold競合、safe area、loot比較／装備／分解を定義する。
+  - Counter cutterとBreach driverをhard gate、Resonance lineを同じ二frameへ付く手動active moduleの目標枠として仮data化し、DPS以外の機械的距離をtest項目にする。
+  - Done when: iPhone実機で比較する入力表、frame data、最低二build／目標三build、loot UI wireflow、合否質問が一式になる。
+- [ ] Gate Bの`World Loop Proof v0.2`をcode実装前に個別schemaへ分ける。
+  - `GameplayContract`、`WorldEvent`、`WorldState`、snapshot／migration、帰還時reducer、二つの同時目的、選んだ二対処、次回90秒以内の可視化を定義する。
+  - Event Log Liteとし、combat tick全件ではなくworldを変える高価値eventだけを保存する。
+  - IndexedDBはatomic snapshot、直前backup、checksum、quota error、`persisted()`／`persist()`、save export／importを持ち、SafariとHome Screen版のstorage自動継承を仮定しない。
+  - Done when: playerが対峙前に目的／routeを選べ、選んだeventから見た目一件＋gameplay一件の次回差分をtable testで説明できる。
+- [ ] `Visual Benchmark Scene`の比較仕様を作り、iPhone 16 Proで描画architectureを決める。
+  - C0では主人公、同行者、草地／遺構の小vignetteだけをliteral high-density voxel／semantic voxel surface／stylized low-polyで比較し、C1では勝った一案だけで開始町一画面を仕上げる。
+  - 同じC1 sceneを`webgpu-hdr-experiment`／`webgpu-sdr`／`webgl2-p3`／`webgl2-srgb`で比較する。
+  - 実`visualViewport`、safe area、internal scale、KTX2、MSAA、shadow、限定bloomを記録し、half-float、P3、HDR outputを別々に判定する。
+  - Done when: visual方式、backend、render scale、texture／shadow／post budgetが実機evidenceで決まり、voxel／WebGPU採用を名称だけで判断しない。
+- [ ] 主人公一体、同行者一体、武器一つで`AssetDNA` pilotを設計する。
+  - version付き`StyleProfile`と、gameplay role、silhouette、semantic parts、material、rig、socket、power／heat／mass、wear、mobile budgetを一つのschemaへ持たせる。
+  - AI 3Dはpart／static candidateに限定し、geometry、rig、collision、PBR、actual-camera readability、licenseを検査する。
+  - Done when: 同じDNAからgame data、geometry、material、icon、説明、validation reportを生成する一件分のcontractが揃う。
+- [ ] 夏版の生成実装は、手作業のWorld Cell一件＋最小schema／参照検査／provenanceへ限定する。
+  - 汎用geometry／PBR／rig／sound compiler、candidate registry UI、自動repair agentはGate A＋B合格後へ送る。
+  - Done when: 雨水再生塔cell一件を同じstable IDとGameplayContractで説明・検査でき、tool開発がgameplay proofを遅らせない。
 - [ ] 公開したVisual Pass Eを、commercial HD-2D完成版ではなくhybrid方向の比較候補としてユーザーreviewする。
   - 地面の質感、建物面、背景、player、生活感、戦闘視認性を分けて評価する。Visual Pass Dは不合格のため基準へ戻さない。
   - Done when: 次に直す一画面と、合格／不合格の理由を3点以内で固定する。
 - [ ] hybrid HD-2Dの次のsurface passを、start-town一画面へ限定して実装する。
   - realtime 3Dはmoving character、collision silhouette、occluder、dynamic shadowへ集中し、地面、道、建物面、背景は高解像度albedo、normal、roughness、baked detailを組み合わせる。
   - visualとcollisionの矛盾を自動検査し、生成assetにはsource、generator、制約、採否、content hashを残す。
-  - Done when: 大きな単色面、Minecraft的なblock感、surfaceの反復が焦点画面を支配せず、852×393でplayerとinteraction routeが読める。
+  - Done when: 大きな単色面、Minecraft的なblock感、surfaceの反復が焦点画面を支配せず、iPhoneの実`visualViewport`でplayerとinteraction routeが読める。
 - [ ] Visual Pass E以降のperformance budgetを実機結果から決め直す。
   - local候補は約47〜54fps、35 draw calls、約48〜49k visible trianglesであり、旧60fps目標を満たしたとは扱わない。
   - Done when: iPhone 16 ProのSafari／ホーム画面PWAで同一routeを計測し、内部解像度、pixel ratio、texture、shadowの調整順を決める。
@@ -48,6 +73,8 @@ Last updated: 2026-07-31
 
 ## Recently completed
 
+- [x] これまでの要求を、提案中の仮称「世界記憶型・放浪生活ハクスラ」として統合し、短い`GAME_CONSTITUTION.md`、Gate A／B／C、Causal World Cell、GameplayContract、StyleProfile／AssetDNA、mobile renderer tierを設計 — 2026-07-31
+- [x] Safari／Three.js／KTX2、2025〜2026年の3D／rig生成、PCG／LLM検証、Steam AI申告の一次資料を調査し、採用／保留境界を設計文書へ反映 — 2026-07-31
 - [x] Prototype 0.1を比較用のlocal commitとquery routeに保存 — 2026-07-30
 - [x] 16³ voxel core、hidden-face mesher、11 recipeを実装 — 2026-07-30
 - [x] Three.js固定俯瞰renderer、追従camera、連続scroll worldを実装 — 2026-07-30

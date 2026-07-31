@@ -173,3 +173,40 @@ Prototype 0.1「境界調査録」は、移動、自動攻撃、強化選択、�
 ### Status
 
 **Completed and publicly verified** — commit `773aaf6`をmainへpushし、GitHub Actions run #7のbuild／deploy成功を確認した。公開URLは新JS／WebPを配信し、852×393 mobile browserで60fps表示、MSAA、AgX、texture `ready`、double tap scale 1、browser error 0件を確認した。次のgateはユーザーart reviewとiPhone 16 Pro実機性能である。
+
+---
+
+## Current Iteration: Product Design Synthesis — 本当に作りたいゲームの設計統合
+
+### Trigger
+
+2026-07-31、ユーザーは現状を「最低限はできていた」と評価し、token制約下では追加実装より、これまでの要求の統合、不足設計の発見、具体的な実現方法の文書化を優先するよう指示した。
+
+### Goal
+
+Prototype Bの実装事実と、長期的に作りたい放浪・生活・ハクスラ・世界反応gameを分離して表現する。そのうえで、次の実装判断を可能にするcore loop、world persistence、死亡、装備build、非戦闘解決、同行者、地域構造、生成pipeline、visual／audio production、試遊gateの設計骨格を一つの正本へまとめる。追加要求として、iPhone前提で最もrichなvisual、主人公／同行者designの抜本改善、生成したworld／character／itemを因果とgameplayへ接続する独自pipelineを、2026年時点の一次資料と実装可能性に基づいて設計する。
+
+### Phases
+
+- [x] Phase S1: 既存brief、world bible、generation rules、decision log、user taste signal、Prototype Bの実装境界を監査する
+- [x] Phase S2: game identity、player fantasy、複数時間scaleのloop、明確なnon-goalを統合する
+- [x] Phase S2R: mobile WebGPU／WebGL、HDR／wide color、game-ready 3D生成、rigging、PBR、PCG／AI検証、Steam disclosureの最新一次資料を調査する
+- [x] Phase S3: 不足／未決定事項を優先度、影響、推奨default、要確認事項に分解する
+- [x] Phase S4: event-driven persistent world、build grammar、encounter resolution、companion roster、region graphの具体設計を作る
+- [x] Phase S5: summer vertical sliceのcontent budget、tiered mobile renderer、character／StyleProfile／AssetDNA、causal-first content generation、visual／audio contract、playtest gate、cut lineを固定する
+- [x] Phase S6: project docsを更新し、整合review、postflight、exact-scope local commitを行う
+
+### Working hypothesis
+
+本作の中心は「Vampire Survivors型の自動戦闘」でも「voxel rendererそのもの」でもない。小さくても記憶を持つ明るい崩壊世界を、自分の手で戦い、避け、交渉し、回収し、生活しながら放浪する生活型ハクスラである。一本の遠征のbuildと判断が、帰還／死亡後の噂、依頼、人物、敵、品物、地図へ巡り、次の旅の目的を生むことが最重要仮説である。
+
+### Constraints
+
+- このiterationでは実装、asset量産、deployを行わない。
+- 正式theme、主人公、死亡／継承方式など、ユーザー判断で体験が変わる事項を無断で確定しない。
+- commercial HD-2D品質は目標として保持するが、rendererの改善をcore-system証明の代替にしない。
+- 生成AIは開発時candidate生成に限定し、runtime規則、数値、save、合否を決めない。
+
+### Status
+
+**Completed locally** — `GAME_CONSTITUTION.md`と`DESIGN_SYNTHESIS.md`を中心に、Gate A／B／C、GameplayContract、夏版の最小World Cell、将来の因果世界コンパイラ、StyleProfile／AssetDNA、mobile renderer、art briefを統合した。独立したdesign／technical reviewを反映し、相対link、doc-only scope、`git diff --check`、Workspace postflightを合格した。game code、runtime asset、public build、deployは変更していない。

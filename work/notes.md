@@ -179,3 +179,55 @@
 - built HTMLのpreloadからhash付きWebPをservice workerのprecache対象へ含め、TextureLoader失敗時はvertex-color地面へfallbackする。
 - Vitest 116件、strict TypeScript、production build、852×393 production previewを通過。previewは60fps表示、35〜37 draw calls、49,520〜49,616 triangles、MSAA、AgX、texture `ready`、double tap scale 1、browser error 0件。asset遮断時はtexture `fallback`を確認した。
 - commit `773aaf6`のGitHub Actions run #7はbuild／deployとも成功。公開HTMLの新JS／WebP参照、JS／WebP／service worker／manifestのHTTPS 200、公開mobile browserの起動・操作・double tap抑止・texture `ready`を確認した。
+
+## Product design synthesis and 2026 technical research
+
+- 2026-07-31、ユーザーは追加実装を抑え、要求統合、不足設計、iPhone前提のrich visual、主人公／同行者design、生成world／assetをgameplayへ接続するlogicを先に進めるよう指示した。
+- 仮称「世界記憶型・放浪生活ハクスラ」は未承認の統合案。Gate Aのmanual action＋loot／buildと、Gate Bの自己目的＋world memoryを別々に証明し、Gate Cのvisual benchmarkを独立させる。
+- Prototype Bは一回の遠征、manual action、hybrid rendererの技術証明だが、combat feel contract、三build、スマホloot UI、同時目的、複数回の因果、同行者、経済、生成pipelineは未証明。
+- contentを単品で生成せず、共通GameplayContractと、旧用途、現在資源、actor need、衝突、証拠、複数対処、reward、world mutation、future hookを持つCausal World Cellとして生成する案を作った。
+- character／item／material／structureは、version付きStyleProfileとgameplay role、semantic parts、material、rig、socket、物理budget、来歴を持つAssetDNAからcompileする。AI生成meshは候補であり正本にしない。
+
+### Primary technical evidence
+
+- Safari 26はiOSを含めWebGPUを出荷し、HDR imageをWebGPU Canvasでも扱う。half-float内部照明、P3、HDR display outputは別能力として実機判定する。
+  - https://webkit.org/blog/16993/news-from-wwdc25-web-technology-coming-this-fall-in-safari-26-beta/
+  - https://webkit.org/blog/17333/webkit-features-in-safari-26-0/
+- Three.js WebGPURendererはWebGPUからWebGL2へfallbackできるが、manualはexperimentalと明記。ShaderMaterial／EffectComposer経路はTSL移行が必要。
+  - https://threejs.org/manual/en/webgpurenderer
+- KTX2／Basis Universalは配信sizeだけでなくGPU native textureへのtranscodeによりmemory、bandwidth、powerを減らす。
+  - https://www.khronos.org/news/press/khronos-ktx-2-0-textures-enable-compact-visually-rich-gltf-3d-assets
+- 2026年の個別研究はPBR、UV／normal bake、polygon control、GLB、rig生成の一部を前進させる。一つの公開toolがhero制作をend-to-endで保証するわけではなく、production-ready surveyはtopology、UV、PBR、rig、physics、scene assemblyを含むgapが残ると整理する。
+  - https://arxiv.org/abs/2605.26137
+  - https://github.com/TencentARC/Pixal3D
+  - https://github.com/microsoft/TRELLIS.2
+  - https://github.com/VAST-AI-Research/SkinTokens
+  - https://arxiv.org/abs/2604.23629
+- CubePart論文はpart-controllable生成の2026年research precedent。現公開codeは主に既存mesh＋part schemaからpart meshへ分解する。README、root license、checkpoint card間の適用範囲を明確に確認できないため、clearance完了までproduct dependencyにしない。
+  - https://about.roblox.com/publications/cubepart-open-vocabulary-part-controllable-3d-generator
+  - https://github.com/Roblox/cube/blob/main/LICENSE
+- missionとspaceを別々に生成して対応付ける方針は、action-adventure level生成の既存研究と一致する。WFCは局所pattern仕上げへ限定する。
+  - https://pcgworkshop.com/archive/dormans2010adventures.pdf
+  - https://github.com/mxgmn/WaveFunctionCollapse
+- RPGBenchはLLMが魅力的なstoryを作れても、長期stateとmechanicsの一貫性を崩しやすいと報告。GameGen-Verifierは仕様をkeypointへ分け、runtime state注入と短いinteractionで検査する方式を報告する。
+  - https://arxiv.org/abs/2502.00595
+  - https://arxiv.org/abs/2605.07442
+- NVIDIA Researchの「Fly, Fail, Fix」は、RL agentのplay traceをLMMが読み、configuration変更を提案するoffline design iterationを示す。自動適用ではなくhuman-approved reviewer候補として使う。
+  - https://research.nvidia.com/publication/2025-08_fly-fail-fix-iterative-game-repair-reinforcement-learning-and-large-multimodal
+- Steamworksは、gameへ同梱されplayerが消費するAI-assisted contentをpre-generated AI contentとして申告対象にする。live-generated AIには追加guardrail説明が必要。申告は法的clearanceではなく、提出時に規則を再確認する。
+  - https://partner.steamgames.com/doc/gettingstarted/contentsurvey?language=english
+- AI／画像／3D serviceは同じseedでもbyte一致を保証しない。procedural工程だけをseed replayし、AI raw outputはhash付きで凍結、再生成物は別candidateとして再承認する。
+  - https://cookbook.openai.com/examples/reproducible_outputs_with_the_seed_parameter
+- WebKit browser storageはbest-effortでevictionがあり得る。SafariとHome Screen Web Appのstorageは自動継承を仮定せず、persist request、atomic save、backup、export／importを設計する。
+  - https://webkit.org/blog/14403/updates-to-storage-policy/
+  - https://webkit.org/blog/14787/webkit-features-in-safari-17-2/
+- WebGL Display-P3はstock Three.js設定ではなく、現project固有のColorSpaces登録と`drawingBufferColorSpace` probeを含む経路として扱う。
+  - https://threejs.org/docs/pages/WebGLRenderer.html
+  - https://developer.apple.com/documentation/safari-release-notes/safari-16_4-release-notes
+
+### Research boundaries
+
+- WebGPU／HDRの公式supportは、iPhone 16 Proで本作が60fps／高画質になる証明ではない。Safari／home-screen PWAの10分実測が必要。
+- 3D generatorのdemo品質は、target topology、rig、collision、LOD、material数、license、actual-camera readabilityを満たす証明ではない。
+- AI seedはreplay保証ではなく、IndexedDBへの書込みは永続保証ではない。candidate freezeとsave exportを別の安全策として持つ。
+- GameplayContract、Causal World Cell、StyleProfile／AssetDNA、三gate、四profile rendererは既存知見を統合した本project向けdesign proposalであり、同一構成のproduct実証はまだない。

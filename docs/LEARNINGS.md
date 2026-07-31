@@ -35,6 +35,11 @@ Last updated: 2026-07-31
 
 ## Working hypotheses to validate
 
+- Prototype Bには二つの独立した不足がある可能性が高い。Gate Aでは手動combatの打撃感、loot比較、異なるbuildを、Gate Bでは自分で選ぶ同時目的と、一回目が二回目のloadout／routeを変える因果を別々に検証する。一方を他方の代替にしない。
+- 人物、monster、item、遺跡を単品生成するより、旧用途、現在資源、actor need、衝突、証拠、複数対処、reward、world mutation、future hookを一つのCausal World Cellとして先に作る方が、装飾的な生成物を減らし、gameplayへ接続しやすい可能性が高い。
+- 主人公／同行者の完成meshを一発生成するより、version付きStyleProfileと、role、silhouette、semantic parts、material、rig、socket、物理budget、wearを持つAssetDNAからgeometryとgame dataをcompileする方が、シリーズ内一貫性、mobile budget、item合成、破損表現を両立しやすい。最新3D／rig生成はpart／static candidateとして比較する。
+- literal high-density voxel、semantic voxel surface、stylized low-polyは、同じcamera、light、animation、effectで比較するまで優劣を確定しない。人型／犬猫の変形meshは、既知rigとedge loopを持つmodular topologyを正本にする案が安全である。
+- iPhone向けの最高品質層はWebGPU／HDRを試せるが、Three.js WebGPURendererはexperimentalであり、API移行だけでは美しさを保証しない。同一Visual Benchmark SceneをWebGPU／WebGL2、HDR／SDR、複数render scaleで実機比較し、baked hybrid、KTX2、character qualityの寄与を分離する。half-float内部照明、P3、HDR outputは別能力として測る。
 - fixed cameraでは、moving character、collision、occlusion、dynamic shadowだけをrealtime 3Dへ残し、地面、道、背景、建物面を高解像度生成／baked layerへ分けることで、見える面へquality budgetを集中できる可能性が高い。まだユーザーのart acceptanceは得ていない。light direction、palette、scale、contact shadowを同一camera previewで検査し、2D／3Dの貼り合わせ感が出ないか確かめる。
 - MSAA、高い内部解像度、AgX、生成textureの組合せがVisual Pass Dより商業HD-2D基準へ近づくかは未確認である。公開後のユーザーreviewをquality gateにする。
 

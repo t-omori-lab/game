@@ -4,6 +4,8 @@ Last updated: 2026-07-31
 
 ## Document map
 
+- 1ページの作品方針、確定要求、提案中の核、次のproof、要判断事項: [GAME_CONSTITUTION.md](./GAME_CONSTITUTION.md)
+- 要求統合、core loop、不足設計、mobile visual、character／world生成architecture、summer slice: [DESIGN_SYNTHESIS.md](./DESIGN_SYNTHESIS.md)
 - 世界、人物、地図、遺跡、item、monster、同行者の設定status: [WORLD_BIBLE.md](./WORLD_BIBLE.md)
 - 開発時生成、科学的／世界内制約、schema、provenance、人間採否: [GENERATION_RULES.md](./GENERATION_RULES.md)
 - 現在の実装事実、local／public／実機の確認境界: [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md)
@@ -14,6 +16,8 @@ Last updated: 2026-07-31
 正体不明の遺物が残る辺境を自由に歩き、自分で武器、防御、道具を使い、敵を倒すか別の方法で対処し、その選択が次の旅へ巡る生活型ハクスラを作る。
 
 豪華な素材量ではなく、武器の手触り、依頼、探索、遺物の奇妙な用途、世界反応の組合せで長く遊べることを目指す。
+
+設計上の仮称は「世界記憶型・放浪生活ハクスラ」。これは提案中の二つの核を統合する仮説であり、正式genre名や設定の確定ではない。作品方針は[GAME_CONSTITUTION.md](./GAME_CONSTITUTION.md)、詳細と現prototypeとの差は[DESIGN_SYNTHESIS.md](./DESIGN_SYNTHESIS.md)を正本とする。
 
 ## Prototype history
 
@@ -95,12 +99,13 @@ local実装済み:
 
 ### Multiple runs
 
-次sliceで実装する:
+Gate Bで最初に検証する:
 
 - 前回の対処が町の噂、価格、敵、信号のいずれかを変える。
-- 死亡した旅人の装備を宿敵が拾う。
-- 次の旅人は装備を奪還、回避、取引できる。
+- 同じ空間へ二つ以上の目的を置き、対峙前に目的／routeを自分で選べる。
 - 前回の結果は次回開始90秒以内に見える。
+
+死亡した旅人の装備を宿敵が拾い、次の旅人が奪還、回避、取引する仕組みは有力な拡張案だが、Gate Bの最小scopeには含めない。
 
 ## Current content budget
 
@@ -132,8 +137,10 @@ local実装済み:
 - moving character、collision silhouette、occluder、dynamic shadow、interactive effectは、hidden faceを除去したgeometryを含むrealtime 3Dで描画する。
 - 地面、道、背景、建物面はvoxelへ固執せず、高解像度の生成／baked albedo、normal、roughness、detail layerを使える。ただし固定camera内でscale、palette、light direction、contact shadowを3D assetと一致させる。
 - world canvasはMSAAと十分な内部解像度をbaselineにし、HUDはcrispなHTML/CSSに分離する。低解像度nearest-neighbor拡大を画面全体の標準にはしない。
-- tone mappingはAgX、色出力はsRGBをbaselineとする。Display-P3はdeviceとWebGL contextの対応時だけ有効化し、HDR的な明暗と色を目指してもtrue HDR達成済みとは扱わない。
-- textureはmipmap、anisotropy、適切なUV scaleを持ち、seam、反復pattern、圧縮artifact、戦闘視認性を852×393 previewで検査する。
+- tone mappingはAgX、色出力はsRGBをbaselineとする。Display-P3は現project固有のcolor-space登録と`drawingBufferColorSpace` probeが通るときだけ有効化し、stock Three.js設定とはみなさない。HDR的な明暗と色を目指してもtrue HDR達成済みとは扱わない。
+- literal high-density voxel、semantic voxel surface、stylized low-polyを、同じcamera、light、animation、effectで比較してからcharacter表現を決める。
+- version付き`StyleProfile`でcamera、world scale、light、palette、material family、texel density、edge、shadow、摩耗、LOD、effect密度を全assetへ共有する。
+- textureはmipmap、anisotropy、適切なUV scaleを持ち、seam、反復pattern、圧縮artifact、戦闘視認性をiPhoneの実`visualViewport`で検査する。
 - sage、花、淡い石、陽光、錆、陶器、修理布を使い、荒廃の中に生活と色を残す。signal cyan、warning amber、danger redは意味色として限定する。
 - hemisphere／directional key light、限定shadow、blob shadow、fog、effect-linked point light、attack arc、ring、voxel burstを使う。
 - 生活の痕跡として、修理跡、掲示物、容器、配線、鉢植え、洗濯、食事や仕事の道具を、戦闘視認性を壊さない範囲で置く。
@@ -177,14 +184,29 @@ local実装済み:
 
 ## Success gates
 
+### Gate A — Hack-and-build
+
 - 30秒以内に説明なしで移動と手動攻撃が成立する。
-- 90秒以内に二武器の差またはguard／回避の成功を体感できる。
-- 10分以内に名付き異形へ到達し、三つの対処の意味を理解できる。
-- 遊んだ後に「武器の違い」と「オリソンへ何をしたか」を説明できる。
-- 一回の結果が次回90秒以内に見える。
-- iPhone 16 Proで10分間、操作不能や継続的な30fps未満がない。
-- 15遠征でクラッシュ、進行不能、save破損が0件。
-- 8分遊んだ本人が自発的に二回目を始めたくなる。
+- 90秒以内に武器差またはguard／回避の成功を体感できる。
+- 最低二buildについて、数値以外の立ち回り差と代償を説明できる。第三buildは目標枠として別判定する。
+- lootの比較、装備、保管／分解を小画面で迷わず行える。
+
+### Gate B — Roam-and-memory
+
+- 対峙前に、二つ以上の候補から今回の目的またはrouteを自分で選んだと認識できる。
+- 一回の結果が次回90秒以内に見た目とgameplayを一件ずつ変える。
+- 「何が変わったか」「なぜ変わったか」「そのため次に何を変えたか」を説明できる。
+- atomic save、直前backup、checksum、export／importが成立し、Safari版とHome Screen版のstorageを自動的に同一とみなさない。
+- 15遠征でcrash、進行不能、save破損が0件。
+
+### Gate C — Visual benchmark
+
+- 主人公＋同行者＋小背景vignetteを三表現で同条件比較し、一案を採用できる。
+- 勝った一案だけで開始町一画面を仕上げ、商業品質方向の基準sceneにできる。
+- iPhone 16 Proで10分間、操作不能、500ms級停止、戻せない拡大がない。
+- 選択profileのp95 frame-time目標、safe area、実`visualViewport`、色、発熱観察を記録する。
+
+内部gameplay proofはGate A＋Bで成立する。ユーザーへ目標品質の完成候補として公開する版はGate A＋B＋Cすべての合格を必要とする。
 
 ## Non-goals for the first release
 

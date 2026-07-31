@@ -19,12 +19,14 @@ Last updated: 2026-07-31
 - 同行者は一体だけの固定partnerではなく、旅の途中で発見／加入し、人型robot、犬／猫、犬型／猫型robot、人物など複数候補から交代できるrosterとする。開始時は主人公単独。
 - Visual Pass Dはstart-townの高密度props、生活の痕跡、24×32×16 playerまで実装したが、ユーザーはantialiasingの不足、地面／背景textureの弱さ、map全体の粗さを理由に「まだ全く美しくない」と評価した。Visual Pass Dはcommercial art gate不合格である。
 - 固定cameraのため、map、ground、building、objectをすべてvoxel／3Dへ限定せず、moving character、collision、occlusion、dynamic shadowはrealtime 3D、surfaceと背景は高解像度生成／baked assetを使うhybrid HD-2D方針へ変更した。
-- Visual Pass Eのlocal中間候補は、WebGL MSAA、854×480基準の内部解像度、AgX tone mapping、sRGB baseline、対応環境だけのDisplay-P3、1024×1024生成meadow textureを統合した。開始時の調査灯型robotは非表示を維持した。
+- Visual Pass Eのlocal中間候補は、WebGL MSAA、854×480基準の内部解像度、AgX tone mapping、sRGB baseline、現project固有のcolor-space登録と`drawingBufferColorSpace` probeが通る環境だけのDisplay-P3、1024×1024生成meadow textureを統合した。開始時の調査灯型robotは非表示を維持した。
 - start-townの修理跡、畑、洗濯、作業台、道具等の生活表現を維持し、見た目上solidなfixture 6区画へsimulation colliderを接続した。町のrouteと掲示板interactionは回帰testで到達可能を維持した。
 - Visual Pass E候補はVitest 116件、strict TypeScript、production buildが合格した。852×393のproduction previewでは60fps表示、35〜37 draw calls、49,520〜49,616 visible triangles、double tap前後scale 1／offset 0、browser error 0件、ground textureの`ready`を観測した。別検査でtexture取得を強制失敗させた場合も`fallback`表示へ移行した。
 - `WORLD_BIBLE.md`と`GENERATION_RULES.md`をv0.1 draftとして追加し、設定の確定／仮説／未決定と、開発時生成のseed、schema、provenance、検証、人間採否、fallbackを分離した。
 - GitHub Actions run #7はcommit `773aaf6`のbuild／deployに成功した。公開HTMLは新しい`index-JIEoGgMy.js`と`reclaimed-meadow-v1-CgTL2cqk.webp`を参照し、JS、WebP、service worker、manifestがHTTPSで200応答した。
 - 公開URLの852×393 mobile Chromeで起動、武器切替、攻撃、移動、double tapを実行し、60fps表示、37 draw calls、49,616 triangles、MSAA、AgX、texture `ready`、scale 1／offset 0、browser error 0件を確認した。
+- ユーザーはtoken制約下で追加実装を増やさず、これまでの要求、不足している検討、具体的な設計、iPhone前提のrich visual、主人公／同行者design、生成world／assetをgameplayへ接続する方法を先に進めるよう指示した。
+- `docs/GAME_CONSTITUTION.md`と`docs/DESIGN_SYNTHESIS.md`をlocalに追加し、確定要求と設計提案を分離した。仮称「世界記憶型・放浪生活ハクスラ」を、Gate Aの手動action＋loot／buildと、Gate Bの自由な放浪＋world memoryに分け、Gate Cのvisual比較を独立させた。GameplayContract、Causal World Cell、StyleProfile／AssetDNA、Event Log Lite、残響基盤は未採用のdesign proposalであり、runtime、asset、公開buildは変更していない。
 
 ## Pending confirmation
 
@@ -37,8 +39,13 @@ Last updated: 2026-07-31
 - [ ] 10分遊んだ本人が自発的に二回目を始めたくなるか。
 - [ ] 前回の依頼結果を次回90秒以内に認識できる永続loopが成立するか。
 - [ ] HTTPS環境でPWA install、offline再起動、IndexedDB保存が成立するか。
+- [ ] IndexedDBのatomic snapshot、quota／eviction対応、persist request、export／import、Safari版からHome Screen版への移行方針が成立するか。
 - [ ] local修正版で、iPhone 16 ProのSafari／ホーム画面PWAともdouble tap拡大が再発しないか。
 - [ ] Visual Pass E公開後の実利用、Steam審査、販売が生じた場合は別途記録する。
+- [ ] Gate Aの「近接主体の手動hack-and-slash＋loot／build」とGate Bの「自由な放浪＋world memory」が、それぞれユーザー意図に合うか。
+- [ ] death／succession、残響基盤、主人公形式、同行者summer scopeの設計提案がユーザー意図に合うか。
+- [ ] literal high-density voxel、semantic voxel surface、stylized low-polyを同条件で比較した結果、どのvisual identityを採るか。
+- [ ] WebGPU／HDR、KTX2、Visual Benchmark Scene、AssetDNA、Causal World CellがiPhone 16 Pro上で知覚品質、performance、制作効率、gameplay改善へ実際につながるか。
 
 ## Rule
 

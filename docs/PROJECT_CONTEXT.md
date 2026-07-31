@@ -2,7 +2,7 @@
 
 Last updated: 2026-07-31  
 Status: active  
-Phase: Prototype B public / Visual Pass E intermediate evaluation build
+Phase: Prototype B public / product design synthesis
 
 ## Purpose
 
@@ -31,7 +31,7 @@ Phase: Prototype B public / Visual Pass E intermediate evaluation build
 - 852×393のlocal mobile ChromeでVisual Pass Cを確認し、上下左右のsilhouette、worldの視認性、60fps表示、26 draw calls、22,148 trianglesを観測した。double tap後もscale 1、offset 0を維持した。
 - ユーザーはVisual Pass Cを、map／building／objectが大きなbox中心でMinecraft的、鮮やかさと魅力も不足すると評価した。次のquality barは『OCTOPATH TRAVELER』等の商業HD-2D作品であり、Visual Pass Cはart acceptanceに未達。
 - Visual Pass Dではstart-townへmulti-part architecture、修理跡、畑、洗濯、作業台、道具、生活小物と24×32×16 playerを追加した。しかしユーザーは、antialiasingの不足、平坦な地面／背景texture、map全体の粗さを理由に「まだ全く美しくない」と明確に評価し、Visual Pass Dをcommercial-quality art gateとして却下した。
-- Visual Pass Eのlocal中間候補では、WebGL MSAA、高精度shader、854×480基準の内部解像度、AgX tone mapping、mipmap／anisotropyを備えた1024×1024の開発時生成meadow textureを導入した。出力はsRGBをbaselineとし、Display-P3はdeviceとWebGL contextの両方が対応するときだけ有効にする。
+- Visual Pass Eのlocal中間候補では、WebGL MSAA、高精度shader、854×480基準の内部解像度、AgX tone mapping、mipmap／anisotropyを備えた1024×1024の開発時生成meadow textureを導入した。出力はsRGBをbaselineとし、Display-P3は現project固有の`ColorSpaces.js`登録と`drawingBufferColorSpace` probeが通るときだけ有効にする。
 - Visual Pass Eは、固定cameraを活かし、地面／背景／建物面を2D生成・bakeできるhybrid HD-2Dの最初の技術候補である。現時点では地面albedo一枚が主なsurface改善で、商業HD-2Dと同等の仕上がりを意味しない。
 - start-townで見た目上solidな掲示板、作業場、修理台、街灯、菜園、crate群の6区画をsimulation colliderへ接続し、表示物をすり抜けない状態にした。町の主要routeと掲示板interactionはtestで到達可能を維持した。
 - 同行者は開始時の固定相棒にせず、world内で発見／加入し、複数候補から交代するroster構想へ変更した。調査灯型robotは候補assetとして保持するが、通常の開始画面では非表示にする。
@@ -40,6 +40,8 @@ Phase: Prototype B public / Visual Pass E intermediate evaluation build
 - GitHub Actions run #7はcommit `773aaf6`のbuild／deployに成功した。公開HTMLが`index-JIEoGgMy.js`と`reclaimed-meadow-v1-CgTL2cqk.webp`を参照し、JS、WebP、service worker、manifestがHTTPSで200応答することを確認した。
 - 公開URLを852×393のmobile Chromeで起動・操作し、60fps表示、37 draw calls、49,616 triangles、MSAA、AgX、ground textureの`ready`、double tap前後scale 1／offset 0、browser error 0件を確認した。
 - 世界、人物、地図、遺跡、item、monster、同行者の状態と出典を分離する`docs/WORLD_BIBLE.md`と、開発時生成、schema、seed、provenance、検証、人間採否、fallbackを定める`docs/GENERATION_RULES.md`をv0.1 draftとして追加した。
+- 2026-07-31、ユーザーは追加実装より、これまでの要求、不足設計、具体的な実現方法を先に整理するよう指示した。`docs/GAME_CONSTITUTION.md`と`docs/DESIGN_SYNTHESIS.md`へ、仮称「世界記憶型・放浪生活ハクスラ」を、Gate Aの手動action＋loot／build、Gate Bの自己目的＋world memory、Gate Cのvisual比較へ分離してdesign proposalとして記録した。GameplayContract、Event Log Lite、Causal World Cell、StyleProfile／AssetDNA、mobile renderer tierも未採用の設計案である。
+- 最新一次資料の調査では、Safari 26のWebGPU／HDR Canvas、Three.js WebGPURendererのWebGL2 fallbackとexperimental status、KTX2／Basisのmobile texture利点、2025〜2026年のPBR／rig-aware 3D生成、LLM game-state一貫性とkeypoint validationの現状を確認した。これらは候補技術の確認であり、本project上の実機性能やproduction採用を意味しない。
 
 ## Creative reference notes
 
@@ -59,8 +61,11 @@ Phase: Prototype B public / Visual Pass E intermediate evaluation build
 - 三つの依頼結果はsimulation testで到達確認済みだが、local browserで開始から帰還までの10分通し試遊は未完了。
 - Prototype 0.1の`WorldLegacy v1`、A/B save、IndexedDBはrepository内に残るが、Prototype Bの依頼結果／途中状態にはまだ接続していない。
 - PWA shellは公開HTTPS上で配信され、Chromeのinstall候補までは確認済み。iPhoneでのホーム画面追加、offline再起動、Prototype B asset cacheは実機未確認。
+- Safari tabとHome Screen Web AppのIndexedDB saveは自動継承を仮定できない。Prototype B永続化ではatomic snapshot、quota／eviction、persist request、export／import、初回移行を別gateにする。
 - 世界観、舞台、主人公、妖怪と電脳怪異の比率は未確定。現在のSF辺境は着せ替え可能な仮設定。
 - 生成ガバナンスは文書化したが、offline generator、schema検査、candidate registry、human curation UIは未実装。runtime AIは接続していない。
+- `GAME_CONSTITUTION.md`と`DESIGN_SYNTHESIS.md`の二つの作品核、GameplayContract、Causal World Cell、残響基盤、三visual表現、WebGPU／HDR profile、StyleProfile／AssetDNA、death／succession、World Loop Proof v0.2は設計提案であり、ユーザーの正式採用、runtime実装、asset生成、実機合格はまだない。
+- このdesign synthesis iterationではgame code、runtime asset、public buildを変更しておらず、deployも行っていない。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff
