@@ -47,7 +47,7 @@ local実装済み:
 - AIによる検査済みcontent pipeline。
 - 地面、道、建物面、背景をcommercial benchmarkまで仕上げる複数surface material pipeline。
 - iPhone 16 Pro実機の10分性能合格、HTTPS PWA install、Steam包装。
-- Visual Pass EのGitHub Pages反映とユーザーart acceptance。
+- 公開Visual Pass Eのユーザーart acceptance。
 
 ## Confirmed taste signals
 

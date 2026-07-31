@@ -2,7 +2,7 @@
 
 Last updated: 2026-07-31  
 Status: active  
-Phase: Prototype B public baseline / Visual Pass E local deployment candidate
+Phase: Prototype B public / Visual Pass E intermediate evaluation build
 
 ## Purpose
 
@@ -37,6 +37,8 @@ Phase: Prototype B public baseline / Visual Pass E local deployment candidate
 - 同行者は開始時の固定相棒にせず、world内で発見／加入し、複数候補から交代するroster構想へ変更した。調査灯型robotは候補assetとして保持するが、通常の開始画面では非表示にする。
 - Visual Pass Eの852×393 local mobile Chromeでは、約47〜54fps、35 draw calls、約48〜49k visible trianglesを観測した。double tap前後はscale 1、offset 0を維持し、browser errorは観測されなかった。60fps目標への到達とiPhone 16 Pro実機性能は未確認。
 - 最終production previewでは60fps表示、35〜37 draw calls、49,520〜49,616 visible triangles、ground textureの`ready`、double tap前後scale 1／offset 0、browser error 0件を確認した。texture要求を遮断した別検査では`fallback`へ移行した。いずれもiPhone実機性能の証明ではない。
+- GitHub Actions run #7はcommit `773aaf6`のbuild／deployに成功した。公開HTMLが`index-JIEoGgMy.js`と`reclaimed-meadow-v1-CgTL2cqk.webp`を参照し、JS、WebP、service worker、manifestがHTTPSで200応答することを確認した。
+- 公開URLを852×393のmobile Chromeで起動・操作し、60fps表示、37 draw calls、49,616 triangles、MSAA、AgX、ground textureの`ready`、double tap前後scale 1／offset 0、browser error 0件を確認した。
 - 世界、人物、地図、遺跡、item、monster、同行者の状態と出典を分離する`docs/WORLD_BIBLE.md`と、開発時生成、schema、seed、provenance、検証、人間採否、fallbackを定める`docs/GENERATION_RULES.md`をv0.1 draftとして追加した。
 
 ## Creative reference notes
@@ -51,7 +53,7 @@ Phase: Prototype B public baseline / Visual Pass E local deployment candidate
 - double tap修正は公開mobile Chromeで確認済みだが、iPhone 16 ProのSafari／ホーム画面PWAでの再確認は未完了。
 - Visual Pass Cはlocal browserでのみ確認済みで、ユーザーのart acceptanceには不合格。GitHub Pagesへは反映しない。
 - Visual Pass Dはユーザーreviewで不合格となり、Visual Pass Eのhybrid方針へ置き換えた。
-- Visual Pass Eはlocalの中間公開候補であり、GitHub Pagesへの反映、公開assetの応答、service worker更新、公開画面の一致はまだ確認していない。
+- Visual Pass EはGitHub Pagesへ反映した中間評価版であり、公開asset、service worker、公開画面の一致を確認済み。商業HD-2D同等の完成やユーザーart acceptanceを意味しない。
 - AgX tone mapping、広い色域、明るいemissiveはHDR的な見え方を助けるが、現在のWebGL出力をtrue HDRと断定しない。Display-P3は対応device／browserだけのprogressive enhancementである。
 - Visual Pass Eのlocal計測は60fps目標を下回る観測を含む。iPhone 16 Proでのfps、発熱、battery、Safari/PWA color出力は未確認。
 - 三つの依頼結果はsimulation testで到達確認済みだが、local browserで開始から帰還までの10分通し試遊は未完了。
@@ -59,7 +61,7 @@ Phase: Prototype B public baseline / Visual Pass E local deployment candidate
 - PWA shellは公開HTTPS上で配信され、Chromeのinstall候補までは確認済み。iPhoneでのホーム画面追加、offline再起動、Prototype B asset cacheは実機未確認。
 - 世界観、舞台、主人公、妖怪と電脳怪異の比率は未確定。現在のSF辺境は着せ替え可能な仮設定。
 - 生成ガバナンスは文書化したが、offline generator、schema検査、candidate registry、human curation UIは未実装。runtime AIは接続していない。
-- Git remoteと従来版のGitHub Pages公開は完了している。Visual Pass Eの公開とSteam公開は確認していない。
+- Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff
 

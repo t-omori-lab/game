@@ -4,9 +4,6 @@ Last updated: 2026-07-31
 
 ## P0
 
-- [ ] Visual Pass Eの中間候補をrelease gateへ通し、GitHub Pagesへ反映する。
-  - Vitest 116件、strict TypeScript、production build、production previewは合格済み。GitHub Actions、公開asset／service worker、公開画面を順に確認する。
-  - Done when: 最新commitのdeploy成功と公開URLの一致を直接確認し、従来公開版とlocal候補を取り違えない。
 - [ ] 公開したVisual Pass Eを、commercial HD-2D完成版ではなくhybrid方向の比較候補としてユーザーreviewする。
   - 地面の質感、建物面、背景、player、生活感、戦闘視認性を分けて評価する。Visual Pass Dは不合格のため基準へ戻さない。
   - Done when: 次に直す一画面と、合格／不合格の理由を3点以内で固定する。
@@ -66,4 +63,5 @@ Last updated: 2026-07-31
 - [x] Visual Pass Eのlocal中間候補へMSAA、高内部解像度、AgX、条件付きDisplay-P3、生成meadow texture、ground overscanを実装 — 2026-07-31
 - [x] start-townのsolid-looking fixture 6区画へsimulation colliderを追加し、route／掲示板到達性を回帰testで維持 — 2026-07-31
 - [x] `WORLD_BIBLE.md`と`GENERATION_RULES.md`を追加し、設定statusと開発時生成ガバナンスをv0.1 draftとして固定 — 2026-07-31
-- [x] Visual Pass E候補でVitest 116件、strict TypeScript、production build、production preview、texture fallbackを確認。公開反映とiPhone実機性能は未確認 — 2026-07-31
+- [x] Visual Pass E候補でVitest 116件、strict TypeScript、production build、production preview、texture fallbackを確認。iPhone実機性能は未確認 — 2026-07-31
+- [x] commit `773aaf6`をGitHub Pagesへ反映し、run #7成功、新JS／WebP／service worker／manifestの200応答と公開mobile browser操作を確認 — 2026-07-31

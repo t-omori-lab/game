@@ -23,11 +23,12 @@ Last updated: 2026-07-31
 - start-townの修理跡、畑、洗濯、作業台、道具等の生活表現を維持し、見た目上solidなfixture 6区画へsimulation colliderを接続した。町のrouteと掲示板interactionは回帰testで到達可能を維持した。
 - Visual Pass E候補はVitest 116件、strict TypeScript、production buildが合格した。852×393のproduction previewでは60fps表示、35〜37 draw calls、49,520〜49,616 visible triangles、double tap前後scale 1／offset 0、browser error 0件、ground textureの`ready`を観測した。別検査でtexture取得を強制失敗させた場合も`fallback`表示へ移行した。
 - `WORLD_BIBLE.md`と`GENERATION_RULES.md`をv0.1 draftとして追加し、設定の確定／仮説／未決定と、開発時生成のseed、schema、provenance、検証、人間採否、fallbackを分離した。
+- GitHub Actions run #7はcommit `773aaf6`のbuild／deployに成功した。公開HTMLは新しい`index-JIEoGgMy.js`と`reclaimed-meadow-v1-CgTL2cqk.webp`を参照し、JS、WebP、service worker、manifestがHTTPSで200応答した。
+- 公開URLの852×393 mobile Chromeで起動、武器切替、攻撃、移動、double tapを実行し、60fps表示、37 draw calls、49,616 triangles、MSAA、AgX、texture `ready`、scale 1／offset 0、browser error 0件を確認した。
 
 ## Pending confirmation
 
 - [ ] Prototype Bのユーザー試遊評価がPrototype 0.1の約20点から改善するか。
-- [ ] Visual Pass EがGitHub Pagesへ反映され、公開asset、service worker、画面がlocal候補と一致するか。
 - [ ] Visual Pass Eのhybrid方向がユーザーのcommercial benchmarkへ近づいたと評価されるか。現時点でcommercial HD-2Dと同等とは確認されていない。
 - [ ] 高密度playerが通常画面で成立し、調査灯型robotが開始時非表示のままroster候補assetとして別previewで成立するか。
 - [ ] Display-P3、AgX、emissiveがiPhone 16 ProのSafari／PWAで意図した色と階調になるか。true HDR出力は未確認。

@@ -149,7 +149,7 @@ Prototype 0.1「境界調査録」は、移動、自動攻撃、強化選択、�
 - [x] Phase E3: 開発時生成した高解像度ground albedoを最適化・provenance記録し、continuous groundへ適用する
 - [x] Phase E4: solid-looking town decorとauthoritative collisionを一致させ、route／interactionを再検証する
 - [x] Phase E5: world bible／generation rules／project docsを完成し、tests、type、build、browser QA、postflightを通す
-- [ ] Phase E6: exact-scope commitをmainへpushし、GitHub Pages workflowとpublic URLを確認する
+- [x] Phase E6: exact-scope commitをmainへpushし、GitHub Pages workflowとpublic URLを確認する
 
 ### Decisions Made
 
@@ -172,4 +172,4 @@ Prototype 0.1「境界調査録」は、移動、自動攻撃、強化選択、�
 
 ### Status
 
-**Currently in Phase E6** — collision整合、色管理、texture precache／fallback、durable docs、Vitest 116件、strict TypeScript、production build、852×393 production preview、postflightは合格済み。exact-scope commit、main push、GitHub Pagesとpublic URLの確認を続行する。
+**Completed and publicly verified** — commit `773aaf6`をmainへpushし、GitHub Actions run #7のbuild／deploy成功を確認した。公開URLは新JS／WebPを配信し、852×393 mobile browserで60fps表示、MSAA、AgX、texture `ready`、double tap scale 1、browser error 0件を確認した。次のgateはユーザーart reviewとiPhone 16 Pro実機性能である。

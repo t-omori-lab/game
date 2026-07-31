@@ -178,3 +178,4 @@
 - generated meadowへ置換済みの旧start-town ground receiverを生成しないようにし、draw callを12から11へ削減した。
 - built HTMLのpreloadからhash付きWebPをservice workerのprecache対象へ含め、TextureLoader失敗時はvertex-color地面へfallbackする。
 - Vitest 116件、strict TypeScript、production build、852×393 production previewを通過。previewは60fps表示、35〜37 draw calls、49,520〜49,616 triangles、MSAA、AgX、texture `ready`、double tap scale 1、browser error 0件。asset遮断時はtexture `fallback`を確認した。
+- commit `773aaf6`のGitHub Actions run #7はbuild／deployとも成功。公開HTMLの新JS／WebP参照、JS／WebP／service worker／manifestのHTTPS 200、公開mobile browserの起動・操作・double tap抑止・texture `ready`を確認した。
