@@ -25,6 +25,11 @@ Phase: Prototype B public playable
 - 防御と移動は押す順にかかわらず一度だけ回避へなり、保持中は防御へ戻る。縦画面／background中はsimulationと操作を止め、復帰時の入力と音の蓄積をresetする。
 - 852×393相当のlocal browserで、60fps表示、開始、依頼受注、武器切替、scroll移動、敵接近、敗北、再開を確認。観測値は初期画面で約25 draw calls／約18k triangles。browser consoleのerror／warningは0件。
 
+## Creative reference notes
+
+- 探索場面のBGMイメージとして、MYUKKE.「Go, Go, Heartbreaker!」を参照する。
+- 参照するのは、移動を前へ押すテンポ感、高揚感の中にある切なさ、探索を「旅の時間」として感じさせる感情設計。旋律、編曲、音色は直接模倣せず、オリジナルのprocedural music／soundscapeへ翻訳する。
+
 ## Boundaries
 
 - Prototype Bは新しい遊びの核を評価する原型であり、完成ゲームではない。
