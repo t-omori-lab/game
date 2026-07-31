@@ -25,6 +25,7 @@ Phase: Prototype B public playable
 - 防御と移動は押す順にかかわらず一度だけ回避へなり、保持中は防御へ戻る。縦画面／background中はsimulationと操作を止め、復帰時の入力と音の蓄積をresetする。
 - 852×393相当のlocal browserで、60fps表示、開始、依頼受注、武器切替、scroll移動、敵接近、敗北、再開を確認。観測値は初期画面で約25 draw calls／約18k triangles。browser consoleのerror／warningは0件。
 - スマホ実機でdouble tapすると拡大したまま戻せない報告を受け、固定倍率のviewport指定を外し、全UIへ`touch-action: manipulation`、joystick／action buttonへ`touch-action: none`を直接適用した。852×393のlocal mobile Chromeではdouble tap前後ともscale 1、offset 0を維持した。
+- GitHub Actions run #5でcommit `da3b8cf`のbuild／deploy成功を確認した。公開URLを852×393のmobile Chromeで開き、double tap前後ともscale 1、offset 0を維持した。
 
 ## Creative reference notes
 
@@ -35,7 +36,7 @@ Phase: Prototype B public playable
 
 - Prototype Bは新しい遊びの核を評価する原型であり、完成ゲームではない。
 - local mobile相当browserの結果は、iPhone 16 Pro実機性能、発熱、touch感触、音量balance、Safari/PWA適合の証明ではない。
-- double tap修正はlocal mobile Chromeで確認済みだが、iPhone 16 ProのSafari／ホーム画面PWAでの再確認と公開反映は未完了。
+- double tap修正は公開mobile Chromeで確認済みだが、iPhone 16 ProのSafari／ホーム画面PWAでの再確認は未完了。
 - 三つの依頼結果はsimulation testで到達確認済みだが、local browserで開始から帰還までの10分通し試遊は未完了。
 - Prototype 0.1の`WorldLegacy v1`、A/B save、IndexedDBはrepository内に残るが、Prototype Bの依頼結果／途中状態にはまだ接続していない。
 - PWA shellは公開HTTPS上で配信され、Chromeのinstall候補までは確認済み。iPhoneでのホーム画面追加、offline再起動、Prototype B asset cacheは実機未確認。

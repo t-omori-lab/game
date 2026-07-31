@@ -10,6 +10,7 @@ Last updated: 2026-07-31
 - 公開repository `https://github.com/t-omori-lab/game`を作成し、Prototype Bを`https://t-omori-lab.github.io/game/`へ公開した。
 - GitHub Actions run #3はcommit `3375470`のbuild／deployに成功した。公開URL、manifest、service worker、共有画像はHTTPSで200応答し、Chromeでタイトル、縦向き案内、PWA install候補を確認した。
 - iPhone 16 Proの実機試遊で、double tapにより画面が拡大し、元の倍率へ戻せなくなる不具合が確認された。
+- GitHub Actions run #5はdouble tap修正commit `da3b8cf`のbuild／deployに成功した。公開URLのmobile Chromeではdouble tap前後ともscale 1、offset 0を維持した。
 
 ## Pending confirmation
 
