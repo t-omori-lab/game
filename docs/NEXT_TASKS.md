@@ -1,22 +1,27 @@
 # Next Tasks: ゲーム開発
 
-Last updated: 2026-07-31
+Last updated: 2026-08-01
 
 ## P0
 
-- [ ] `GAME_CONSTITUTION.md`と`DESIGN_SYNTHESIS.md`をユーザーreviewし、二つの作品核を別々に判断する。
-  - Gate Aの「近接主体の手動hack-and-slash＋loot／build」と、Gate Bの「自由な放浪＋world memory」をそれぞれ`accepted`／`revise`／`reject`にする。
-  - death／継承、主人公一人か複数旅人か、残響基盤案、遠距離攻撃の位置、summer同行者一体か二体かは、核の承認後に決める。
-  - Done when: 各項目が`accepted`または比較testへ送られ、推奨defaultを無言で確定しない。
-- [ ] Gate Aの`Combat Feel Contract`、`Loot／Build Contract`、`Mobile Interaction Contract`を数値化する。
-  - aim assist、attack移動／cancel、間合い、hit stop、guard／dodge受付、敵予兆、tap／hold競合、safe area、loot比較／装備／分解を定義する。
+- [ ] Gate Aの`Combat Feel Contract`、`Loot／Build Contract`、`Mobile Interaction Contract`を半自動戦闘用に数値化する。
+  - `Acquire → Windup → Hit → Recover`、target score／drop、attack中の移動／cancel、成立間合い、攻撃周期、manual skill、敵予兆、safe area、loot比較／装備／分解を定義する。
+  - guard／dodge、item、target上書き、通常の同行者行動、遠距離通常攻撃をどこまで手動にするか、二案以内で比較する。
+  - 遠距離通常攻撃は画面外、遮蔽越し、無制限追尾を禁止し、名付き敵の立ち止まり／manual skillなし安定勝利をhard failにする。
   - Counter cutterとBreach driverをhard gate、Resonance lineを同じ二frameへ付く手動active moduleの目標枠として仮data化し、DPS以外の機械的距離をtest項目にする。
-  - Done when: iPhone実機で比較する入力表、frame data、最低二build／目標三build、loot UI wireflow、合否質問が一式になる。
+  - Done when: iPhone実機で比較する入力表、target／frame data、最低二build／目標三build、loot UI wireflow、合否質問が一式になり、30秒でauto-engage、90秒でmanual skillを理解できる。
 - [ ] Gate Bの`World Loop Proof v0.2`をcode実装前に個別schemaへ分ける。
-  - `GameplayContract`、`WorldEvent`、`WorldState`、snapshot／migration、帰還時reducer、二つの同時目的、選んだ二対処、次回90秒以内の可視化を定義する。
+  - `GameplayContract`、`WorldEvent`、`WorldState`、`BaseSite`、`BaseModule`、`BaseEvent`、帰還時reducer、次回90秒以内の可視化を定義する。
+  - 性質の異なる拠点候補地二つ、稼働拠点一つ、機能module候補二つ以上／設置一つへ限定し、reclaim／foundを同じ状態遷移で扱う。
   - Event Log Liteとし、combat tick全件ではなくworldを変える高価値eventだけを保存する。
-  - IndexedDBはatomic snapshot、直前backup、checksum、quota error、`persisted()`／`persist()`、save export／importを持ち、SafariとHome Screen版のstorage自動継承を仮定しない。
-  - Done when: playerが対峙前に目的／routeを選べ、選んだeventから見た目一件＋gameplay一件の次回差分をtable testで説明できる。
+  - Done when: 二つの拠点候補を自己目的として選べ、選んだsite／moduleから見た目一件＋gameplay一件の次回差分をtable testで説明できる。
+- [ ] Gate A／Bとは別に`Release Durability Contract`を固定する。
+  - IndexedDBはversion付きsnapshot／migration、atomic snapshot、直前backup、checksum、quota error、`persisted()`／`persist()`、save export／importを持ち、SafariとHome Screen版のstorage自動継承を仮定しない。
+  - Done when: 両候補地経路を含む15遠征でcrash、進行不能、save破損0件となり、reload／migration／export／import後もsite、module、item参照が一致する。
+- [ ] 現代都市の自然侵食を、最初の一地域の`World Cell`へ具体化する。
+  - 旧用途、水／日照／土壌、植生遷移、現在の生活、資源、危険、route、拠点候補を同じ因果で記述する。
+  - 崩壊原因、経過年数、地域、共同体密度、妖怪／残響基盤の関係は未決定のまま比較可能にする。
+  - Done when: recognizableな現代infra、自然侵食、回収、拠点、encounterが一つの`WorldCellSpec`から説明できる。
 - [ ] `Visual Benchmark Scene`の比較仕様を作り、iPhone 16 Proで描画architectureを決める。
   - C0では主人公、同行者、草地／遺構の小vignetteだけをliteral high-density voxel／semantic voxel surface／stylized low-polyで比較し、C1では勝った一案だけで開始町一画面を仕上げる。
   - 同じC1 sceneを`webgpu-hdr-experiment`／`webgpu-sdr`／`webgl2-p3`／`webgl2-srgb`で比較する。
@@ -47,9 +52,9 @@ Last updated: 2026-07-31
   - 公開URL: `https://t-omori-lab.github.io/game/`
   - 開始、依頼板、移動、二武器、guard／回避、遺物、item、loot、名付き反響体、帰還の順に確認する。
   - Done when: 操作不能、誤入力、文字、safe area、音の判別、発熱、fps低下、もう一度遊びたいか、100点中の評価を記録する。
-- [ ] 実機結果を基に、最初の敵とtouch操作を一度だけ調整する。
-  - 特に「移動しながら防御で回避」が説明なしで伝わるか、最初の屑鉄猟犬が練習相手として強すぎないかを見る。
-  - Done when: 30秒以内に移動と手動攻撃が成立し、90秒以内に武器差またはguard成功を体感できる。
+- [ ] Prototype Bの実機結果を比較baselineとして凍結した後、別routeでGate Aの半自動戦闘spikeを作る。
+  - Prototype Bの手動攻撃／guardを製品目標として再調整せず、weapon一系統、格下敵一体、名付き敵一体で`Acquire → Windup → Hit → Recover`とmanual skillを比較する。
+  - Done when: 30秒以内にauto-engageを理解し、90秒以内にmanual skillを使い、格下は自動処理できる一方、名付き敵は立ち止まり／大技なしでは安定勝利できない。
 - [ ] Prototype Bの開始から三結果・町帰還までをbrowser E2Eで固定する。
   - Done when: 破壊、鎮静、接続の三経路で進行不能がなく、結果画面まで自動検査できる。
 - [ ] Prototype Bの依頼結果をversion付きsaveへ接続する。
@@ -59,7 +64,7 @@ Last updated: 2026-07-31
 
 - [ ] Prototype B評価後、発見／加入／交代できる同行者rosterを設計する。
   - 人型robot、犬／猫、犬型／猫型robot、人物などを同じ外見や役割へ均さず、加入経緯、性格、得意行動、補給方法を個別化する。
-  - Done when: 開始時は単独、world内で加入、少なくとも一体を選んで交代、待機場所、自動戦闘ではない命令型能力、離脱／再加入の扱いを一枚の状態遷移で説明できる。
+  - Done when: 開始時は単独、world内で加入、少なくとも一体を選んで交代、待機場所、通常行動とは別の有限resource命令、拠点role、離脱／再加入の扱いを一枚の状態遷移で説明できる。
 - [ ] 同じsystemへ「妖怪寄り」と「電脳怪異／旧文明寄り」のtheme profileを仮着せし、固有性、読みやすさ、展開可能性で比較する。
 - [ ] 名前、噂、依頼文、VoxelRecipe、遺物解説を生成するoffline AI pipelineを設計する。
   - `WORLD_BIBLE.md`と`GENERATION_RULES.md`を入力契約とし、AI出力はJSON schema検査と人間の採否を通し、runtime判定へ直接つながない。
@@ -73,6 +78,7 @@ Last updated: 2026-07-31
 
 ## Recently completed
 
+- [x] 自由放浪、world memory、Elona Mobile型の半自動戦闘、自然に侵食された現代都市、自築拠点を上位方向として作品憲法と設計正本へ反映 — 2026-08-01
 - [x] これまでの要求を、提案中の仮称「世界記憶型・放浪生活ハクスラ」として統合し、短い`GAME_CONSTITUTION.md`、Gate A／B／C、Causal World Cell、GameplayContract、StyleProfile／AssetDNA、mobile renderer tierを設計 — 2026-07-31
 - [x] Safari／Three.js／KTX2、2025〜2026年の3D／rig生成、PCG／LLM検証、Steam AI申告の一次資料を調査し、採用／保留境界を設計文書へ反映 — 2026-07-31
 - [x] Prototype 0.1を比較用のlocal commitとquery routeに保存 — 2026-07-30

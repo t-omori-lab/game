@@ -231,3 +231,14 @@
 - 3D generatorのdemo品質は、target topology、rig、collision、LOD、material数、license、actual-camera readabilityを満たす証明ではない。
 - AI seedはreplay保証ではなく、IndexedDBへの書込みは永続保証ではない。candidate freezeとsave exportを別の安全策として持つ。
 - GameplayContract、Causal World Cell、StyleProfile／AssetDNA、三gate、四profile rendererは既存知見を統合した本project向けdesign proposalであり、同一構成のproduct実証はまだない。
+
+## Semi-auto combat, overgrown city, self-built base clarification
+
+- 2026-08-01、ユーザーは移動／action／戦闘styleとして、Elona Mobileに近い「通常戦闘は自動、大技skill発動は手動」が最も近いと明示した。
+- 過去の不合格は自動化一般ではなく、固定arenaで接近、位置取り、target、撤退を必要とせず、常時自動遠隔攻撃を眺めるタワーディフェンス的な構造だったと再解釈する。
+- 確定方向は、手動移動／接敵／位置取り／撤退、条件付き自動通常攻撃、手動大技。target上書き、guard／dodge、item、通常の同行者行動をどこまで手動に残すかは比較案。
+- 自由放浪とworld memoryは基本方針として支持された。
+- 人類は激減し、識別可能な現代都市とinfraが植物、水、動物、新しい生活へ自然侵食／転用されている。NieR:Automataは危機と鮮やかな自然が同居する構造参照であり、固有設定、景観、asset、構図は模倣しない。
+- 既存遺構を復旧するか、条件の合う土地を選び、playerが自分の拠点を築く。完全自由配置、複数拠点、移転、維持、襲撃は未決定。
+- 夏版の推奨縮小形は、拠点候補地二つ、稼働拠点一つ、機能module候補二つ以上／設置一つ。次回90秒以内にvisualとgameplayを一件ずつ変え、放浪の成果をworld memoryとして見せる。
+- 拠点は探索80％／拠点20％程度の錨として扱い、完全自由な床／壁／家具editor、入植者仕事割当、offline待機生産、定期wave防衛へ広げない。

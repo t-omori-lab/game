@@ -1,7 +1,7 @@
 # World Bible: 辺境遺物録（仮）
 
-Last updated: 2026-07-31  
-Status: v0.1 draft
+Last updated: 2026-08-01  
+Status: v0.2 draft
 
 ## 1. この文書の役割
 
@@ -48,7 +48,7 @@ provenance:
   - source: docs/GAME_BRIEF.md
     section: Confirmed taste signals
     recorded_at: 2026-07-31
-summary: 開始時は単独で、自分の移動と戦闘判断を担う旅人。
+summary: 開始時は単独で、自分の移動、位置取り、撤退、大技の判断を担う旅人。
 open_questions:
   - 出身、年齢、外見、過去、固有名
 ```
@@ -62,7 +62,8 @@ open_questions:
 | Stable ID | Status | Contract | Tags | Provenance | Revision |
 |---|---|---|---|---|---|
 | `tone.product.baseline` | confirmed | baselineは悲嘆ではなく、好奇心、仕事、修理、商売、食事、乾いたhumor | `sunlit-resilience`, `practical` | `GAME_BRIEF.md / World tone contract` | accepted |
-| `state.product.humanity` | confirmed | 人類は危機にあるが、まだ敗北していない | `crisis`, `not-defeated` | user direction, 2026-07-31 | accepted |
+| `state.product.humanity` | confirmed | 人類は激減し危機にあるが、まだ敗北していない | `population-collapse`, `crisis`, `not-defeated` | user direction, 2026-08-01 | accepted |
+| `environment.product.overgrown_modern_city` | confirmed | 現代都市とinfraが植物、水、動物、新しい生活へ侵食・転用されている | `modern-city`, `reclaimed-nature`, `sunlit-ruin` | user direction, 2026-08-01 | accepted |
 | `tone.product.death` | confirmed | 死は突然かつ簡潔でよい。常に長い感傷や英雄化で包まない | `brief-death` | `work/notes.md / Optimistic post-apocalypse tone clarification` | accepted |
 | `system.product.death_trace` | hypothesis | 喪失を装備、仕事、寝床、噂、価格等のworld stateへ残す | `persistent-trace` | `DESIGN_SYNTHESIS.md / Death` | draft |
 | `lore.product.collapse_cause` | undecided | 文明崩壊の原因、年代、責任主体 | `collapse`, `open` | `PROJECT_CONTEXT.md / Boundaries` | draft |
@@ -71,6 +72,8 @@ open_questions:
 ### 3.2 描写の基準
 
 - 廃墟は過去の墓標だけでなく、屋根を継ぎ、湯を沸かし、畑を作り、洗濯物を干す現在の生活場所として描く。
+- 舞台の基層は識別可能な現代都市とし、道路、集合住宅、鉄道、駅、店舗、office、学校、病院、上下水、送電設備などの旧用途が読めるようにする。
+- 自然侵食は無秩序な草の散布ではなく、日照、水系、土壌、建物の亀裂、人と動物の利用から、植生と新しいrouteが生じた状態として描く。
 - 明るい昼光、自然、水、錆、陶器、修理布、看板を使い、危険は敵のsilhouette、赤橙の予兆、resource不足、音へ局所化する。
 - 人々は危機を理解しているが、毎回演説しない。まず手を動かし、直し、売り、食べ、移動する。
 - humorは漫才ではなく、奇妙な副作用、現場の工夫、生活者の慣れから生む。
@@ -88,7 +91,7 @@ open_questions:
 
 ### 4.1 確定
 
-- `person.product.protagonist`: 開始時は単独。移動、近距離／遠距離物理、guard、回避、item、最終判断の主体。
+- `person.product.protagonist`: 開始時は単独。移動、接敵、位置取り、撤退、大技、item、最終判断の主体。通常戦闘は装備規則により自動化する。
 
 ### 4.2 仮説
 
@@ -114,22 +117,36 @@ open_questions:
 
 共同体は最低限、食料／水、修理、休息、情報、危険への対処をどう成立させているか説明できること。統治制度、人口、宗教、通貨、他共同体との関係は未決定であり、固有名から先に固定しない。
 
+### 5.1 Player-built base
+
+| Stable ID | Status | Summary | Tags | Provenance | Revision |
+|---|---|---|---|---|---|
+| `base.product.player_built` | confirmed direction | 既存遺構を復旧するか条件の合う土地を選び、playerが自分の拠点を築く | `reclaim`, `found`, `world-memory` | user direction, 2026-08-01 | accepted direction |
+| `base.product.site_contract` | hypothesis | 土地の水、電力、交通、遮蔽、危険、拡張性が機能と代償を決める | `site-choice`, `tradeoff` | `DESIGN_SYNTHESIS.md / Base as world memory` | draft |
+| `base.product.module_contract` | hypothesis | storage、workshop、power／water等のmoduleが新しいverbと次回差分を作る | `module`, `gameplay-effect` | `DESIGN_SYNTHESIS.md / Base as world memory` | draft |
+
+拠点は自然を消して旧都市を元通りにするものではなく、既存構造、生態、水、光、回収部品を修理・転用する。正式な配置自由度、複数拠点、移転、維持、襲撃の有無は未決定。夏版では候補地二つと機能module候補二つ以上／今回設置一つでworld memoryへの接続だけを試す。
+
 ## 6. 世界地図
 
 ### 6.1 確定
 
 - 自由放浪と短い依頼を両立し、町、移動路、危険地域、遺跡、帰還の関係が読める地図にする。
+
+### 6.2 設計仮説
+
 - 世界はplayerの外でも続いている感覚を持つが、初期版で全NPCの常時simulationは行わない。
 - 行動結果は帰還時などのevent-driven更新で次の旅へ反映する。
+- playerの拠点候補地、稼働拠点、復旧／設置したmoduleをworld map上の恒久stateとして持つ。
 
-### 6.2 現在のprototype scope
+### 6.3 現在のprototype scope
 
 | Stable ID | Status | Summary | Canonicality |
 |---|---|---|---|
 | `map.prototype_b.primary` | confirmed | 町―三叉路―廃区を連続scrollする3,600×1,800 world | Prototype B only |
 | `map.product.primary` | undecided | 完成版の世界形状、地域数、距離、境界 | Not fixed |
 
-### 6.3 地図が持つ情報
+### 6.4 地図が持つ情報
 
 - 地域node、接続route、移動cost、危険度、補給点、landmark、撤退先。
 - 共同体の仕事と遺跡の用途がrouteで接続している理由。
@@ -145,7 +162,7 @@ open_questions:
 | `region.product.settlement_edge` | hypothesis | 仕事、依頼、補給、帰還 | 安全寄りだが生活上の問題がある |
 | `region.product.travel_corridor` | hypothesis | 移動、遭遇、分岐、landmark | 見通しと退避場所 |
 | `region.product.recovery_zone` | hypothesis | 遺物回収、解析対象、環境hazard | 高い報酬と明確な撤退判断 |
-| `region.product.reclaimed_nature` | hypothesis | 自然侵食、食料、水、別の生態 | 人工物だけではない世界の回復 |
+| `region.product.reclaimed_nature` | confirmed direction | 現代都市への自然侵食、食料、水、新しい生態 | 旧infraの用途が読め、人工物だけではない世界の回復 |
 
 各地域は、visual paletteだけでなく「ここで何をして暮らすか」「何を持ち帰るか」「何を恐れるか」を一文ずつ持つ。
 
@@ -187,7 +204,8 @@ open_questions:
 
 ### 10.1 確定
 
-- 戦闘はplayerの手動攻撃、防御、回避、持替を中心にする。
+- playerが移動、接敵、位置取り、撤退を行い、通常戦闘は自動、大技skillは手動で発動する。
+- 固定arenaで常時自動遠隔攻撃を眺める形にはせず、武器ごとにtarget取得、成立間合い、攻撃周期、移動拘束、resourceを持つ。
 - 武器差はdamageだけでなく、間合い、速度、impact、resource、危険性、音で判別できるようにする。
 - 強さはrank文字ではなく数値軸で管理する。
 
@@ -226,7 +244,7 @@ open_questions:
 - 一体だけの固定partnerではなく、加入済みrosterから旅へ連れていく相手を交代できる。
 - 候補は人物、人型robot、犬／猫、犬型／猫型robot、遺物解析機など。生物と機械を同じ外見や補給法へ均さない。
 - 各同行者は加入経緯、性格、得意行動、補給方法、会話反応、関係変化、待機場所を持つ。
-- 目的は自動戦闘の追加ではない。playerの通常actionと、命令する有限resource行動を分ける。
+- 通常行動は自動化できるが、受動DPSだけの枠にしない。探索verb、拠点role、playerが命令する有限resource行動を分ける。
 
 ### 12.2 仮説
 
@@ -250,6 +268,7 @@ open_questions:
 | 修理する | 部品、工具、耐久、時間 | 装備性能、仕事、共同体の機能 |
 | 補給・充電する | 燃料、電力、薬、弾薬 | route選択、同行者能力、遠征長 |
 | 解析する | 遺物、知識、危険、時間 | 新しい用途、売価、依頼、誤作動情報 |
+| 拠点を復旧・築く | 土地、旧設備、資材、電力、水、時間 | 帰還先、storage、工房、route、同行者の居場所、地域の注目 |
 | 売る・交換する | 回収物、評判、需要 | 価格、品揃え、関係、噂 |
 | 休む・野営する | 時間、安全、天候、見張り | world進行、短い反応、襲撃risk |
 | 弔う・片付ける | 遺品、空いた役割、記録 | 噂、継承、宿敵、共同体の変化 |
@@ -304,13 +323,16 @@ open_questions:
 
 優先して決める順序は次の通り。
 
-1. 正式theme profileと、世界固有法則の範囲。
-2. 主人公、最初の共同体、最初のregionの役割と関係。
-3. 遺物技術の制約、energy源、故障と副作用。
-4. monsterの発生法則と、破壊以外の対処が成立する条件。
-5. 同行枠、待機、離脱、再加入、維持resource。
-6. 世界地図のscale、地域数、移動時間、world update単位。
-7. 音楽の制作方法、権利処理、loop仕様、実機speaker基準。
+1. 人類激減と都市崩壊の原因、経過年数、地域、共同体密度。
+2. 正式theme profileと、世界固有法則の範囲。
+3. 主人公、最初の共同体、最初のregionの役割と関係。
+4. 遺物技術の制約、energy源、故障と副作用。
+5. monsterの発生法則と、破壊以外の対処が成立する条件。
+6. 半自動戦闘のtarget、防御／回避、item、遠距離攻撃の手動範囲。
+7. 拠点の配置自由度、複数化、移転、維持、襲撃の有無。
+8. 同行枠、待機、離脱、再加入、維持resource。
+9. 世界地図のscale、地域数、移動時間、world update単位。
+10. 音楽の制作方法、権利処理、loop仕様、実機speaker基準。
 
 固有名、年代、組織図から先に埋めない。上記がgameplayへ与える差を先にprototypeし、採用後に名称を決める。
 

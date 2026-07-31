@@ -210,3 +210,38 @@ Prototype Bの実装事実と、長期的に作りたい放浪・生活・ハク
 ### Status
 
 **Completed locally** — `GAME_CONSTITUTION.md`と`DESIGN_SYNTHESIS.md`を中心に、Gate A／B／C、GameplayContract、夏版の最小World Cell、将来の因果世界コンパイラ、StyleProfile／AssetDNA、mobile renderer、art briefを統合した。独立したdesign／technical reviewを反映し、相対link、doc-only scope、`git diff --check`、Workspace postflightを合格した。game code、runtime asset、public build、deployは変更していない。
+
+---
+
+## Current Iteration: Semi-auto combat, overgrown city, self-built base
+
+### Trigger
+
+2026-08-01、ユーザーは目標戦闘をElona Mobileに近い「移動は手動、通常戦闘は自動、大技skillは手動」と明示した。また、自由放浪とworld memoryを支持し、人類が激減した現代都市を自然が侵食する世界、自分で場所を選んで築く拠点を作品の方向として追加した。
+
+### Goal
+
+過去の「常時自動遠隔攻撃は合わない」という試遊結果を、あらゆる自動戦闘の否定と誤読せず、位置取りと重要判断をplayerへ残す半自動戦闘へ再定義する。放浪、回収、拠点選定／復旧／建築、world memoryを一つの複数遠征loopへ統合し、夏版で検証できる最小scopeを定める。
+
+### Phases
+
+- [x] Phase R1: 最新の確定事項と既存設計の矛盾箇所を監査する
+- [x] Phase R2: 半自動戦闘の入力、targeting、手動介入、停止条件のdraft contract骨格を作る
+- [x] Phase R3: 自由放浪、拠点、world memoryを結ぶ最小loopとdraft schema骨格を作る
+- [x] Phase R4: 作品憲法、統合設計、brief、world bible、generation rules、project台帳を更新する
+- [x] Phase R5: 相対link、表現整合、doc-only scope、Workspace postflightを検査し、exact-scope local commitを行う
+
+### Working hypothesis
+
+嫌だったのは「固定arenaで常時自動遠隔攻撃を眺めること」であり、通常攻撃の自動化そのものではない。移動、接敵距離、向き、target優先、撤退と、大技、防御、item、同行者命令などの有限介入を手動にすれば、smartphoneの操作負荷を下げながらbuildと判断を濃くできる。拠点は単なるmenuではなく、選んだ土地、持ち帰った部品、加入者、過去の遠征が物理的に積み上がるworld memoryの表示面にする。
+
+### Constraints
+
+- Prototype Bの手動戦闘は過去の実装事実として保持し、目標仕様と混同しない。
+- 通常攻撃以外のどこまでを自動／手動にするかは、設計提案と確定要求を分ける。
+- 夏版で無制限の地形編集や建築editorは作らない。候補地選択と機能module設置で核を試す。
+- このiterationではcode、asset、public build、deployを変更しない。
+
+### Status
+
+**Completed locally** — 半自動戦闘、自然侵食された現代都市、最小拠点loopを文書へ反映した。独立design reviewでP0残件0を確認し、`git diff --check`、相対link、確定／仮説境界、Workspace postflightが合格した。game code、runtime asset、public build、deployは変更していない。

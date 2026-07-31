@@ -1,12 +1,12 @@
 # Project Context: ゲーム開発
 
-Last updated: 2026-07-31  
+Last updated: 2026-08-01  
 Status: active  
-Phase: Prototype B public / product design synthesis
+Phase: Prototype B public / product design refinement
 
 ## Purpose
 
-仕組みと遊び方で長く遊べる、スマホ対応の生活型ハクスラを開発する。短い依頼と手動戦闘を入口に、装備、異形への対処、帰還結果が次の旅へ巡る小さな自由世界を目指す。初版はブラウザ／PWAで反復し、ゲーム核の合格後にSteam向けdesktop包装を検討する。
+仕組みと遊び方で長く遊べる、スマホ対応の生活型ハクスラを開発する。自然に侵食された現代都市を自由に放浪し、通常戦闘は自動、大技は手動で介入する。装備、異形への対処、回収、拠点づくり、帰還結果が次の旅へ巡る小さなworldを目指す。初版はブラウザ／PWAで反復し、ゲーム核の合格後にSteam向けdesktop包装を検討する。
 
 ## Confirmed current state
 
@@ -41,6 +41,7 @@ Phase: Prototype B public / product design synthesis
 - 公開URLを852×393のmobile Chromeで起動・操作し、60fps表示、37 draw calls、49,616 triangles、MSAA、AgX、ground textureの`ready`、double tap前後scale 1／offset 0、browser error 0件を確認した。
 - 世界、人物、地図、遺跡、item、monster、同行者の状態と出典を分離する`docs/WORLD_BIBLE.md`と、開発時生成、schema、seed、provenance、検証、人間採否、fallbackを定める`docs/GENERATION_RULES.md`をv0.1 draftとして追加した。
 - 2026-07-31、ユーザーは追加実装より、これまでの要求、不足設計、具体的な実現方法を先に整理するよう指示した。`docs/GAME_CONSTITUTION.md`と`docs/DESIGN_SYNTHESIS.md`へ、仮称「世界記憶型・放浪生活ハクスラ」を、Gate Aの手動action＋loot／build、Gate Bの自己目的＋world memory、Gate Cのvisual比較へ分離してdesign proposalとして記録した。GameplayContract、Event Log Lite、Causal World Cell、StyleProfile／AssetDNA、mobile renderer tierも未採用の設計案である。
+- 2026-08-01、ユーザーは目標戦闘をElona Mobileに近い「通常戦闘は自動、大技skillは手動」と明示し、自由放浪とworld memoryを支持した。人類が激減し、現代都市を自然が侵食したpost-apocalypse、既存遺構の復旧または選んだ土地への自築拠点も上位方向として確認した。Prototype Bの手動戦闘は実装事実として残るが、製品目標は半自動戦闘へ更新する。
 - 最新一次資料の調査では、Safari 26のWebGPU／HDR Canvas、Three.js WebGPURendererのWebGL2 fallbackとexperimental status、KTX2／Basisのmobile texture利点、2025〜2026年のPBR／rig-aware 3D生成、LLM game-state一貫性とkeypoint validationの現状を確認した。これらは候補技術の確認であり、本project上の実機性能やproduction採用を意味しない。
 
 ## Creative reference notes
@@ -62,9 +63,9 @@ Phase: Prototype B public / product design synthesis
 - Prototype 0.1の`WorldLegacy v1`、A/B save、IndexedDBはrepository内に残るが、Prototype Bの依頼結果／途中状態にはまだ接続していない。
 - PWA shellは公開HTTPS上で配信され、Chromeのinstall候補までは確認済み。iPhoneでのホーム画面追加、offline再起動、Prototype B asset cacheは実機未確認。
 - Safari tabとHome Screen Web AppのIndexedDB saveは自動継承を仮定できない。Prototype B永続化ではatomic snapshot、quota／eviction、persist request、export／import、初回移行を別gateにする。
-- 世界観、舞台、主人公、妖怪と電脳怪異の比率は未確定。現在のSF辺境は着せ替え可能な仮設定。
+- 人類激減、自然に侵食された現代都市は確認済みの舞台条件。崩壊原因、経過年数、地域、共同体密度、主人公、妖怪と電脳怪異の比率は未確定。現在の固有名とSF辺境の詳細は仮設定。
 - 生成ガバナンスは文書化したが、offline generator、schema検査、candidate registry、human curation UIは未実装。runtime AIは接続していない。
-- `GAME_CONSTITUTION.md`と`DESIGN_SYNTHESIS.md`の二つの作品核、GameplayContract、Causal World Cell、残響基盤、三visual表現、WebGPU／HDR profile、StyleProfile／AssetDNA、death／succession、World Loop Proof v0.2は設計提案であり、ユーザーの正式採用、runtime実装、asset生成、実機合格はまだない。
+- 自由放浪、world memory、半自動戦闘、自然に侵食された現代都市、自築拠点は確認済みの上位方向。targeting、防御／itemの手動範囲、拠点配置粒度、GameplayContract、Causal World Cell、残響基盤、三visual表現、WebGPU／HDR profile、StyleProfile／AssetDNA、death／succession、World Loop Proof v0.2の具体仕様は設計提案であり、runtime実装、asset生成、実機合格はまだない。
 - このdesign synthesis iterationではgame code、runtime asset、public buildを変更しておらず、deployも行っていない。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 

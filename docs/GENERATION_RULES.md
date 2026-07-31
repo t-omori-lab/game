@@ -1,7 +1,7 @@
 # Generation Rules: 開発時content生成
 
-Last updated: 2026-07-31  
-Status: v0.1 draft
+Last updated: 2026-08-01  
+Status: v0.2 draft
 
 ## 1. 原則
 
@@ -334,6 +334,16 @@ AIは名称、外観motif、観察記録候補を提案できる。hit判定、A
 }
 ```
 
+完成版weapon candidateには、物理構造に加えて`combat_execution`を必須にする。
+
+- `mode`: `auto-basic`／`manual-skill`／`manual-utility`。
+- `acquire`: target候補、距離、入力方向、脅威、遮蔽のscore。
+- `drop`: 射程外、遮蔽、撤退入力、target無効化時の解除条件。
+- `cycle`: windup、hit、recovery、次周期、移動scale、cancel条件。
+- `manual_override`: 大技、防御、item、target上書きが通常周期へどう割り込むか。
+
+武器生成はDPSだけでなく、target取得、成立間合い、移動拘束、攻撃周期、manual skillの時機の差を検査する。固定位置のまま全targetへ常時自動遠隔攻撃するcandidateは、作品憲法違反としてrejectする。遠距離通常攻撃は画面外、遮蔽越し、無制限追尾でtargetを維持しない。名付き敵とのsimulationでは、立ち止まり／manual skillなしの安定勝利をhard failとし、位置変更、撤退、大技のいずれかを要求する。
+
 ### 10.3 数値軸
 
 強さの正本はrank文字ではなく、少なくとも次の数値軸で持つ。
@@ -492,3 +502,59 @@ Character、item、monster、ruin、quest、visual、audioは同じcellとcontra
 Material dataは実在材ならSI単位、基準温度、出典／測定条件を持つ。架空材は`*_sim`または`world_calibrated_sim`と明記し、実測物性と呼ばない。どの値もheat、fracture、sound、handling、craftの少なくとも一つへ接続する。
 
 夏版はWorld Cell一件を人が構造化し、最小schema、stable ID参照、seed、provenance、hard validationだけを通す。geometry、PBR、rig、soundまで含む汎用compiler化はGate A＋B合格後に、繰り返しcostが実測できた工程だけへ適用する。
+
+## 19. 拠点候補・module・event生成
+
+`上位方向は確定。以下の生成contractは設計提案・未実装`
+
+拠点をdecorative housingとして生成せず、**場所と設備の選択が次の遠征を変えるか**を正本にする。夏版では候補地二つ、稼働拠点一つ、機能module候補二つ以上／設置一つに限定し、完全自由な床／壁／家具editor、複数拠点物流、定期wave防衛、offline待機生産を作らない。
+
+### 19.1 BaseSite
+
+候補地のtraitは無関係なlabel抽選ではなく、world map、旧用途、地形、現在の生態から導出する。
+
+```text
+河川／配管への近さ → 水利用 + 浸水risk
+標高／開口部          → 通信範囲 + 露出
+旧送電設備            → 電力 + 機械異常
+道路／鉄道            → 移動効率 + 人や敵の往来
+植生密度              → 資源／遮蔽 + 視界不良／根の損傷
+既存建物              → 屋根／storage + 故障／占有者／旧用途
+```
+
+各候補地は次を満たす。
+
+- 明確な長所一つ以上、短所一つ以上、その土地固有の可能性一つ以上。
+- 主要routeから到達でき、遠征対象までの距離と撤退経路を計算できる。
+- 他候補とのtrait vectorが十分に異なり、同costの完全上位互換がない。
+- `reclaim`なら旧設備と故障／占有、`found`なら水／電力／資材の自力確保を持つ。
+- camera、collision、interaction、建築可能範囲が一致する。
+
+### 19.2 BaseModule
+
+moduleは受動数値だけでなく、`analyze`、`refit`、`scan`、`rest`、`store`等の新しいverbを一つ以上持つ。`inputs`、`prerequisites`、`upkeep`、`emissions`（heat、noise、signal）、`gameplayEffects`、`visibleChanges`、`sourceItemIds`を記録する。土地traitとの相性が、効果と代償の両方へ現れるようにする。
+
+### 19.3 BaseEvent
+
+eventは無関係な抽選箱から出さず、次の因果から候補を作る。
+
+```text
+土地trait
++ 設置module
++ heat／noise／signal等の放出
++ 地域の勢力／生態／異常
++ 過去event
+→ BaseEvent候補
+```
+
+各eventは共通`WorldEvent`の`eventId`、単調増加`sequence`、`worldTurn`、`rulesVersion`、`contentPackId`を持ち、payloadへ`causedBy`、`WorldDelta`、外見差分、次のhookを入れる。player判断を要求する`BaseDamaged`／`BaseFunctionChanged`等だけは、最低二つの対応とcostを持つ。重大な`BaseSiteSurveyed`、`BaseClaimed`、`BaseModuleInstalled`、`BaseDamaged`、`BaseAbandoned`、`BaseFunctionChanged`だけをEvent Log Liteへ保存し、清掃や細かな配置操作をすべてevent化しない。
+
+### 19.4 Hard validation
+
+- 候補地ごとの長所／短所を到着前または調査時に読める。
+- module選択が次の補給、route、loadout、同行者、危険の少なくとも一つを変える。
+- 次回90秒以内に同じ原因からvisual差分とgameplay差分が一つずつ現れる。
+- save／reload後にsnapshotの`lastAppliedEventSequence`／`lastAppliedEventId`、site、installed module、event、source item、rules／content pack versionの参照が一致する。
+- procedural工程は同じseed／versionから同じ候補地を再現する。
+- soft lock、到達不能、無限資源、唯一の完全上位候補、目的tagなしが0件。
+- 拠点内作業時間が探索時間を上回らず、wave防衛型の手触りを生まない。

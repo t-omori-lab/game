@@ -120,3 +120,25 @@
 - Decision: contentは原則として開発時に`Specify → Normalize → Seed → Generate → Validate → Fallback → Curate → Freeze → Integrate`の順で作る。deterministic codeがschema、数値、合成可否、物理／energy／熱／stress制約、地図到達性、報酬、fallbackを所有し、AIは許可fieldの候補だけを提案する。各candidateはstable ID、seed、generator version、input／content hash、source、validation report、人間の`accept`／`revise`／`reject`を持ち、採用済み固定dataだけをruntimeへ入れる。詳細契約は`WORLD_BIBLE.md`と`GENERATION_RULES.md`を正本とする。
 - Consequences: 同じ規則から再生成、監査、rollback、balance検査ができ、itemのflavorと実効果を同じ根拠へ結び付けられる。候補生成だけではcontent増加と数えず、検証と人間reviewの制作costが必要になる。offline generator、schema、registry、curation UIは別途実装する。
 - Supersedes: none。ADR-004の「runtime AIを避け、検査済み候補へ限定する」を具体化する
+
+---
+
+## ADR-012: Use manual positioning with automatic basic combat and manual burst skills
+
+- Date: 2026-08-01
+- Status: accepted direction / implementation details pending
+- Context: Prototype 0.1の不一致は、固定arenaで接近、位置取り、target、撤退を必要とせず、常時自動遠隔攻撃を眺める構造だった。ユーザーはElona Mobileに近い、通常戦闘を自動化し、大技skillを手動で発動する感覚を目標として明示した。
+- Decision: 製品目標では、移動、接敵、位置取り、撤退をplayerが担い、武器条件を満たした通常攻撃は自動実行し、有限resourceの大技は手動で発動する。buildはdamageだけでなく、target取得、成立間合い、移動拘束、攻撃周期、manual skillの時機を変える。
+- Consequences: smartphoneの連打負荷を減らしながら、判断を位置取り、build、大技へ集中できる。target上書き、guard／dodge、item、遠距離通常攻撃、通常の同行者行動をどこまで手動に残すかはGate Aで比較する。
+- Supersedes: ADR-006の製品目標部分。ADR-006はPrototype Bの実装判断と比較用controlとして有効
+
+---
+
+## ADR-013: Ground the world in overgrown modern cities and make the player base a world-memory system
+
+- Date: 2026-08-01
+- Status: accepted direction / implementation details pending
+- Context: 自由放浪とworld memoryの方向が支持され、世界の基層と帰還先の所有感を具体化する必要がある。ユーザーは、人類が激減し、現代都市が自然に侵食されたpost-apocalypseと、既存地点の復旧または自由に選んだ場所へ自分で拠点を築く像を示した。
+- Decision: 識別可能な現代都市とinfraを、植物、水、動物、新しい生活が侵食／転用した世界を基層にする。playerは既存遺構を復旧するか条件の合う土地を選び、回収資源で自分の拠点を築く。拠点は別の建築gameではなく、放浪、loot build、同行者、world memoryを束ねる恒久stateにする。
+- Consequences: 地域生成は旧用途、水／日照／土壌、植生遷移、現在の生活、資源、route、拠点候補を同じ因果から作る。夏版は候補地二つ、稼働拠点一つ、機能module候補二つ以上／今回設置一つ、次回差分一つへ縮小する。崩壊原因、経過年数、地域、配置自由度、複数拠点、移転、維持、襲撃は未決定。
+- Supersedes: none

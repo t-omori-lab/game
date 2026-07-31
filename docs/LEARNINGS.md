@@ -1,10 +1,10 @@
 # Learnings: ゲーム開発
 
-Last updated: 2026-07-31
+Last updated: 2026-08-01
 
 ## Validated project learnings
 
-- Prototype 0.1の「遊べるが約20点」という評価から、技術的完成とゲーム核の適合は別であると確認できた。固定arenaと常時自動攻撃を磨くより、手動verbとscroll探索へ核を入れ替える方が目的に近い。
+- Prototype 0.1の「遊べるが約20点」という評価から、技術的完成とゲーム核の適合は別であると確認できた。不一致は自動化一般ではなく、固定arenaで接近、位置取り、target、大技の判断を伴わず常時自動遠隔攻撃を眺める構造だった。scroll探索とplayer判断へ核を移す必要がある。
 - simulationを表示から分離し、seedと30Hz tickへ限定すると、rendererをPhaserからThree.jsへ変えても、戦闘、分岐、replayをbrowserなしで再現検査できる。
 - 16×16×16を実行時のcube数ではなくauthoring gridとして扱い、隠れ面を除去した単一geometryへ変換すると、画像assetなしで立体silhouetteを作れる。
 - fixed orthographic camera、low-resolution world canvas、crisp HTML HUD、blob shadowの組合せは、自由回転cameraやdynamic shadowなしでも奥行きと操作視認性を出せる。
@@ -35,7 +35,10 @@ Last updated: 2026-07-31
 
 ## Working hypotheses to validate
 
-- Prototype Bには二つの独立した不足がある可能性が高い。Gate Aでは手動combatの打撃感、loot比較、異なるbuildを、Gate Bでは自分で選ぶ同時目的と、一回目が二回目のloadout／routeを変える因果を別々に検証する。一方を他方の代替にしない。
+- Prototype Bには二つの独立した不足がある可能性が高い。Gate Aでは条件付き自動通常攻撃、手動大技、loot比較、異なるbuildを、Gate Bでは自分で選ぶ同時目的／拠点と、一回目が二回目のloadout／routeを変える因果を別々に検証する。一方を他方の代替にしない。
+- 通常攻撃を自動化するとsmartphoneの連打負荷を減らせる可能性がある。ただし深さは、接敵、間合い、target優先、撤退、build固有の攻撃周期、有限resourceの大技へ移さなければならない。格下は自動で処理でき、名付き敵は立ち止まったままでは安定して倒せない難度差を比較する。
+- 自築拠点は独立した建築gameへ広げず、放浪の成果とworld memoryを物理化する最初の永続因果にできる可能性がある。候補地二つ、機能module候補二つ以上／今回設置一つ、次回差分一つで「場所と設備の選択が次の遠征を変えるか」を先に試す。
+- 人類激減と自然に侵食された現代都市は確認済みの方向だが、魅力は草や廃墟の量だけでは生まれない。旧用途、水／日照／土壌、植生遷移、現在の生活、route、資源を同じ因果から作る必要があるという点は検証仮説である。
 - 人物、monster、item、遺跡を単品生成するより、旧用途、現在資源、actor need、衝突、証拠、複数対処、reward、world mutation、future hookを一つのCausal World Cellとして先に作る方が、装飾的な生成物を減らし、gameplayへ接続しやすい可能性が高い。
 - 主人公／同行者の完成meshを一発生成するより、version付きStyleProfileと、role、silhouette、semantic parts、material、rig、socket、物理budget、wearを持つAssetDNAからgeometryとgame dataをcompileする方が、シリーズ内一貫性、mobile budget、item合成、破損表現を両立しやすい。最新3D／rig生成はpart／static candidateとして比較する。
 - literal high-density voxel、semantic voxel surface、stylized low-polyは、同じcamera、light、animation、effectで比較するまで優劣を確定しない。人型／犬猫の変形meshは、既知rigとedge loopを持つmodular topologyを正本にする案が安全である。

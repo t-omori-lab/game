@@ -1,22 +1,22 @@
 # 設計統合案: 世界記憶型・放浪生活ハクスラ
 
-Last updated: 2026-07-31  
-Status: design proposal v0.1 — 実装判断前の統合案
+Last updated: 2026-08-01  
+Status: design synthesis v0.2 — 確定方向と未検証の実装案を分離
 
 ## 0. この文書の結論
 
-`設計提案。正式な作品核として未承認`
+`自由放浪、world memory、半自動戦闘、自然に侵食された現代都市、自築拠点は確定方向。正式genre名と詳細実装は未決定`
 
 作りたいものは「Vampire Survivorsに探索を足したgame」ではない。現時点の統合仮説を一言で呼ぶなら、**世界記憶型・放浪生活ハクスラ**である。
 
-> 崩壊しても明るく生きている小さな世界を、選ばれた英雄ではない旅人として歩く。自分の手で戦い、守り、避け、調べ、回収し、ときには相手を壊さずに対処する。拾った遺物と部品を、原理と代償が納得できる装備へ組み替える。旅の途中で人、robot、犬や猫などの同行者と出会い、誰と行くかを選ぶ。帰還、失敗、死亡、売買、介入の結果は、噂、価格、道、敵、人物、品物として世界に残り、次の旅の理由になる。
+> 人類が激減し、植物と水に侵食された現代都市を、選ばれた英雄ではない旅人として歩く。通常攻撃は装備の規則に任せ、自分は接敵、位置取り、撤退、大技の時機を判断する。遺物と部品を原理のある装備へ組み替え、既存の遺構を直すか選んだ土地へ拠点を築く。旅の途中で人、robot、犬や猫などの同行者と出会い、誰と行くかを選ぶ。帰還、失敗、死亡、売買、建築の結果は、拠点、噂、価格、道、敵、人物、品物として残り、次の旅の理由になる。
 
-画面は暗い終末を美化するのではなく、陽光、植物、水、錆、生活の修理跡、色のある廃墟を、スマートフォン上で最も魅力的に見せる。美しいvisualは必須条件だが、作品の固有性を決める中心はrendererそのものではなく、**装備build、手動action、複数の対処、生活、世界の記憶が循環する仕組み**である。
+画面は暗い終末を美化するのではなく、陽光、植物、水、錆、現代都市のrecognizableなinfra、生活の修理跡、色のある廃墟を、スマートフォン上で最も魅力的に見せる。美しいvisualは必須条件だが、作品の固有性を決める中心はrendererそのものではなく、**装備build、半自動戦闘への手動介入、複数の対処、放浪、拠点、世界の記憶が循環する仕組み**である。
 
 Prototype Bは、手動action、scroll探索、固定俯瞰表現、一回の依頼を成立させた「部品の技術証明」である。次は二つの核を別々に証明し、別々に採否を判断する。
 
-1. **瞬間〜一遠征** — 手動actionの手触りと、拾う・比較する・組む・試すが異なるloot／build。
-2. **複数遠征** — 自分で目的を選ぶ放浪と、一回目の行為が二回目の遊び方を変えるworld memory。
+1. **瞬間〜一遠征** — 手動の移動／位置取りと条件付き自動通常攻撃、手動大技を組み合わせ、拾う・比較する・組む・試すで交戦規則が変わるloot／build。
+2. **複数遠征** — 自分で目的と居場所を選ぶ放浪、拠点づくり、一回目の行為が二回目の遊び方を変えるworld memory。
 
 どちらか一方だけでは、目標とする長く遊べる放浪ハクスラにはならない。短い判断用の正本は[GAME_CONSTITUTION.md](./GAME_CONSTITUTION.md)とする。
 
@@ -38,8 +38,9 @@ Prototype Bは、手動action、scroll探索、固定俯瞰表現、一回の依
 `確定要求を中心に、一部を設計解釈として明記`
 
 - `設計解釈`: 主人公は世界を救う運命を初めから背負った英雄ではなく、仕事、装備、人間関係、生き方を選ぶ旅人である。主人公像自体は未決定。
-- `確定要求`: playerは攻撃、防御、回避、item、skill／同行者支援を自分で使う。常時自動遠隔攻撃は中心にしない。
+- `確定要求`: playerは移動、接敵、位置取り、撤退を担い、通常戦闘は自動、大技skillは手動で発動する。固定arenaの常時自動遠隔攻撃は中心にしない。
 - `設計解釈`: 依頼に従うだけでなく、噂を追う、遺跡へ寄る、商売する、遺品を取り戻す、危険を避けるなど、自分で今回の目的を決められる。
+- `確定要求`: 既存の遺構を復旧するか条件の合う場所を選び、持ち帰った資源で自分の拠点を築く。
 - `設計提案`: 遺物、武器、同行者、旅の結果に来歴が残り、自分だけの個人史ができる。
 - `設計提案`: 異形は単なる経験値袋ではなく、目的、維持条件、予兆、対処法、世界内の居場所を持つ。
 
@@ -48,10 +49,10 @@ Prototype Bは、手動action、scroll探索、固定俯瞰表現、一回の依
 `設計提案`
 
 1. **自由な放浪** — 行き先と目的を選び、依頼を無視する自由も持つ。
-2. **手動で読めるaction** — 少ないtouch inputで、間合い、予兆、guard、回避、weapon commitmentを読む。
+2. **位置取りで作る半自動戦闘** — 少ないtouch inputで、接敵、間合い、target優先、撤退、大技の時機を読む。通常攻撃はbuild固有の規則で自動実行する。
 3. **原理を持つハクスラbuild** — 攻撃力の序列ではなく、作用、interface、energy、heat、stress、riskのtrade-offで装備を組む。
 4. **破壊以外の対処** — 鎮静、接続、誘導、交渉、回避、利用が、相手の仕組みから成立する。
-5. **世界の記憶** — 選択、帰還、死亡、売買が次の旅の状況を変える。
+5. **世界の記憶と自築拠点** — 選択、帰還、死亡、売買、復旧、建築が次の旅の状況と自分の居場所を変える。
 6. **発見する同行者roster** — 開始時は単独。world内で出会い、加入、交代し、同行者ごとの都合と有限能力を使う。
 7. **明るい崩壊世界の生活** — 危険は深刻でも、baselineは好奇心、修理、食事、商売、乾いたhumor、前進。
 8. **生成と人間の共同制作** — AIは世界法則内の候補を増やし、codeが規則を検証し、人が採否とart directionを決める。
@@ -60,7 +61,8 @@ Prototype Bは、手動action、scroll探索、固定俯瞰表現、一回の依
 
 `確定要求から導くnon-goal案`
 
-- 常時自動射撃を眺めるsurvival arenaではない。
+- 固定arenaで常時自動遠隔射撃を眺めるsurvival gameではない。
+- 通常攻撃の自動化によって、移動、target、build、大技、撤退の判断まで消すgameではない。
 - 一本道を進み、最後に三択だけを出す短編action gameではない。
 - 数値の大きい装備へ交換し続けるだけのloot treadmillではない。
 - 巨大なseamless open worldや全NPC常時simulationを競うgameではない。
@@ -72,7 +74,7 @@ Prototype Bは、手動action、scroll探索、固定俯瞰表現、一回の依
 
 | Reference group | 抽出する構造 | 複製しないもの |
 |---|---|---|
-| ルナティックドーン、Elona、Kenshi、Oblivion | 自己目的、放浪、世界がplayer外でも続く感覚、偶発的な個人史 | 世界設定、quest、人物、文章 |
+| ルナティックドーン、Elona／Elona Mobile、Kenshi、Oblivion | 自己目的、放浪、世界がplayer外でも続く感覚、通常戦闘の自動化と重要skillの手動介入、偶発的な個人史 | 世界設定、quest、人物、文章、固有UI |
 | Diablo、おっさん or die、Metal Max、ラグランジュポイント | 装備更新、部品構成、拾う喜び、危険地帯へ再挑戦する循環、武器と音の記憶 | item名、数値、vehicle、音楽、visual |
 | Undertale | 相手を理解し、倒す以外の方法と結果の記憶を作る | battle表現、dialogue、character |
 | 攻殻機動隊、Cyberpunk 2077、Watch Dogs | network、監視、身体拡張、都市機能の裏側 | 固有技術、都市、組織、衣装 |
@@ -90,17 +92,19 @@ Prototype Bは、手動action、scroll探索、固定俯瞰表現、一回の依
 `設計提案`
 
 ```text
-数秒:   予兆を読む → 近づく／避ける → 攻撃／guard／回避／item／支援
+数秒:   targetと予兆を読む → 近づく／離れる → 自動通常攻撃 → 大技／防御／item／支援で介入
 数分:   相手と場所を観察 → 対処法を見つける → costを払い結果を得る
-一遠征: 目的、loadout、同行者を選ぶ → 旅、回収、撤退 → 帰還／遭難／死亡
-複数回: world turnが進む → 噂、価格、道、敵、人物が変わる → 次の目的が生まれる
+一遠征: 目的、loadout、同行者を選ぶ → 旅、回収、候補地調査、撤退 → 帰還／遭難／死亡
+複数回: 拠点を復旧／建築する → world turnが進む → 噂、価格、道、敵、人物が変わる → 次の目的が生まれる
 ```
 
 ### 4.1 Moment-to-moment
 
-- 一つの主攻撃buttonでも、weapon frameによりtap、hold、移動中、guard後の挙動が変わる。
+- 通常攻撃buttonを連打させない。playerがweaponの成立距離とtarget条件を作ると、`Acquire → Windup → Hit → Recover`を自動実行する。
+- target候補は距離、入力方向、脅威、遮蔽でscore化する。tapによる優先target上書きはGate Aの比較案であり、確定仕様ではない。
+- weapon frameごとに射程、攻撃周期、向き、移動中の成立可否、windup中の移動拘束、cancel、heat／energy、手動大技との関係を変える。
 - enemyはsilhouette、動き、音、局所色で予兆を出す。小画面でparticleの奥に予兆を隠さない。
-- hit、just guard、回避、装備過熱、破損寸前を、映像、音、短いUI feedbackで一致させる。
+- hit、大技、装備過熱、破損寸前を、映像、音、短いUI feedbackで一致させる。guard／回避を手動に残すかは比較する。
 - 通常戦闘時間は実測で決める。初期仮説として15〜40秒の判断単位を比較し、戦闘だけが連続しないよう調査、回収、移動を挟む。
 
 weaponごとの手触りを感想だけで管理せず、30Hz simulation tickを基準に次をdata化する。
@@ -108,6 +112,9 @@ weaponごとの手触りを感想だけで管理せず、30Hz simulation tickを
 ```ts
 type CombatFeelContract = {
   actionId: string;
+  execution: "auto-basic" | "manual-skill" | "manual-utility";
+  acquire: TargetAcquireSpec;
+  dropTarget: TargetDropSpec;
   startupTicks: number;
   activeTicks: number;
   recoveryTicks: number;
@@ -125,6 +132,7 @@ type CombatFeelContract = {
   };
   resourceDelta: ResourceDelta;
   telegraphContract: TelegraphSpec;
+  manualOverride: ManualOverrideSpec;
   tests: readonly TestSpec[];
 };
 ```
@@ -166,32 +174,116 @@ type CombatFeelContract = {
 
 一遠征の主要変化は、原則として**重大変化1件＋小さな余波0〜2件**に絞る。変化を増やしすぎると、何が自分の行為の結果か読めなくなる。
 
-### 4.5 「圧倒的向上」をどこで作るか
+### 4.5 Base as world memory
+
+`拠点を自分で築くことは確定方向。以下のdata構造と夏scopeは設計提案`
+
+拠点を別画面の強化menuにしない。**どこを選び、何を持ち帰り、誰と暮らし、何を直したかが地面と建物へ残るworld memory**にする。二つの始め方を同じ状態遷移で扱う。
+
+- **Reclaim**: 住宅、駅、屋上、店舗、公共施設など既存遺構を復旧する。屋根、配線、貯水、旧設備を利用できるが、故障、旧用途、占有者、異形も引き継ぐ。
+- **Found**: 条件の合う土地を選んで新設する。場所の自由を得る代わりに、水、電力、資材、交通、防衛を自力で成立させる。
+
+```text
+未発見 → 調査済み → 確保 → 安定化 → 機能特化
+```
+
+```ts
+type BaseSite = {
+  id: string;
+  mode: "reclaim" | "found";
+  regionId: string;
+  terrainTags: string[];
+  access: RouteRef[];
+  utilities: UtilityPotential[];
+  hazards: HazardRef[];
+  capacity: number;
+  expansionSlots: ExpansionSlot[];
+  worldLawRefs: string[];
+};
+
+type BaseModule = {
+  id: string;
+  role: "storage" | "workshop" | "power" | "water" | "scanner" | "companion-bay" | "defense";
+  inputs: ResourceCost[];
+  prerequisites: Condition[];
+  upkeep: ResourceDelta[];
+  verbs: BaseVerb[];
+  emissions: { heat: number; noise: number; signal: number };
+  gameplayEffects: WorldDelta[];
+  visibleChanges: VisualCue[];
+  sourceItemIds: string[];
+};
+
+type BaseState = {
+  siteId: string;
+  status: "surveyed" | "claimed" | "stable" | "damaged" | "abandoned";
+  installedModules: Record<string, {
+    moduleId: string;
+    sourceItemIds: string[];
+    condition: number;
+    installedByEventId: EventId;
+  }>;
+  integrity: number;
+  attention: number;
+  eventIds: EventId[];
+};
+
+type BaseWorldEventType =
+  | "BaseSiteSurveyed"
+  | "BaseClaimed"
+  | "BaseModuleInstalled"
+  | "BaseDamaged"
+  | "BaseAbandoned"
+  | "BaseFunctionChanged";
+
+type BaseEventPayload = {
+  siteId: string;
+  moduleId?: string;
+  causedBy: EventId[];
+  choices?: readonly {
+    choiceId: string;
+    costs: ResourceDelta[];
+    effects: WorldDelta[];
+  }[];
+  resolvedChoiceId?: string;
+  visibleChanges: VisualCue[];
+  futureHookIds: string[];
+};
+```
+
+夏版は自由建築editorを作らない。性質の異なる候補地二つから一つを選び、`storage`、`workshop`、`water／power`等の候補二つ以上から一機能だけを復旧／設置する。次の遠征90秒以内に、補給、装備組替え、route情報、同行者待機、地域安全性のうち一つを変える。これで、**放浪 → 発見 → 回収 → 居場所を選ぶ → 建てる → 次の放浪が変わる**までを一つのGate Bで検証できる。
+
+### 4.6 「圧倒的向上」をどこで作るか
 
 圧倒的な改善は、敵数、effect、生成文章の量ではなく、現在は分離している判断を一本の因果へ接続することで作る。
 
 | Current Prototype B | Target experience |
 |---|---|
 | 二武器を持ち替える | module、heat、range、impact、noiseにより、同じ場所でも立ち回りと解法が変わる |
+| 手動攻撃buttonを押す | playerが間合いとtargetを作り、build固有の通常攻撃を自動実行し、大技の時機へ集中する |
 | 道中でlootを拾う | 欲しい部品を求めて目的地、危険、撤退時期を選ぶ |
 | 最後のmodalで三択する | 道中の観察、item、環境操作、同行者によって、対峙前から別解を作る |
 | 帰還文を見る | 町の外見、価格、人物、route、enemy、次依頼が変わり、次のloadoutを変える |
 | 同行者候補assetを見る | world内で出会い、加入条件を満たし、有限支援を自分で命令し、誰と行くか選ぶ |
 | 一つのrouteを進む | world graphから依頼、噂、遺品、好奇心のどれを追うか決める |
+| 帰還先が固定される | 遺構の復旧または新設地点を選び、持ち帰った資源と加入者が自分の拠点へ積み上がる |
 
 mobile操作はbutton数を増やさない。
 
 - 左手: movement stick。
-- 右手主操作: attackのtap／hold。weapon frameが動作を変える。
-- 右手副操作: guard hold。方向入力との組合せでdodge。
+- 右手主操作: 有限resourceの大技。押す意味のない通常攻撃buttonは置かない。
+- tap enemy／脅威方向入力によるtarget優先上書きはGate Aで比較する。
+- 右手副操作: 防御／回避を手動で残す案。位置取りと装備へ統合する案と比較する。
 - quick action: item／relic／companion commandの選択slotを一つ。選択中の一actionだけ大きく置く。
 - interactionは対象が近いときだけ同じcontext位置へ出し、combat中のbutton配置を動かさない。
 
 button配置だけでなく、次の`TouchActionState`をP0設計にする。
 
 ```text
-Neutral → AttackTap / AttackHold / GuardHold / AimAssist / QuickAction / Interact
-GuardHold + move-flick → Dodge
+Neutral → AutoAcquire / ManualSkill / ManualDefense / TargetOverride / QuickAction / Interact
+ManualDefense + move-flick → Dodge（比較案）
+AutoAcquire + valid range → Windup → Hit → Recover
+move／target change → weapon contractに従い継続／cancel／drop
 Pickup candidate + combat threat → combat inputを優先し、pickupは短時間queue
 menu open → world pauseを原則とし、危険中の装備変更可否を明示
 ```
@@ -207,11 +299,12 @@ menu open → world pauseを原則とし、危険中の装備変更可否を明�
 
 | Area | Prototype Bの証明 | まだ証明していないこと |
 |---|---|---|
-| Action | 手動攻撃、二武器、guard、回避、item、遺物 | weaponごとの深い操作、buildによる立ち回り変化、touchの長期快適性 |
+| Action | 手動攻撃、二武器、guard、回避、item、遺物の技術部品 | 条件付き自動通常攻撃、手動大技、targeting、buildごとの立ち回り、touchの長期快適性 |
 | Exploration | scrollする町―道―遺跡 | 行き先の自由、地域graph、自由探索、撤退／寄り道判断 |
 | Encounter | 名付き異形へ破壊／鎮静／接続 | 道中から成立する非戦闘解決、複数相手への一般化 |
 | Loot | 6種のlootと説明 | module文法、compatibility、経済、所有履歴、奪還 |
 | World | 一回の依頼と帰還記録 | saveされた因果、次回の世界変化、人物／価格／route反応 |
+| Base | 固定の開始町 | 候補地調査、復旧／新設、module、次回への機能／visual差分 |
 | Companion | 非表示の候補asset | 発見、加入、交代、命令、補給、離脱 |
 | Visual | hybrid HD-2Dの技術的入口 | commercial-level art direction、複数material、hero／companionの決定的魅力 |
 | Generation | schemaとガバナンス文書 | generator、candidate registry、横断的な因果生成、curation tool |
@@ -224,7 +317,7 @@ menu open → world pauseを原則とし、危険中の装備変更可否を明�
 
 | Missing design | 推奨default | まだ確定しない点 |
 |---|---|---|
-| Combat Feel Contract | aim assist、attack中の移動／cancel、間合い、hit stop、guard／dodge受付、敵予兆、敵密度、音と画面feedbackを一体で定義 | weaponごとのcommitment、無敵時間、target切替方法 |
+| Combat Feel Contract | target acquire／drop、auto-basicの周期と移動cancel、間合い、manual skill、敵予兆、音と画面feedbackを一体で定義 | guard／dodge／itemの手動範囲、target上書き、遠距離通常攻撃の扱い |
 | Loot／Build Contract | slot、module役割、drop、比較／装備／分解UI、遠征内／永続成長を定義し、判断が異なるbuildを最低2、目標3作る | field装備変更、所持上限、永続強化の上限 |
 | Mobile Interaction Contract | target score、tap／hold競合、safe area、左右反転、誤操作回復、combat／interaction優先順位 | 横画面専用か、縦持ち／browser chromeへどこまで対応するか |
 | World update | 帰還／死亡時に進むevent-driven world turn | 一回に進む日数、遠隔地域の変化量 |
@@ -233,6 +326,7 @@ menu open → world pauseを原則とし、危険中の装備変更可否を明�
 | World map | world graph＋小さく密度の高いlocal map | 地域数、移動の見せ方 |
 | Encounter grammar | 観察可能な条件から複数対処を導く | 交渉／捕獲を初版へ入れるか |
 | Self-directed objective | 同じ空間へ依頼、噂の遺物、遺品奪還など二つ以上を同時提示し、途中帰還／放棄を許す | 同時保持数、期限、目的間の衝突 |
+| Player-built base | reclaim／foundを同じsite状態で扱い、候補地2、機能module候補2以上／今回設置1、次回差分1で検証する | 完全自由配置、複数拠点、移転、襲撃、維持費 |
 | Success gates | Gate Aのcombat／buildとGate Bの放浪／因果を別採点する | 目標評価点と外部tester数 |
 
 ### P1 — P0の因果loop合格後
@@ -260,23 +354,53 @@ menu open → world pauseを原則とし、危険中の装備変更可否を明�
 単一の巨大save objectだけでなく、「何が起きたか」と「現在どうなっているか」を分ける。
 
 ```ts
-type WorldEvent = {
-  eventId: string;
+type EventId = string;
+
+type WorldEventType =
+  | BaseWorldEventType
+  | "ContractAccepted"
+  | "EntityDestroyed"
+  | "EntityCalmed"
+  | "EntityConnected"
+  | "TravelerReturned"
+  | "TravelerLost"
+  | "ItemRecovered"
+  | "ItemClaimedByEntity"
+  | "RelicAnalyzed"
+  | "CompanionDiscovered"
+  | "CompanionJoined"
+  | "CompanionInjured"
+  | "RouteOpened"
+  | "SettlementStockChanged"
+  | "WorldTurnAdvanced";
+
+type WorldEvent<TPayload extends object = Readonly<Record<string, unknown>>> = {
+  eventId: EventId;
+  sequence: number;
   worldTurn: number;
   rulesVersion: string;
+  contentPackId: string;
   type: WorldEventType;
   actorId?: string;
   targetId?: string;
   regionId?: string;
-  payload: Readonly<Record<string, unknown>>;
+  payload: TPayload;
 };
+
+type BaseEvent = WorldEvent<BaseEventPayload> & { type: BaseWorldEventType };
 
 type WorldState = {
   schemaVersion: string;
+  rulesVersion: string;
+  contentPackId: string;
+  generatorVersions: Readonly<Record<string, string>>;
   seed: string;
   worldTurn: number;
+  lastAppliedEventSequence: number;
+  lastAppliedEventId: EventId | null;
   settlements: Readonly<Record<string, SettlementState>>;
   regions: Readonly<Record<string, RegionState>>;
+  bases: Readonly<Record<string, BaseState>>;
   travelers: Readonly<Record<string, TravelerState>>;
   companions: Readonly<Record<string, CompanionState>>;
   namedEntities: Readonly<Record<string, NamedEntityState>>;
@@ -294,6 +418,8 @@ EntityConnected         TravelerReturned      TravelerLost
 ItemRecovered           ItemClaimedByEntity   RelicAnalyzed
 CompanionDiscovered     CompanionJoined       CompanionInjured
 RouteOpened             SettlementStockChanged WorldTurnAdvanced
+BaseSiteSurveyed        BaseClaimed             BaseModuleInstalled
+BaseDamaged             BaseAbandoned           BaseFunctionChanged
 ```
 
 これは全combat tickを保存する完全なevent sourcingではなく、**worldを変える高価値eventだけを残すEvent Log Lite**とする。一撃ごとのdamageや通常移動は遠征結果へ集約し、item所有者、死亡、加入、route、供給、named entityの状態など、後で因果を説明／再生する必要があるeventだけを追記する。一定件数ごとにsnapshotを作り、migration時は旧eventとrules versionを保持する。
@@ -685,7 +811,7 @@ type CharacterGenome = {
 6. **Optional AI 3D candidate** — hard-surface partやstatic accessoryのblockout／donorとして試す。
 7. **Topology／rig gate** — deformation、anchor、collision、LOD、UV、material数を検査する。
 8. **Material bake** — albedo、normal、roughness、emissiveを作りKTX2へ変換する。
-9. **Animation and sound** — idle、移動、攻撃、guard、dodge、hurt、interaction、signature actionを作る。
+9. **Animation and sound** — idle、移動、auto-basic、manual skill、必要ならguard／dodge、hurt、interaction、signature actionを作る。
 10. **Actual-view acceptance** — iPhone実機の`window.innerWidth／innerHeight`、`visualViewport`、safe areaを記録し、その実画面で前後左右、明所、影、戦闘effect中を人が判定する。
 
 2025〜2026年の個別研究は、それぞれPBR、polygon budget、UV／normal bake、automatic rigの一部を前進させている。一つの公開toolがhero制作をend-to-endで保証しているわけではなく、最新surveyもtopology、UV、PBR、rig、physics、scene assemblyまで含むproduction-ready gapが残ると整理している（[production-ready 3D survey](https://arxiv.org/abs/2604.23629)、[AssetGen](https://arxiv.org/abs/2605.26137)）。主人公と主要同行者は、AI meshを無検査で完成品にせず、**conceptと部品候補を生成し、構造は自前のgenomeとvalidatorで所有する**。
@@ -716,7 +842,7 @@ type CharacterGenome = {
 
 ### 11.6 同行者のart／game gate
 
-同行者をheroの小型版や自動DPS枠にしない。
+同行者をheroの小型版や自動DPSだけの枠にしない。通常行動の自動化は許容するが、探索verb、有限の手動命令、拠点role、生活上の都合を必ず持たせる。
 
 - `analysis robot`: 浮く水平disc＋片側の折畳みarm。scan／接続。energyとcoolingが必要。iris、fin、hover heightで感情を示す。止まった雨水塔の内側で、自分を修理部品と誤認して分解中のところへ出会う。
 - `dog`: 大きい胸郭＋細い脚＋片耳の色札。追跡／警戒／小物回収。食事、休息、信頼が必要。耳、尾、歩調、主人公との距離で状態を示す。遺品の匂いを追う途中で何度もrouteが交差し、餌だけではなく共同探索で加入する。
@@ -764,11 +890,11 @@ type CharacterGenome = {
 
 | Build | Base | 主判断 | 強み | 代償 | World verb |
 |---|---|---|---|---|---|
-| Counter cutter | 既存の測量刃frame＋counter module | 敵の予兆へ踏み込み、guard直後に刃へchargeを移す | 軽い、静か、just guardで循環 | 群れと離れたtargetに弱い | cable、布、植物を精密切断する |
-| Breach driver | 既存の杭打機frame＋flywheel module | 長い予備動作中の位置と、反動後の退路を決める | armor、壁、重量物へ強い | heat、騒音、移動commitment | 崩落、扉、杭、支持材を動かす |
+| Counter cutter | 既存の測量刃frame＋counter module | 自動斬撃が成立する薄い間合いを維持し、予兆へ手動counter skillを合わせる | 軽い、静か、counter成功で循環 | 群れと離れたtargetに弱い | cable、布、植物を精密切断する |
+| Breach driver | 既存の杭打機frame＋flywheel module | 自動windupを始める位置と、反動後の退路を決め、手動overdriveを切る | armor、壁、重量物へ強い | heat、騒音、移動commitment | 崩落、扉、杭、支持材を動かす |
 | Resonance line | 測量刃frame＋手動active line module。第三frameではない | 中距離pointへlineを刺し、heatと接続時間を管理する | 誘導、引寄せ、signal採取 | 有限charge、直接damageは低い | 機械、生物、配線を一時接続する |
 
-hard gateはCounter cutterとBreach driverの二build。Resonance lineは同じ二frameから三つ目の遊び方を作れるかを見る目標枠である。DPS差ではなく、間合い、timing、resource、target、route判断の少なくとも三項を変える。採用buildはどれでもsliceを完走できるが、すべてを一装備で最適化できないようpower、heat、mass、noise、interface budgetを競合させる。
+hard gateはCounter cutterとBreach driverの二build。Resonance lineは同じ二frameから三つ目の遊び方を作れるかを見る目標枠である。DPS差ではなく、target取得、成立間合い、移動拘束、攻撃周期、手動skillの時機、resource、route判断の少なくとも三項を変える。採用buildはどれでもsliceを完走できるが、すべてを一装備で最適化できないようpower、heat、mass、noise、interface budgetを競合させる。
 
 Loot／Build Contractの初期値:
 
@@ -941,64 +1067,66 @@ Runtime browser / PWA
 
 `設計提案。三gateを別々に合格させる`
 
-夏休み中の次の完成目標は、広い完成版ではなく、**手動ハクスラが気持ちよく、二回遊ぶと自分の選択で世界の意味が変わる公開vertical slice**とする。一つの巨大scopeにせず、次へ分ける。
+夏休み中の次の完成目標は、広い完成版ではなく、**位置取りで成立する半自動ハクスラが気持ちよく、放浪の成果で自分の拠点と次の旅が変わる公開vertical slice**とする。一つの巨大scopeにせず、次へ分ける。
 
 ### 15.1 三つのgate
 
 | Gate | 証明すること | 最小scope | 完了条件の要点 |
 |---|---|---|---|
-| A: Hack-and-build | iPhoneで手動combatとloot比較が気持ちよく、buildが判断を変える | 既存mapの一部、敵2、weapon frame 2、module 4〜6、build最低2／目標3、loot UI | 間合い、timing、resource判断が異なる2 buildをtesterが説明できる。第三buildは目標枠 |
-| B: Roam-and-memory | 自分で目的を選び、その結果が次回の外見と遊びを変える | 同じ小map、同時目的2、重要encounter 1、対処2以上、persistent variable 3〜4 | 対峙前に目的／routeを選び、二回目90秒以内に因果を認識して行動を変える |
+| A: Position-and-build | iPhoneで条件付き自動通常戦闘と手動大技が気持ちよく、buildが位置取りと介入判断を変える | 既存mapの一部、敵2、weapon frame 2、module 4〜6、build最低2／目標3、manual skill 1〜2、loot UI | 2 buildの差を説明でき、名付き敵は立ち止まり／大技なしでは安定勝利できない。第三buildは目標枠 |
+| B: Roam／settle／remember | 自分で居場所を選び、その結果が次回の外見と遊びを変える | 同じ小map、二つの自己目的＝拠点候補2、機能module選択2以上／設置1、persistent variable 1〜2 | 候補地／moduleを選び、二回目90秒以内に因果を認識して行動を変える |
 | C: Visual benchmark | 主人公、同行者、町が一つの商業品質方向へ収束する | C0は主人公＋同行者＋小背景vignetteの三表現blockout。C1は勝った一案だけで開始町一画面 | C0で一案を採り、C1を実機でsilhouette、material、depth、生活感、操作視認性まで合格させる |
 
-内部gameplay proofで必須なのはA＋B。Cは並行制作するが、commercial art pass全体をA／Bの検証blockerにしない。ユーザーへ目標品質の完成候補として公開する版はA＋B＋Cを必要とし、A／Bが弱い状態をCの美しさで、Cが弱い状態をA／Bの強さで完成扱いにしない。
+内部gameplay proofで必須なのはA＋B。Cは並行制作するが、commercial art pass全体をA／Bの検証blockerにしない。ユーザーへ目標品質の完成候補として公開する版はA＋B＋C＋release durabilityを必要とし、A／Bが弱い状態をCの美しさで、Cが弱い状態をA／Bの強さで完成扱いにしない。
 
 ### 15.2 統合時のcontent上限
 
 | Kind | Budget |
 |---|---|
 | Play time | 初回12〜18分。二回目90秒以内に因果を発見 |
-| Map | 拠点1、分岐街道1、小遺跡1。既存範囲を再利用 |
+| Map | 分岐街道1、小遺跡1、性質の異なる拠点候補地2。既存範囲を再利用 |
+| Base | 稼働拠点1、core 1、機能module候補2以上／設置1。完全自由建築editorなし |
 | Character | 主人公1、通常敵2〜3、名付き異形1。宿敵variantはGate B余力時 |
 | Weapons | 既存2 frame＋交換module 6以内 |
 | Loot | 意味のあるitem 8以内。完全上位互換なし |
 | Relic | active 1 |
-| Objectives | 同じ空間へ同時に2。途中帰還／放棄可 |
+| Objectives | 拠点候補地2を同時に見せ、どちらを調査／確保するか選ぶ。途中帰還可 |
 | Outcomes | 最低2。破壊、鎮静、接続から選ぶ。死亡／奪還は次の拡張候補 |
 | Companion | Gate C用の候補1。実playへ入れる場合は「加入proof」と明記 |
-| Companion action | 実playへ入れる場合、自動攻撃ではない有限resource命令1 |
-| Persistent variables | 町在庫、signal、route危険度、named entity所持品など3〜4 |
+| Companion action | 実playへ入れる場合、通常行動とは別に有限resourceの手動命令1 |
+| Persistent variables | 拠点site／moduleと、それに由来する次回差分1件。合計1〜2 |
 | Visual art gate | 開始町一画面、主人公、同行者、主要enemyだけをreference qualityへ |
 
 一体だけで証明できるのは発見／加入までで、rosterの本質である交代は証明できない。rosterを夏に証明する場合だけ、低制作costの二体目を加え、route、補給、別解が変わるところまで実装する。
 
 ### 15.3 必ず残すもの
 
-- 手動攻撃、防御、回避。
-- 差が明確な三buildと、苦にならない比較／装備／分解。
-- 同じ空間に同時目的を二つ置き、自分で選ぶこと。
+- 手動移動、条件付き自動通常攻撃、有限resourceの手動大技。
+- 差が明確な最低二build（第三buildは目標枠）と、苦にならない比較／装備／分解。
+- 性質の異なる拠点候補二つを自己目的として置き、module候補二つ以上から一つを選んで作ること。
 - 破壊以外の対処。
 - 少なくとも一つの結果を、次回の見た目とgameplayへ反映すること。
 - iPhone 16 Pro実機試験。
 
-遅れた場合は、宿敵／死亡奪還、追加enemy、追加loot、同行者の実play参加、町以外の高密度artの順で削る。Gate Aのcombat／buildとGate Bの自己目的／因果は削らない。
+遅れた場合は、完全自由配置、拠点移転／襲撃、宿敵／死亡奪還、追加enemy、追加loot、同行者の実play参加、町以外の高密度artの順で削る。Gate Aのcombat／buildとGate Bの自己目的／拠点因果は削らない。拠点作業より探索時間を長くし、待機生産やwave防衛へ寄せない。
 
 ### 15.4 合格条件
 
-内部:
+Release durability（A／Bの体験採点とは独立）:
 
-- 選んだ二対処を含む15遠征でcrash、進行不能、save破損0件。
+- 両方の候補地経路を含む15遠征でcrash、進行不能、save破損0件。
 - update前saveからmigrationできる。
 - persistent変数とitem所有者が再起動後も一致する。
 - atomic snapshot、直前backup、checksum、save export／importが成立し、Safari版とHome Screen版のstorage分離を誤って自動継承扱いしない。
 - iPhone 16 ProのSafari／ホーム画面PWAで10分、選択profileのp95 frame-time目標を満たし、500ms級停止、操作不能、戻せない拡大がない。
 
-体験:
+Experience gates:
 
-- 30秒以内に移動と攻撃が成立する。
-- 90秒以内に武器差またはguard成功を体感する。
+- 30秒以内に「間合いへ入ると通常攻撃し、離れると停止する」を理解する。
+- 90秒以内にmanual skillを自分の判断で使い、武器差または介入成功を体感する。
+- 格下は自動処理できる一方、名付き敵は立ち止まり／manual skillなしでは安定勝利できず、位置変更、撤退、大技のいずれかを要求する。遠距離通常攻撃は画面外、遮蔽越し、無制限追尾を行わない。
 - 最低二buildについて、数値以外の立ち回り差と代償を説明できる。第三buildは目標枠として別判定する。
-- 対峙前に、二つ以上の候補から今回の目的またはrouteを自分で選んだと認識できる。
+- 二つの拠点候補の長所／短所を自己目的として理解して一つを選び、moduleの結果が次の補給、route、loadout、同行者、危険のどれかを変える。
 - playerが「何が変わったか」「なぜ変わったか」「そのため次に何を変えたか」を説明できる。
 - 指示されず二回目を始めたいと思う。
 - 感想が「もっと絵を綺麗に」だけで終わらず、別build、別対処、別route、同行者のどれかを次に試したいと言える。
@@ -1034,16 +1162,16 @@ Runtime browser / PWA
 
 次の実装へ進む前に、最終的には以下をユーザーと決める。
 
-1. **瞬間の核** — 近接主体の手動hack-and-slash＋module buildを中心にしてよいか。
-2. **長期の独自性** — 自由な放浪＋world memoryを中心にしてよいか。
-3. **死** — 完全死亡、行方不明／救出、重傷復帰のどれをbaselineにするか。
-4. **主人公** — 固有主人公一人を深く描くか、複数旅人の人生を巡らせるか。
-5. **世界法則** — 残響基盤案を採るか、妖怪を独立した存在として強くするか。
-6. **遠距離攻撃** — 主人公の常用武器、有限resource、同行者支援のどこへ置くか。
-7. **同行者の夏scope** — 一体の加入proofにするか、二体を用意して交代まで証明するか。
-8. **visual identity** — 三表現を同条件で比較し、どの比率を採るか。
+1. **半自動戦闘の境界** — guard／dodge、item、target上書き、通常の同行者行動をどこまで手動に残すか。
+2. **時間構造** — 完全realtimeか、短いpause／tickを認めるか。
+3. **拠点自由度** — 有効区域内の自由設置、slot式候補地、複数拠点／移転をどこまで許すか。
+4. **死** — 完全死亡、行方不明／救出、重傷復帰のどれをbaselineにするか。
+5. **主人公** — 固有主人公一人を深く描くか、複数旅人の人生を巡らせるか。
+6. **世界法則** — 崩壊原因、経過年数、地域、残響基盤、妖怪、旧文明技術の関係をどうするか。
+7. **遠距離攻撃** — 自動通常攻撃、有限resourceの手動大技、同行者支援のどこへ置くか。
+8. **同行者／visual** — 夏版を加入proof／交代proofのどこまで作り、三表現のどれを採るか。
 
-推奨する検証順は、Gate Aの手動combat／build、Gate Bの自己目的／world memory、Gate Cの三表現比較である。event-driven world、world graph＋local map、複数旅人save、同行枠1は有力な設計提案だが未承認。semantic voxel surfaceもGate Cの一候補であり既定路線にしない。runtime AIなしだけは、初版scopeの安全なdefaultとする。
+推奨する検証順は、Gate Aの半自動combat／build、Gate Bの自己目的／拠点／world memory、Gate Cの三表現比較である。自由放浪、world memory、人類激減、自然に侵食された現代都市、自築拠点という上位方向は確認済みである。targeting、defense、建築粒度、event-driven worldの詳細、world graph＋local map、複数旅人save、同行枠1は設計提案であり未検証。semantic voxel surfaceもGate Cの一候補であり既定路線にしない。runtime AIなしだけは、初版scopeの安全なdefaultとする。
 
 ## 18. Sources reviewed by evidence type
 
