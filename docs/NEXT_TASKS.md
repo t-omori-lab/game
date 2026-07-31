@@ -4,6 +4,10 @@ Last updated: 2026-07-31
 
 ## P0
 
+- [ ] double tap修正版を公開し、iPhone 16 ProのSafariとホーム画面PWAで再試験する。
+  - タイトル、world、HUD、装備欄、攻撃buttonを各5回double tapし、拡大と画面ずれが起きないことを確認する。
+  - joystick＋防御の二本指操作、pinchでの倍率復帰、通常の単発tapも併せて確認する。
+  - Done when: double tapでscaleとoffsetが変わらず、意図しない拡大が起きてもpinchで元へ戻せる。
 - [ ] Prototype BをiPhone 16 Pro実機で10分通し試遊する。
   - 公開URL: `https://t-omori-lab.github.io/game/`
   - 開始、依頼板、移動、二武器、guard／回避、遺物、item、loot、名付き反響体、帰還の順に確認する。
@@ -41,3 +45,4 @@ Last updated: 2026-07-31
 - [x] Vitest 85件、strict TypeScript、production build、mobile相当browser QAを合格 — 2026-07-31
 - [x] 分岐鍵の経路、探索へ戻る導線、縦画面pause、防御／回避、keyboard、音声復帰をreview修正 — 2026-07-31
 - [x] `t-omori-lab/game`を作成し、GitHub PagesへPrototype Bを公開 — 2026-07-31
+- [x] double tap拡大を対象要素のgesture policyと回帰testでlocal修正 — 2026-07-31

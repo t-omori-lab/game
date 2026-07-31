@@ -17,13 +17,14 @@ Phase: Prototype B public playable
 - 通常敵3種と名付き反響体1体があり、名付き反響体は破壊、鎮静、接続の三経路で解決できる。結果を町へ報告すると異なる帰還記録が出る。
 - lootは6種。各SF遺物を、効果、世界内の原理仮説、副作用、使用者の所感に分けて表示する。
 - 音はWeb Audioによる独自のprocedural soundscapeで、探索pulse、危険layer、武器2種、予兆、guard、回避、遺物、item、三結果を分けた。
-- 2026-07-31時点でVitest 85件、strict TypeScript、production buildが合格。
+- 2026-07-31時点でVitest 87件、strict TypeScript、production buildが合格。
 - 公開repositoryは`https://github.com/t-omori-lab/game`。GitHub Pagesの公開URLは`https://t-omori-lab.github.io/game/`。
 - GitHub Actions run #3でcommit `3375470`のbuild／deploy成功を確認し、公開URL、manifest、service worker、共有画像がHTTPSで200応答することを確認した。
 - 公開URLをChromeで開き、タイトル、縦向き案内、PWA install候補の表示を確認した。
 - 必要遺物は対峙開始前に連続移動で回収できる配置へ修正し、取り逃した場合も選択画面から探索へ戻り、反響体の近くで開き直せる。
 - 防御と移動は押す順にかかわらず一度だけ回避へなり、保持中は防御へ戻る。縦画面／background中はsimulationと操作を止め、復帰時の入力と音の蓄積をresetする。
 - 852×393相当のlocal browserで、60fps表示、開始、依頼受注、武器切替、scroll移動、敵接近、敗北、再開を確認。観測値は初期画面で約25 draw calls／約18k triangles。browser consoleのerror／warningは0件。
+- スマホ実機でdouble tapすると拡大したまま戻せない報告を受け、固定倍率のviewport指定を外し、全UIへ`touch-action: manipulation`、joystick／action buttonへ`touch-action: none`を直接適用した。852×393のlocal mobile Chromeではdouble tap前後ともscale 1、offset 0を維持した。
 
 ## Creative reference notes
 
@@ -34,6 +35,7 @@ Phase: Prototype B public playable
 
 - Prototype Bは新しい遊びの核を評価する原型であり、完成ゲームではない。
 - local mobile相当browserの結果は、iPhone 16 Pro実機性能、発熱、touch感触、音量balance、Safari/PWA適合の証明ではない。
+- double tap修正はlocal mobile Chromeで確認済みだが、iPhone 16 ProのSafari／ホーム画面PWAでの再確認と公開反映は未完了。
 - 三つの依頼結果はsimulation testで到達確認済みだが、local browserで開始から帰還までの10分通し試遊は未完了。
 - Prototype 0.1の`WorldLegacy v1`、A/B save、IndexedDBはrepository内に残るが、Prototype Bの依頼結果／途中状態にはまだ接続していない。
 - PWA shellは公開HTTPS上で配信され、Chromeのinstall候補までは確認済み。iPhoneでのホーム画面追加、offline再起動、Prototype B asset cacheは実機未確認。

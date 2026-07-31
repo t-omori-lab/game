@@ -9,6 +9,7 @@ Last updated: 2026-07-31
 - ユーザーは、固定俯瞰voxel、scroll探索、手動戦闘、Elona／ルナティックドーン寄りのPrototype B実装を承認した。
 - 公開repository `https://github.com/t-omori-lab/game`を作成し、Prototype Bを`https://t-omori-lab.github.io/game/`へ公開した。
 - GitHub Actions run #3はcommit `3375470`のbuild／deployに成功した。公開URL、manifest、service worker、共有画像はHTTPSで200応答し、Chromeでタイトル、縦向き案内、PWA install候補を確認した。
+- iPhone 16 Proの実機試遊で、double tapにより画面が拡大し、元の倍率へ戻せなくなる不具合が確認された。
 
 ## Pending confirmation
 
@@ -18,6 +19,7 @@ Last updated: 2026-07-31
 - [ ] 10分遊んだ本人が自発的に二回目を始めたくなるか。
 - [ ] 前回の依頼結果を次回90秒以内に認識できる永続loopが成立するか。
 - [ ] HTTPS環境でPWA install、offline再起動、IndexedDB保存が成立するか。
+- [ ] local修正版で、iPhone 16 ProのSafari／ホーム画面PWAともdouble tap拡大が再発しないか。
 - [ ] 公開後の実利用、Steam審査、販売が生じた場合は別途記録する。
 
 ## Rule

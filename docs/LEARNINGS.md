@@ -20,6 +20,7 @@ Last updated: 2026-07-31
 - local browserで戦闘せず街道のlootへ向かうと、最初の敵に敗北した。手動対応を要求する設計は成立している一方、練習敵としての強さは実機試遊で調整が必要。
 - GitHub Pagesのproject siteでは、Viteの`base`とWeb App Manifestの`id`を公開subpathへ固定する。asset URLが偶然動いても、manifestの相対`id`は別の基準で解決され、PWA identityがorigin rootを指し得る。
 - 新規repositoryのPages sourceをGitHub Actionsへ切り替える前に初回workflowを走らせると、buildが正しくてもdeployは失敗する。source保存後に再実行し、最新commitの成功runと公開HTTP応答を別々に確認する。
+- fullscreen web gameでは、外枠だけの`touch-action: none`と`user-scalable=no`へ依存すると、iOSで拡大だけ成立し縮小操作を失う可能性がある。local mobile Chromeでは、通常UIの実touch対象を`manipulation`、joystickや同時押しactionだけを`none`に分けると、double tap、pinch復帰、multi-touch操作のgesture policyを分離できた。iOS Safari／PWAでの有効性は実機再確認が必要。
 
 ## Improvement candidates
 
