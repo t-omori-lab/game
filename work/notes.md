@@ -242,3 +242,13 @@
 - 既存遺構を復旧するか、条件の合う土地を選び、playerが自分の拠点を築く。完全自由配置、複数拠点、移転、維持、襲撃は未決定。
 - 夏版の推奨縮小形は、拠点候補地二つ、稼働拠点一つ、機能module候補二つ以上／設置一つ。次回90秒以内にvisualとgameplayを一件ずつ変え、放浪の成果をworld memoryとして見せる。
 - 拠点は探索80％／拠点20％程度の錨として扱い、完全自由な床／壁／家具editor、入植者仕事割当、offline待機生産、定期wave防衛へ広げない。
+
+## Runtime local micro-model／pseudo-LLM idea
+
+- 2026-08-01、ユーザーは、事前承認済みcontentだけでなく、必要に応じたruntime生成が独自性と面白さを増す可能性を提案した。対象は、矛盾のないplayer character、都度独自のscenario／台詞、item／flavor text、合成／強化法則に従う結果、map等。
+- 外部APIは費用、通信、運用、privacy、service継続性を複雑にするため、商用利用条件を確認した小規模OSS local LLM、またはgrammar／template／retrieval／状態機械を組み合わせた「擬似LLM」をgameへ同梱する案。
+- 推奨仮説は三層構造。`Rule Core`が世界状態、数値、合成可否、map到達性、報酬、event因果を決定し、`Pseudo-LLM`が規則内の構造候補を安価かつ再現可能に組み、`Local Micro-LLM`が必要な場合だけ台詞、scenario表現、命名、flavorへ変換する。
+- characterは制約付きgenome、scenarioは検証可能なevent graph、item／合成は物理／energy／balance solver、mapはmission graph＋space graphを先に作る。local modelへ自由文からmechanicsを直接決めさせない。
+- runtime生成物はその場限りにせず、canonical state参照、seed、generator／validator version、model ID／weight hash、input／output hash、採用結果をsaveへ凍結する。reload時は再生成せず同じ結果を読む。検証失敗時はdeterministic fallbackへ戻す。
+- 小型であること自体は矛盾防止、商用利用許可、smartphone性能、battery、download sizeを保証しない。具体modelの採用はlicense、weight再配布、生成物条件、端末RAM／速度、品質を同じbenchmarkで確認してから決める。
+- 初期default候補は擬似LLM。規則だけでは表現の反復が目立つ箇所へlocal micro-LLMを限定導入し、PCでは高品質model、smartphoneでは軽量model／擬似LLMへquality tierで切り替える。
