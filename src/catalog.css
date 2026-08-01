@@ -1,0 +1,383 @@
+:root {
+  color-scheme: dark;
+  font-family: "Avenir Next", "Hiragino Sans", "Yu Gothic", sans-serif;
+  background: #07110e;
+  color: #eef1d8;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: #07110e;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 84% 0%, rgb(126 210 170 / 12%), transparent 32rem),
+    radial-gradient(circle at 5% 38%, rgb(206 177 90 / 9%), transparent 28rem),
+    linear-gradient(145deg, #0a1813 0%, #07100e 55%, #050b0a 100%);
+}
+
+a {
+  color: inherit;
+}
+
+.prototype-catalog {
+  position: relative;
+  width: min(100%, 1520px);
+  min-height: 100vh;
+  padding: clamp(24px, 4.4vw, 72px);
+  margin: 0 auto;
+  isolation: isolate;
+}
+
+.catalog-noise {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 2%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 1.4%) 1px, transparent 1px);
+  background-size: 5px 5px, 5px 5px;
+  mask-image: linear-gradient(to bottom, #000, transparent 82%);
+  pointer-events: none;
+}
+
+.catalog-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: clamp(28px, 4vw, 58px);
+  border-bottom: 1px solid rgb(224 235 210 / 19%);
+  gap: 32px;
+}
+
+.catalog-kicker,
+.release-card__meta,
+.catalog-footer,
+.catalog-intro > div span:last-child {
+  font-family: "Avenir Next Condensed", "DIN Condensed", sans-serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.catalog-kicker {
+  display: block;
+  margin-bottom: 14px;
+  color: #87d9bb;
+  font-size: clamp(9px, 0.7vw, 12px);
+  font-weight: 700;
+}
+
+.catalog-header h1 {
+  margin: 0;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: clamp(40px, 7vw, 104px);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 0.9;
+}
+
+.catalog-header > p {
+  margin: 0;
+  color: #d4dec7;
+  font-family: "Avenir Next Condensed", sans-serif;
+  font-size: clamp(10px, 0.9vw, 14px);
+  letter-spacing: 0.12em;
+  line-height: 1.75;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.catalog-header > p span {
+  color: rgb(212 222 199 / 52%);
+  font-family: "Hiragino Sans", sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+.catalog-main {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.26fr) minmax(0, 1fr);
+  padding-top: clamp(32px, 5vw, 76px);
+  gap: clamp(30px, 5vw, 88px);
+}
+
+.catalog-intro {
+  align-self: start;
+  position: sticky;
+  top: 32px;
+}
+
+.catalog-intro > div {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.catalog-intro__number {
+  color: #e9b967;
+  font: 300 clamp(58px, 7vw, 108px)/0.74 "Avenir Next Condensed", sans-serif;
+  letter-spacing: -0.08em;
+}
+
+.catalog-intro > div span:last-child {
+  color: rgb(238 241 216 / 49%);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.catalog-intro p {
+  max-width: 260px;
+  margin: 42px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid rgb(238 241 216 / 14%);
+  color: rgb(238 241 216 / 63%);
+  font-size: clamp(11px, 0.84vw, 13px);
+  line-height: 1.9;
+}
+
+.release-list {
+  display: grid;
+  gap: clamp(18px, 2.2vw, 34px);
+}
+
+.release-card {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr);
+  min-height: 260px;
+  overflow: hidden;
+  border: 1px solid rgb(220 233 205 / 15%);
+  background: rgb(12 28 23 / 78%);
+  box-shadow: 0 32px 90px rgb(0 0 0 / 22%);
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.release-card:hover {
+  border-color: rgb(135 217 187 / 44%);
+  transform: translateY(-2px);
+}
+
+.release-card__visual {
+  position: relative;
+  min-height: 240px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 70% 30%, rgb(234 196 113 / 42%) 0 1.5%, transparent 2%),
+    linear-gradient(154deg, transparent 0 53%, rgb(104 151 111 / 58%) 53.2% 58%, transparent 58.3%),
+    linear-gradient(26deg, transparent 0 47%, rgb(34 84 63 / 90%) 47.2% 55%, transparent 55.2%),
+    linear-gradient(145deg, #6c9c7c 0 26%, #2b5946 26.2% 52%, #172f29 52.3% 100%);
+}
+
+.release-card--latest .release-card__visual {
+  background:
+    radial-gradient(circle at 69% 26%, #ffe59d 0 1%, rgb(255 203 111 / 25%) 1.2% 10%, transparent 23%),
+    linear-gradient(154deg, transparent 0 53%, rgb(117 169 114 / 72%) 53.2% 60%, transparent 60.3%),
+    linear-gradient(26deg, transparent 0 46%, rgb(40 105 69 / 95%) 46.2% 56%, transparent 56.2%),
+    linear-gradient(145deg, #98bd8e 0 25%, #3b7452 25.2% 50%, #183c31 50.3% 100%);
+}
+
+.release-card__visual::before,
+.release-card__visual::after {
+  position: absolute;
+  content: "";
+}
+
+.release-card__visual::before {
+  right: -18%;
+  bottom: -42%;
+  width: 112%;
+  aspect-ratio: 1;
+  border: 1px solid rgb(233 244 219 / 19%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 26px rgb(7 22 17 / 24%), 0 0 0 58px rgb(7 22 17 / 13%);
+}
+
+.release-card__visual::after {
+  inset: 0;
+  background: linear-gradient(110deg, rgb(255 255 255 / 9%), transparent 28% 72%, rgb(0 0 0 / 32%));
+  mix-blend-mode: soft-light;
+}
+
+.release-card__index {
+  position: absolute;
+  z-index: 2;
+  top: 18px;
+  left: 20px;
+  color: rgb(247 242 211 / 74%);
+  font: 600 10px/1 "Avenir Next Condensed", sans-serif;
+  letter-spacing: 0.2em;
+}
+
+.release-card__horizon {
+  position: absolute;
+  z-index: 1;
+  top: 42%;
+  left: 48%;
+  width: 26%;
+  height: 34%;
+  border: 1px solid rgb(226 239 210 / 32%);
+  background: rgb(8 25 20 / 48%);
+  box-shadow: 20px 24px 0 rgb(9 30 23 / 42%);
+  transform: skewY(-12deg);
+}
+
+.release-card__signal {
+  position: absolute;
+  z-index: 3;
+  right: 18%;
+  bottom: 24%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #a8f4d5;
+  box-shadow: 0 0 10px #8ee7c0, 0 0 34px #9bf0cb;
+}
+
+.release-card__body {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 3.4vw, 52px);
+}
+
+.release-card__meta {
+  display: flex;
+  justify-content: space-between;
+  color: rgb(225 236 210 / 49%);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.release-card--latest .release-card__meta span:last-child {
+  color: #8fe2bf;
+}
+
+.release-card h2 {
+  max-width: 680px;
+  margin: auto 0 10px;
+  color: #f0f2db;
+  font-size: clamp(22px, 2.45vw, 40px);
+  font-weight: 520;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+
+.release-card p {
+  max-width: 680px;
+  margin: 0 0 26px;
+  color: rgb(224 231 205 / 61%);
+  font-size: clamp(11px, 0.84vw, 13px);
+  line-height: 1.8;
+}
+
+.release-card__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(100%, 320px);
+  padding: 13px 0 9px;
+  border-bottom: 1px solid rgb(142 226 192 / 52%);
+  color: #9ce7c7;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+
+.release-card__link span:last-child {
+  font-size: 17px;
+  transition: transform 180ms ease;
+}
+
+.release-card__link:hover span:last-child {
+  transform: translate(3px, -3px);
+}
+
+.catalog-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: clamp(38px, 5vw, 70px);
+  color: rgb(221 233 207 / 31%);
+  font-size: 8px;
+}
+
+@media (max-width: 820px) {
+  .prototype-catalog {
+    padding: 24px 18px 32px;
+  }
+
+  .catalog-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .catalog-header > p {
+    text-align: left;
+  }
+
+  .catalog-main {
+    display: block;
+    padding-top: 32px;
+  }
+
+  .catalog-intro {
+    position: static;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    gap: 22px;
+  }
+
+  .catalog-intro p {
+    max-width: 330px;
+    margin: 0;
+  }
+
+  .release-card {
+    grid-template-columns: 1fr;
+  }
+
+  .release-card__visual {
+    min-height: 190px;
+  }
+
+  .release-card__body {
+    min-height: 270px;
+  }
+}
+
+@media (max-width: 520px) {
+  .catalog-intro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .catalog-intro p {
+    max-width: none;
+  }
+
+  .catalog-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .release-card,
+  .release-card__link span:last-child {
+    transition: none;
+  }
+}

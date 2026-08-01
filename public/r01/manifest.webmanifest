@@ -1,16 +1,16 @@
 {
-  "id": "/game/",
-  "name": "辺境遺物録",
-  "short_name": "辺境遺物",
-  "description": "正体不明のSF遺物を拾い、手動戦闘と選択で辺境の履歴を作る固定俯瞰リアルタイム3D・ハクスラ原型。",
+  "id": "/game/r01/",
+  "name": "辺境遺物録 R01",
+  "short_name": "辺境 R01",
+  "description": "正体不明のSF遺物を拾い、手動戦闘と選択で辺境の履歴を作る固定俯瞰ボクセル・ハクスラ原型。",
   "lang": "ja",
   "dir": "ltr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "landscape-primary",
-  "background_color": "#07110e",
-  "theme_color": "#10251c",
+  "background_color": "#080c0c",
+  "theme_color": "#080c0c",
   "categories": ["games", "entertainment"],
   "icons": [
     {

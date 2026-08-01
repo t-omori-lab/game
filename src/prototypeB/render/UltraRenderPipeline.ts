@@ -5,7 +5,10 @@ import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { type Pass } from "three/examples/jsm/postprocessing/Pass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { HorizontalTiltShiftShader } from "three/examples/jsm/shaders/HorizontalTiltShiftShader.js";
+import { VerticalTiltShiftShader } from "three/examples/jsm/shaders/VerticalTiltShiftShader.js";
 
 const DEFAULT_MAX_PIXEL_RATIO = 2;
 const DEFAULT_MSAA_SAMPLES = 4;
@@ -25,6 +28,13 @@ export interface UltraRenderPipelineOptions {
   readonly gtao?: boolean;
   readonly bloom?: boolean;
   readonly smaa?: boolean;
+  /**
+   * Fixed-camera miniature depth separation. This deliberately operates on
+   * the rendered world only; DOM HUD and touch controls stay optically sharp.
+   */
+  readonly tiltShift?: boolean;
+  readonly tiltShiftFocus?: number;
+  readonly tiltShiftStrength?: number;
   readonly onFallback?: (reason: unknown) => void;
 }
 
@@ -37,6 +47,7 @@ export interface UltraRenderPipelineStatus {
   readonly gtao: boolean;
   readonly bloom: boolean;
   readonly smaa: boolean;
+  readonly tiltShift: boolean;
   readonly fallbackReason: string | null;
 }
 
@@ -64,6 +75,11 @@ export class UltraRenderPipeline {
   private gtaoEnabled = false;
   private bloomEnabled = false;
   private smaaEnabled = false;
+  private tiltShiftEnabled = false;
+  private horizontalTiltShift: ShaderPass | null = null;
+  private verticalTiltShift: ShaderPass | null = null;
+  private tiltShiftFocus = 0.48;
+  private tiltShiftStrength = 3.4;
   private fallbackReason: string | null = null;
   private disposed = false;
 
@@ -138,6 +154,7 @@ export class UltraRenderPipeline {
     try {
       this.composer.setPixelRatio(this.pixelRatio);
       this.composer.setSize(this.width, this.height);
+      this.syncTiltShiftUniforms();
     } catch (reason: unknown) {
       this.fallbackToDirect(reason);
     }
@@ -153,6 +170,7 @@ export class UltraRenderPipeline {
       gtao: this.gtaoEnabled,
       bloom: this.bloomEnabled,
       smaa: this.smaaEnabled,
+      tiltShift: this.tiltShiftEnabled,
       fallbackReason: this.fallbackReason,
     };
   }
@@ -235,6 +253,36 @@ export class UltraRenderPipeline {
         this.gtaoEnabled = true;
       }
 
+      if (options.tiltShift ?? false) {
+        this.tiltShiftFocus = THREE.MathUtils.clamp(
+          Number.isFinite(options.tiltShiftFocus)
+            ? (options.tiltShiftFocus as number)
+            : 0.48,
+          0.18,
+          0.82,
+        );
+        this.tiltShiftStrength = THREE.MathUtils.clamp(
+          Number.isFinite(options.tiltShiftStrength)
+            ? (options.tiltShiftStrength as number)
+            : 3.4,
+          0.5,
+          8,
+        );
+        this.horizontalTiltShift = new ShaderPass(
+          HorizontalTiltShiftShader,
+        );
+        this.verticalTiltShift = new ShaderPass(VerticalTiltShiftShader);
+        this.horizontalTiltShift.material.name =
+          "beauty-cell-horizontal-depth-separation";
+        this.verticalTiltShift.material.name =
+          "beauty-cell-vertical-depth-separation";
+        composer.addPass(this.horizontalTiltShift);
+        composer.addPass(this.verticalTiltShift);
+        passes.push(this.horizontalTiltShift, this.verticalTiltShift);
+        this.tiltShiftEnabled = true;
+        this.syncTiltShiftUniforms();
+      }
+
       if (options.bloom ?? true) {
         const bloomPass = new UnrealBloomPass(
           new THREE.Vector2(
@@ -300,6 +348,8 @@ export class UltraRenderPipeline {
     disposePostProcessing(this.composer, this.passes);
     this.composer = null;
     this.passes = [];
+    this.horizontalTiltShift = null;
+    this.verticalTiltShift = null;
   }
 
   private resetFeatureStatus(): void {
@@ -308,6 +358,25 @@ export class UltraRenderPipeline {
     this.gtaoEnabled = false;
     this.bloomEnabled = false;
     this.smaaEnabled = false;
+    this.tiltShiftEnabled = false;
+  }
+
+  private syncTiltShiftUniforms(): void {
+    if (
+      this.horizontalTiltShift === null ||
+      this.verticalTiltShift === null
+    ) {
+      return;
+    }
+
+    const renderWidth = Math.max(1, this.width * this.pixelRatio);
+    const renderHeight = Math.max(1, this.height * this.pixelRatio);
+    this.horizontalTiltShift.uniforms["h"]!.value =
+      this.tiltShiftStrength / renderWidth;
+    this.horizontalTiltShift.uniforms["r"]!.value = this.tiltShiftFocus;
+    this.verticalTiltShift.uniforms["v"]!.value =
+      this.tiltShiftStrength / renderHeight;
+    this.verticalTiltShift.uniforms["r"]!.value = this.tiltShiftFocus;
   }
 }
 

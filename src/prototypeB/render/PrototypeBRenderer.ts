@@ -34,6 +34,7 @@ import {
   type StartTownArtSlice,
 } from "./startTownArt";
 import { createNorthStarCityArtSlice } from "./northStarCityArt";
+import { createBeautyCellArtSlice } from "./beautyCell";
 import { configureDisplayColor } from "./displayColor";
 import {
   FIXED_CAMERA_OFFSET,
@@ -46,6 +47,12 @@ import {
   type HeroMotion,
   type HeroVisual,
 } from "./hero";
+import {
+  createBeautyCompanionVisual,
+  createBeautyHeroVisual,
+  createBeautyWeaponVisual,
+  type BeautyCompanionVisual,
+} from "./hero/BeautyHeroVisual";
 import { UltraRenderPipeline } from "./UltraRenderPipeline";
 import reclaimedMeadowTextureUrl from "./assets/reclaimed-meadow-v1.webp";
 
@@ -53,7 +60,9 @@ const INTERNAL_WIDTH = 854;
 const INTERNAL_HEIGHT = 480;
 const CAMERA_VIEW_HEIGHT = 600;
 const PC_ULTRA_CAMERA_VIEW_HEIGHT = 360;
+const BEAUTY_CELL_CAMERA_VIEW_HEIGHT = 390;
 const PC_ULTRA_EXPOSURE = 0.98;
+const BEAUTY_CELL_EXPOSURE = 0.92;
 const MAX_INTERNAL_WIDTH = 1_075;
 const CAMERA_OFFSET = new THREE.Vector3(
   FIXED_CAMERA_OFFSET.x,
@@ -138,7 +147,8 @@ export type PrototypeBRenderStats = {
 export type PrototypeBRenderQuality = "baseline" | "pc-ultra";
 export type PrototypeBEnvironmentProfile =
   | "start-town"
-  | "north-star-city";
+  | "north-star-city"
+  | "beauty-cell";
 
 export type CombatPresentationState = {
   readonly targetId: string | null;
@@ -162,6 +172,7 @@ export interface PrototypeBRendererOptions {
 export class PrototypeBRenderer {
   private readonly renderer: THREE.WebGLRenderer;
   private readonly qualityProfile: PrototypeBRenderQuality;
+  private readonly environmentProfile: PrototypeBEnvironmentProfile;
   private readonly cameraCompositionProfile: CameraCompositionProfile;
   private readonly cameraViewHeight: number;
   private ultraPipeline: UltraRenderPipeline | null = null;
@@ -172,20 +183,15 @@ export class PrototypeBRenderer {
   private readonly playerGroup = new THREE.Group();
   private readonly playerBody: HeroVoxelMesh;
   private readonly playerHeroVisual: HeroVisual | null;
-  private readonly bladeMesh: THREE.Mesh<
-    THREE.BufferGeometry,
-    THREE.MeshStandardMaterial
-  >;
-  private readonly impactMesh: THREE.Mesh<
-    THREE.BufferGeometry,
-    THREE.MeshStandardMaterial
-  >;
+  private readonly bladeMesh: THREE.Object3D;
+  private readonly impactMesh: THREE.Object3D;
   private readonly playerShadow: THREE.Mesh<
     THREE.CircleGeometry,
     THREE.MeshBasicMaterial
   >;
   private readonly companionGroup = new THREE.Group();
   private readonly companionBody: HeroVoxelMesh;
+  private readonly companionBeautyVisual: BeautyCompanionVisual | null;
   private readonly companionShadow: THREE.Mesh<
     THREE.CircleGeometry,
     THREE.MeshBasicMaterial
@@ -243,12 +249,16 @@ export class PrototypeBRenderer {
     options: PrototypeBRendererOptions = {},
   ) {
     this.qualityProfile = options.qualityProfile ?? "baseline";
+    this.environmentProfile =
+      options.environmentProfile ?? "start-town";
     this.cameraCompositionProfile =
       options.cameraCompositionProfile ?? "baseline";
     this.cameraViewHeight =
-      this.qualityProfile === "pc-ultra"
-        ? PC_ULTRA_CAMERA_VIEW_HEIGHT
-        : CAMERA_VIEW_HEIGHT;
+      this.environmentProfile === "beauty-cell"
+        ? BEAUTY_CELL_CAMERA_VIEW_HEIGHT
+        : this.qualityProfile === "pc-ultra"
+          ? PC_ULTRA_CAMERA_VIEW_HEIGHT
+          : CAMERA_VIEW_HEIGHT;
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: false,
@@ -259,9 +269,11 @@ export class PrototypeBRenderer {
     });
     configureDisplayColor(
       this.renderer,
-      this.qualityProfile === "pc-ultra"
-        ? PC_ULTRA_EXPOSURE
-        : undefined,
+      this.environmentProfile === "beauty-cell"
+        ? BEAUTY_CELL_EXPOSURE
+        : this.qualityProfile === "pc-ultra"
+          ? PC_ULTRA_EXPOSURE
+          : undefined,
     );
     this.renderer.shadowMap.enabled = true;
     // Three.js 0.185 maps the deprecated PCFSoftShadowMap to PCFShadowMap.
@@ -283,7 +295,7 @@ export class PrototypeBRenderer {
     this.renderer.domElement.dataset.cameraCompositionProfile =
       this.cameraCompositionProfile;
     this.renderer.domElement.dataset.environmentProfile =
-      options.environmentProfile ?? "start-town";
+      this.environmentProfile;
     this.renderer.domElement.setAttribute(
       "aria-label",
       "辺境遺物録 ボクセルゲーム画面",
@@ -309,11 +321,23 @@ export class PrototypeBRenderer {
       this.contextRestoredHandler,
     );
 
-    this.scene.background = new THREE.Color(DAYLIGHT_FOG_COLOR);
+    const fogColor =
+      this.environmentProfile === "beauty-cell"
+        ? 0xa9c4bd
+        : DAYLIGHT_FOG_COLOR;
+    this.scene.background = new THREE.Color(fogColor);
     this.scene.fog = new THREE.Fog(
-      DAYLIGHT_FOG_COLOR,
-      this.qualityProfile === "pc-ultra" ? 1_140 : 900,
-      this.qualityProfile === "pc-ultra" ? 2_700 : 2_450,
+      fogColor,
+      this.environmentProfile === "beauty-cell"
+        ? 1_020
+        : this.qualityProfile === "pc-ultra"
+          ? 1_140
+          : 900,
+      this.environmentProfile === "beauty-cell"
+        ? 2_340
+        : this.qualityProfile === "pc-ultra"
+          ? 2_700
+          : 2_450,
     );
     this.createLighting();
     if (this.qualityProfile === "pc-ultra") {
@@ -342,6 +366,9 @@ export class PrototypeBRenderer {
           gtao: true,
           bloom: true,
           smaa: true,
+          tiltShift: this.environmentProfile === "beauty-cell",
+          tiltShiftFocus: 0.49,
+          tiltShiftStrength: 3.7,
           onFallback: (reason) => {
             this.renderer.domElement.dataset.ultraFallback =
               reason instanceof Error ? reason.message : "post-processing";
@@ -357,14 +384,32 @@ export class PrototypeBRenderer {
 
     this.createGround(initialState);
     this.environmentArt =
-      options.environmentProfile === "north-star-city"
-        ? createNorthStarCityArtSlice()
-        : createStartTownArtSlice();
+      this.environmentProfile === "beauty-cell"
+        ? createBeautyCellArtSlice()
+        : this.environmentProfile === "north-star-city"
+          ? createNorthStarCityArtSlice()
+          : createStartTownArtSlice();
     this.scene.add(this.environmentArt.group);
-    this.createFieldGrowth(
-      initialState,
-      this.environmentArt.replacedTerrainIds,
-    );
+    if (this.environmentProfile === "beauty-cell") {
+      this.renderer.domElement.dataset.visualGrammar =
+        "concept-c-fixed-diagonal";
+      this.renderer.domElement.dataset.generationMode =
+        "deterministic-spec-compiler";
+      const stableId = this.environmentArt.group.userData.stableId;
+      if (typeof stableId === "string") {
+        this.renderer.domElement.dataset.beautyCellId = stableId;
+      }
+    }
+    if (this.environmentProfile !== "beauty-cell") {
+      this.createFieldGrowth(
+        initialState,
+        this.environmentArt.replacedTerrainIds,
+      );
+    }
+    // The Beauty Cell replaces the authored town cell, not the authoritative
+    // 3,600-unit simulation. Always render every terrain/prop that its art
+    // manifest did not explicitly replace, so collision and the eastern quest
+    // route can never continue through invisible legacy geometry.
     this.createTerrain(
       initialState,
       this.environmentArt.replacedTerrainIds,
@@ -383,35 +428,51 @@ export class PrototypeBRenderer {
     this.playerBody.castShadow = true;
     this.playerBody.receiveShadow = true;
     this.playerHeroVisual =
-      this.qualityProfile === "pc-ultra"
-        ? createHeroVisual({ mode: "articulated" })
-        : null;
+      this.environmentProfile === "beauty-cell"
+        ? createBeautyHeroVisual()
+        : this.qualityProfile === "pc-ultra"
+          ? createHeroVisual({ mode: "articulated" })
+          : null;
     if (this.playerHeroVisual !== null) {
       this.playerBody.visible = false;
+      if (this.environmentProfile === "beauty-cell") {
+        this.playerHeroVisual.root.scale.setScalar(1.28);
+      }
       this.playerGroup.add(this.playerHeroVisual.root);
     }
-    this.bladeMesh = createVoxelMesh(
-      BLADE_WEAPON_RECIPE,
-      BLADE_VOXEL_SIZE,
-      1,
-    );
-    this.impactMesh = createVoxelMesh(
-      IMPACT_WEAPON_RECIPE,
-      IMPACT_VOXEL_SIZE,
-      1,
-    );
-    configureHeldWeapon(this.bladeMesh, "blade");
-    configureHeldWeapon(this.impactMesh, "impact");
+    if (this.environmentProfile === "beauty-cell") {
+      this.bladeMesh = createBeautyWeaponVisual("blade");
+      this.impactMesh = createBeautyWeaponVisual("impact");
+    } else {
+      const bladeMesh = createVoxelMesh(
+        BLADE_WEAPON_RECIPE,
+        BLADE_VOXEL_SIZE,
+        1,
+      );
+      const impactMesh = createVoxelMesh(
+        IMPACT_WEAPON_RECIPE,
+        IMPACT_VOXEL_SIZE,
+        1,
+      );
+      configureHeldWeapon(bladeMesh, "blade");
+      configureHeldWeapon(impactMesh, "impact");
+      this.bladeMesh = bladeMesh;
+      this.impactMesh = impactMesh;
+    }
     this.bladeMesh.castShadow = true;
     this.impactMesh.castShadow = true;
     if (this.playerHeroVisual !== null) {
       this.playerHeroVisual.attachWeapon(
         this.bladeMesh,
-        BLADE_GRIP_ANCHOR,
+        this.environmentProfile === "beauty-cell"
+          ? { x: 0, y: 0, z: 0 }
+          : BLADE_GRIP_ANCHOR,
       );
       this.playerHeroVisual.attachWeapon(
         this.impactMesh,
-        IMPACT_GRIP_ANCHOR,
+        this.environmentProfile === "beauty-cell"
+          ? { x: 0, y: 0, z: 0 }
+          : IMPACT_GRIP_ANCHOR,
       );
     } else {
       this.playerGroup.add(this.bladeMesh, this.impactMesh);
@@ -433,6 +494,14 @@ export class PrototypeBRenderer {
     );
     this.companionBody.castShadow = true;
     this.companionBody.receiveShadow = true;
+    this.companionBeautyVisual =
+      this.environmentProfile === "beauty-cell"
+        ? createBeautyCompanionVisual()
+        : null;
+    if (this.companionBeautyVisual !== null) {
+      this.companionBody.visible = false;
+      this.companionGroup.add(this.companionBeautyVisual.root);
+    }
     this.companionShadow = createBlobShadow(24, 15, 0.24);
     this.companionGroup.name = "visual-only-companion";
     this.companionGroup.add(this.companionBody, this.companionShadow);
@@ -665,6 +734,9 @@ export class PrototypeBRenderer {
     this.renderer.domElement.dataset.ultraGtao = String(status.gtao);
     this.renderer.domElement.dataset.ultraBloom = String(status.bloom);
     this.renderer.domElement.dataset.ultraSmaa = String(status.smaa);
+    this.renderer.domElement.dataset.ultraTiltShift = String(
+      status.tiltShift,
+    );
     this.renderer.domElement.dataset.ultraSamples = String(status.samples);
     if (status.fallbackReason === null) {
       delete this.renderer.domElement.dataset.ultraFallback;
@@ -676,16 +748,31 @@ export class PrototypeBRenderer {
 
   private createLighting(): void {
     const skyFill = new THREE.HemisphereLight(
-      0xf6f0d2,
-      0x355a43,
-      this.qualityProfile === "pc-ultra" ? 0.42 : 1.55,
+      this.environmentProfile === "beauty-cell" ? 0xfff2ca : 0xf6f0d2,
+      this.environmentProfile === "beauty-cell" ? 0x173e34 : 0x355a43,
+      this.environmentProfile === "beauty-cell"
+        ? 0.34
+        : this.qualityProfile === "pc-ultra"
+          ? 0.42
+          : 1.55,
     );
     skyFill.name = "daylight-sky-fill";
 
+    this.keyLight.color.setHex(
+      this.environmentProfile === "beauty-cell" ? 0xffe0b0 : 0xffe8bd,
+    );
     this.keyLight.intensity =
-      this.qualityProfile === "pc-ultra" ? 2.68 : 2.45;
+      this.environmentProfile === "beauty-cell"
+        ? 2.52
+        : this.qualityProfile === "pc-ultra"
+          ? 2.68
+          : 2.45;
     this.keyLight.name = "daylight-key";
-    this.keyLight.position.set(40, 820, 360);
+    this.keyLight.position.set(
+      this.environmentProfile === "beauty-cell" ? -180 : 40,
+      this.environmentProfile === "beauty-cell" ? 890 : 820,
+      this.environmentProfile === "beauty-cell" ? 140 : 360,
+    );
     this.keyLightTarget.name = "daylight-key-target";
     this.keyLightTarget.position.set(390, 0, 900);
     this.keyLight.target = this.keyLightTarget;
@@ -693,7 +780,8 @@ export class PrototypeBRenderer {
     const shadowMapSize = this.qualityProfile === "pc-ultra" ? 2_048 : 512;
     this.keyLight.shadow.mapSize.set(shadowMapSize, shadowMapSize);
     this.keyLight.shadow.bias = -0.0012;
-    this.keyLight.shadow.normalBias = 1.4;
+    this.keyLight.shadow.normalBias =
+      this.environmentProfile === "beauty-cell" ? 0.82 : 1.4;
     this.keyLight.shadow.camera.left = -460;
     this.keyLight.shadow.camera.right = 460;
     this.keyLight.shadow.camera.top = 460;
@@ -715,7 +803,10 @@ export class PrototypeBRenderer {
       const rimTarget = new THREE.Object3D();
       rimTarget.name = "daylight-rim-target";
       rimTarget.position.set(430, 24, 860);
-      const rimLight = new THREE.DirectionalLight(0xa9e6df, 0.62);
+      const rimLight = new THREE.DirectionalLight(
+        this.environmentProfile === "beauty-cell" ? 0x8bd9d1 : 0xa9e6df,
+        this.environmentProfile === "beauty-cell" ? 0.48 : 0.62,
+      );
       rimLight.name = "daylight-cool-rim";
       rimLight.position.set(-360, 420, -280);
       rimLight.target = rimTarget;
@@ -740,7 +831,8 @@ export class PrototypeBRenderer {
     try {
       this.environmentTarget = generator.fromScene(environment, 0.04);
       this.scene.environment = this.environmentTarget.texture;
-      this.scene.environmentIntensity = 0.26;
+      this.scene.environmentIntensity =
+        this.environmentProfile === "beauty-cell" ? 0.19 : 0.26;
       this.renderer.domElement.dataset.environmentLighting = "pmrem-ibl";
     } catch (reason) {
       this.renderer.domElement.dataset.environmentLighting =
@@ -796,7 +888,10 @@ export class PrototypeBRenderer {
           (((seed >>> 4) & 0x0f) / 15 - 0.5) * 0.035,
           (((seed >>> 13) & 0x0f) / 15 - 0.5) * 0.055,
         );
-        color.lerp(white, 0.72);
+        color.lerp(
+          white,
+          this.environmentProfile === "beauty-cell" ? 0.24 : 0.72,
+        );
         colors.push(color.r, color.g, color.b);
       }
     }
@@ -1375,21 +1470,41 @@ export class PrototypeBRenderer {
       ? Math.sin(progress * Math.PI) *
         (this.attackWeapon === "impact" ? 1.42 : 1.05)
       : 0;
-    this.bladeMesh.rotation.z = -0.42 - swing;
-    this.impactMesh.rotation.z = -0.28 - swing;
+    if (this.environmentProfile === "beauty-cell") {
+      this.bladeMesh.rotation.set(0, 0, 0);
+      this.impactMesh.rotation.set(0, 0, 0);
+    } else {
+      this.bladeMesh.rotation.z = -0.42 - swing;
+      this.impactMesh.rotation.z = -0.28 - swing;
+    }
     const tint =
       player.invulnerableTicks > 0 && state.tick % 2 === 0
         ? 0xb8fff4
         : 0xffffff;
     if (this.playerHeroVisual === null) {
-      alignHeldWeapon(this.bladeMesh, "blade");
-      alignHeldWeapon(this.impactMesh, "impact");
+      if (
+        this.bladeMesh instanceof THREE.Mesh &&
+        this.impactMesh instanceof THREE.Mesh
+      ) {
+        alignHeldWeapon(this.bladeMesh, "blade");
+        alignHeldWeapon(this.impactMesh, "impact");
+      }
       setHeroMeshTint(this.playerBody, tint);
       return;
     }
 
-    alignObjectGripToSocket(this.bladeMesh, BLADE_GRIP_ANCHOR);
-    alignObjectGripToSocket(this.impactMesh, IMPACT_GRIP_ANCHOR);
+    alignObjectGripToSocket(
+      this.bladeMesh,
+      this.environmentProfile === "beauty-cell"
+        ? { x: 0, y: 0, z: 0 }
+        : BLADE_GRIP_ANCHOR,
+    );
+    alignObjectGripToSocket(
+      this.impactMesh,
+      this.environmentProfile === "beauty-cell"
+        ? { x: 0, y: 0, z: 0 }
+        : IMPACT_GRIP_ANCHOR,
+    );
     this.heroHurtAnimation = Math.max(
       0,
       this.heroHurtAnimation - deltaSeconds * 3.8,
@@ -1468,7 +1583,19 @@ export class PrototypeBRenderer {
       Math.sin((1 - this.companionReaction) * Math.PI * 3) *
         this.companionReaction *
         0.045;
-    this.companionGroup.scale.setScalar(reactionPulse);
+    this.companionGroup.scale.setScalar(
+      reactionPulse *
+        (this.environmentProfile === "beauty-cell" ? 1.08 : 1),
+    );
+    this.companionBeautyVisual?.updatePose({
+      timeSeconds: this.elapsed,
+      moveAmount: THREE.MathUtils.clamp(
+        Math.sqrt(distanceSquared) / 72,
+        0,
+        1,
+      ),
+      reaction: this.companionReaction,
+    });
   }
 
   private syncEnemies(state: PrototypeBState): void {
@@ -1991,7 +2118,13 @@ export class PrototypeBRenderer {
       },
       this.cameraCompositionProfile,
     );
-    this.cameraTarget.set(composition.targetX, 28, composition.targetY);
+    this.cameraTarget.set(
+      composition.targetX +
+        (this.environmentProfile === "beauty-cell" ? -42 : 0),
+      28,
+      composition.targetY +
+        (this.environmentProfile === "beauty-cell" ? -54 : 0),
+    );
     this.renderer.domElement.dataset.cameraComposition = composition.mode;
     this.camera.position.copy(this.cameraTarget).add(CAMERA_OFFSET);
     this.camera.lookAt(this.cameraTarget);
@@ -2025,9 +2158,11 @@ export class PrototypeBRenderer {
     const follow = 1 - Math.exp(-8 * deltaSeconds);
     this.cameraTarget.lerp(
       this.reusablePosition.set(
-        composition.targetX,
+        composition.targetX +
+          (this.environmentProfile === "beauty-cell" ? -42 : 0),
         28,
-        composition.targetY,
+        composition.targetY +
+          (this.environmentProfile === "beauty-cell" ? -54 : 0),
       ),
       follow,
     );

@@ -1,0 +1,47 @@
+import { describe, expect, it } from "vitest";
+import {
+  PROTOTYPE_RELEASES,
+  createReleaseHref,
+  resolvePrototypeAlias,
+  resolvePrototypeRelease,
+} from "../../src/prototypeRoutes";
+
+describe("prototype release routing", () => {
+  it("lists playable releases newest first", () => {
+    expect(PROTOTYPE_RELEASES.map((release) => release.id)).toEqual([
+      "r02",
+      "r01",
+    ]);
+    expect(PROTOTYPE_RELEASES[0]?.status).toBe("latest");
+    expect(PROTOTYPE_RELEASES[1]?.status).toBe("archive");
+  });
+
+  it("resolves versioned paths without confusing the catalog", () => {
+    expect(resolvePrototypeRelease("/game/", "")).toBeNull();
+    expect(resolvePrototypeRelease("/game/r01/", "")).toBe("r01");
+    expect(resolvePrototypeRelease("/game/r02/index.html", "")).toBe("r02");
+  });
+
+  it("keeps compatibility aliases pinned to their intended release", () => {
+    expect(resolvePrototypeAlias("?prototype=north-star")).toBe("r01");
+    expect(resolvePrototypeAlias("?prototype=beauty-cell")).toBe("r02");
+    expect(resolvePrototypeAlias("?prototype=0.1")).toBeNull();
+    expect(
+      resolvePrototypeRelease(
+        "/game/r02/",
+        "?prototype=north-star&debug=1",
+      ),
+    ).toBe("r01");
+  });
+
+  it("creates canonical links while preserving non-routing diagnostics", () => {
+    expect(createReleaseHref("r02", "/game")).toBe("/game/r02/");
+    expect(
+      createReleaseHref(
+        "r01",
+        "/game/",
+        "?prototype=north-star&debug=1",
+      ),
+    ).toBe("/game/r01/?debug=1");
+  });
+});

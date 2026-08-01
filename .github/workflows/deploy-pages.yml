@@ -36,8 +36,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build game
-        run: pnpm build
+      - name: Test and build game
+        run: pnpm check
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

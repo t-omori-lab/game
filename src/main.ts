@@ -1,5 +1,6 @@
 import "./styles.css";
 import { startPrototypeB } from "./prototypeB/app";
+import { resolvePrototypeRelease } from "./prototypeRoutes";
 
 const root = document.querySelector<HTMLElement>("#app");
 
@@ -13,7 +14,7 @@ void boot(root).catch((error: unknown) => {
 
 if ("serviceWorker" in navigator && import.meta.env.PROD) {
   window.addEventListener("load", () => {
-    void navigator.serviceWorker.register("./sw.js");
+    void navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`);
   });
 }
 
@@ -26,7 +27,22 @@ async function boot(applicationRoot: HTMLElement): Promise<void> {
     return;
   }
 
-  if (parameters.get("prototype") === "north-star") {
+  const release = resolvePrototypeRelease(
+    window.location.pathname,
+    window.location.search,
+  );
+
+  if (release === "r02") {
+    startPrototypeB(applicationRoot, {
+      experience: "beauty-cell",
+      renderQuality: "pc-ultra",
+      companionPreview: true,
+      semiAutoCombat: true,
+    });
+    return;
+  }
+
+  if (release === "r01") {
     startPrototypeB(applicationRoot, {
       experience: "north-star",
       renderQuality: "pc-ultra",
@@ -36,7 +52,12 @@ async function boot(applicationRoot: HTMLElement): Promise<void> {
     return;
   }
 
-  startPrototypeB(applicationRoot);
+  startPrototypeB(applicationRoot, {
+    experience: "north-star",
+    renderQuality: "pc-ultra",
+    companionPreview: true,
+    semiAutoCombat: true,
+  });
 }
 
 function showBootFailure(

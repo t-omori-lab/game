@@ -1,8 +1,15 @@
 # Learnings: ゲーム開発
 
-Last updated: 2026-08-01
+Last updated: 2026-08-02
 
 ## Validated project learnings
+
+- post stackだけではConcept Cへ届かない。単純な構造物でも、foreground／play band／backgroundのmass composition、heroとrouteの画面占有、wet／cloth／ceramic／metal／emissiveのmaterial分離、warm key／cool shadowを同時に設計すると、part数を増やす前に画面全体の知覚品質を大きく動かせる。
+- fixed cameraではtilt-shiftをworld renderへだけ適用し、DOM HUDをcomposer外へ残すと、HD-2D的なdepth bandと操作情報の可読性を両立できる。hero／enemy telegraphがplay bandから外れないcamera契約と一組で扱う。
+- `experience → environment profile → versioned spec compiler`を分けると、R01のsimulation／routeを凍結したままR02のcomposition、material、actorを大胆に変更できる。stable ID、seed、causal rule、AssetDNA／provenanceは、runtime LLMにworld truthを任せずAI-native生成基盤へ進む最小単位になる。
+- 明示的なRXX routeだけでは過去版は凍結されない。同じsource chunkを共有すると将来のbuildで内容が変質するため、公開比較版は元commitから独立buildした静的成果物、source commit、SHA-256 manifestまで固定する。Vite multi-page、route別service worker cache、新しい順のcatalogと組み合わせ、deploy時は既存version保持を明示確認し、削除指示がなければ保存する。
+- environment artだけを差し替えてsimulationを共有すると、描画を止めた旧colliderや遠方questが不可視のまま残り得る。art manifestの`replacedTerrainIds`ごとに同boundsのvisual counterpartを検査し、未置換terrain／propはfallback描画することで、画面とworld ruleの整合を保つ。
+- actual cameraでのvisual loopは、data／geometry countでは見えない構図上の欠点を検出した。R02ではbeigeに寄ったroad、過大なshelter、薄いvegetationを画面上で見つけ、dark wet road、mass balance、植生縁へ改稿できた。最終採否は同じcameraの操作画面で行う。
 
 - Prototype 0.1の「遊べるが約20点」という評価から、技術的完成とゲーム核の適合は別であると確認できた。不一致は自動化一般ではなく、固定arenaで接近、位置取り、target、大技の判断を伴わず常時自動遠隔攻撃を眺める構造だった。scroll探索とplayer判断へ核を移す必要がある。
 - simulationを表示から分離し、seedと30Hz tickへ限定すると、rendererをPhaserからThree.jsへ変えても、戦闘、分岐、replayをbrowserなしで再現検査できる。

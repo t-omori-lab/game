@@ -1,6 +1,6 @@
 # Outcomes: ゲーム開発
 
-Last updated: 2026-08-01
+Last updated: 2026-08-02
 
 ## Confirmed
 
@@ -11,6 +11,11 @@ Last updated: 2026-08-01
 - ユーザーはvisual ceilingをhigh-end PC前提のfrontier-quality master sceneに置き、iPhone／lower-specは同じart sourceから派生するquality tierとする方向を確認した。これは目標方向の確定であり、WebGPU／true HDR実装、commercial-quality達成、Steam公開の確認ではない。
 - 2026-08-01、ユーザーはAI concept A〜EのうちCをVisual North Starとして選んだ。high-density voxel／rich pixel-artのような画面密度、fixed diagonal diorama、HD-2D的なボケ味を評価し、この画面関係をactual gameplayで再現するよう指示した。C画像そのものはliteral pixel art／cube voxel runtime captureではない。
 - Cの主人公／武器に見える中世fantasy driftは採用せず、post-apocalyptic SFへ修正する。最初のcharacter benchmarkは女性型presetとし、種族、性別／gender表現、体格、顔、髪、surface、装備を選べるcharacter creatorへ接続する。女性型は唯一の主人公や能力制限ではない。
+- 2026-08-02、ユーザーは既存prototypeを後から公開環境で確認できるよう保持し、`/game/`を新しい順の説明付きversion一覧、各prototypeを`RXX` URLへ分離するよう指示した。今後のdeployでは過去版を残すか確認し、明示的な削除指示がない限り保持する。
+- `R02` Beauty Cellをlocal実装した。Concept C画像を背景に使わず、road、stair、shelter、water、vegetation、hero、四脚survey robot、SF tools、cyan anomalyをruntime 3Dで構成し、deterministic versioned spec、stable ID、seed、AssetDNA／provenanceへ接続した。
+- `R02`は既存の半自動通常攻撃、手動大技、装備切替、敵予兆、screen-relative inputを保持し、PC master候補としてhalf-float 4× MSAA、GTAO、bloom、SMAA、AgX、world限定tilt-shiftを使う。これはWebGPU、true HDR、commercial-quality達成、ユーザーart acceptanceの確認ではない。
+- `/game/`、`/game/r01/`、`/game/r02/`のversion shellとroute別service worker cacheをlocal実装した。R01は開始commit `88d0f2f`から独立buildした静的成果物とSHA-256 manifestであり、R02以降の共有source変更で変質しない。strict TypeScript、Vitest、production build、production previewの再検証後に公開する。GitHub Pagesへの新version公開はこの記録時点では未確認である。
+- 公開前reviewでR02の専用artが旧worldの未置換terrain／propを描かず、不可視collisionと空の東方quest routeを作る可能性を検出した。置換対象colliderへ読める造形／bounds anchorを追加し、未置換terrain／prop／landmarkはR01相当のfallbackを常時描画するよう修正した。
 - 自由放浪とworld memoryはユーザー意図に合う上位方向として確認された。
 - 世界の基層は、人類が激減し、識別可能な現代都市が植物、水、動物、新しい生活へ侵食・転用されたpost-apocalypseと確認された。崩壊原因、年代、地域、共同体密度は未決定。
 - playerは既存遺構を復旧するか条件の合う土地を選び、自分の拠点を築く方向が確認された。配置自由度、複数拠点、移転、維持、襲撃の詳細は未決定。
@@ -49,6 +54,9 @@ Last updated: 2026-08-01
 - 固定cameraのworld X/Yへkeyboard／virtual-stick X/Yを直結すると、上入力が画面斜めへ投影されることをcode上で確認した。screen-relative controlをrendererと共有するcamera basisでworld座標へ回転するlocal実装を追加し、上下左右、analog magnitude、実Three.js camera投影を含むVitest 144件、strict TypeScript、production buildが合格した。Gamepad APIとclick／tap-to-moveはまだ接続していない。
 
 ## Pending confirmation
+
+- R02のGitHub Pages workflow成功、公開catalog／R01／R02のHTTPS応答と実画面一致。
+- R02がConcept Cへ十分近づいたか、次にhero造形・材質／光・構図／DoFのどれを優先するかというユーザーart review。
 
 - [ ] Prototype Bのユーザー試遊評価がPrototype 0.1の約20点から改善するか。
 - [ ] Visual Pass Eのhybrid方向がユーザーのcommercial benchmarkへ近づいたと評価されるか。現時点でcommercial HD-2Dと同等とは確認されていない。

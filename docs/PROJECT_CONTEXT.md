@@ -1,8 +1,8 @@
 # Project Context: ゲーム開発
 
-Last updated: 2026-08-01  
+Last updated: 2026-08-02  
 Status: active  
-Phase: Concept C Direction Lock v0.5 / realtime hybrid contract and input alignment
+Phase: AI-native Concept C Beauty Cell R02 / versioned public prototypes
 
 ## Purpose
 
@@ -56,6 +56,13 @@ Phase: Concept C Direction Lock v0.5 / realtime hybrid contract and input alignm
 - 2026-08-01、ユーザーは五案からAI concept Cを正式なVisual North Starに選んだ。評価対象は高密度voxel／rich pixel-artのように統合される小型3D造形、fixed diagonal diorama、HD-2D的な被写界深度である。C自体はliteral pixel／cube-voxel画像ではないため、実装はhigh-density micro-voxel由来のrealtime 3D actor、fixed-camera 3D shell、baked static density、wet PBR、gameplay-safe multi-layer DOFに分けて同じ知覚結果を再構築する。Eは比較履歴へ戻した。
 - 主人公は女性型field scavengerを最初のart presetとするが、唯一の主人公には固定しない。`humanoid-v1`から始め、種族、body frame、性別／gender表現、顔、髪、surface、palette、voice／pronoun、augmentation、equipmentをversioned `CharacterGenome`で構成する。Cの白髪、長coat、発光剣はそのまま採らず、都市作業服、sensor、power／heat／service機構を持つpost-apocalyptic SFへ修正する。
 - 固定斜めcameraに対してkeyboard／virtual stickのscreen axisをworld axisへ直結していたため、上入力が画面斜めへ投影される問題を確認した。rendererと同じcamera offsetからscreen-relative input basisを計算し、simulation直前でworld X/Yへ回転する実装へ変更した。上下左右、analog magnitude、実Three.js camera投影をtest化し、Vitest 21 files／144 tests、strict TypeScript、production buildが合格した。Gamepad APIとclick／tap-to-move自体は未実装である。
+- 2026-08-02、選定済みConcept Cの知覚品質を一画面で検証する`R02` Beauty Cellをlocal実装した。暗いwet road、横断歩道、階段／擁壁、transit shelter、water／spillway、作業台、植生、遠景shell、cyan anomalyを、画像背景ではなくruntime 3D sceneとして構成した。
+- `R02`はversioned `BEAUTY_CELL_SPEC`、stable ID `concept-c-beauty-cell-r02`、seed、composition／material grammar、AssetDNA／provenanceを持つdeterministic spec compiler候補である。runtime LLMやConcept C画像をworld truth／textureとして使用していない。
+- `R02`専用に女性型SF field surveyor、四脚survey robot、共鳴切断工具／coil式anchor driverを実装し、既存の半自動通常攻撃、手動大技、装備切替、敵予兆、screen-relative inputへ接続した。これは最初のart presetであり、最終hero／character creator／加入済みcompanion仕様ではない。
+- `R02`のPC master候補ではhalf-float 4× MSAA、GTAO、抑制bloom、SMAA、AgXに、worldだけへ適用するhorizontal／vertical tilt-shiftを加え、DOM HUDをblur対象から外した。production previewの1600×900 browserで3196×1796内部buffer、`environment=beauty-cell`、`quality=pc-ultra`、`tiltShift=true`を確認した。
+- 公開shellをversion化し、`/game/`を新しい順のprototype一覧、`/game/r01/`を従来North Starの凍結版、`/game/r02/`をBeauty Cellとした。R01は開始commit `88d0f2f`から独立buildした静的成果物とSHA-256 manifestをrepositoryへ固定し、今後の共有source変更で再生成されない。`?prototype=north-star`と`?prototype=beauty-cell`は各versionへの互換alias、旧`?prototype=0.1`も保持する。service worker cacheもrouteごとに分離する。
+- Beauty Cellは町cellだけを専用artへ置換し、明示的に置換していない東方worldのterrain／prop／landmarkは引き続き描画する。置換対象の全solid colliderには同じboundsを記録したvisual anchorと、井戸、作業yard、signal mast、seed bed、crate等の読める造形を追加し、不可視collisionと空のquest routeを残さない。
+- local候補はstrict TypeScript、Vitest 26 files／163 tests、production buildに合格し、production previewで`/game/`、`/game/r01/`、`/game/r02/`、service worker、manifestのHTTP 200とR01の`environment=north-star-city`、独立した相対asset bundleを確認した。R01 snapshotはtilt-shift導入前のbuildであり、R02専用passを共有しない。GitHub Pagesの公開反映はこの記録時点では未確認である。
 
 ## Creative reference notes
 
@@ -78,13 +85,14 @@ Phase: Concept C Direction Lock v0.5 / realtime hybrid contract and input alignm
 - Safari tabとHome Screen Web AppのIndexedDB saveは自動継承を仮定できない。Prototype B永続化ではatomic snapshot、quota／eviction、persist request、export／import、初回移行を別gateにする。
 - 人類激減、自然に侵食された現代都市は確認済みの舞台条件。崩壊原因、経過年数、地域、共同体密度、主人公、妖怪と電脳怪異の比率は未確定。現在の固有名とSF辺境の詳細は仮設定。
 - 生成ガバナンスは文書化したが、offline generator、schema検査、candidate registry、human curation UIは未実装。runtime AIは接続していない。
-- 自由放浪、world memory、半自動戦闘、自然に侵食された現代都市、自築拠点、AI concept Cのvisual方向、女性型defaultから始めるcharacter creationは確認済みの上位方向。targeting、防御／itemの手動範囲、拠点配置粒度、GameplayContract、Causal World Cell、残響基盤、WebGPU／HDR profile、StyleProfile／AssetDNA、death／succession、World Loop Proof v0.2の具体仕様は設計提案であり、Cのruntime再現、final asset生成、実機合格はまだない。
+- 自由放浪、world memory、半自動戦闘、自然に侵食された現代都市、自築拠点、AI concept Cのvisual方向、女性型defaultから始めるcharacter creationは確認済みの上位方向。R02はCの知覚要素をruntimeへ接続した最初のBeauty Cell候補だが、targeting、防御／itemの手動範囲、拠点配置粒度、GameplayContract、Causal World Cell、残響基盤、WebGPU／HDR profile、完全なStyleProfile／AssetDNA、death／succession、World Loop Proof v0.2、final asset生成、実機合格はまだない。
 - このdesign synthesis iterationではgame code、runtime asset、public buildを変更しておらず、deployも行っていない。
 - 上記のdoc-only design synthesisとは別に、2026-08-01のNorth Star iterationではlocal game codeを変更した。公開版とGitHub Pagesは変更しておらず、deployも行っていない。
 - 現North Star sceneはPC Ultra描画／半自動戦闘／部位animationと、recognizableな自然侵食現代都市の第一候補を同じ画面で判断できる。Surface Pass v0.2でmulti-channel高解像度面は入ったが、runtime procedural生成のlocal art candidateである。初回同期生成の停止、build-time bake／非同期preload／KTX2、高架駅の構造分節、最終hero／companion、商業HD-2D相当の密度やユーザーart acceptanceは未達。
 - 現主人公は既存semantic voxel recipeを部位化した第一段階であり、最終hero design、顔、髪／布のsurface、PBR material、deformation rig、signature motionの完成を意味しない。表示中の調査灯型robotはart review用候補で、開始時加入の仕様変更ではない。
 - Visual Fidelity Foundation v0.3でcloth／metal／signalのmaterial responseと画面占有は改善したが、24×32×16 literal voxel source自体の造形不足は残る。次は選定済みCに向け、96-cell級を開始点とするhigh-density micro-voxel sourceをoptimized skinned meshへcompileし、normal gameplay scaleで検証する。
-- Visual North Star concept Cは、最終画面のcamera／actor占有／detail frequency／material／light／DOF／hybrid production grammarを評価するtargetである。主人公のbiography／final face、選択可能な種族構成、同行者の加入条件、Cの画面をruntimeで再現できるかは未確認。画像をgameplay captureやaccepted commercial artとして扱わない。
+- Visual North Star concept Cは、最終画面のcamera／actor占有／detail frequency／material／light／DOF／hybrid production grammarを評価するtargetである。R02でその一部をruntime化したが、主人公のbiography／final face、選択可能な種族構成、同行者の加入条件、天候／時間／装備変化後も同品質を維持できるかは未確認。concept画像やR02をaccepted commercial artとして扱わない。
+- R02はWebGL2／SDR browser出力のcandidateであり、WebGPU、true HDR、native Steam build、iPhone 16 Pro実機性能、commercial HD-2D同等、ユーザーの最終art acceptanceを証明しない。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff

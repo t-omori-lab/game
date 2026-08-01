@@ -1,10 +1,21 @@
 # Next Tasks: ゲーム開発
 
-Last updated: 2026-08-01
+Last updated: 2026-08-02
 
 ## P0
 
-Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生成、mobile実機項目は同sceneへ順次接続するqueueであり、North Star候補の制作とvisual reviewをblockしない。
+Active P0は`R02 AI-native Concept C Beauty Cell`の公開とユーザーvisual reviewである。以下のcontract、world loop、生成、mobile実機項目は同sceneへ順次接続するqueueであり、R02のreviewと次の限定的なart修正をblockしない。
+
+- [ ] `R02`を公開し、Concept Cに対する次の一画面修正をユーザー評価で3点以内に固定する。
+  - [x] road／stair／shelter／water／vegetation／hero／survey robot／anomalyをruntime sceneとして実装し、画像背景を使わないBeauty Cellへ統合した。
+  - [x] half-float MSAA、GTAO、bloom、SMAA、AgX、world限定tilt-shift、PC camera compositionを接続した。
+  - [x] versioned spec、stable ID、seed、causal rule、AssetDNA／provenanceを持つ最小AI-native compiler contractを実装した。
+  - [x] strict TypeScript、Vitest 163件、production build、production previewのR01／R02／catalog routeをlocal検証した。
+  - [ ] GitHub Pages workflow成功と公開URLのR01／R02／catalogを確認する。
+  - [ ] ユーザーreview後、hero造形、材質／光、構図／DoFのうち最大3点へ次sliceを限定する。
+- [x] prototype version保存規則を公開shellへ導入する。
+  - `/game/`は新しい順の説明付き一覧、`/game/r01/`は開始commitから独立buildした静的North Star snapshot、`/game/r02/`はBeauty Cellとする。R01はSHA-256 manifestで変質を検出する。
+  - 今後のdeploy planでは既存versionを残すか毎回確認し、ユーザーから明示的な削除指示がない限り過去versionを保持する。
 
 - [ ] PC play前提の`North Star Scene v0.1`を最優先で作る。
   - [x] `?prototype=north-star`を独立routeにし、PC Ultra WebGL2 post stack、半自動通常攻撃、手動大技、部位化主人公、同行者候補previewを一画面へ接続した。
@@ -13,8 +24,8 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
     - [x] Surface Pass v0.2でasphalt／concrete 1024²、roof 512²のalbedo／normal／roughness、面別UV、歩道目地、provenance／digestを実装し、actual-cameraでmacro反復と骨材格子を改稿した。
     - [x] Visual Fidelity Foundation v0.3で、都市partを増やさずPMREM IBL、direct／rim／fill、露出／fog、PC camera、cloth／metal／signal material、world-first intro、縮小HUDを実装し、actual browserで一度改稿した。
     - [x] Visual North Star concept A〜Eを生成・比較し、ユーザーがCを正式targetに選んだ。Cのhigh-density voxel／rich pixel-art知覚、fixed diagonal diorama、HD-2D的DOFをrealtime 3D hybridで再構築する。prompt、SHA-256、実装案をprojectへ保存したが、runtime実装やcommercial art acceptanceではない。
-    - [ ] 次はCを基準に、高さ96-cell級の女性型default preset、SF survey cutter、hair／fieldwear一式を`humanoid-v1`へcompileし、別gender presentationと別humanoid speciesを同じrig／clip／socketで交換できる`CharacterGenome` pilotにする。
-    - [ ] 単純な道路、壁一枚、shelter、rain collector、水、植生、主人公、同行者candidate、敵一体だけのC Beauty Cellを切り出し、建築密度なしでも昼光、接地、wet material、空気、色、UI、foreground／far DOFが成立することを2560×1440の静止画と操作captureでgate化する。主人公、敵予兆、interactionはblurしない。
+    - [ ] R02で女性型SF field surveyor、二武器、四脚survey robot、AssetDNAの一presetを実装した。次は別gender presentationと別humanoid speciesを同じrig／clip／socketで交換できる`CharacterGenome` pilotへ一般化する。
+    - [x] 単純なroad、stair、shelter、water、植生、主人公、同行者candidate、敵／anomalyからなるC Beauty Cellを切り出し、wet material、warm／cool light、world限定foreground／far DOFを同じruntime sceneへ接続した。商業品質やユーザーart acceptanceは未確定。
     - [ ] 上のhero／simple-cell gateをユーザーが選択した後にだけ、高架／駅のdeck、縁、支持体、設備、植生縁の構造分節を再開する。
     - [ ] `AssetPackLoader`、GLTFLoader＋Meshopt、KTX2Loader、generated precache manifest、approved voxel fallbackを実装する。runtime同期生成をversioned baked asset＋非同期preloadへ移し、初回scene生成のmain-thread停止を残したままproduction採用しない。
   - 自然に侵食されたrecognizableな現代都市一画面、精密な主人公、同行者候補一体、格下一体、名付き敵一体、遺物effectを同じ固定cameraへ置く。
@@ -105,6 +116,8 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
 
 ## Recently completed
 
+- [x] AI-native Concept C Beauty Cell R02、女性型SF hero、四脚survey robot、二武器、world限定tilt-shiftを実装し、strict TypeScript、Vitest 26 files／163 tests、production build、R01／R02／catalogのlocal production previewを合格 — 2026-08-02
+- [x] `/game/`の新しい順prototype catalog、開始commitから独立buildした`/game/r01/`静的snapshot＋SHA-256、`/game/r02/`Beauty Cell、route別service worker cacheと互換aliasを実装 — 2026-08-02
 - [x] Visual Fidelity Foundation v0.3でPMREM IBL、光／fog／露出、PC camera composition、主人公material、world-first intro／HUDを統合し、1280×720 DPR 2 actual browser、strict TypeScript、Vitest 141件、production buildを合格 — 2026-08-01
 - [x] North Star Surface Pass v0.2で決定的albedo／normal／roughness 9枚、主要building面別UV、歩道microdetailを実装し、1600×900 visual loop、strict TypeScript、Vitest 133件、production buildを合格 — 2026-08-01
 - [x] PC Ultra North Star技術sliceへhalf-float MSAA／GTAO／bloom／SMAA、半自動近接戦闘、部位化主人公と7種poseを統合し、desktop browserでvisual smokeを実施 — 2026-08-01
