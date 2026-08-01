@@ -267,3 +267,23 @@
 - camera-facing側を旧店舗／診療所のtile、窓、shutter、庇、錆補修、洗濯へ反転し、512² asphalt＋linear／mipmapへ変更した第二稿をactual-cameraで確認した。crosswalkも風化／分節し、菜園とrepair bayへ色を足した。
 - 第二稿は「都市の旧用途が読める最初のlocal candidate」まで。高解像度baked albedo／normal／roughness、roof microdetail、最終hero／companion、commercial art acceptanceは未達。
 - local evidence: 1600×900 viewport、1598×898 canvas、device pixel ratio 1、`environmentProfile=north-star-city`、MSAA、half-float post stack、ground texture `ready`。Vitest 18 files／129 tests、strict TypeScript、Vite production build合格。
+
+## 2026-08-01 — North Star Surface Pass v0.2 working notes
+
+- 判断レベルは引き続き`Revise one thing`。今回直すのは大面積surfaceの平坦さであり、gameplayやrenderer方式は広げない。
+- fixed cameraで情報量への寄与が大きい順は、道路／横断歩道、建物roof、camera-facing facade。見えにくい背面へ同量のdetailを置かない。
+- 実装候補はNorth Star専用の決定的DataTexture群。albedoだけでなく、同じheight／wear fieldからnormalとroughnessを生成し、各channelのcolor spaceを分離する。
+- UVを持たない既存batch全体へ無理にtextureを貼らず、主要な舗装と建物shellだけをUV付きgeometryへ分離する。collision／interactionの正本と置換IDは変えない。
+- facadeの汚れ、補修、苔は一様なnoiseにせず、雨筋、地際、排水、亀裂、補修patchへ因果を持たせる。屋根は水溜まり跡、排水、設備支持、植生縁を優先する。
+- texture ownershipとdisposeをsurface libraryへ集約し、同じgroupを複数回disposeしても安全にする。
+- provenance候補: profile、generator/version、seed、resolution、channels、deterministic flag、content digest、source=`procedural-dev-candidate`。
+- commercial reference級という目標は維持するが、この一回で達成したとは判定しない。actual-cameraの第一稿を撮り、最も効く一箇所を再度直す。
+- 1600×900第一稿では、road／wall／roofにalbedo／normal／roughnessの物質感が出て、巨大な無地面は解消した。一方、asphaltの補修矩形とroofの湛水輪が複数回規則的に並び、「高精細な生成tile」に見えた。
+- 一度のactual-camera改稿は反復感へ限定する。macro wearのrepeatをほぼ一画面一回へ下げ、主要2棟のshell／roofはgeometry側UV位相をずらす。fine aggregate／normalの解像度は維持する。
+- macro反復の改稿後、asphaltの固定5px-cellへ必ず骨材を置く規則がscreen上で点格子として露出した。cellは候補位置だけに使い、約36%だけを採用する疎密へ変更。albedo差、height、roughness、normal strengthも抑え、規則より材料の揺らぎとして読む値へ戻す。
+- 疎密修正後のroadはmacro反復／点格子を解消し、中央の読みやすさも回復した。次に残る最大の平坦面は南北の長い歩道slabだったため、既存batch内で低contrastの伸縮目地と欠損した点字誘導blockを追加し、人間scaleと旧用途を補う。collision形状は不変。
+- code reviewで、BoxGeometry全6面へ同じ0..1 UVとmacro傷を貼る伸縮／同形反復と、scene生成ごとの同期source生成をP1として検出した。各faceの実寸比でUV範囲を縮め、法線方向ごとに位相を変える。生成済みheight／channel／digestはmodule内cacheへ保持し、renderer restartでは再計算しない。初回同期生成自体は残るため、build-time bakeは次sliceの性能／配信課題。
+- first-pass local screenshot: `/tmp/north-star-surface-v2-first.png`。
+- surfaceごとの派生seedを各texture metadataの`seed`とし、共通値は`baseSeed`へ分離した。library provenanceとtexture provenanceが同じ生成単位を指す。
+- final local screenshot: `/tmp/north-star-surface-v2-final.png`。独立visual reviewは静止画上のP0なしで`Keep and stop`。最大の次課題は右上の高架駅／線路構造で、roofの高周波detailは移動時shimmer未検証。
+- final local evidence: strict TypeScript、Vitest 19 files／133 tests、Vite production build、`git diff --check`合格。初回同期生成はproduction blockerとして残し、public deploy／pushは行わない。

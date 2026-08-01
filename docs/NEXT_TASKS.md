@@ -9,7 +9,10 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
 - [ ] PC play前提の`North Star Scene v0.1`を最優先で作る。
   - [x] `?prototype=north-star`を独立routeにし、PC Ultra WebGL2 post stack、半自動通常攻撃、手動大技、部位化主人公、同行者候補previewを一画面へ接続した。
   - [x] North Star routeだけを、道路、横断歩道、鉄道／高架、集合住宅、店舗／診療所、雨水／修理設備の旧用途が読める自然侵食現代都市cellへ置き換えた。baseline start-townは保持した。
-  - [ ] 現都市cellを高解像度baked surface、facade／roof microdetail、植生silhouette、lighting compositionで再制作し、procedural box主体の第一候補からcommercial reference級へ引き上げる。
+  - [ ] 現都市cellをcommercial reference級へ引き上げる。
+    - [x] Surface Pass v0.2でasphalt／concrete 1024²、roof 512²のalbedo／normal／roughness、面別UV、歩道目地、provenance／digestを実装し、actual-cameraでmacro反復と骨材格子を改稿した。
+    - [ ] 次は右上の高架／駅を、noise追加ではなくdeck上面／側面、縁、支持体、設備、植生縁の構造分節とsilhouette breakupで再制作する。
+    - [ ] runtime同期生成をversioned baked asset＋非同期preloadへ移し、KTX2候補を比較する。初回scene生成のmain-thread停止を残したままproduction採用しない。
   - 自然に侵食されたrecognizableな現代都市一画面、精密な主人公、同行者候補一体、格下一体、名付き敵一体、遺物effectを同じ固定cameraへ置く。
   - 2560×1440相当のPC Ultraをmasterとし、WebGPU／HDR、half-float lighting、PBR、baked indirect light、高解像度surface、shadow、選択的postを比較する。WebGL2／SDRとmobileは後から同じsceneを縮退する。
   - 主人公／同行者は単一merged voxel meshの上下動に留めず、顔／sensor、衣装／外装、武器、semantic parts、material差、signature pose、part animationを持つhero assetにする。
@@ -52,10 +55,10 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
 - [ ] 公開したVisual Pass Eを、commercial HD-2D完成版ではなくhybrid方向の比較候補としてユーザーreviewする。
   - 地面の質感、建物面、背景、player、生活感、戦闘視認性を分けて評価する。Visual Pass Dは不合格のため基準へ戻さない。
   - Done when: 次に直す一画面と、合格／不合格の理由を3点以内で固定する。
-- [ ] hybrid HD-2Dの次のsurface passを、start-town一画面へ限定して実装する。
+- [x] hybrid HD-2Dの最初のmulti-channel surface passを、North Star都市cell一画面へ限定して実装する。
   - realtime 3Dはmoving character、collision silhouette、occluder、dynamic shadowへ集中し、地面、道、建物面、背景は高解像度albedo、normal、roughness、baked detailを組み合わせる。
   - visualとcollisionの矛盾を自動検査し、生成assetにはsource、generator、制約、採否、content hashを残す。
-  - Done when: 大きな単色面、Minecraft的なblock感、surfaceの反復が焦点画面を支配せず、iPhoneの実`visualViewport`でplayerとinteraction routeが読める。
+  - local desktopでは大きな無地面とsurface反復を後退させ、player／interaction routeを維持した。iPhone実`visualViewport`、移動時のroof shimmer、commercial art acceptanceは別途未確認。
 - [ ] Visual Pass E以降のperformance budgetを実機結果から決め直す。
   - local候補は約47〜54fps、35 draw calls、約48〜49k visible trianglesであり、旧60fps目標を満たしたとは扱わない。
   - Done when: iPhone 16 ProのSafari／ホーム画面PWAで同一routeを計測し、内部解像度、pixel ratio、texture、shadowの調整順を決める。
@@ -93,6 +96,7 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
 
 ## Recently completed
 
+- [x] North Star Surface Pass v0.2で決定的albedo／normal／roughness 9枚、主要building面別UV、歩道microdetailを実装し、1600×900 visual loop、strict TypeScript、Vitest 133件、production buildを合格 — 2026-08-01
 - [x] PC Ultra North Star技術sliceへhalf-float MSAA／GTAO／bloom／SMAA、半自動近接戦闘、部位化主人公と7種poseを統合し、desktop browserでvisual smokeを実施 — 2026-08-01
 - [x] 自由放浪、world memory、Elona Mobile型の半自動戦闘、自然に侵食された現代都市、自築拠点を上位方向として作品憲法と設計正本へ反映 — 2026-08-01
 - [x] これまでの要求を、提案中の仮称「世界記憶型・放浪生活ハクスラ」として統合し、短い`GAME_CONSTITUTION.md`、Gate A／B／C、Causal World Cell、GameplayContract、StyleProfile／AssetDNA、mobile renderer tierを設計 — 2026-07-31

@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-01  
 Status: active  
-Phase: PC Ultra North Star scene / local visual and gameplay development
+Phase: North Star Surface Pass v0.2 / local visual and gameplay development
 
 ## Purpose
 
@@ -48,7 +48,8 @@ Phase: PC Ultra North Star scene / local visual and gameplay development
 - 主人公の24×32×16 recipeを、頭、胴、左右腕、左右脚、装備へsemantic分割し、右腕weapon socketとidle／run／windup／hit／recovery／hurt／skill poseをPC Ultra routeへ接続した。従来のmerged meshはbaseline fallbackへ残した。
 - 1600×900、device pixel ratio 1のlocal desktop ChromeでNorth Star routeを起動し、1598×898内部解像度、half-float MSAA、GTAO、bloom、SMAA、通常攻撃button非表示、windup／hit pose、大技中のauto combat停止、browser error 0件を観測した。strict TypeScript、Vitest 124件、production buildも合格した。
 - North Star routeだけが`north-star-city` environment profileを選ぶようにし、baselineのstart-townは保持した。最初の都市cell候補は、旧高架駅／集合住宅、舗装道路と横断歩道、旧店舗／診療所、雨水濾過槽、再利用kiosk、修理bay、菜園、局所的な植生を、既存collisionとinteraction座標へ合わせて一画面へ統合した。
-- 都市cellは512²の決定的asphalt DataTexture、mipmap／linear filtering、non-flat Standard／Physical material、最大24 draw-call／80k triangleのPC候補budgetを持つ。1600×900 local Chromeで1598×898、`environment=north-star-city`、MSAA、half-float post stack、texture `ready`を観測した。strict TypeScript、Vitest 129件、production buildが合格した。
+- North Star Surface Pass v0.2では、asphalt／concreteを1024²、roofを512²とし、同一の損耗fieldからalbedo／normal／roughnessを生成する9枚のDataTextureへ更新した。各surfaceはseed、generator version、channel encoding、repeat、normal strength、content digestをprovenanceとして持ち、roughnessはThree.jsのG channelへ格納する。道路と主要2棟のshell／roofをUV付きmeshへ移管し、歩道には伸縮目地と欠損した点字誘導blockを加えた。
+- 1600×900のactual-camera reviewでは、第一稿のmacro tile反復、次稿の規則的な骨材格子を検出して解消した。建物は面の実寸aspectと法線方向別offsetを持ち、+X／+Z／roofで同じ傷を同形反復しない。最終local候補は1598×898、`environment=north-star-city`、MSAA、half-float post stack、texture `ready`、visual viewport scale 1、browser error 0件。baseline routeは`environment=start-town`／`quality=baseline`を維持した。strict TypeScript、Vitest 19 files／133 tests、production buildが合格した。
 
 ## Creative reference notes
 
@@ -74,7 +75,7 @@ Phase: PC Ultra North Star scene / local visual and gameplay development
 - 自由放浪、world memory、半自動戦闘、自然に侵食された現代都市、自築拠点は確認済みの上位方向。targeting、防御／itemの手動範囲、拠点配置粒度、GameplayContract、Causal World Cell、残響基盤、三visual表現、WebGPU／HDR profile、StyleProfile／AssetDNA、death／succession、World Loop Proof v0.2の具体仕様は設計提案であり、runtime実装、asset生成、実機合格はまだない。
 - このdesign synthesis iterationではgame code、runtime asset、public buildを変更しておらず、deployも行っていない。
 - 上記のdoc-only design synthesisとは別に、2026-08-01のNorth Star iterationではlocal game codeを変更した。公開版とGitHub Pagesは変更しておらず、deployも行っていない。
-- 現North Star sceneはPC Ultra描画／半自動戦闘／部位animationと、recognizableな自然侵食現代都市の第一候補を同じ画面で判断できる。ただし都市cellはprocedural geometry／DataTexture中心のlocal art candidateであり、高解像度baked surface、最終hero／companion、商業HD-2D相当の密度やユーザーart acceptanceを意味しない。
+- 現North Star sceneはPC Ultra描画／半自動戦闘／部位animationと、recognizableな自然侵食現代都市の第一候補を同じ画面で判断できる。Surface Pass v0.2でmulti-channel高解像度面は入ったが、runtime procedural生成のlocal art candidateである。初回同期生成の停止、build-time bake／非同期preload／KTX2、高架駅の構造分節、最終hero／companion、商業HD-2D相当の密度やユーザーart acceptanceは未達。
 - 現主人公は既存semantic voxel recipeを部位化した第一段階であり、最終hero design、顔、髪／布のsurface、PBR material、deformation rig、signature motionの完成を意味しない。表示中の調査灯型robotはart review用候補で、開始時加入の仕様変更ではない。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 

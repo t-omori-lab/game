@@ -40,6 +40,7 @@ Last updated: 2026-08-01
 - 24×32×16主人公を7 semantic partへ分割し、右腕weapon socket、idle／run／windup／hit／recovery／hurt／skill poseをPC Ultra routeへ接続した。single merged meshはbaseline fallbackとして保持した。
 - North Star local候補はstrict TypeScript、Vitest 124件、production buildが合格した。desktop Chromeで開始、移動、半自動攻撃windup／hit pose、PC Ultra候補post stack、通常攻撃button非表示、大技中のauto combat停止、武器切替時の即時hit抑止、browser error 0件を確認した。
 - North Star専用の自然侵食現代都市cellをlocal実装した。旧高架駅／集合住宅、横断歩道、旧店舗／診療所、雨水濾過槽、情報kiosk、修理bay、菜園を既存collisionへ合わせ、baselineは従来のstart-townを維持した。1600×900のlocal Chromeで都市表示と主人公の開始位置を目視し、空白だったcamera-facing facadeと舗装filterを一度改稿した。strict TypeScript、Vitest 129件、production buildが合格した。公開／deployとユーザーart acceptanceは未実施。
+- North Star Surface Pass v0.2をlocal実装した。asphalt／concrete 1024²、roof 512²のalbedo／normal／roughnessを決定的に生成し、provenance／content digest、面別UV、冪等dispose、歩道microdetailを接続した。1600×900 actual-cameraでmacro反復と骨材格子を改稿し、別visual reviewで同sliceを止める静止画上のP0なしと判定した。strict TypeScript、Vitest 19 files／133 tests、production build、North Star／baseline browser smokeが合格した。公開／deploy、移動時shimmer、ユーザーart acceptance、commercial-quality達成は未確認。
 
 ## Pending confirmation
 
@@ -62,6 +63,7 @@ Last updated: 2026-08-01
 - [ ] PC UltraのWebGPU／HDR、KTX2、Visual Benchmark Scene、AssetDNA、Causal World Cellが知覚品質、制作効率、gameplay改善へ実際につながるか。
 - [ ] PC masterから派生したmobile tierがiPhone 16 Pro上で操作視認性、performance、発熱の条件を満たすか。
 - [ ] North Star routeの自然侵食現代都市第一候補がユーザーにrecognizableで魅力的と評価され、さらに商業reference級の一画面へ到達するか。local候補は実装済みだが、commercial art acceptanceは未確認。
+- [ ] Surface Pass v0.2のroof microdetailが移動時にちらつかず、runtime同期生成をbaked／非同期assetへ移して初回停止を解消できるか。
 - [ ] semantic part化した現主人公が十分な精密さと魅力を持つか。顔／髪／衣装surface、PBR material、deformation rig、signature animationを含む最終hero designは未完成。
 - [ ] Counter cutterとBreach driverが実際の試遊で、DPS以外の位置取り、risk、timingの差として感じられるか。
 - [ ] PC UltraのWebGPU／HDR候補が、現WebGL2 half-float post stackより知覚品質で勝つか。同条件比較は未実施。

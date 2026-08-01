@@ -323,3 +323,39 @@ North Starルートに残る村落的な開始地点を、旧用途が一目で�
 ### Status
 
 **Completed locally; not deployed** — 都市cellのlocal実装、1600×900 actual-camera review、camera-facing facade／舗装filterの改稿、baseline保持、strict TypeScript、Vitest 129件、production build、Workspace postflightまで合格した。public deploy／pushとユーザーart acceptanceは行っていない。
+
+---
+
+## Current Iteration: North Star Surface Pass v0.2
+
+### Trigger
+
+2026-08-01、ユーザーがNorth Star都市cellの改善を確認し、「つぎ」と継続実装を指示した。正本上の次P0である、procedural box主体の表面をcommercial referenceへ近づける作業へ進む。
+
+### Goal
+
+North Star専用都市cellの大面積な舗装、外壁、屋根を、決定的に生成した高解像度albedo／normal／roughnessと固定camera向けmicrodetailへ置き換える。現行の都市構図、主人公、戦闘、collision／interaction、post stack、baseline routeは保持し、「形は都市だが表面が生成boxに見える」問題を一段解消する。
+
+### Art-direction decision
+
+**Revise one thing** — 今回の主問題は、大面積surfaceの平坦さと反復感。読む順番 `主人公と進路 → 駅・集合住宅・旧診療所 → 水・修理・菜園` を保ち、画面上でよく見えるroofとcamera-facing facade、道路を優先する。
+
+### Phases
+
+- [x] Phase S1: 現都市cellのsurface／material所有、UV、dispose、test境界を監査し、限定した実装方式を固定する
+- [x] Phase S2: North Star専用の決定的multi-channel surface libraryと、facade／roof／asphalt microdetailを実装する
+- [x] Phase S3: 1600×900 actual-cameraで第一稿を確認し、主問題を一度改稿する
+- [x] Phase S4: focused／full test、strict TypeScript、production build、baseline browser smokeを合格させる
+- [x] Phase S5: durable docs、Workspace postflight、exact-scope local commitを完了する
+
+### Constraints
+
+- gameplay、collision、interaction、baseline route、PC post stackを変更しない。
+- WebGPU／true HDR、mobile quality tier、最終hero／companion造形は別sliceとする。
+- 外部AI runtimeや無審査assetを追加しない。surface生成はseed、version、channel、content digestを記録し、再現可能にする。
+- commercial HD-2D達成とは呼ばず、actual-cameraとuser review前のlocal candidateとして扱う。
+- public deploy／pushは今回の指示に含めない。
+
+### Status
+
+**Completed locally; not deployed** — 9枚の決定的albedo／normal／roughness、UV付き道路・主要2棟shell／roof、歩道microdetailを実装した。1600×900 reviewでmacro反復と点格子を解消。strict TypeScript、Vitest 19 files／133 tests、production build、North Star／baseline browser smoke、独立code／visual review、Workspace postflightが合格した。public deploy／push、移動時shimmer、iPhone実機、ユーザーart acceptance、commercial-quality達成は未確認。

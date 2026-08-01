@@ -1,5 +1,11 @@
 import * as THREE from "three";
 import { ColoredGeometryBuilder } from "./coloredGeometry";
+import {
+  NORTH_STAR_SURFACE_PROFILE,
+  createNorthStarSurfaceLibrary,
+  type NorthStarSurfaceLibrary,
+  type NorthStarSurfaceSet,
+} from "./northStarSurfaceTextures";
 import { TOWN_CONTRACT_BOARD_POSITION } from "../sim/content";
 
 export interface NorthStarCityArtSlice {
@@ -42,6 +48,7 @@ const REPLACED_PROP_IDS: ReadonlySet<string> = new Set([
 
 const OLD_USE_SIGNALS = [
   "crosswalk-and-lane-markings",
+  "tactile-paving-and-expansion-joints",
   "mixed-use-apartment-balconies",
   "ground-floor-shop-canopy",
   "elevated-rail-platform-fragment",
@@ -140,52 +147,7 @@ function addSegment(
   });
 }
 
-function createAsphaltTexture(): THREE.DataTexture {
-  const width = 512;
-  const height = 512;
-  const data = new Uint8Array(width * height * 4);
-
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      const seed = hash(x, y, 91);
-      const coarse = Math.floor(hashUnit(seed) * 24);
-      const grain = Math.floor(hashUnit(seed, 10) * 14);
-      const seam = (x + Math.floor(y * 0.37)) % 71 < 2;
-      const aggregate = (seed & 0x3f) === 0;
-      const index = (y * width + x) * 4;
-      const shade = THREE.MathUtils.clamp(
-        91 + coarse + grain - (seam ? 27 : 0) + (aggregate ? 31 : 0),
-        48,
-        142,
-      );
-      data[index] = shade - 7;
-      data[index + 1] = shade + 1;
-      data[index + 2] = shade + 3;
-      data[index + 3] = 255;
-    }
-  }
-
-  const texture = new THREE.DataTexture(
-    data,
-    width,
-    height,
-    THREE.RGBAFormat,
-    THREE.UnsignedByteType,
-  );
-  texture.name = "north-star-city-asphalt-texture";
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(5.4, 4.7);
-  texture.anisotropy = 8;
-  texture.magFilter = THREE.LinearFilter;
-  texture.minFilter = THREE.LinearMipmapLinearFilter;
-  texture.generateMipmaps = true;
-  texture.needsUpdate = true;
-  return texture;
-}
-
-function createAsphaltMesh(texture: THREE.Texture): THREE.Mesh {
+function createAsphaltMesh(surface: NorthStarSurfaceSet): THREE.Mesh {
   const geometry = new THREE.PlaneGeometry(860, 760, 48, 40);
   geometry.name = "north-star-city-asphalt-geometry";
   geometry.rotateX(-Math.PI / 2);
@@ -194,15 +156,146 @@ function createAsphaltMesh(texture: THREE.Texture): THREE.Mesh {
   const material = new THREE.MeshStandardMaterial({
     name: "north-star-city-asphalt-material",
     color: 0xffffff,
-    map: texture,
-    roughness: 0.88,
+    map: surface.albedoMap,
+    normalMap: surface.normalMap,
+    normalScale: new THREE.Vector2(0.42, 0.42),
+    roughnessMap: surface.roughnessMap,
+    roughness: 1,
     metalness: 0.04,
     flatShading: false,
   });
+  material.userData.surfaceProfile = NORTH_STAR_SURFACE_PROFILE;
+  material.userData.surfaceKind = "asphalt";
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "north-star-city-asphalt";
   mesh.receiveShadow = true;
   return mesh;
+}
+
+type TexturedBoxSpecification = {
+  readonly name: string;
+  readonly center: readonly [number, number, number];
+  readonly size: readonly [number, number, number];
+  readonly surface: NorthStarSurfaceSet;
+  readonly surfaceKind: "concrete" | "roof";
+  readonly normalScale: number;
+  readonly uvOffset?: readonly [number, number];
+  readonly castShadow?: boolean;
+  readonly receiveShadow?: boolean;
+};
+
+function createTexturedBoxMesh(
+  specification: TexturedBoxSpecification,
+): THREE.Mesh {
+  const [width, height, depth] = specification.size;
+  const geometry = new THREE.BoxGeometry(width, height, depth);
+  geometry.name = `${specification.name}-geometry`;
+  const uv = geometry.getAttribute("uv");
+  const normal = geometry.getAttribute("normal");
+  const [offsetU, offsetV] = specification.uvOffset ?? [0, 0];
+  for (let index = 0; index < uv.count; index += 1) {
+    const normalX = normal.getX(index);
+    const normalY = normal.getY(index);
+    const normalZ = normal.getZ(index);
+    let physicalU: number;
+    let physicalV: number;
+    let faceOffsetU: number;
+    let faceOffsetV: number;
+
+    if (Math.abs(normalX) > 0.5) {
+      physicalU = depth;
+      physicalV = height;
+      [faceOffsetU, faceOffsetV] = normalX > 0
+        ? [0.19, 0.31]
+        : [0.61, 0.07];
+    } else if (Math.abs(normalY) > 0.5) {
+      physicalU = width;
+      physicalV = depth;
+      [faceOffsetU, faceOffsetV] = normalY > 0
+        ? [0.29, 0.43]
+        : [0.73, 0.17];
+    } else {
+      physicalU = width;
+      physicalV = height;
+      [faceOffsetU, faceOffsetV] = normalZ > 0
+        ? [0, 0]
+        : [0.47, 0.59];
+    }
+
+    const longestAxis = Math.max(physicalU, physicalV);
+    uv.setXY(
+      index,
+      uv.getX(index) * (physicalU / longestAxis) + offsetU + faceOffsetU,
+      uv.getY(index) * (physicalV / longestAxis) + offsetV + faceOffsetV,
+    );
+  }
+  uv.needsUpdate = true;
+  geometry.translate(...specification.center);
+  geometry.userData.componentCount = 1;
+  const material = new THREE.MeshStandardMaterial({
+    name: `${specification.name}-material`,
+    color: 0xffffff,
+    map: specification.surface.albedoMap,
+    normalMap: specification.surface.normalMap,
+    normalScale: new THREE.Vector2(
+      specification.normalScale,
+      specification.normalScale,
+    ),
+    roughnessMap: specification.surface.roughnessMap,
+    roughness: 1,
+    metalness: specification.surfaceKind === "roof" ? 0.05 : 0,
+    flatShading: false,
+  });
+  material.userData.surfaceProfile = NORTH_STAR_SURFACE_PROFILE;
+  material.userData.surfaceKind = specification.surfaceKind;
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.name = specification.name;
+  mesh.castShadow = specification.castShadow ?? true;
+  mesh.receiveShadow = specification.receiveShadow ?? true;
+  return mesh;
+}
+
+function createTexturedArchitectureMeshes(
+  surfaces: NorthStarSurfaceLibrary,
+): readonly THREE.Mesh[] {
+  return [
+    createTexturedBoxMesh({
+      name: "north-star-city-north-apartment-shell",
+      center: [255, 78, 645],
+      size: [244, 152, 140],
+      surface: surfaces.concrete,
+      surfaceKind: "concrete",
+      normalScale: 0.34,
+      uvOffset: [0.07, 0.12],
+    }),
+    createTexturedBoxMesh({
+      name: "north-star-city-north-apartment-roof",
+      center: [268, 161, 646],
+      size: [210, 18, 136],
+      surface: surfaces.roof,
+      surfaceKind: "roof",
+      normalScale: 0.46,
+      uvOffset: [0.03, 0.06],
+    }),
+    createTexturedBoxMesh({
+      name: "north-star-city-south-clinic-shell",
+      center: [265, 57, 1_155],
+      size: [224, 110, 126],
+      surface: surfaces.concrete,
+      surfaceKind: "concrete",
+      normalScale: 0.31,
+      uvOffset: [0.41, 0.23],
+    }),
+    createTexturedBoxMesh({
+      name: "north-star-city-south-clinic-roof",
+      center: [265, 116, 1_155],
+      size: [232, 10, 132],
+      surface: surfaces.roof,
+      surfaceKind: "roof",
+      normalScale: 0.43,
+      uvOffset: [0.36, 0.47],
+    }),
+  ];
 }
 
 function addRoadAndSidewalk(
@@ -236,6 +329,36 @@ function addRoadAndSidewalk(
     size: [820, 5.2, 7],
     color: 0xc6c7b9,
   });
+
+  // Human-scale pavement modules stop the two long slabs reading as a single
+  // Minecraft-like block. Damage remains sparse around the player corridor.
+  for (let x = 104; x <= 760; x += 64) {
+    debris.addBox({
+      center: [x, 4.56, 778],
+      size: [1.1, 0.24, 67],
+      color: x % 128 === 40 ? 0x7c8681 : 0x87918c,
+    });
+    debris.addBox({
+      center: [x + 27, 4.56, 1_030],
+      size: [1, 0.24, 63],
+      color: x % 192 === 40 ? 0x818b86 : 0x8d9690,
+    });
+  }
+  for (let x = 112; x <= 752; x += 22) {
+    if (x > 390 && x < 520) {
+      continue;
+    }
+    markings.addBox({
+      center: [x, 4.7, 796],
+      size: [13.5, 0.28, 5.5],
+      color: x % 44 === 24 ? 0xc1a956 : 0xb9a658,
+    });
+    markings.addBox({
+      center: [x + 9, 4.7, 1_012],
+      size: [13.5, 0.28, 5.5],
+      color: x % 66 === 46 ? 0xb7a15a : 0xc0ab61,
+    });
+  }
 
   // Japanese urban-road signals: faded center line, stop bar, and crosswalk.
   for (let x = 95; x <= 795; x += 78) {
@@ -303,17 +426,8 @@ function addNorthMixedUseBlock(
   signs: ColoredGeometryBuilder,
   foliage: ColoredGeometryBuilder,
 ): void {
-  concrete.addBox({
-    center: [255, 78, 645],
-    size: [244, 152, 140],
-    color: 0xb7b8aa,
-    faceShades: { "positive-z": 1.08, "positive-y": 1.06 },
-  });
-  concrete.addBox({
-    center: [268, 161, 646],
-    size: [210, 18, 136],
-    color: 0x969f9b,
-  });
+  // The main shell and roof use UV-backed multi-channel materials and are
+  // created separately. Structural projections remain in this shared batch.
   concrete.addBox({
     center: [141, 118, 647],
     size: [18, 82, 136],
@@ -427,24 +541,14 @@ function addNorthMixedUseBlock(
 }
 
 function addSouthStoreResidence(
-  concrete: ColoredGeometryBuilder,
   facade: ColoredGeometryBuilder,
   glass: ColoredGeometryBuilder,
   metal: ColoredGeometryBuilder,
   signs: ColoredGeometryBuilder,
   foliage: ColoredGeometryBuilder,
 ): void {
-  concrete.addBox({
-    center: [265, 57, 1_155],
-    size: [224, 110, 126],
-    color: 0xc1bfae,
-    faceShades: { "negative-z": 1.07 },
-  });
-  concrete.addBox({
-    center: [265, 116, 1_155],
-    size: [232, 10, 132],
-    color: 0x7f9690,
-  });
+  // The main shell and roof use UV-backed multi-channel materials and are
+  // created separately. Camera-facing facade pieces stay batched below.
   facade.addBox({
     center: [265, 61, 1_219.2],
     size: [215, 100, 2.5],
@@ -960,7 +1064,7 @@ export function createNorthStarCityArtSlice(): NorthStarCityArtSlice {
 
   addRoadAndSidewalk(surfaces, markings, debris);
   addNorthMixedUseBlock(concrete, facade, glass, metal, signs, foliage);
-  addSouthStoreResidence(concrete, facade, glass, metal, signs, foliage);
+  addSouthStoreResidence(facade, glass, metal, signs, foliage);
   addElevatedRailFragment(station, metal, concrete, glass, foliage);
   addUtilityBasinAndWater(concrete, metal, glass, water, foliage);
   addContractKiosk(metal, signs, glass, warmGlow);
@@ -968,8 +1072,9 @@ export function createNorthStarCityArtSlice(): NorthStarCityArtSlice {
   addGrowthCluster(foliage, 96, 822, 38, 52, 44, 733);
   addGrowthCluster(foliage, 775, 1_015, 48, 38, 38, 739);
 
-  const asphaltTexture = createAsphaltTexture();
-  const asphalt = createAsphaltMesh(asphaltTexture);
+  const surfaceLibrary = createNorthStarSurfaceLibrary();
+  const asphalt = createAsphaltMesh(surfaceLibrary.asphalt);
+  const architectureMeshes = createTexturedArchitectureMeshes(surfaceLibrary);
   const meshes = [
     createBatchMesh(surfaces, {
       name: "north-star-city-curbs-and-sidewalks",
@@ -1059,7 +1164,7 @@ export function createNorthStarCityArtSlice(): NorthStarCityArtSlice {
   const ground = new THREE.Group();
   ground.name = "north-star-city-ground";
   ground.add(asphalt, meshes[0], meshes[1], meshes[10], meshes[11]);
-  group.add(ground, ...meshes.slice(2, 10));
+  group.add(ground, ...architectureMeshes, ...meshes.slice(2, 10));
 
   const contractAnchor = new THREE.Group();
   contractAnchor.name = "north-star-contract-kiosk-anchor";
@@ -1082,6 +1187,8 @@ export function createNorthStarCityArtSlice(): NorthStarCityArtSlice {
     bounds: { ...zone.bounds },
   }));
   group.userData.lifeSignals = [...LIFE_SIGNALS];
+  group.userData.surfaceProfile = surfaceLibrary.provenance.profile;
+  group.userData.surfaceProvenance = surfaceLibrary.provenance;
   group.userData.metrics = metrics;
   group.userData.replacedTerrainIds = [...REPLACED_TERRAIN_IDS];
   group.userData.replacedPropIds = [...REPLACED_PROP_IDS];
@@ -1129,7 +1236,7 @@ export function createNorthStarCityArtSlice(): NorthStarCityArtSlice {
           child.material.dispose();
         }
       });
-      asphaltTexture.dispose();
+      surfaceLibrary.dispose();
       ground.clear();
       group.clear();
     },

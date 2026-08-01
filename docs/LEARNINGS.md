@@ -41,6 +41,9 @@ Last updated: 2026-08-01
 - baselineとNorth Starの環境を`qualityProfile`だけで分けると、baseline体験へPC描画だけを適用する組合せまで都市化し得る。`experience → environmentProfile`を明示してart factoryだけを差し替えると、simulation、collision、interaction、比較版を保ったまま一画面を大胆に改稿できる。
 - fixed cameraの建物は、camera-facing側へ窓、庇、看板、tile、補修跡を置かなければ、高密度にauthoringしても最終画面では巨大な無地boxに見える。実画面の第一稿で方角誤りを検出し、正面を反転して初めて旧用途が読めた。geometry countではなくactual-camera screenshotをart gateにする。
 - 小さなprocedural舗装textureをnearest相当で反復すると、解像度を上げてもmoireと布目状patternが目立つ。512²以上、linear magnification、mipmap minification、anisotropyを組み合わせ、道路標示も完全な白ではなく風化／分節させると、主人公と戦闘記号を保ったまま現代道路を読ませやすい。
+- 1024²へ上げても、macro補修を数回repeatしたり、固定cellへ必ず骨材を置くと、実画面では「高精細な生成tile」や点格子として規則が露出する。macro wearは一画面に一回程度、micro aggregateは候補cellから疎に採用し、actual-camera screenshotで反復を検出してから採用する。
+- BoxGeometryの全6面へ同じ0..1 UVを貼ると、ひび、雨筋、補修が同形反復し、面寸法によって物理scaleも変わる。fixed cameraで同時に見える面は実寸aspectでUV範囲を決め、法線方向別offsetを持たせる。最終assetではtileable microdetailと一回性macro decalを分離する。
+- 高解像度albedo／normal／roughnessをruntimeで同期生成すると、再現性と候補制作には便利でも初回main threadを止める。source field／digest cacheはrenderer restartの再計算を避けられるが、productionではversioned build-time bake、非同期preload、KTX2等へ移す必要がある。
 
 ## Working hypotheses to validate
 
