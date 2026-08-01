@@ -11,8 +11,12 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
   - [x] North Star routeだけを、道路、横断歩道、鉄道／高架、集合住宅、店舗／診療所、雨水／修理設備の旧用途が読める自然侵食現代都市cellへ置き換えた。baseline start-townは保持した。
   - [ ] 現都市cellをcommercial reference級へ引き上げる。
     - [x] Surface Pass v0.2でasphalt／concrete 1024²、roof 512²のalbedo／normal／roughness、面別UV、歩道目地、provenance／digestを実装し、actual-cameraでmacro反復と骨材格子を改稿した。
-    - [ ] 次は右上の高架／駅を、noise追加ではなくdeck上面／側面、縁、支持体、設備、植生縁の構造分節とsilhouette breakupで再制作する。
-    - [ ] runtime同期生成をversioned baked asset＋非同期preloadへ移し、KTX2候補を比較する。初回scene生成のmain-thread停止を残したままproduction採用しない。
+    - [x] Visual Fidelity Foundation v0.3で、都市partを増やさずPMREM IBL、direct／rim／fill、露出／fog、PC camera、cloth／metal／signal material、world-first intro、縮小HUDを実装し、actual browserで一度改稿した。
+    - [x] Visual North Star concept A〜Eを生成・比較し、明るい中間調、normal gameplay scaleで読めるstylized 3D protagonist／四足同行者、fixed-camera baked hybrid worldを持つEを暫定targetにした。prompt、SHA-256、実装案をprojectへ保存した。これはruntime実装やuser art acceptanceではない。
+    - [ ] 次はEを基準に、Blender正本のstylized modular rigged hero一体、四足robot candidate一体、武器一つを同じcamera／light／normal gameplay sizeで作る。顔、髪、sage／rustの非対称衣装、折り畳み半円survey frame、cyan-amber blade、silhouette、deformation、signature motionをactual-cameraで採否する。
+    - [ ] 単純な道路、壁一枚、shelter、rain collector、水、植生、主人公、同行者candidate、敵一体だけのBeauty Cellを切り出し、建築密度なしでも昼光、接地、material差、空気、色、UIが成立することを2560×1440の静止画と操作captureでgate化する。
+    - [ ] 上のhero／simple-cell gateをユーザーが選択した後にだけ、高架／駅のdeck、縁、支持体、設備、植生縁の構造分節を再開する。
+    - [ ] `AssetPackLoader`、GLTFLoader＋Meshopt、KTX2Loader、generated precache manifest、approved voxel fallbackを実装する。runtime同期生成をversioned baked asset＋非同期preloadへ移し、初回scene生成のmain-thread停止を残したままproduction採用しない。
   - 自然に侵食されたrecognizableな現代都市一画面、精密な主人公、同行者候補一体、格下一体、名付き敵一体、遺物effectを同じ固定cameraへ置く。
   - 2560×1440相当のPC Ultraをmasterとし、WebGPU／HDR、half-float lighting、PBR、baked indirect light、高解像度surface、shadow、選択的postを比較する。WebGL2／SDRとmobileは後から同じsceneを縮退する。
   - 主人公／同行者は単一merged voxel meshの上下動に留めず、顔／sensor、衣装／外装、武器、semantic parts、material差、signature pose、part animationを持つhero assetにする。
@@ -96,6 +100,7 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
 
 ## Recently completed
 
+- [x] Visual Fidelity Foundation v0.3でPMREM IBL、光／fog／露出、PC camera composition、主人公material、world-first intro／HUDを統合し、1280×720 DPR 2 actual browser、strict TypeScript、Vitest 141件、production buildを合格 — 2026-08-01
 - [x] North Star Surface Pass v0.2で決定的albedo／normal／roughness 9枚、主要building面別UV、歩道microdetailを実装し、1600×900 visual loop、strict TypeScript、Vitest 133件、production buildを合格 — 2026-08-01
 - [x] PC Ultra North Star技術sliceへhalf-float MSAA／GTAO／bloom／SMAA、半自動近接戦闘、部位化主人公と7種poseを統合し、desktop browserでvisual smokeを実施 — 2026-08-01
 - [x] 自由放浪、world memory、Elona Mobile型の半自動戦闘、自然に侵食された現代都市、自築拠点を上位方向として作品憲法と設計正本へ反映 — 2026-08-01

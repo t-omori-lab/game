@@ -32,9 +32,10 @@ function displayReportsP3(): boolean {
  */
 export function configureDisplayColor(
   renderer: THREE.WebGLRenderer,
+  exposure = HDR_LOOK_EXPOSURE,
 ): DisplayColorConfiguration {
   renderer.toneMapping = THREE.AgXToneMapping;
-  renderer.toneMappingExposure = HDR_LOOK_EXPOSURE;
+  renderer.toneMappingExposure = exposure;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   let gamut: DisplayColorConfiguration["gamut"] = "srgb";
@@ -62,10 +63,11 @@ export function configureDisplayColor(
 
   renderer.domElement.dataset.outputGamut = gamut;
   renderer.domElement.dataset.toneMapping = "agx";
+  renderer.domElement.dataset.toneMappingExposure = exposure.toFixed(2);
 
   return {
     gamut,
     toneMapping: "agx",
-    exposure: HDR_LOOK_EXPOSURE,
+    exposure,
   };
 }

@@ -275,6 +275,11 @@ body {
   pointer-events: none;
 }
 
+.north-star-stage:not(.is-north-star-debug) .north-star-badge,
+.north-star-stage:not(.is-north-star-debug) .relic-performance {
+  display: none;
+}
+
 .north-star-badge span {
   color: var(--relic-signal);
   font: 700 8px/1 "Avenir Next Condensed", sans-serif;
@@ -292,27 +297,32 @@ body {
   top: clamp(78px, 12.5cqh, 94px);
   left: 50%;
   display: grid;
-  width: clamp(210px, 29cqw, 390px);
-  gap: 4px;
-  padding: 8px 14px 9px;
+  width: clamp(92px, 15cqw, 148px);
+  gap: 3px;
+  padding: 6px 9px 7px;
   border: 1px solid rgb(189 255 232 / 16%);
   background: linear-gradient(180deg, rgb(8 24 20 / 70%), rgb(8 24 20 / 24%));
   color: var(--relic-paper);
+  opacity: 1;
   text-align: center;
   transform: translateX(-50%);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease,
+    visibility 120ms;
   pointer-events: none;
 }
 
-.north-star-combat-readout > span {
-  color: rgb(210 229 217 / 62%);
-  font: 700 7px/1 "Avenir Next Condensed", sans-serif;
-  letter-spacing: 0.2em;
+.north-star-combat-readout[data-phase="idle"] {
+  visibility: hidden;
+  opacity: 0;
+  transform: translate(-50%, -5px);
 }
 
 .north-star-combat-readout > strong {
   color: var(--relic-signal);
-  font: 700 clamp(9px, 1.5cqh, 13px)/1 "Avenir Next Condensed", sans-serif;
-  letter-spacing: 0.15em;
+  font: 700 clamp(8px, 1.35cqh, 11px)/1 "Avenir Next Condensed", sans-serif;
+  letter-spacing: 0.18em;
   text-shadow: 0 0 18px rgb(97 229 209 / 36%);
 }
 
@@ -1324,6 +1334,240 @@ body {
   .relic-title__copy {
     padding-top: 2%;
     padding-bottom: 2%;
+  }
+}
+
+/* North Star desktop presentation: the world is the primary interface. */
+@media (hover: hover) and (pointer: fine) {
+  .north-star-stage[data-presentation-state="intro"] .relic-hud,
+  .north-star-stage[data-presentation-state="intro"] .relic-loadout,
+  .north-star-stage[data-presentation-state="intro"] .relic-target,
+  .north-star-stage[data-presentation-state="intro"] .relic-context,
+  .north-star-stage[data-presentation-state="intro"] .north-star-combat-readout {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .north-star-stage .relic-controls {
+    display: none;
+  }
+
+  .north-star-stage .relic-hud {
+    top: clamp(12px, 2cqh, 20px);
+    right: clamp(12px, 1.5cqw, 22px);
+    left: clamp(12px, 1.5cqw, 22px);
+    grid-template-columns: max-content minmax(220px, 31cqw) max-content;
+    align-items: start;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .north-star-stage .relic-hud__identity,
+  .north-star-stage .relic-hud__mission,
+  .north-star-stage .relic-hud__vitals {
+    min-height: 0;
+    padding: 7px 10px;
+    border: 1px solid rgb(224 241 227 / 14%);
+    background:
+      linear-gradient(115deg, rgb(7 19 16 / 78%), rgb(7 19 16 / 42%));
+    box-shadow: 0 8px 28px rgb(3 11 9 / 16%);
+    backdrop-filter: blur(7px) saturate(1.08);
+  }
+
+  .north-star-stage .relic-hud__identity {
+    justify-self: start;
+  }
+
+  .north-star-stage .relic-hud__identity .relic-kicker,
+  .north-star-stage .relic-signal {
+    display: none;
+  }
+
+  .north-star-stage .relic-hud__identity strong {
+    margin: 0;
+    font-size: clamp(11px, 1.6cqh, 14px);
+    letter-spacing: 0.1em;
+  }
+
+  .north-star-stage .relic-hud__mission {
+    justify-self: center;
+    width: min(31cqw, 430px);
+    border: 1px solid rgb(224 241 227 / 14%);
+  }
+
+  .north-star-stage .relic-hud__mission > span {
+    font-size: 6px;
+    letter-spacing: 0.2em;
+  }
+
+  .north-star-stage .relic-hud__mission strong {
+    margin-top: 4px;
+    font-size: clamp(9px, 1.35cqh, 12px);
+  }
+
+  .north-star-stage .relic-hud__vitals {
+    align-items: center;
+    justify-self: end;
+    gap: 8px;
+  }
+
+  .north-star-stage .relic-health {
+    width: clamp(92px, 9.5cqw, 136px);
+  }
+
+  .north-star-stage .relic-health__track {
+    height: 3px;
+    margin: 4px 0 2px;
+  }
+
+  .north-star-stage .relic-health b {
+    font-size: clamp(7px, 1.05cqh, 9px);
+  }
+
+  .north-star-stage .relic-audio {
+    display: grid;
+    width: 27px;
+    height: 27px;
+    padding: 0;
+    font-size: 0;
+    place-items: center;
+  }
+
+  .north-star-stage .relic-audio span {
+    font-size: 9px;
+  }
+
+  .north-star-stage .relic-audio:focus-visible,
+  .north-star-stage .relic-loadout__weapon:focus-visible {
+    outline: 2px solid var(--relic-signal);
+    outline-offset: 3px;
+  }
+
+  .north-star-stage .north-star-combat-readout {
+    top: clamp(68px, 9.3cqh, 84px);
+  }
+
+  .north-star-stage .relic-target {
+    top: clamp(101px, 13.5cqh, 122px);
+  }
+
+  .north-star-stage .relic-loadout {
+    top: auto;
+    bottom: clamp(12px, 1.8cqh, 20px);
+    left: clamp(12px, 1.5cqw, 22px);
+    display: flex;
+    width: auto;
+    max-width: calc(100% - 44px);
+    align-items: stretch;
+    gap: 5px;
+  }
+
+  .north-star-stage .relic-loadout > * {
+    display: grid;
+    min-height: 38px;
+    padding: 6px 9px;
+    border-color: rgb(224 241 227 / 14%);
+    background:
+      linear-gradient(108deg, rgb(7 19 16 / 76%), rgb(7 19 16 / 38%));
+    box-shadow: 0 7px 24px rgb(3 11 9 / 14%);
+    backdrop-filter: blur(7px) saturate(1.08);
+    align-content: center;
+  }
+
+  .north-star-stage .relic-loadout__weapon {
+    width: clamp(94px, 10cqw, 142px);
+  }
+
+  .north-star-stage .relic-loadout__item {
+    width: clamp(104px, 12cqw, 164px);
+  }
+
+  .north-star-stage .relic-loadout span,
+  .north-star-stage .relic-loadout small {
+    display: none;
+  }
+
+  .north-star-stage .relic-loadout strong {
+    margin: 0;
+    font-size: clamp(9px, 1.3cqh, 11px);
+    letter-spacing: 0.08em;
+  }
+
+  .north-star-stage .relic-loadout__stock {
+    min-width: 58px;
+    grid-template-columns: auto auto;
+    gap: 6px;
+  }
+
+  .north-star-stage .relic-loadout__stock span {
+    display: block;
+    font-size: 6px;
+    letter-spacing: 0.08em;
+  }
+
+  .north-star-stage .relic-loadout__stock b {
+    font-size: 10px;
+  }
+
+  .north-star-stage .relic-title {
+    grid-template-columns: minmax(320px, 38%) 1fr;
+    background:
+      linear-gradient(
+        90deg,
+        rgb(4 12 10 / 94%) 0%,
+        rgb(4 12 10 / 82%) 58%,
+        rgb(4 12 10 / 48%) 78%,
+        transparent 100%
+      ) left / 40% 100% no-repeat;
+    backdrop-filter: none;
+  }
+
+  .north-star-stage .relic-title__index,
+  .north-star-stage .relic-title__catalog {
+    display: none;
+  }
+
+  .north-star-stage .relic-title__copy {
+    position: relative;
+    grid-column: 1;
+    align-self: end;
+    padding:
+      clamp(34px, 6cqh, 64px)
+      clamp(30px, 3.6cqw, 58px)
+      clamp(46px, 8cqh, 78px);
+  }
+
+  .north-star-stage .relic-title__copy::before {
+    display: block;
+    width: 42px;
+    height: 1px;
+    margin-bottom: 14px;
+    background: linear-gradient(90deg, var(--relic-signal), transparent);
+    content: "";
+  }
+
+  .north-star-stage .relic-title h1 {
+    margin: 9px 0 14px;
+    font-size: clamp(44px, 9cqh, 76px);
+    line-height: 0.9;
+    text-shadow: 0 3px 30px rgb(1 8 6 / 54%);
+  }
+
+  .north-star-stage .relic-title__copy p {
+    max-width: 33em;
+    color: rgb(238 239 219 / 76%);
+  }
+
+  .north-star-stage .relic-title__copy button {
+    min-width: min(270px, 100%);
+    padding: 12px 14px;
+    border-color: rgb(173 246 218 / 62%);
+    background: linear-gradient(90deg, rgb(8 35 28 / 84%), rgb(8 35 28 / 26%));
+    box-shadow: 0 8px 28px rgb(2 10 8 / 24%);
   }
 }
 

@@ -44,6 +44,14 @@ Last updated: 2026-08-01
 - 1024²へ上げても、macro補修を数回repeatしたり、固定cellへ必ず骨材を置くと、実画面では「高精細な生成tile」や点格子として規則が露出する。macro wearは一画面に一回程度、micro aggregateは候補cellから疎に採用し、actual-camera screenshotで反復を検出してから採用する。
 - BoxGeometryの全6面へ同じ0..1 UVを貼ると、ひび、雨筋、補修が同形反復し、面寸法によって物理scaleも変わる。fixed cameraで同時に見える面は実寸aspectでUV範囲を決め、法線方向別offsetを持たせる。最終assetではtileable microdetailと一回性macro decalを分離する。
 - 高解像度albedo／normal／roughnessをruntimeで同期生成すると、再現性と候補制作には便利でも初回main threadを止める。source field／digest cacheはrenderer restartの再計算を避けられるが、productionではversioned build-time bake、非同期preload、KTX2等へ移す必要がある。
+- PMREM IBL、hemisphere、direct light、fog、AgX exposureをすべて強くすると、機能数は増えても道路、concrete、foliage、metalが同じ白い明度帯へ圧縮される。明るい終末を暗くせずにmaterial差を戻すには、ambient／environmentを抑え、direct／rimを残し、camera距離に対するfog nearとdisplay exposureを一組でactual-camera調整する。
+- world-firstを目標にしても、開始前からmission、health、loadout、prompt、diagnosticを出すとUIがvisual protagonistになる。introではworld、title、開始action以外を退かせ、play中もtouch UI、idle combat readout、performance表示を入力device／debug stateで限定すると、geometryを増やさず画面の商業感を上げられる。
+- character materialとcamera占有を改善しても、source silhouetteがliteral voxel recipeのままなら顔、髪、衣装、手足の造形上限は超えない。lighting passの次gateを建築追加にせず、複数character representationを同条件・normal gameplay sizeで比較すると、技術の新しさではなく最終画面で方式を選べる。
+- camera compositionはrender qualityではなくexperienceの演出契約である。North Star mobile tierやbaseline PC tierを将来追加しても誤適用しないよう、`qualityProfile`から推測せず`experience`から明示profileを渡す。
+- 同じworld premiseをhybrid HD-2D、precision micro-voxel、stylized 3Dで画像比較すると、現runtimeとの差がpost stackではなく、actor source、outdoor／baked light、wet material、foliage、fixed-camera environment assetにあることを分離できた。生成conceptは完成証拠ではないが、何を実装しないかを決めるart-direction gateとして有効である。
+- generated synthesisは、複数案の長所を指定しても、暗いvignette、小さいactor、既視感の強い白髪／白coat／青剣へ収束し得る。normal gameplay scale、mid-tone exposure、避ける組合せ、変更点数、保持するgeometryを明示して再生成すると、実装可能な差分として評価しやすい。
+- 人型の最終surfaceまでliteral voxelへ固定すると、PC masterで求める顔、髪、布、deformation、signature motionの上限が低い。voxel grammarは機械、buildable、damage state、procedural proxyへ残し、人型／動物は既知topologyとrigを持つmodular 3Dを正本候補にすると、同じ生成思想を役割別に使い分けられる。
+- AI生成assetを再現可能なproductionへ接続するには、seedだけでなくraw outputのSHA-256、prompt／spec、tool version、license review、人間修正、validation、採否理由を凍結する。runtimeは承認済みpackを選ぶだけにし、physics、collision、damage、合成可否はdeterministic schemaが所有する。
 
 ## Working hypotheses to validate
 

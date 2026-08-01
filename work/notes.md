@@ -268,6 +268,18 @@
 - 第二稿は「都市の旧用途が読める最初のlocal candidate」まで。高解像度baked albedo／normal／roughness、roof microdetail、最終hero／companion、commercial art acceptanceは未達。
 - local evidence: 1600×900 viewport、1598×898 canvas、device pixel ratio 1、`environmentProfile=north-star-city`、MSAA、half-float post stack、ground texture `ready`。Vitest 18 files／129 tests、strict TypeScript、Vite production build合格。
 
+## 2026-08-01 — Visual North Star Concept Set v0.4 working notes
+
+- built-in `image_gen`で、A: hybrid HD-2D、B: precision micro-voxel、C: stylized modular 3D、D: synthesis、E: corrected synthesisの五案を生成した。全案は1672×941で、runtime screenshotではない。
+- 比較ではDがworld／compositionの最良ベース、Cがactor clarity、Bが明るさ／即読性、Aがhybrid実装の現実性で強かった。Eはこの合成判断を、暗部の持上げ、actor約35%拡大、genericな白髪／白coat／青剣からの離脱、限定したrepair markで反映した。
+- Eのprotagonist motif候補はdark windswept hair、pale sage asymmetrical field coat、rust-orange panel、folded semicircular survey frame、short cyan-amber blade。最終人物設定ではなく、通常gameplay倍率で固有silhouetteを作る試験対象。
+- 現runtimeは既にorthographic composition、warm key／cool rim、PMREM、half-float MSAA／GTAO／bloom／SMAA、AgX／P3 probeを持つ。Eとの差はpost effect追加より、outdoor／baked light、layered VisualCell、wetness／water、authored foliage、rigged actors、asset pipelineが支配的。
+- 推奨production grammarは、realtime stylized 3D actors／collision／occlusion／near shadowと、fixed-camera 3D shell＋baked indirect／PBR／macro decal。flat background一枚にはせず、scroll、parallax、occlusionを保つ。
+- canonical assetはBlender sourceからGLB／KTX2へbuildする。AI 3Dはhard-surface donor、concept、surface variationまでに限定し、deforming hero／coat／hair／quadrupedは既知topologyとrigを正本にする。
+- simulationの`Acquire → Windup → Hit → Recover`がdamage timingを所有し、animation clipはphase progressを表示する。animation eventからruleを発火しない。
+- accepted packはAssetDNA、StyleProfile、GameplayContract、SHA-256、tool／generator version、prompt／spec、license review、人間修正、validation、採否理由を持つ。runtime AIはphysics、collision、damage、合成可否を決めない。
+- 最初の実装単位はBeauty Cell一件。road、wall、shelter、rain collector、water、garden、hero、quadruped robot candidate、enemyだけを同じE cameraで作り、2560×1440のidle／move／combat／wet frameをuser reviewする。
+
 ## 2026-08-01 — North Star Surface Pass v0.2 working notes
 
 - 判断レベルは引き続き`Revise one thing`。今回直すのは大面積surfaceの平坦さであり、gameplayやrenderer方式は広げない。
@@ -287,3 +299,19 @@
 - surfaceごとの派生seedを各texture metadataの`seed`とし、共通値は`baseSeed`へ分離した。library provenanceとtexture provenanceが同じ生成単位を指す。
 - final local screenshot: `/tmp/north-star-surface-v2-final.png`。独立visual reviewは静止画上のP0なしで`Keep and stop`。最大の次課題は右上の高架駅／線路構造で、roofの高周波detailは移動時shimmer未検証。
 - final local evidence: strict TypeScript、Vitest 19 files／133 tests、Vite production build、`git diff --check`合格。初回同期生成はproduction blockerとして残し、public deploy／pushは行わない。
+
+## 2026-08-01 — Visual Fidelity Foundation v0.3 working notes
+
+- ユーザー評価: 現画面は依然commercial-qualityではない。都市構造の追加より、簡単な構造物でも美しく見える描画方式、個別asset、主人公、画面構成、UI、光を先に追求する。
+- 判断レベルは`Return to purpose/value`。次の主要改稿を高架駅の分節から、画面全体のquality foundationへ差し替える。
+- preserve: PC-first North Star独立route、半自動戦闘、現代都市の旧用途、Surface Pass v0.2、baseline route、決定論的simulation。
+- visual protagonist: 主人公。読む順番は`主人公と進路 → 光と空気が作る空間 → 旧用途／生活痕跡 → 必要な戦闘情報`。
+- hard boundary: geometryやprop数の追加だけでrichnessを作らない。固有作品のasset／costume／palette／構図は写さない。
+- 一次資料から採用したproduction principle: HD-2Dではflat characterと3D backgroundの統合、固定camera、dynamic lightingが中核。NieR系の制作知見ではopen spaceでsilhouetteを立て、material、light、particleを空間と危険の読みへ使う。Three.jsではPMREMでroughness-awareなIBLを与える。
+- 第一稿はPMREM 0.58、hemisphere 0.86、AgX exposure 1.18で、道路、concrete、foliage、metalが白い同一明度帯へ圧縮された。lighting機能の有無ではなく、ambient／direct／fog／display transformの比率が主因だった。
+- 第二稿はPCだけをAgX exposure 0.98、PMREM 0.26、hemisphere 0.42、warm key 2.68、cool rim 0.62、fog near 1140へ変更した。明るい世界を維持しつつ、direct lightとshadow／material responseを分離した。
+- PC cameraを510から360 world-unitへ寄せ、探索中は進行方向へ46、戦闘中はtarget方向へ最大27.36 world-unitだけ構図を共有する。simulation／targetingは変更しない。camera profileはrender qualityではなくexperienceから明示する。
+- 主人公はmatte clothをsheen付きPhysicalMaterial、metalを高metalness＋low clearcoat、signalをHDR値のtone-map外emissiveへ分離した。造形source自体は既存24×32×16であり、material改善を最終造形の代替にしない。
+- PC fine-pointerではtouch control、idle combat readout、diagnostic badge／performanceを非表示。intro中はHUD／loadout／promptも退かせ、左40%のscrim、title、開始button、worldだけを視線入口にした。
+- actual browser evidence: 1280×720／DPR 2、canvas 2556×1436、`half-float-msaa`、MSAA 4、GTAO／bloom／SMAA true、PMREM IBL、Display-P3、AgX exposure 0.98、texture ready、touch control `display:none`。
+- visual judgment: simple box主体でも光、接地、material差、UI hierarchyは第一稿より明確に改善した。一方、主人公の顔、髪、衣装、手足のsilhouetteはまだliteral voxel recipeに支配され、commercial character qualityへ未達。次は都市を増やさず、literal high-density voxel／semantic voxel surface／stylized low-polyを同camera／light／poseで比較する。

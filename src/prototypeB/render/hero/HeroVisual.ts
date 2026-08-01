@@ -210,18 +210,23 @@ export function partitionHeroRecipe(
 function defaultMaterial(role: VoxelMaterialRole): THREE.Material {
   switch (role) {
     case "matte":
-      return new THREE.MeshStandardMaterial({
+      return new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
         vertexColors: true,
-        roughness: 0.8,
+        roughness: 0.72,
         metalness: 0,
+        sheen: 0.24,
+        sheenColor: 0xcfe5dc,
+        sheenRoughness: 0.88,
       });
     case "metal":
-      return new THREE.MeshStandardMaterial({
+      return new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
         vertexColors: true,
-        roughness: 0.32,
-        metalness: 0.72,
+        roughness: 0.28,
+        metalness: 0.82,
+        clearcoat: 0.12,
+        clearcoatRoughness: 0.42,
       });
     case "emissive":
       return new THREE.MeshBasicMaterial({
@@ -556,12 +561,23 @@ export function createHeroVisual(options: HeroVisualOptions = {}): HeroVisual {
       alignObjectGripToSocket(object, gripLocal);
     },
     setTint(color): void {
-      for (const material of Object.values(materials)) {
+      for (const [role, material] of Object.entries(materials) as Array<
+        [VoxelMaterialRole, THREE.Material]
+      >) {
         if (
           material instanceof THREE.MeshStandardMaterial ||
           material instanceof THREE.MeshBasicMaterial
         ) {
           material.color.set(color);
+          if (
+            role === "emissive" &&
+            material instanceof THREE.MeshBasicMaterial
+          ) {
+            // Values above display white stay available to the bloom pass, so
+            // the authored signal voxels read as a light source instead of a
+            // flat cyan decal.
+            material.color.multiplyScalar(2.15);
+          }
         }
       }
     },

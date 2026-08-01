@@ -70,6 +70,10 @@ export type StartPrototypeBOptions = {
   readonly semiAutoCombat?: boolean;
 };
 
+export function isNorthStarDebugEnabled(search: string): boolean {
+  return new URLSearchParams(search).getAll("debug").includes("1");
+}
+
 const DOSSIERS: Record<LootId, ItemDossier> = {
   "edge-coil": {
     title: "縁断コイル E-04",
@@ -214,6 +218,9 @@ export function startPrototypeB(
     }
 
     started = true;
+    if (layout.stage.dataset.experience === "north-star") {
+      layout.stage.dataset.presentationState = "active";
+    }
     layout.titleOverlay.setAttribute("aria-hidden", "true");
     layout.titleOverlay.inert = true;
     controls.setEnabled(controlsMayRun());
@@ -569,6 +576,8 @@ export function startPrototypeB(
           accumulator = 0;
         },
         companionPreview: options.companionPreview,
+        cameraCompositionProfile:
+          options.experience === "north-star" ? "north-star" : "baseline",
         environmentProfile:
           options.experience === "north-star"
             ? "north-star-city"
@@ -783,22 +792,29 @@ function configureExperience(
   root.classList.add("north-star-shell");
   layout.stage.classList.add("north-star-stage");
   layout.stage.dataset.experience = "north-star";
+  layout.stage.dataset.presentationState = "intro";
+  const debugEnabled = isNorthStarDebugEnabled(window.location.search);
+  layout.stage.classList.toggle("is-north-star-debug", debugEnabled);
+  layout.stage.dataset.debug = debugEnabled ? "1" : "0";
+  layout.performance.hidden = !debugEnabled;
   layout.stage.setAttribute(
     "aria-label",
-    "North Star Scene。左手で移動し、通常攻撃は間合いに入ると自動。右手で大技、防御、道具を操作します。",
+    "North Star Scene。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。",
   );
 
   const badge = document.createElement("div");
   badge.className = "north-star-badge";
+  badge.hidden = !debugEnabled;
   badge.innerHTML =
     "<span>VISUAL NORTH STAR</span><strong>PC ULTRA / LIVE COMBAT</strong>";
   layout.stage.append(badge);
 
   const combatReadout = document.createElement("div");
   combatReadout.className = "north-star-combat-readout";
+  combatReadout.dataset.phase = "idle";
+  combatReadout.setAttribute("aria-hidden", "true");
   combatReadout.innerHTML = `
-    <span>AUTO BASIC / POSITION TO ENGAGE</span>
-    <strong data-ui="north-star-combat-phase">SEARCHING</strong>
+    <strong data-ui="north-star-combat-phase">LOCK</strong>
     <i><em data-ui="north-star-combat-progress"></em></i>
   `;
   layout.stage.append(combatReadout);
@@ -867,11 +883,11 @@ function updateNorthStarPresentation(
   );
   const phaseName = presentation?.phase ?? "idle";
   const phaseLabels: Record<CombatPresentationState["phase"], string> = {
-    idle: "SEARCHING",
-    acquire: "TARGET ACQUIRED",
-    windup: state.player.weaponId === "blade" ? "CUTTER WINDUP" : "DRIVER CHARGING",
-    hit: state.player.weaponId === "blade" ? "COUNTER CUT" : "BREACH IMPACT",
-    recover: "RECOVER / REPOSITION",
+    idle: "LOCK",
+    acquire: "LOCK",
+    windup: state.player.weaponId === "blade" ? "WINDUP" : "CHARGE",
+    hit: "HIT",
+    recover: "RECOVER",
   };
   if (phase !== null) {
     phase.textContent = phaseLabels[phaseName];

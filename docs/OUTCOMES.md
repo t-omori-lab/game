@@ -41,6 +41,9 @@ Last updated: 2026-08-01
 - North Star local候補はstrict TypeScript、Vitest 124件、production buildが合格した。desktop Chromeで開始、移動、半自動攻撃windup／hit pose、PC Ultra候補post stack、通常攻撃button非表示、大技中のauto combat停止、武器切替時の即時hit抑止、browser error 0件を確認した。
 - North Star専用の自然侵食現代都市cellをlocal実装した。旧高架駅／集合住宅、横断歩道、旧店舗／診療所、雨水濾過槽、情報kiosk、修理bay、菜園を既存collisionへ合わせ、baselineは従来のstart-townを維持した。1600×900のlocal Chromeで都市表示と主人公の開始位置を目視し、空白だったcamera-facing facadeと舗装filterを一度改稿した。strict TypeScript、Vitest 129件、production buildが合格した。公開／deployとユーザーart acceptanceは未実施。
 - North Star Surface Pass v0.2をlocal実装した。asphalt／concrete 1024²、roof 512²のalbedo／normal／roughnessを決定的に生成し、provenance／content digest、面別UV、冪等dispose、歩道microdetailを接続した。1600×900 actual-cameraでmacro反復と骨材格子を改稿し、別visual reviewで同sliceを止める静止画上のP0なしと判定した。strict TypeScript、Vitest 19 files／133 tests、production build、North Star／baseline browser smokeが合格した。公開／deploy、移動時shimmer、ユーザーart acceptance、commercial-quality達成は未確認。
+- ユーザーは、都市構造やpartを増やす前に、単純な構造物でも美しく見える画面描写、主人公造形、個別asset、画面構成、UI、光を先に追求し、『NieR:Automata』とcommercial HD-2D級を目標にするよう優先順位を明示した。
+- Visual Fidelity Foundation v0.3をlocal実装した。North Star専用にPMREM IBL、warm key／cool rim／reduced fill、PC露出／fog、探索／戦闘camera composition、cloth／metal／HDR signal material、world-first intro、縮小HUD、debug表示の明示切替を接続した。1280×720／DPR 2で2556×1436、Display-P3、AgX 0.98、half-float MSAA 4、GTAO／bloom／SMAA、PMREM、texture ready、PC touch UI非表示を確認した。strict TypeScript、Vitest 141件、production buildが合格した。public deploy／pushとユーザーart acceptanceは行っていない。
+- AI生成によるVisual North Star conceptをA〜Eの五案作成し、1672×941 PNG、全prompt、SHA-256 manifestをlocal projectへ保存した。比較の結果、Dの単純な交差点構図を、明るい中間調、拡大した主人公／四足同行者、sage／rust衣装と折り畳み半円survey frameで修正したEを暫定North Starにした。fixed-camera VisualCell、rigged GLB、baked PBR／indirect light、GLB／KTX2、AssetDNA／provenance、PC masterからmobile tierへの実装案も文書化した。これはconceptとlocal設計の完了であり、runtime再現、commercial art acceptance、user approval、public deploy／pushではない。
 
 ## Pending confirmation
 
@@ -65,8 +68,10 @@ Last updated: 2026-08-01
 - [ ] North Star routeの自然侵食現代都市第一候補がユーザーにrecognizableで魅力的と評価され、さらに商業reference級の一画面へ到達するか。local候補は実装済みだが、commercial art acceptanceは未確認。
 - [ ] Surface Pass v0.2のroof microdetailが移動時にちらつかず、runtime同期生成をbaked／非同期assetへ移して初回停止を解消できるか。
 - [ ] semantic part化した現主人公が十分な精密さと魅力を持つか。顔／髪／衣装surface、PBR material、deformation rig、signature animationを含む最終hero designは未完成。
+- [ ] Visual Fidelity Foundation v0.3のlighting／camera／UI統合がユーザーのcommercial benchmarkへ十分近づいたか。現主人公のliteral voxel造形はlocal visual reviewでも次の最大課題であり、commercial-quality達成とは確認していない。
 - [ ] Counter cutterとBreach driverが実際の試遊で、DPS以外の位置取り、risk、timingの差として感じられるか。
 - [ ] PC UltraのWebGPU／HDR候補が、現WebGL2 half-float post stackより知覚品質で勝つか。同条件比較は未実施。
+- [ ] Visual North Star concept Eの画面構成、明るさ、主人公のsurvey motif、四足同行者、hybrid production grammarがユーザーの理想方向として採択されるか。採択後もBeauty Cellのactual gameplayで再現できるかは別gateとする。
 
 ## Rule
 

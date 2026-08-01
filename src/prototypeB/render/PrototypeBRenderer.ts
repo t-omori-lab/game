@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import {
   ENEMY_DEFINITIONS,
   type EnemyKind,
@@ -35,6 +36,10 @@ import {
 import { createNorthStarCityArtSlice } from "./northStarCityArt";
 import { configureDisplayColor } from "./displayColor";
 import {
+  composeCameraTarget,
+  type CameraCompositionProfile,
+} from "./CameraComposition";
+import {
   alignObjectGripToSocket,
   createHeroVisual,
   type HeroMotion,
@@ -46,7 +51,8 @@ import reclaimedMeadowTextureUrl from "./assets/reclaimed-meadow-v1.webp";
 const INTERNAL_WIDTH = 854;
 const INTERNAL_HEIGHT = 480;
 const CAMERA_VIEW_HEIGHT = 600;
-const PC_ULTRA_CAMERA_VIEW_HEIGHT = 510;
+const PC_ULTRA_CAMERA_VIEW_HEIGHT = 360;
+const PC_ULTRA_EXPOSURE = 0.98;
 const MAX_INTERNAL_WIDTH = 1_075;
 const CAMERA_OFFSET = new THREE.Vector3(510, 680, 510);
 const BLADE_VOXEL_SIZE = 2.1;
@@ -143,6 +149,7 @@ export interface PrototypeBRendererOptions {
    * discovery/roster state explicitly selects one.
    */
   readonly companionPreview?: boolean;
+  readonly cameraCompositionProfile?: CameraCompositionProfile;
   readonly environmentProfile?: PrototypeBEnvironmentProfile;
   readonly qualityProfile?: PrototypeBRenderQuality;
 }
@@ -150,6 +157,7 @@ export interface PrototypeBRendererOptions {
 export class PrototypeBRenderer {
   private readonly renderer: THREE.WebGLRenderer;
   private readonly qualityProfile: PrototypeBRenderQuality;
+  private readonly cameraCompositionProfile: CameraCompositionProfile;
   private readonly cameraViewHeight: number;
   private ultraPipeline: UltraRenderPipeline | null = null;
   private readonly scene = new THREE.Scene();
@@ -203,6 +211,7 @@ export class PrototypeBRenderer {
   );
   private readonly contextLostHandler: (event: Event) => void;
   private readonly contextRestoredHandler: () => void;
+  private environmentTarget: THREE.WebGLRenderTarget | null = null;
   private groundTexture: THREE.Texture | null = null;
   private attackAnimation = 0;
   private attackWeapon: WeaponId = "blade";
@@ -229,6 +238,8 @@ export class PrototypeBRenderer {
     options: PrototypeBRendererOptions = {},
   ) {
     this.qualityProfile = options.qualityProfile ?? "baseline";
+    this.cameraCompositionProfile =
+      options.cameraCompositionProfile ?? "baseline";
     this.cameraViewHeight =
       this.qualityProfile === "pc-ultra"
         ? PC_ULTRA_CAMERA_VIEW_HEIGHT
@@ -241,7 +252,12 @@ export class PrototypeBRenderer {
       precision: "highp",
       preserveDrawingBuffer: false,
     });
-    configureDisplayColor(this.renderer);
+    configureDisplayColor(
+      this.renderer,
+      this.qualityProfile === "pc-ultra"
+        ? PC_ULTRA_EXPOSURE
+        : undefined,
+    );
     this.renderer.shadowMap.enabled = true;
     // Three.js 0.185 maps the deprecated PCFSoftShadowMap to PCFShadowMap.
     // Select the effective mode directly so the North Star route stays free of
@@ -259,6 +275,8 @@ export class PrototypeBRenderer {
         ? "msaa"
         : "none";
     this.renderer.domElement.dataset.qualityProfile = this.qualityProfile;
+    this.renderer.domElement.dataset.cameraCompositionProfile =
+      this.cameraCompositionProfile;
     this.renderer.domElement.dataset.environmentProfile =
       options.environmentProfile ?? "start-town";
     this.renderer.domElement.setAttribute(
@@ -272,6 +290,9 @@ export class PrototypeBRenderer {
       options.onContextLost?.();
     };
     this.contextRestoredHandler = (): void => {
+      if (this.qualityProfile === "pc-ultra") {
+        this.createEnvironmentLighting();
+      }
       options.onContextRestored?.();
     };
     this.renderer.domElement.addEventListener(
@@ -284,8 +305,15 @@ export class PrototypeBRenderer {
     );
 
     this.scene.background = new THREE.Color(DAYLIGHT_FOG_COLOR);
-    this.scene.fog = new THREE.Fog(DAYLIGHT_FOG_COLOR, 900, 2_450);
+    this.scene.fog = new THREE.Fog(
+      DAYLIGHT_FOG_COLOR,
+      this.qualityProfile === "pc-ultra" ? 1_140 : 900,
+      this.qualityProfile === "pc-ultra" ? 2_700 : 2_450,
+    );
     this.createLighting();
+    if (this.qualityProfile === "pc-ultra") {
+      this.createEnvironmentLighting();
+    }
 
     const defaultCameraViewWidth =
       this.cameraViewHeight * (INTERNAL_WIDTH / INTERNAL_HEIGHT);
@@ -432,7 +460,7 @@ export class PrototypeBRenderer {
     this.syncCombatPresentation(state, combatPresentation);
     this.syncLoot(state);
     this.updateEffects(deltaSeconds);
-    this.updateCamera(state, deltaSeconds);
+    this.updateCamera(state, deltaSeconds, combatPresentation);
     this.updateAmbientMotion(state, timeMs / 1_000);
     if (this.ultraPipeline !== null) {
       this.ultraPipeline.render(deltaSeconds);
@@ -586,6 +614,9 @@ export class PrototypeBRenderer {
     this.environmentArt.dispose();
     this.ultraPipeline?.dispose();
     this.ultraPipeline = null;
+    this.scene.environment = null;
+    this.environmentTarget?.dispose();
+    this.environmentTarget = null;
     this.groundTexture?.dispose();
     this.groundTexture = null;
 
@@ -642,10 +673,12 @@ export class PrototypeBRenderer {
     const skyFill = new THREE.HemisphereLight(
       0xf6f0d2,
       0x355a43,
-      1.55,
+      this.qualityProfile === "pc-ultra" ? 0.42 : 1.55,
     );
     skyFill.name = "daylight-sky-fill";
 
+    this.keyLight.intensity =
+      this.qualityProfile === "pc-ultra" ? 2.68 : 2.45;
     this.keyLight.name = "daylight-key";
     this.keyLight.position.set(40, 820, 360);
     this.keyLightTarget.name = "daylight-key-target";
@@ -672,6 +705,47 @@ export class PrototypeBRenderer {
       this.keyLight,
       this.effectLight,
     );
+
+    if (this.qualityProfile === "pc-ultra") {
+      const rimTarget = new THREE.Object3D();
+      rimTarget.name = "daylight-rim-target";
+      rimTarget.position.set(430, 24, 860);
+      const rimLight = new THREE.DirectionalLight(0xa9e6df, 0.62);
+      rimLight.name = "daylight-cool-rim";
+      rimLight.position.set(-360, 420, -280);
+      rimLight.target = rimTarget;
+      this.scene.add(rimTarget, rimLight);
+    }
+  }
+
+  /**
+   * Adds roughness-aware image-based light to PC materials. RoomEnvironment is
+   * a compact neutral source for this technical slice; the accepted art route
+   * can later swap in a baked outdoor HDRI without changing material contracts.
+   */
+  private createEnvironmentLighting(): void {
+    this.scene.environment = null;
+    this.environmentTarget?.dispose();
+    this.environmentTarget = null;
+    delete this.renderer.domElement.dataset.environmentLightingFallback;
+
+    const environment = new RoomEnvironment();
+    const generator = new THREE.PMREMGenerator(this.renderer);
+
+    try {
+      this.environmentTarget = generator.fromScene(environment, 0.04);
+      this.scene.environment = this.environmentTarget.texture;
+      this.scene.environmentIntensity = 0.26;
+      this.renderer.domElement.dataset.environmentLighting = "pmrem-ibl";
+    } catch (reason) {
+      this.renderer.domElement.dataset.environmentLighting =
+        "direct-light-fallback";
+      this.renderer.domElement.dataset.environmentLightingFallback =
+        reason instanceof Error ? reason.message : "pmrem-generation";
+    } finally {
+      environment.dispose();
+      generator.dispose();
+    }
   }
 
   private createGround(state: PrototypeBState): void {
@@ -1902,7 +1976,18 @@ export class PrototypeBRenderer {
   }
 
   private snapCamera(state: PrototypeBState): void {
-    this.cameraTarget.set(state.player.x, 28, state.player.y);
+    const composition = composeCameraTarget(
+      {
+        playerX: state.player.x,
+        playerY: state.player.y,
+        facingX: state.player.facingX,
+        facingY: state.player.facingY,
+        phase: "idle",
+      },
+      this.cameraCompositionProfile,
+    );
+    this.cameraTarget.set(composition.targetX, 28, composition.targetY);
+    this.renderer.domElement.dataset.cameraComposition = composition.mode;
     this.camera.position.copy(this.cameraTarget).add(CAMERA_OFFSET);
     this.camera.lookAt(this.cameraTarget);
     this.camera.updateProjectionMatrix();
@@ -1911,13 +1996,33 @@ export class PrototypeBRenderer {
   private updateCamera(
     state: PrototypeBState,
     deltaSeconds: number,
+    combatPresentation: CombatPresentationState | undefined,
   ): void {
+    const activeTarget = combatPresentation?.targetId === null ||
+        combatPresentation?.targetId === undefined
+      ? undefined
+      : state.enemies.find(
+          (enemy) => enemy.id === combatPresentation.targetId,
+        );
+    const composition = composeCameraTarget(
+      {
+        playerX: state.player.x,
+        playerY: state.player.y,
+        facingX: state.player.facingX,
+        facingY: state.player.facingY,
+        phase: combatPresentation?.phase ?? "idle",
+        targetX: activeTarget?.x,
+        targetY: activeTarget?.y,
+      },
+      this.cameraCompositionProfile,
+    );
+    this.renderer.domElement.dataset.cameraComposition = composition.mode;
     const follow = 1 - Math.exp(-8 * deltaSeconds);
     this.cameraTarget.lerp(
       this.reusablePosition.set(
-        state.player.x,
+        composition.targetX,
         28,
-        state.player.y,
+        composition.targetY,
       ),
       follow,
     );

@@ -1,6 +1,6 @@
 # Iteration Log: ゲーム開発
 
-Active authority: 末尾の`PC Ultra North Star scene`。それ以前のPrototype B、mobile、手動戦闘の節は履歴であり、現在の優先順位や[GAME_CONSTITUTION](../docs/GAME_CONSTITUTION.md)を上書きしない。
+Active authority: 末尾の`Visual North Star Concept Set v0.4`。それ以前のPrototype B、mobile、手動戦闘、都市part追加の節は履歴であり、現在の優先順位や[GAME_CONSTITUTION](../docs/GAME_CONSTITUTION.md)を上書きしない。
 
 ## Historical Iteration: Prototype B — 生活型ハクスラ原型
 
@@ -359,3 +359,86 @@ North Star専用都市cellの大面積な舗装、外壁、屋根を、決定的
 ### Status
 
 **Completed locally; not deployed** — 9枚の決定的albedo／normal／roughness、UV付き道路・主要2棟shell／roof、歩道microdetailを実装した。1600×900 reviewでmacro反復と点格子を解消。strict TypeScript、Vitest 19 files／133 tests、production build、North Star／baseline browser smoke、独立code／visual review、Workspace postflightが合格した。public deploy／push、移動時shimmer、iPhone実機、ユーザーart acceptance、commercial-quality達成は未確認。
+
+---
+
+## Current Iteration: Visual Fidelity Foundation v0.3
+
+### Trigger
+
+2026-08-01、ユーザーは都市の構造やpart追加より先に、単純な構造物だけでも美しく見える画面描写、主人公造形、光、画面構成、UIをcommercial reference水準へ引き上げるよう優先順位を修正した。
+
+### Goal
+
+North Starのgameplayと現代都市の意味を保ちつつ、geometry量へ依存しない美しさの基盤を一つの実画面で証明する。主人公を画面のprotagonistとし、`光と空気 → 素材と接地 → 主人公の造形とacting → 必要時だけ現れるUI`の順で、PC masterのquality gateを作る。
+
+### Art-direction decision
+
+**Return to purpose/value** — 高架駅のpart追加は停止する。現状の最大問題は都市情報の不足ではなく、単純な形でも画面全体を商業品質へ統合するlighting、material、camera composition、hero art、UI hierarchyが未完成なこと。『NieR:Automata』とcommercial HD-2Dからは、固有assetや構図ではなく、明暗の設計、空気遠近、接地、selective detail、heroの視線誘導、2D／3D統合の完成度を参照する。
+
+### Phases
+
+- [x] Phase F1: 現renderer、lighting／post、hero、UIを独立監査し、一次資料とactual-camera evidenceから主因を固定する
+- [x] Phase F2: simple-geometry Visual Benchmarkの画面設計、quality gate、変更面を限定する
+- [x] Phase F3: lighting／atmosphere／material、hero造形、UI hierarchyの最小vertical sliceを実装する
+- [x] Phase F4: PC actual-cameraで第一稿と改稿を比較し、gameplay／baseline回帰、strict TypeScript、Vitest、production buildを合格させる
+- [x] Phase F5: durable docs、Workspace postflight、exact-scope local commitを完了する
+
+### Constraints
+
+- このsliceでは高架駅、建築物、world contentを増やして品質を偽装しない。
+- 固有作品のasset、character、costume、palette、構図、effectを模倣しない。構造的なproduction principleだけを翻訳する。
+- 主人公はvisual protagonist。HUDとcombat feedbackはplayに必要な情報だけを階層化し、常時のprototype diagnostic表示を作品UIへ混ぜない。
+- PC masterの上限を先に作り、mobile tierは同じart sourceから後で縮退する。
+- public deploy／pushはこの指示に含めない。
+
+### Status
+
+**Local candidate implemented; not deployed; art acceptance pending** — geometry／都市partを追加せず、PC routeへPMREM IBL、直射／逆光／fill分離、露出／fog、主人公寄りのcamera composition、cloth／metal／HDR signal material、world-first intro、縮小HUDを実装した。1280×720／DPR 2のactual browserで2556×1436、Display-P3、AgX 0.98、half-float MSAA、GTAO、bloom、SMAA、PMREM、texture readyを観測。第一稿の白浮きと小さすぎる主人公を、ambient低減と360 world-unit cameraへ一度改稿した。画面統合は改善したが現heroのliteral voxel造形はcommercial character qualityへ未達で、次gateを三方式のhero比較とする。
+
+### Error log
+
+| Date | Command | Failure | Resolution |
+|---|---|---|---|
+| 2026-08-01 | sandbox内`vite --host 127.0.0.1 --port 5173` | listenが`EPERM` | 承認済みlocal dev serverとして起動し直した |
+| 2026-08-01 | local Vite port 5173 | 既存processが使用中 | Viteが選んだ5174をactual-camera reviewに使用した |
+
+---
+
+## Current Iteration: Visual North Star Concept Set v0.4
+
+### Trigger
+
+2026-08-01、ユーザーは、こちらが理想と考えるgameplay画面をAI画像生成で複数案提示し、それを現projectで実現する方法まで検討するよう依頼した。
+
+### Goal
+
+現runtimeの相対改善だけで方向を選ばず、固定俯瞰、明るい自然侵食都市、精密な主人公、交換可能な同行者、半自動戦闘が一画面で成立するPC masterの外部目標を複数案で可視化する。案ごとの実装負債を比較し、次のBeauty Cellとcharacter asset pipelineへ落とせる暫定North Starを一つ選ぶ。
+
+### Phases
+
+- [x] Phase N1: 現North Star画面と要求から、hybrid HD-2D、precision micro-voxel、stylized 3Dの三経路を生成する
+- [x] Phase N2: 三案を統合したDと、露出／actor scale／固有motifを修正したEを生成する
+- [x] Phase N3: 五案をworld、actor、gameplay readability、固有性、実装性で比較し、Eを暫定North Starにする
+- [x] Phase N4: fixed-camera VisualCell、rigged GLB、baked PBR／indirect light、GLB／KTX2 content pack、AssetDNA、provenance、quality tierの実装案を文書化する
+- [x] Phase N5: project docs、Workspace postflight、exact-scope local commitを完了する
+
+### Decision
+
+- 暫定North StarはE。Dの単純な交差点構図を保ち、中間調を約一段明るくし、主人公／四足同行者を拡大し、主人公へdark hair、sageの非対称field coat、rust panel、折り畳み半円survey frame、cyan-amber bladeという独自候補を与えた。
+- Eは完成screenでも出荷assetでもない。画面構成、明るさ、actor占有、material family、制作構造を決めるconceptであり、最終主人公設定と顔は未固定。
+- 主人公／同行者／敵はstylized modular rigged 3D、世界は固定camera用3D shell＋baked indirect／PBR／decal、water／wetness／foliage motion／actor shadow／effectはrealtimeとする。
+- literal voxelは人間の最終surfaceから外す方向を強めるが、機械、buildable、damage state、procedural proxyには残す。最終判断は同じactual-cameraのrigged hero pilotで行う。
+- AIはconcept、surface story、hard-surface part、variation候補を作る。runtimeへ入るのはhuman-approved GLB／KTX2／manifestだけで、物理、collision、戦闘結果、合成可否はdeterministic schemaが所有する。
+
+### Constraints
+
+- 既存作品のcharacter、costume、UI、palette、sceneを複製しない。
+- 都市を増築してrichnessを偽装せず、road、wall、shelter、water、vegetation、hero、companion candidate、enemyだけのBeauty Cellを先に合格させる。
+- PC masterを先に作り、mobileは同じcanonical assetからLOD／texture／lighting／effectを縮退する。
+- generated conceptをruntime capture、commercial-quality達成、user art acceptanceと呼ばない。
+- public deploy／pushは今回の依頼に含めない。
+
+### Status
+
+**Completed locally; not deployed; art acceptance pending** — 1672×941の五案、全prompt、SHA-256 manifest、実装設計をproject内へ保存した。manifest JSON、Vitest 21 files／141 tests、strict TypeScript、production build、`git diff --check`、Workspace postflightが合格した。Eを暫定North Starとするが、user art acceptance、runtime再現、public deployは未実施。

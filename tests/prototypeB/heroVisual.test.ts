@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import * as THREE from "three";
 import { PLAYER_RECIPE } from "../../src/prototypeB/voxel";
 import {
   HERO_PART_IDS,
@@ -69,6 +70,31 @@ describe("articulated hero visual", () => {
     expect(
       HERO_PART_IDS.every((partId) => visual.partMeshes[partId] === null),
     ).toBe(true);
+    visual.dispose();
+  });
+
+  it("uses physically separated cloth, metal, and HDR signal materials", () => {
+    const visual = createHeroVisual();
+    const matte = visual.materials.matte;
+    const metal = visual.materials.metal;
+    const emissive = visual.materials.emissive;
+
+    expect(matte).toBeInstanceOf(THREE.MeshPhysicalMaterial);
+    expect(metal).toBeInstanceOf(THREE.MeshPhysicalMaterial);
+    expect(emissive).toBeInstanceOf(THREE.MeshBasicMaterial);
+    if (
+      !(matte instanceof THREE.MeshPhysicalMaterial) ||
+      !(metal instanceof THREE.MeshPhysicalMaterial) ||
+      !(emissive instanceof THREE.MeshBasicMaterial)
+    ) {
+      throw new Error("Hero material roles did not use the expected shaders.");
+    }
+
+    expect(matte.sheen).toBeGreaterThan(0);
+    expect(metal.metalness).toBeGreaterThan(0.75);
+    visual.setTint(0xffffff);
+    expect(emissive.color.r).toBeGreaterThan(1);
+    expect(emissive.toneMapped).toBe(false);
     visual.dispose();
   });
 });

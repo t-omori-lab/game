@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "visual-concept-set/1",
+  "setId": "visual-fidelity-v03",
+  "createdAt": "2026-08-01",
+  "generator": {
+    "provider": "OpenAI",
+    "interface": "Codex built-in image_gen",
+    "modelVersion": "not exposed by tool",
+    "seed": "not exposed by tool"
+  },
+  "status": "art-direction candidates only",
+  "runtimeAsset": false,
+  "commercialArtAcceptance": false,
+  "promptSource": "README.md",
+  "sourceReference": {
+    "kind": "local gameplay screenshot",
+    "use": "camera and game semantics only"
+  },
+  "assets": [
+    {
+      "id": "A",
+      "file": "ideal-screen-a-hybrid-hd2d.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "0ac7d406c50de7a03db9025ebdbce1b1e38edfa9e08ad6135a85cfd9418b3782",
+      "decision": "candidate"
+    },
+    {
+      "id": "B",
+      "file": "ideal-screen-b-micro-voxel.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "03408c362a8a623189bfc5d7593f8a154dc0ba68efcaf7f9e0acb48581a8d779",
+      "decision": "candidate"
+    },
+    {
+      "id": "C",
+      "file": "ideal-screen-c-stylized-3d.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "9190e60398b794f5e423e40f9084f1988a7c2b055d06304e4aee43c3fce57e02",
+      "decision": "candidate"
+    },
+    {
+      "id": "D",
+      "file": "ideal-screen-d-recommended-synthesis.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "a3b16647bf23377570e259f5bda5b9c2dce0683d465fc6d242ac8dc2c41490e1",
+      "decision": "superseded by E"
+    },
+    {
+      "id": "E",
+      "file": "ideal-screen-e-final-target.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "462643fb23832eb51d54313284c54f93445589f291d1e614be6088ae366daf2a",
+      "decision": "provisional visual North Star"
+    }
+  ]
+}
