@@ -62,7 +62,8 @@ Phase: AI-native Concept C Beauty Cell R02 / versioned public prototypes
 - `R02`のPC master候補ではhalf-float 4× MSAA、GTAO、抑制bloom、SMAA、AgXに、worldだけへ適用するhorizontal／vertical tilt-shiftを加え、DOM HUDをblur対象から外した。production previewの1600×900 browserで3196×1796内部buffer、`environment=beauty-cell`、`quality=pc-ultra`、`tiltShift=true`を確認した。
 - 公開shellをversion化し、`/game/`を新しい順のprototype一覧、`/game/r01/`を従来North Starの凍結版、`/game/r02/`をBeauty Cellとした。R01は開始commit `88d0f2f`から独立buildした静的成果物とSHA-256 manifestをrepositoryへ固定し、今後の共有source変更で再生成されない。`?prototype=north-star`と`?prototype=beauty-cell`は各versionへの互換alias、旧`?prototype=0.1`も保持する。service worker cacheもrouteごとに分離する。
 - Beauty Cellは町cellだけを専用artへ置換し、明示的に置換していない東方worldのterrain／prop／landmarkは引き続き描画する。置換対象の全solid colliderには同じboundsを記録したvisual anchorと、井戸、作業yard、signal mast、seed bed、crate等の読める造形を追加し、不可視collisionと空のquest routeを残さない。
-- local候補はstrict TypeScript、Vitest 26 files／163 tests、production buildに合格し、production previewで`/game/`、`/game/r01/`、`/game/r02/`、service worker、manifestのHTTP 200とR01の`environment=north-star-city`、独立した相対asset bundleを確認した。R01 snapshotはtilt-shift導入前のbuildであり、R02専用passを共有しない。GitHub Pagesの公開反映はこの記録時点では未確認である。
+- local候補はstrict TypeScript、Vitest 26 files／163 tests、production buildに合格し、production previewで`/game/`、`/game/r01/`、`/game/r02/`、service worker、manifestのHTTP 200とR01の`environment=north-star-city`、独立した相対asset bundleを確認した。R01 snapshotはtilt-shift導入前のbuildであり、R02専用passを共有しない。
+- GitHub Actions `Deploy GitHub Pages` run #9はcommit `e1cdb57`のtest／build／deployに成功した。公開catalog、R01、R02、root service worker、R01 `SNAPSHOT.json`がHTTPS 200を返し、公開browserでcatalogのR02→R01順、R01の独立bundle／`north-star-city`、R02の`beauty-cell`／`pc-ultra`／half-float MSAA／tilt-shift／stable IDを確認した。
 
 ## Creative reference notes
 

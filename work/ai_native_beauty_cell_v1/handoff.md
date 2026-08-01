@@ -1,6 +1,6 @@
 # Handoff: AI-native Concept C Beauty Cell v1
 
-Status: local candidate verified; public deployment in progress.
+Status: deployed and publicly verified; user art acceptance pending.
 
 ## Implemented slice
 
@@ -25,6 +25,15 @@ Status: local candidate verified; public deployment in progress.
 - This is not evidence of WebGPU, true HDR, iPhone 16 Pro performance, native Steam packaging, commercial HD-2D parity, or final user art acceptance.
 - Browser console collection was unavailable in the active in-app browser API; no claim of zero console errors is made.
 - CharacterGenome, selectable species／gender presentation, companion discovery／roster logic, baked GLB／KTX2 asset pack, and gameplay-wide weather／time quality persistence remain future work.
+
+## Public deployment
+
+- Source commit: `e1cdb578e696a8f5e815bec6844c994050df7d8d`
+- GitHub Actions: Deploy GitHub Pages run #9 (`30708042163`), build and deploy succeeded.
+- Catalog: `https://t-omori-lab.github.io/game/`
+- R02: `https://t-omori-lab.github.io/game/r02/`
+- R01: `https://t-omori-lab.github.io/game/r01/`
+- Public browser confirmed the version order, independent R01 bundle, and R02 Beauty Cell render data.
 
 ## Next art decision
 

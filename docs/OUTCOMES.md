@@ -14,8 +14,10 @@ Last updated: 2026-08-02
 - 2026-08-02、ユーザーは既存prototypeを後から公開環境で確認できるよう保持し、`/game/`を新しい順の説明付きversion一覧、各prototypeを`RXX` URLへ分離するよう指示した。今後のdeployでは過去版を残すか確認し、明示的な削除指示がない限り保持する。
 - `R02` Beauty Cellをlocal実装した。Concept C画像を背景に使わず、road、stair、shelter、water、vegetation、hero、四脚survey robot、SF tools、cyan anomalyをruntime 3Dで構成し、deterministic versioned spec、stable ID、seed、AssetDNA／provenanceへ接続した。
 - `R02`は既存の半自動通常攻撃、手動大技、装備切替、敵予兆、screen-relative inputを保持し、PC master候補としてhalf-float 4× MSAA、GTAO、bloom、SMAA、AgX、world限定tilt-shiftを使う。これはWebGPU、true HDR、commercial-quality達成、ユーザーart acceptanceの確認ではない。
-- `/game/`、`/game/r01/`、`/game/r02/`のversion shellとroute別service worker cacheをlocal実装した。R01は開始commit `88d0f2f`から独立buildした静的成果物とSHA-256 manifestであり、R02以降の共有source変更で変質しない。strict TypeScript、Vitest、production build、production previewの再検証後に公開する。GitHub Pagesへの新version公開はこの記録時点では未確認である。
+- `/game/`、`/game/r01/`、`/game/r02/`のversion shellとroute別service worker cacheを実装した。R01は開始commit `88d0f2f`から独立buildした静的成果物とSHA-256 manifestであり、R02以降の共有source変更で変質しない。strict TypeScript、Vitest 26 files／163 tests、production build、production previewが合格した。
 - 公開前reviewでR02の専用artが旧worldの未置換terrain／propを描かず、不可視collisionと空の東方quest routeを作る可能性を検出した。置換対象colliderへ読める造形／bounds anchorを追加し、未置換terrain／prop／landmarkはR01相当のfallbackを常時描画するよう修正した。
+- GitHub Actions run #9はcommit `e1cdb57`のtest／build／deployに成功した。`https://t-omori-lab.github.io/game/`、`/game/r01/`、`/game/r02/`、root service worker、R01 `SNAPSHOT.json`がHTTPS 200を返した。
+- 公開browserでcatalogがR02→R01の順に表示され、R01は独立相対bundleで`environment=north-star-city`、R02は`environment=beauty-cell`、`quality=pc-ultra`、`pipeline=half-float-msaa`、`tiltShift=true`、stable ID `concept-c-beauty-cell-r02`、3196×1796内部bufferとして起動した。
 - 自由放浪とworld memoryはユーザー意図に合う上位方向として確認された。
 - 世界の基層は、人類が激減し、識別可能な現代都市が植物、水、動物、新しい生活へ侵食・転用されたpost-apocalypseと確認された。崩壊原因、年代、地域、共同体密度は未決定。
 - playerは既存遺構を復旧するか条件の合う土地を選び、自分の拠点を築く方向が確認された。配置自由度、複数拠点、移転、維持、襲撃の詳細は未決定。
@@ -55,7 +57,6 @@ Last updated: 2026-08-02
 
 ## Pending confirmation
 
-- R02のGitHub Pages workflow成功、公開catalog／R01／R02のHTTPS応答と実画面一致。
 - R02がConcept Cへ十分近づいたか、次にhero造形・材質／光・構図／DoFのどれを優先するかというユーザーart review。
 
 - [ ] Prototype Bのユーザー試遊評価がPrototype 0.1の約20点から改善するか。

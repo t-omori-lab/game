@@ -30,3 +30,12 @@
 - Actual-camera review caught a beige road, oversized shelter mass, and weak vegetation edge. The accepted local candidate uses a darker wet road, reduced shelter dominance, stronger planter／vegetation framing, and a cyan anomaly in the far depth band.
 - Full local verification: strict TypeScript passed; Vitest 26 files／163 tests passed; production Vite build passed; production preview returned HTTP 200 for catalog, R01, R02, service worker, and manifest.
 - Vite reports large chunks (main about 880 KB and preserved legacy Phaser about 1.45 MB). This is a future loading／splitting concern, not a blocker for the current visual-first Beauty Cell release.
+
+## Public deployment
+
+- Commit: `e1cdb578e696a8f5e815bec6844c994050df7d8d`
+- GitHub Actions: Deploy GitHub Pages run #9 (`30708042163`), build and deploy jobs succeeded.
+- HTTPS 200: catalog, R01, R02, root service worker, R01 `SNAPSHOT.json`.
+- Public catalog order: R02 then R01.
+- Public R01: independent `./assets/index-Cj67ZGSF.js`, `environment=north-star-city`, `quality=pc-ultra`.
+- Public R02: `environment=beauty-cell`, `quality=pc-ultra`, `pipeline=half-float-msaa`, `tiltShift=true`, stable ID `concept-c-beauty-cell-r02`, 3196×1796 internal canvas at the 1600×900 review viewport.

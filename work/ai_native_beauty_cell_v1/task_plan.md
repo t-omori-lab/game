@@ -11,8 +11,8 @@
 - [x] heroが移動できるruntimeへ接続され、半自動通常攻撃、手動大技、装備差、enemy telegraphを維持する
 - [x] Beauty Cellをversioned spec／manifestから構築し、rendererへ個別座標を無制限に直書きしない
 - [x] strict TypeScript、Vitest、production build、desktop browser boot／render statusを検証する
-- [ ] scope限定commitをpushし、GitHub Pages workflowと公開URLを確認する
-- [ ] `/game/r01/`で現行prototype、`/game/r02/`でBeauty Cell、`/game/`で新しい順の説明付き一覧を直接開ける
+- [x] scope限定commitをpushし、GitHub Pages workflowと公開URLを確認する
+- [x] `/game/r01/`で現行prototype、`/game/r02/`でBeauty Cell、`/game/`で新しい順の説明付き一覧を直接開ける
 
 ## Phases
 
@@ -21,7 +21,7 @@
 - [x] Phase 2: Beauty Cell spec／visual grammar／asset manifestの最小AI-native contractを実装する
 - [x] Phase 3: environment、hero、lighting、wetness、vegetation、DoF、UIをConcept Cへ収束させる
 - [x] Phase 4: tests、build、browser capture、操作、render statusを反復検証する
-- [ ] Phase 5: durable docs、postflight、scope限定commit、push、GitHub Pages公開確認を行う（進行中）
+- [x] Phase 5: durable docs、postflight、scope限定commit、push、GitHub Pages公開確認を行う
 
 ## Decisions made
 
@@ -49,4 +49,4 @@
 
 ## Status
 
-**Phase 5 in progress** — local candidateと版管理shellは検証済み。durable docs、scope限定commit、push、GitHub Pages workflow、公開URL確認を完了する。
+**Deployment verified; art acceptance pending** — commit `e1cdb57`、GitHub Actions run #9、公開catalog／R01／R02／service worker／snapshotを確認済み。次はR02へのユーザーvisual reviewで修正点を3件以内に絞る。

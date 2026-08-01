@@ -4,14 +4,14 @@ Last updated: 2026-08-02
 
 ## P0
 
-Active P0は`R02 AI-native Concept C Beauty Cell`の公開とユーザーvisual reviewである。以下のcontract、world loop、生成、mobile実機項目は同sceneへ順次接続するqueueであり、R02のreviewと次の限定的なart修正をblockしない。
+Active P0は公開済み`R02 AI-native Concept C Beauty Cell`のユーザーvisual reviewである。以下のcontract、world loop、生成、mobile実機項目は同sceneへ順次接続するqueueであり、R02のreviewと次の限定的なart修正をblockしない。
 
 - [ ] `R02`を公開し、Concept Cに対する次の一画面修正をユーザー評価で3点以内に固定する。
   - [x] road／stair／shelter／water／vegetation／hero／survey robot／anomalyをruntime sceneとして実装し、画像背景を使わないBeauty Cellへ統合した。
   - [x] half-float MSAA、GTAO、bloom、SMAA、AgX、world限定tilt-shift、PC camera compositionを接続した。
   - [x] versioned spec、stable ID、seed、causal rule、AssetDNA／provenanceを持つ最小AI-native compiler contractを実装した。
   - [x] strict TypeScript、Vitest 163件、production build、production previewのR01／R02／catalog routeをlocal検証した。
-  - [ ] GitHub Pages workflow成功と公開URLのR01／R02／catalogを確認する。
+  - [x] GitHub Pages run #9のtest／build／deploy成功と、公開URLのR01／R02／catalog、service worker、R01 snapshotを確認した。
   - [ ] ユーザーreview後、hero造形、材質／光、構図／DoFのうち最大3点へ次sliceを限定する。
 - [x] prototype version保存規則を公開shellへ導入する。
   - `/game/`は新しい順の説明付き一覧、`/game/r01/`は開始commitから独立buildした静的North Star snapshot、`/game/r02/`はBeauty Cellとする。R01はSHA-256 manifestで変質を検出する。
@@ -116,6 +116,7 @@ Active P0は`R02 AI-native Concept C Beauty Cell`の公開とユーザーvisual 
 
 ## Recently completed
 
+- [x] commit `e1cdb57`をGitHub Pagesへ反映し、run #9成功、公開catalog／R01静的snapshot／R02 Beauty Cell／service workerのHTTPS応答と実browser描画を確認 — 2026-08-02
 - [x] AI-native Concept C Beauty Cell R02、女性型SF hero、四脚survey robot、二武器、world限定tilt-shiftを実装し、strict TypeScript、Vitest 26 files／163 tests、production build、R01／R02／catalogのlocal production previewを合格 — 2026-08-02
 - [x] `/game/`の新しい順prototype catalog、開始commitから独立buildした`/game/r01/`静的snapshot＋SHA-256、`/game/r02/`Beauty Cell、route別service worker cacheと互換aliasを実装 — 2026-08-02
 - [x] Visual Fidelity Foundation v0.3でPMREM IBL、光／fog／露出、PC camera composition、主人公material、world-first intro／HUDを統合し、1280×720 DPR 2 actual browser、strict TypeScript、Vitest 141件、production buildを合格 — 2026-08-01
