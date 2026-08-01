@@ -287,3 +287,39 @@ PC play前提の最高品質を先に定義し、自然侵食された現代都�
 | Date | Command | Failure | Resolution |
 |---|---|---|---|
 | 2026-08-01 | `pnpm exec tsc --noEmit` | bundled pnpmがregistry metadata取得と非TTYのmodules再作成を要求して停止 | bundled Nodeでlocal TypeScript CLIを直接実行し、strict TypeScript合格を確認 |
+
+---
+
+## Current Iteration: North Star City Cell v0.1
+
+### Trigger
+
+2026-08-01、ユーザーはPC-first North Star候補の改善を確認し、「では次」と継続実装を指示した。
+
+### Goal
+
+North Starルートに残る村落的な開始地点を、旧用途が一目で読める「自然に侵食された現代都市の一画面」へ置き換える。道路、高架／鉄道、集合住宅／店舗、水と植生、修理して暮らす痕跡を同じ因果で構成し、現行の主人公、半自動戦闘、高品質post stack、既存baseline routeを保つ。
+
+### Art-direction decision
+
+**Revise one thing** — 今回はrenderer方式やgameplay scopeを広げず、背景の都市認識と画面構成だけを大きく改稿する。主役は移動／戦う主人公。読む順番は `主人公と進路 → 都市の旧用途 → 植生と生活の痕跡` とし、colliderとinteractionに対応する物体は装飾ではなくevidence layerとして見せる。
+
+### Phases
+
+- [x] Phase C1: start-town art、renderer統合、collision／prop置換、既存testを監査し、North Star専用差し替え面を固定する
+- [x] Phase C2: 固定camera向けの高密度都市セル、material、植生、生活痕跡を実装する
+- [x] Phase C3: desktop実画面で構図、主人公可読性、都市認識を確認し、一度改稿する
+- [x] Phase C4: focused test、全test、strict TypeScript、production buildを合格させる
+- [x] Phase C5: project docsを更新し、postflightとexact-scope local commitを行う
+
+### Constraints
+
+- `baseline` routeのstart-town表現とauthoritative collision／interactionを壊さない。
+- North StarはPC最高品質候補を先に作り、mobile tierへの縮退はこのsliceでは行わない。
+- 固有作品の景観、商標、assetを模倣しない。参照するのは鮮やかな自然と都市遺構の構造だけ。
+- commercial HD-2D達成とは呼ばず、user art acceptance前のlocal candidateとして扱う。
+- public deploy／pushは今回の指示に含めない。
+
+### Status
+
+**Completed locally; not deployed** — 都市cellのlocal実装、1600×900 actual-camera review、camera-facing facade／舗装filterの改稿、baseline保持、strict TypeScript、Vitest 129件、production build、Workspace postflightまで合格した。public deploy／pushとユーザーart acceptanceは行っていない。

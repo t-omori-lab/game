@@ -38,6 +38,9 @@ Last updated: 2026-08-01
 - 半自動通常攻撃をpure fixed-tick controllerへ分けると、simulationへ渡すのは`attack`と移動倍率だけになり、target／windup ring、HUD、hero poseは同じpresentation stateから派生できる。game ruleと演出の同期点を一つに保てる。
 - `Hit`をgame rule上の1 tickにすると、30Hz simulationでは正しくても60Hz以上のrender frameへ表示されないことがある。damageは1 tickのまま、heroのfollow-throughは`player-attacked` eventから短いrender clockで再生し、大技／武器切替はauto controllerを明示的に抑止すると、ruleの決定性と読めるactionを両立できる。
 - headless desktop Chromeの1600×900／device pixel ratio 1で1598×898内部解像度を確認できても、Retina desktopの2倍scale、HDR display、wide color、WebGPU性能の証明にはならない。quality名ではなく実deviceの内部解像度、pipeline status、frame time、最終画面を別々に記録する。
+- baselineとNorth Starの環境を`qualityProfile`だけで分けると、baseline体験へPC描画だけを適用する組合せまで都市化し得る。`experience → environmentProfile`を明示してart factoryだけを差し替えると、simulation、collision、interaction、比較版を保ったまま一画面を大胆に改稿できる。
+- fixed cameraの建物は、camera-facing側へ窓、庇、看板、tile、補修跡を置かなければ、高密度にauthoringしても最終画面では巨大な無地boxに見える。実画面の第一稿で方角誤りを検出し、正面を反転して初めて旧用途が読めた。geometry countではなくactual-camera screenshotをart gateにする。
+- 小さなprocedural舗装textureをnearest相当で反復すると、解像度を上げてもmoireと布目状patternが目立つ。512²以上、linear magnification、mipmap minification、anisotropyを組み合わせ、道路標示も完全な白ではなく風化／分節させると、主人公と戦闘記号を保ったまま現代道路を読ませやすい。
 
 ## Working hypotheses to validate
 

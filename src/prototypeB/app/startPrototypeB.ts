@@ -569,6 +569,10 @@ export function startPrototypeB(
           accumulator = 0;
         },
         companionPreview: options.companionPreview,
+        environmentProfile:
+          options.experience === "north-star"
+            ? "north-star-city"
+            : "start-town",
         qualityProfile: options.renderQuality,
       },
     );

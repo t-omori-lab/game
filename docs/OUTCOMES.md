@@ -34,10 +34,12 @@ Last updated: 2026-08-01
 - `docs/GAME_CONSTITUTION.md`と`docs/DESIGN_SYNTHESIS.md`をlocalに追加し、確定要求と設計提案を分離した。仮称「世界記憶型・放浪生活ハクスラ」を、Gate Aの手動action＋loot／buildと、Gate Bの自由な放浪＋world memoryに分け、Gate Cのvisual比較を独立させた。GameplayContract、Causal World Cell、StyleProfile／AssetDNA、Event Log Lite、残響基盤は未採用のdesign proposalであり、runtime、asset、公開buildは変更していない。
 - 2026-08-01、作品憲法と統合設計をv0.2へ更新し、Gate Aを半自動戦闘、Gate Bを候補地選定／module設置／次回差分へ再定義した。`BaseSite`、`BaseModule`、`BaseEvent`と拠点生成hard gateをdraft化し、release durabilityを体験gateから分離した。game code、runtime asset、公開build、deployは変更していない。
 - 2026-08-01、PC最高品質を先に追う独立local North Star候補route `?prototype=north-star`を追加した。既存公開routeは保持し、GitHub Pagesへのpush／deployは行っていない。
+- ユーザーは半自動戦闘、PC-first描画、部位化主人公を統合した最初のNorth Star候補を見て「確かによくなった」と評価し、次の実装へ進むよう指示した。これはcommercial-qualityの合格評価ではない。
 - North Star routeへ、WebGL2 half-float render target、4× MSAA、GTAO、抑制したbloom、SMAA、可変内部解像度、camera impulseを統合した。1600×900／device pixel ratio 1のChromeでは1598×898内部解像度でpost stackがfallbackせず動作した。これはWebGPU／true HDR採用結果ではない。
 - `Acquire → Windup → Hit → Recover`のfixed-tick controllerを実装し、二武器の間合い、周期、移動拘束、target維持、dodge cancelと通常攻撃自動発動をNorth Star routeへ接続した。通常攻撃buttonは同routeで非表示にし、大技、回避／防御、itemは手動のままにした。
 - 24×32×16主人公を7 semantic partへ分割し、右腕weapon socket、idle／run／windup／hit／recovery／hurt／skill poseをPC Ultra routeへ接続した。single merged meshはbaseline fallbackとして保持した。
 - North Star local候補はstrict TypeScript、Vitest 124件、production buildが合格した。desktop Chromeで開始、移動、半自動攻撃windup／hit pose、PC Ultra候補post stack、通常攻撃button非表示、大技中のauto combat停止、武器切替時の即時hit抑止、browser error 0件を確認した。
+- North Star専用の自然侵食現代都市cellをlocal実装した。旧高架駅／集合住宅、横断歩道、旧店舗／診療所、雨水濾過槽、情報kiosk、修理bay、菜園を既存collisionへ合わせ、baselineは従来のstart-townを維持した。1600×900のlocal Chromeで都市表示と主人公の開始位置を目視し、空白だったcamera-facing facadeと舗装filterを一度改稿した。strict TypeScript、Vitest 129件、production buildが合格した。公開／deployとユーザーart acceptanceは未実施。
 
 ## Pending confirmation
 
@@ -59,7 +61,7 @@ Last updated: 2026-08-01
 - [ ] literal high-density voxel、semantic voxel surface、stylized low-polyを同条件で比較した結果、どのvisual identityを採るか。
 - [ ] PC UltraのWebGPU／HDR、KTX2、Visual Benchmark Scene、AssetDNA、Causal World Cellが知覚品質、制作効率、gameplay改善へ実際につながるか。
 - [ ] PC masterから派生したmobile tierがiPhone 16 Pro上で操作視認性、performance、発熱の条件を満たすか。
-- [ ] North Star routeが、既存start-townの技術sliceから、recognizableな自然侵食現代都市と商業reference級の一画面へ到達するか。現時点では未達。
+- [ ] North Star routeの自然侵食現代都市第一候補がユーザーにrecognizableで魅力的と評価され、さらに商業reference級の一画面へ到達するか。local候補は実装済みだが、commercial art acceptanceは未確認。
 - [ ] semantic part化した現主人公が十分な精密さと魅力を持つか。顔／髪／衣装surface、PBR material、deformation rig、signature animationを含む最終hero designは未完成。
 - [ ] Counter cutterとBreach driverが実際の試遊で、DPS以外の位置取り、risk、timingの差として感じられるか。
 - [ ] PC UltraのWebGPU／HDR候補が、現WebGL2 half-float post stackより知覚品質で勝つか。同条件比較は未実施。

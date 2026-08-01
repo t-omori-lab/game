@@ -32,6 +32,7 @@ import {
   createStartTownArtSlice,
   type StartTownArtSlice,
 } from "./startTownArt";
+import { createNorthStarCityArtSlice } from "./northStarCityArt";
 import { configureDisplayColor } from "./displayColor";
 import {
   alignObjectGripToSocket,
@@ -124,6 +125,9 @@ export type PrototypeBRenderStats = {
 };
 
 export type PrototypeBRenderQuality = "baseline" | "pc-ultra";
+export type PrototypeBEnvironmentProfile =
+  | "start-town"
+  | "north-star-city";
 
 export type CombatPresentationState = {
   readonly targetId: string | null;
@@ -139,6 +143,7 @@ export interface PrototypeBRendererOptions {
    * discovery/roster state explicitly selects one.
    */
   readonly companionPreview?: boolean;
+  readonly environmentProfile?: PrototypeBEnvironmentProfile;
   readonly qualityProfile?: PrototypeBRenderQuality;
 }
 
@@ -149,7 +154,7 @@ export class PrototypeBRenderer {
   private ultraPipeline: UltraRenderPipeline | null = null;
   private readonly scene = new THREE.Scene();
   private readonly camera: THREE.OrthographicCamera;
-  private readonly startTownArt: StartTownArtSlice;
+  private readonly environmentArt: StartTownArtSlice;
   private readonly cameraTarget = new THREE.Vector3();
   private readonly playerGroup = new THREE.Group();
   private readonly playerBody: HeroVoxelMesh;
@@ -238,7 +243,10 @@ export class PrototypeBRenderer {
     });
     configureDisplayColor(this.renderer);
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // Three.js 0.185 maps the deprecated PCFSoftShadowMap to PCFShadowMap.
+    // Select the effective mode directly so the North Star route stays free of
+    // deprecation noise while preserving the rendered result.
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.renderer.setPixelRatio(
       this.qualityProfile === "pc-ultra"
         ? Math.min(2, Math.max(1, window.devicePixelRatio || 1))
@@ -251,6 +259,8 @@ export class PrototypeBRenderer {
         ? "msaa"
         : "none";
     this.renderer.domElement.dataset.qualityProfile = this.qualityProfile;
+    this.renderer.domElement.dataset.environmentProfile =
+      options.environmentProfile ?? "start-town";
     this.renderer.domElement.setAttribute(
       "aria-label",
       "辺境遺物録 ボクセルゲーム画面",
@@ -313,19 +323,22 @@ export class PrototypeBRenderer {
     }
 
     this.createGround(initialState);
-    this.startTownArt = createStartTownArtSlice();
-    this.scene.add(this.startTownArt.group);
+    this.environmentArt =
+      options.environmentProfile === "north-star-city"
+        ? createNorthStarCityArtSlice()
+        : createStartTownArtSlice();
+    this.scene.add(this.environmentArt.group);
     this.createFieldGrowth(
       initialState,
-      this.startTownArt.replacedTerrainIds,
+      this.environmentArt.replacedTerrainIds,
     );
     this.createTerrain(
       initialState,
-      this.startTownArt.replacedTerrainIds,
+      this.environmentArt.replacedTerrainIds,
     );
     this.createProps(
       initialState,
-      this.startTownArt.replacedPropIds,
+      this.environmentArt.replacedPropIds,
     );
     this.createLandmarkSignals(initialState);
 
@@ -570,7 +583,7 @@ export class PrototypeBRenderer {
       window.removeEventListener("resize", this.windowResizeHandler);
       this.windowResizeHandler = null;
     }
-    this.startTownArt.dispose();
+    this.environmentArt.dispose();
     this.ultraPipeline?.dispose();
     this.ultraPipeline = null;
     this.groundTexture?.dispose();

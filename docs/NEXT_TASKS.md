@@ -8,7 +8,8 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
 
 - [ ] PC play前提の`North Star Scene v0.1`を最優先で作る。
   - [x] `?prototype=north-star`を独立routeにし、PC Ultra WebGL2 post stack、半自動通常攻撃、手動大技、部位化主人公、同行者候補previewを一画面へ接続した。
-  - [ ] 既存start-townの再利用を終え、道路、鉄道／高架、集合住宅、商業／公共設備の旧用途が一目で分かる自然侵食現代都市cellへ置き換える。
+  - [x] North Star routeだけを、道路、横断歩道、鉄道／高架、集合住宅、店舗／診療所、雨水／修理設備の旧用途が読める自然侵食現代都市cellへ置き換えた。baseline start-townは保持した。
+  - [ ] 現都市cellを高解像度baked surface、facade／roof microdetail、植生silhouette、lighting compositionで再制作し、procedural box主体の第一候補からcommercial reference級へ引き上げる。
   - 自然に侵食されたrecognizableな現代都市一画面、精密な主人公、同行者候補一体、格下一体、名付き敵一体、遺物effectを同じ固定cameraへ置く。
   - 2560×1440相当のPC Ultraをmasterとし、WebGPU／HDR、half-float lighting、PBR、baked indirect light、高解像度surface、shadow、選択的postを比較する。WebGL2／SDRとmobileは後から同じsceneを縮退する。
   - 主人公／同行者は単一merged voxel meshの上下動に留めず、顔／sensor、衣装／外装、武器、semantic parts、material差、signature pose、part animationを持つhero assetにする。

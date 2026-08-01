@@ -252,3 +252,18 @@
 - runtime生成物はその場限りにせず、canonical state参照、seed、generator／validator version、model ID／weight hash、input／output hash、採用結果をsaveへ凍結する。reload時は再生成せず同じ結果を読む。検証失敗時はdeterministic fallbackへ戻す。
 - 小型であること自体は矛盾防止、商用利用許可、smartphone性能、battery、download sizeを保証しない。具体modelの採用はlicense、weight再配布、生成物条件、端末RAM／速度、品質を同じbenchmarkで確認してから決める。
 - 初期default候補は擬似LLM。規則だけでは表現の反復が目立つ箇所へlocal micro-LLMを限定導入し、PCでは高品質model、smartphoneでは軽量model／擬似LLMへquality tierで切り替える。
+
+## 2026-08-01 — North Star City Cell v0.1 working notes
+
+- 今回の判断レベルは `Revise one thing`。現行のhero、combat、post stackは保持し、村落的背景だけを自然侵食現代都市へ置き換える。
+- visual protagonistは主人公。都市情報を増やしても、開始地点には明るい抜けと移動方向を残す。
+- 読む順番は `主人公／進路 → 道路・高架・建築の旧用途 → 水・植生・修理生活の痕跡`。
+- 都市の認識には大きな箱を増やすだけでは足りない。横断歩道、車線、窓反復、庇、手すり、配管、看板支持体、排水、舗装目地など、人間scaleの反復と用途記号が必要。
+- 植生は一様に撒かず、水が溜まる低地、亀裂、日照縁、壁面の支持体へ因果的に集中させる。
+- 生活痕跡は荒廃の悲壮感ではなく、雨水回収、補修板、菜園、作業灯、干し布など「あっけらかんと使い直す」方向にする。
+- authoritative collisionとinteractionは既存simulationを正本とし、North Star artは同じ置換ID／位置を守る。装飾がcollisionを偽装しないこと。
+- runtime生成textureを使う場合は決定的seedと明示的disposeを持たせる。最終量産pipelineとは分けたlocal candidateと記録する。
+- 1600×900の第一稿では、現代道路、高架、横断歩道、kioskにより村から都市への認識は改善した。一方、south buildingのdetailがcameraと逆の面にあり、巨大な無地boxとして見えた。
+- camera-facing側を旧店舗／診療所のtile、窓、shutter、庇、錆補修、洗濯へ反転し、512² asphalt＋linear／mipmapへ変更した第二稿をactual-cameraで確認した。crosswalkも風化／分節し、菜園とrepair bayへ色を足した。
+- 第二稿は「都市の旧用途が読める最初のlocal candidate」まで。高解像度baked albedo／normal／roughness、roof microdetail、最終hero／companion、commercial art acceptanceは未達。
+- local evidence: 1600×900 viewport、1598×898 canvas、device pixel ratio 1、`environmentProfile=north-star-city`、MSAA、half-float post stack、ground texture `ready`。Vitest 18 files／129 tests、strict TypeScript、Vite production build合格。
