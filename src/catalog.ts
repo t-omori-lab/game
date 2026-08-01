@@ -88,7 +88,7 @@ function renderCatalog(applicationRoot: HTMLElement): void {
       </section>
     </main>
     <footer class="catalog-footer">
-      <span>FIXED CAMERA · PROCEDURAL WORLD · REALTIME 3D</span>
+      <span>FIXED CAMERA · AI-NATIVE WORLD · 2.5D HYBRID</span>
       <span>© T-OMORI-LAB</span>
     </footer>
   `;

@@ -63,6 +63,12 @@ Last updated: 2026-08-02
 - Concept Cのvoxel／pixel-art感はliteral cube数ではなく、小型3D造形、micro-facet、orthogonalな都市形状、俯瞰縮小、wet material、baked light、DOFが統合された知覚である。character creatorと装備換装が中核なら、actorはrealtime skinned 3Dにし、static city densityをlightmap／KTX2／merged shellへbakeする分担に意味がある。
 - character creationは女性／男性というmesh二択ではなく、rig family、species、body frame、gender presentation、face／hair／surface、palette、equipment fitをstable IDで分離すると、default女性presetと多様な旅人を同時に成立させられる。大きく異なるbody planは一つのhumanoid rigへ例外追加せず、後続rig familyへ分ける。
 
+- 旧scene graphへ高品質post effectや新しいbox assetを足しても、camera composition、object scale、negative space、actor representationがreferenceと違えば、知覚的には旧prototypeの小改良に留まる。reference再現では、再利用量より同一viewport比較を先に置き、到達不能な層は独立再構築する。
+- 一枚の高品質environment plateは、North Starのdensity、palette、light、material、DOFを短期間で固定するBeauty Benchmarkとして有効である。ただしdepth、occlusion、collision、navigation、時刻／天候変化を持たないため、遠景／非接触領域へ限定し、playable領域はlayered scene compilerで置き換える。
+- 高解像度spriteを置くだけでは、baked environmentから浮いて見える。actorにも同じlight directionのrim、contact／cast shadow、wet-surface reflection、distance blur、atmospheric saturationを同時に与え、実際のgameplay scaleで統合を評価する。
+- 「女性型で可愛い」はasset sheetの解像度や設定文では判定できない。通常gameplay scaleのfront viewで顔、髪、目、体形、衣装、SF装備が一目で読めることをvisual gateにし、directional setの初期facingも正面へ固定する。
+- ultra-wide mobileではworldとHUDを同じcover transformで縮小すると操作UIが切れる。worldはcover、HUDはcontainの別transformにし、safe-areaとmanual skill targetを独立して検査すると、PC masterの構図を保ちながらmobile controlを残せる。
+
 ## Working hypotheses to validate
 
 - Prototype Bには二つの独立した不足がある可能性が高い。Gate Aでは条件付き自動通常攻撃、手動大技、loot比較、異なるbuildを、Gate Bでは自分で選ぶ同時目的／拠点と、一回目が二回目のloadout／routeを変える因果を別々に検証する。一方を他方の代替にしない。

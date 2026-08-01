@@ -1,2 +1,6 @@
 # Markdown uses two trailing spaces as an intentional hard line break.
 *.md whitespace=-blank-at-eol,-blank-at-eof
+
+# Frozen Vite bundles are byte-for-byte release artifacts, not source diffs.
+public/r01/assets/*.js binary
+public/r02/assets/*.js binary

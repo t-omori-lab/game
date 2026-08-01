@@ -1,4 +1,4 @@
-export type PrototypeReleaseId = "r01" | "r02";
+export type PrototypeReleaseId = "r01" | "r02" | "r03";
 
 export interface PrototypeRelease {
   readonly id: PrototypeReleaseId;
@@ -9,11 +9,18 @@ export interface PrototypeRelease {
 
 export const PROTOTYPE_RELEASES: readonly PrototypeRelease[] = [
   {
+    id: "r03",
+    title: "Concept C Beauty Benchmark",
+    summary:
+      "Cの画角と素材感を基準画像から再構築し、高密度な女性主人公、相棒、正しい4方向移動を統合した独立2.5Dセル。",
+    status: "latest",
+  },
+  {
     id: "r02",
     title: "AI-native Concept C Beauty Cell",
     summary:
       "高密度な立体造形、濡れた都市、自然侵食、光と被写界深度を一画面に統合した最新の美術検証セル。",
-    status: "latest",
+    status: "archive",
   },
   {
     id: "r01",
@@ -24,7 +31,7 @@ export const PROTOTYPE_RELEASES: readonly PrototypeRelease[] = [
   },
 ] as const;
 
-const RELEASE_PATH_PATTERN = /\/(r01|r02)(?:\/|$)/i;
+const RELEASE_PATH_PATTERN = /\/(r01|r02|r03)(?:\/|$)/i;
 
 export function resolvePrototypeRelease(
   pathname: string,
@@ -39,7 +46,9 @@ export function resolvePrototypeRelease(
   const match = RELEASE_PATH_PATTERN.exec(pathname);
   const releaseId = match?.[1]?.toLowerCase();
 
-  return releaseId === "r01" || releaseId === "r02" ? releaseId : null;
+  return releaseId === "r01" || releaseId === "r02" || releaseId === "r03"
+    ? releaseId
+    : null;
 }
 
 export function resolvePrototypeAlias(

@@ -4,15 +4,21 @@ Last updated: 2026-08-02
 
 ## P0
 
-Active P0は公開済み`R02 AI-native Concept C Beauty Cell`のユーザーvisual reviewである。以下のcontract、world loop、生成、mobile実機項目は同sceneへ順次接続するqueueであり、R02のreviewと次の限定的なart修正をblockしない。
+Active P0は、R02を漸進改良せず独立再構築した`R03 Concept C Beauty Benchmark`の公開とユーザーvisual reviewである。以下のcontract、world loop、生成、mobile実機項目はqueueであり、R03の公開確認をblockしない。
 
-- [ ] `R02`を公開し、Concept Cに対する次の一画面修正をユーザー評価で3点以内に固定する。
-  - [x] road／stair／shelter／water／vegetation／hero／survey robot／anomalyをruntime sceneとして実装し、画像背景を使わないBeauty Cellへ統合した。
-  - [x] half-float MSAA、GTAO、bloom、SMAA、AgX、world限定tilt-shift、PC camera compositionを接続した。
-  - [x] versioned spec、stable ID、seed、causal rule、AssetDNA／provenanceを持つ最小AI-native compiler contractを実装した。
-  - [x] strict TypeScript、Vitest 163件、production build、production previewのR01／R02／catalog routeをlocal検証した。
-  - [x] GitHub Pages run #9のtest／build／deploy成功と、公開URLのR01／R02／catalog、service worker、R01 snapshotを確認した。
-  - [ ] ユーザーreview後、hero造形、材質／光、構図／DoFのうち最大3点へ次sliceを限定する。
+- [ ] `R03`をGitHub Pagesへ公開し、公開版をConcept Cのvisual contractとして確認する。
+  - [x] wide camera、高解像度女性SF hero、robot dog、遠景anomaly、高DPI 2.5D描画、半自動通常攻撃、手動遺物skill、tap-to-moveをR02非依存のappとして実装した。
+  - [x] W／↑、D／→、S／↓、A／←のscreen directionとcharacter facingを一致させ、四方向の動的browser checkを行った。
+  - [x] Concept C正本と同じ1672×941の最終comparisonを作り、独立visual QAでP0 0／P1 0／非blocking P2 3、`final result: passed`を得た。
+  - [x] strict TypeScript、Vitest 27 files／168 tests、production build、874×402 browser policy、double-click scale 1をlocal確認した。
+  - [x] follow cameraをplate overscan内へ制限し、keyboard／tapを同じ10頂点road polygonへ接続した。公開前code review再監査はP0 0／P1 0でGO。
+  - [ ] exact-file commit、GitHub push、Pages run成功、公開R03／catalog／R02 freezeのHTTPと実browser描画を確認する。
+  - [ ] ユーザーreviewでConcept Cとの残差を最大3点に絞り、C1へ持ち越す差分を決める。
+- [ ] `C1 Layered Beauty Cell`でR03の知覚品質をdepth-awareなHD-2D基盤へ移す。
+  - 道路、階段、停留所、作業台をmodular geometry、depth、occlusion、collision、navigationへ分解する。
+  - approved R03 captureを回帰基準にし、dynamic light／装備／移動中もP1差分ゼロを維持する。
+  - 遠景／非接触領域はplateを保持し、playable領域だけを3D／depth-aware layerへ置き換える。
+  - Done when: 一つの動的light、遮蔽、衝突、経路探索を有効にしても、同一camera比較でR03の密度・光・色・素材感・DOFを失わない。
 - [x] prototype version保存規則を公開shellへ導入する。
   - `/game/`は新しい順の説明付き一覧、`/game/r01/`は開始commitから独立buildした静的North Star snapshot、`/game/r02/`はBeauty Cellとする。R01はSHA-256 manifestで変質を検出する。
   - 今後のdeploy planでは既存versionを残すか毎回確認し、ユーザーから明示的な削除指示がない限り過去versionを保持する。
@@ -116,6 +122,8 @@ Active P0は公開済み`R02 AI-native Concept C Beauty Cell`のユーザーvisu
 
 ## Recently completed
 
+- [x] R03をR02非依存の2.5D Beauty Benchmarkとして再構築し、Concept Cとの同一1672×941比較、独立visual QA P0 0／P1 0、四方向操作、手動skill、safe camera／road polygon、Vitest 168件、strict TypeScript、production buildをlocal合格 — 2026-08-02
+- [x] R02をcommit `0b5fd9f6…`由来の静的bundle、固有service worker、snapshot、11ファイルのSHA-256 manifestへ凍結 — 2026-08-02
 - [x] commit `e1cdb57`をGitHub Pagesへ反映し、run #9成功、公開catalog／R01静的snapshot／R02 Beauty Cell／service workerのHTTPS応答と実browser描画を確認 — 2026-08-02
 - [x] AI-native Concept C Beauty Cell R02、女性型SF hero、四脚survey robot、二武器、world限定tilt-shiftを実装し、strict TypeScript、Vitest 26 files／163 tests、production build、R01／R02／catalogのlocal production previewを合格 — 2026-08-02
 - [x] `/game/`の新しい順prototype catalog、開始commitから独立buildした`/game/r01/`静的snapshot＋SHA-256、`/game/r02/`Beauty Cell、route別service worker cacheと互換aliasを実装 — 2026-08-02

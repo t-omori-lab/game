@@ -1,0 +1,23 @@
+{
+  "id": "./",
+  "name": "辺境遺物録 R02 — Beauty Cell",
+  "short_name": "辺境 R02",
+  "description": "自然に侵食された都市を旅し、半自動戦闘と手動大技で遺物を巡る固定斜め俯瞰リアルタイム3D試作。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape-primary",
+  "background_color": "#07110e",
+  "theme_color": "#10251c",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

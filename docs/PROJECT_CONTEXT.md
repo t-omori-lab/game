@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: AI-native Concept C Beauty Cell R02 / versioned public prototypes
+Phase: R03 Concept C Beauty Benchmark / public deployment pending
 
 ## Purpose
 
@@ -64,6 +64,14 @@ Phase: AI-native Concept C Beauty Cell R02 / versioned public prototypes
 - Beauty Cellは町cellだけを専用artへ置換し、明示的に置換していない東方worldのterrain／prop／landmarkは引き続き描画する。置換対象の全solid colliderには同じboundsを記録したvisual anchorと、井戸、作業yard、signal mast、seed bed、crate等の読める造形を追加し、不可視collisionと空のquest routeを残さない。
 - local候補はstrict TypeScript、Vitest 26 files／163 tests、production buildに合格し、production previewで`/game/`、`/game/r01/`、`/game/r02/`、service worker、manifestのHTTP 200とR01の`environment=north-star-city`、独立した相対asset bundleを確認した。R01 snapshotはtilt-shift導入前のbuildであり、R02専用passを共有しない。
 - GitHub Actions `Deploy GitHub Pages` run #9はcommit `e1cdb57`のtest／build／deployに成功した。公開catalog、R01、R02、root service worker、R01 `SNAPSHOT.json`がHTTPS 200を返し、公開browserでcatalogのR02→R01順、R01の独立bundle／`north-star-city`、R02の`beauty-cell`／`pc-ultra`／half-float MSAA／tilt-shift／stable IDを確認した。
+- 2026-08-02、ユーザーは公開R02を「Concept Cを再現できておらず、旧prototypeが多少変化しただけ」と評価し、cameraの寄り、女性主人公の造形と可愛さ、微細化、WASDと向きの逆転をblocking defectとして指摘した。R02の漸進改良ではなくR03の再設計・再構築へ切り替えた。
+- R03はR02のThree.js scene／rendererを継承しない独立appである。Concept Cからactor／UIを除いた1672×941の高品質environment plate、4方向の高解像度女性SF探索者、robot dog、遠景anomaly、Canvas 2Dの高DPI描画、limited-follow camera、cast／contact shadow、wet-road reflection、bloom／particle、半自動通常攻撃、手動遺物skill、tap-to-moveを一つの2.5D Beauty Benchmarkへ統合した。
+- R03のW／↑、D／→、S／↓、A／←は画面上／右／下／左の移動と4方向sprite facingへ直接一致する。local browserで四方向の座標変化と向き、手動遺物skillを確認した。
+- Concept C正本とR03を同じ1672×941、同じ初期gameplay stateで上下に並べた比較を作成した。独立visual QAは初回P1として主人公の女性／可愛さ、actorの接地・光統合、anomalyの大きさ／遠景統合を検出し、修正後はP0 0、P1 0、非blocking P2 3で`final result: passed`と判定した。
+- R02はcommit `0b5fd9f6…`由来の静的bundle、固有service worker、`SNAPSHOT.json`、11ファイルのSHA-256 manifestとして`public/r02/`へ凍結した。通常R02起動は今後のshared source変更で変質しない。
+- R03 local候補はstrict TypeScript、Vitest 27 files／168 tests、production buildに合格した。874×402のiPhone 16 Pro landscape相当browserではworldとHUDの別contain、手動skill control、double-click前後scale 1を確認した。これはiPhone 16 Pro実機、Safari／PWA性能、発熱、true HDRの証明ではない。
+- 公開前code reviewで、follow cameraによるplate外の黒帯露出と、矩形walk boundsによるshelter／wall上への侵入をP1として検出した。cameraを実cover overscan内へ制限し、keyboard／tapの両方を中央roadの10頂点polygonへclampした。再監査はP0 0／P1 0で公開GOと判定した。
+- R03はConcept Cのcamera、density、palette、actor scale、light、material、DOFを固定するvisual contractであり、完成したHD-2D world engineではない。次段階C1は中央道路／階段／停留所／作業台をdepth-aware geometry、occlusion、collision、navigation、dynamic lightingへ分解し、R03承認captureとのP1差分ゼロを保つ。
 
 ## Creative reference notes
 
@@ -94,6 +102,8 @@ Phase: AI-native Concept C Beauty Cell R02 / versioned public prototypes
 - Visual Fidelity Foundation v0.3でcloth／metal／signalのmaterial responseと画面占有は改善したが、24×32×16 literal voxel source自体の造形不足は残る。次は選定済みCに向け、96-cell級を開始点とするhigh-density micro-voxel sourceをoptimized skinned meshへcompileし、normal gameplay scaleで検証する。
 - Visual North Star concept Cは、最終画面のcamera／actor占有／detail frequency／material／light／DOF／hybrid production grammarを評価するtargetである。R02でその一部をruntime化したが、主人公のbiography／final face、選択可能な種族構成、同行者の加入条件、天候／時間／装備変化後も同品質を維持できるかは未確認。concept画像やR02をaccepted commercial artとして扱わない。
 - R02はWebGL2／SDR browser出力のcandidateであり、WebGPU、true HDR、native Steam build、iPhone 16 Pro実機性能、commercial HD-2D同等、ユーザーの最終art acceptanceを証明しない。
+- R03のenvironment plateは遠景／非接触領域とvisual benchmarkには有効だが、plate単独では正しい高さ、遮蔽、建物進入、破壊、時刻／天候による物理的更新、連続world streamingを提供しない。
+- R03の`final result: passed`は、指定された1672×941初期frameにおけるConcept Cとの知覚比較と公開候補判定である。ゲーム全体、全camera state、全装備／天候、commercial HD-2D同等の完成を意味しない。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff

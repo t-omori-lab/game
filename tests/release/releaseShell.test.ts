@@ -5,7 +5,11 @@ import r01Html from "../../public/r01/index.html?raw";
 import r01Snapshot from "../../public/r01/SNAPSHOT.json?raw";
 import r01Checksums from "../../public/r01/SHA256SUMS?raw";
 import r01ServiceWorker from "../../public/r01/sw.js?raw";
-import r02Html from "../../r02/index.html?raw";
+import r02Html from "../../public/r02/index.html?raw";
+import r02Snapshot from "../../public/r02/SNAPSHOT.json?raw";
+import r02Checksums from "../../public/r02/SHA256SUMS?raw";
+import r02ServiceWorker from "../../public/r02/sw.js?raw";
+import r03Html from "../../r03/index.html?raw";
 import serviceWorker from "../../public/sw.js?raw";
 import deployWorkflow from "../../.github/workflows/deploy-pages.yml?raw";
 import catalogSource from "../../src/catalog.ts?raw";
@@ -27,8 +31,19 @@ describe("versioned public release shell", () => {
       "a5510d9b2433366f1c6de5239502f872579b3ef6bd2c2abb54ab321c4cbc236e  assets/index-Cj67ZGSF.js",
     );
     expect(viteConfig).not.toContain('r01: "r01/index.html"');
-    expect(r02Html).toContain('src="/src/main.ts"');
+    expect(r02Html).toContain('src="./assets/r02-');
+    expect(r02Html).not.toContain('/src/main.ts');
     expect(r02Html).toContain("R02 — AI-native Concept C Beauty Cell");
+    expect(r02Snapshot).toContain(
+      '"source_commit": "0b5fd9f6a332cec92ea0ccb1e333bd31865b611e"',
+    );
+    expect(r02Snapshot).toContain('"frozen": true');
+    expect(r02Checksums).toContain("assets/r02-Dyj0RLzg.js");
+    expect(viteConfig).not.toContain('r02: "r02/index.html"');
+
+    expect(r03Html).toContain('src="/src/r03/main.ts"');
+    expect(r03Html).toContain("R03 — Concept C Beauty Benchmark");
+    expect(viteConfig).toContain('r03: "r03/index.html"');
   });
 
   it("renders the version manifest in declared newest-first order", () => {
@@ -41,6 +56,7 @@ describe("versioned public release shell", () => {
   it("caches and restores each release document independently", () => {
     expect(serviceWorker).toContain('r01: new URL("./r01/index.html"');
     expect(serviceWorker).toContain('r02: new URL("./r02/index.html"');
+    expect(serviceWorker).toContain('r03: new URL("./r03/index.html"');
     expect(serviceWorker).toContain("resolveRouteIndexUrl(request.url)");
     expect(serviceWorker).toContain('"small-persistent-world-shell-"');
     expect(serviceWorker).toContain(
@@ -49,7 +65,11 @@ describe("versioned public release shell", () => {
     expect(r01ServiceWorker).toContain(
       'const CACHE_PREFIX = "relic-frontier-r01-shell-"',
     );
+    expect(r02ServiceWorker).toContain(
+      'const CACHE_PREFIX = "relic-frontier-r02-shell-"',
+    );
     expect(serviceWorker).not.toContain("relic-frontier-r01-shell-");
+    expect(serviceWorker).not.toContain("relic-frontier-r02-shell-");
   });
 
   it("gates the Pages artifact on tests and compilation", () => {

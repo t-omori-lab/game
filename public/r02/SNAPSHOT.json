@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "release": "R02",
+  "source_commit": "0b5fd9f6a332cec92ea0ccb1e333bd31865b611e",
+  "built_on": "2026-08-02",
+  "base": "./",
+  "default_experience": "beauty-cell",
+  "entry_bundle": "assets/r02-Dyj0RLzg.js",
+  "frozen": true,
+  "notes": "Self-contained production archive with relative bundle paths. Future runtime source changes do not alter this release."
+}
