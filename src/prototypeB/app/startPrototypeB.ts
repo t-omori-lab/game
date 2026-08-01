@@ -10,7 +10,9 @@ import {
   TICK_RATE,
   WEAPON_DEFINITIONS,
   createPrototypeBState,
+  createSemiAutoCombatController,
   isWithinAnomalyInteractionReach,
+  stepSemiAutoCombatController,
   stepPrototypeB,
   type AudioCue,
   type CommandRejectionReason,
@@ -19,9 +21,14 @@ import {
   type PrototypeBEvent,
   type PrototypeBState,
   type QuestOutcome,
+  type SemiAutoCombatControllerState,
   type WeaponId,
 } from "../sim";
-import { PrototypeBRenderer } from "../render";
+import {
+  PrototypeBRenderer,
+  type CombatPresentationState,
+  type PrototypeBRenderQuality,
+} from "../render";
 import {
   createPrototypeBLayout,
   type PrototypeBLayout,
@@ -29,6 +36,7 @@ import {
 
 const FIXED_STEP_MS = 1_000 / TICK_RATE;
 const MAX_STEPS_PER_FRAME = 5;
+const SEMI_AUTO_SKILL_LOCK_TICKS = Math.ceil(TICK_RATE * 0.7);
 const RUN_SEED = "relic-frontier-b-02";
 const activeApplications = new WeakMap<
   HTMLElement,
@@ -51,6 +59,15 @@ type InterfaceOptions = {
 export type PrototypeBApplication = {
   destroy(): void;
   getState(): PrototypeBState;
+};
+
+export type PrototypeBExperience = "baseline" | "north-star";
+
+export type StartPrototypeBOptions = {
+  readonly experience?: PrototypeBExperience;
+  readonly renderQuality?: PrototypeBRenderQuality;
+  readonly companionPreview?: boolean;
+  readonly semiAutoCombat?: boolean;
 };
 
 const DOSSIERS: Record<LootId, ItemDossier> = {
@@ -104,10 +121,14 @@ const OUTCOME_LABELS: Record<QuestOutcome, string> = {
   connect: "接続",
 };
 
-export function startPrototypeB(root: HTMLElement): PrototypeBApplication {
+export function startPrototypeB(
+  root: HTMLElement,
+  options: StartPrototypeBOptions = {},
+): PrototypeBApplication {
   activeApplications.get(root)?.destroy();
 
   const layout = createPrototypeBLayout(root);
+  configureExperience(root, layout, options);
   const controls = new PrototypeBControls(layout.stage);
   const sound = new RelicSoundscape();
   const listeners: Array<() => void> = [];
@@ -126,6 +147,10 @@ export function startPrototypeB(root: HTMLElement): PrototypeBApplication {
   let sampledFrames = 0;
   let sampledTime = 0;
   let outcomeDismissed = false;
+  let combatPresentation: CombatPresentationState | undefined;
+  let semiAutoController: SemiAutoCombatControllerState =
+    createSemiAutoCombatController();
+  let semiAutoSuppressionTicks = 0;
   let previousDecisionOpen = false;
   let previousResultOpen = false;
   let statusMessageHoldUntil = 0;
@@ -220,6 +245,9 @@ export function startPrototypeB(root: HTMLElement): PrototypeBApplication {
 
   const restart = (): void => {
     state = createPrototypeBState(RUN_SEED);
+    semiAutoController = createSemiAutoCombatController();
+    semiAutoSuppressionTicks = 0;
+    combatPresentation = undefined;
     accumulator = 0;
     outcomeDismissed = false;
     previousDecisionOpen = false;
@@ -366,10 +394,54 @@ export function startPrototypeB(root: HTMLElement): PrototypeBApplication {
             now,
           );
         } else if (!decisionOpen || input.outcomeChoice !== null) {
-          const result = stepPrototypeB(
-            state,
-            commandFromInput(state, input, decisionOpen),
-          );
+          const command = commandFromInput(state, input, decisionOpen);
+          if (options.semiAutoCombat === true && !decisionOpen) {
+            const willActivateRelic =
+              command.activateRelic === true &&
+              state.player.relicCooldownTicks <= 1;
+            if (willActivateRelic) {
+              semiAutoSuppressionTicks = Math.max(
+                semiAutoSuppressionTicks,
+                SEMI_AUTO_SKILL_LOCK_TICKS,
+              );
+            } else if (
+              command.dodge === true ||
+              command.chooseWeapon !== undefined
+            ) {
+              semiAutoSuppressionTicks = Math.max(
+                semiAutoSuppressionTicks,
+                1,
+              );
+            }
+
+            if (semiAutoSuppressionTicks > 0) {
+              semiAutoController = createSemiAutoCombatController();
+              semiAutoSuppressionTicks -= 1;
+              command.moveSpeedScale = 1;
+              command.attack = false;
+              combatPresentation = {
+                targetId: null,
+                phase: "idle",
+                progress: 0,
+              };
+            } else {
+              const autoCombat = stepSemiAutoCombatController(
+                semiAutoController,
+                state,
+              );
+              semiAutoController = autoCombat.state;
+              command.moveSpeedScale =
+                autoCombat.presentation.movementScale;
+              command.attack =
+                autoCombat.commandContribution.attack === true;
+              combatPresentation = {
+                targetId: autoCombat.presentation.targetId,
+                phase: autoCombat.presentation.phase,
+                progress: autoCombat.presentation.phaseProgress,
+              };
+            }
+          }
+          const result = stepPrototypeB(state, command);
           state = result.state;
           events.push(...result.events);
         }
@@ -396,6 +468,7 @@ export function startPrototypeB(root: HTMLElement): PrototypeBApplication {
         !contextLost &&
         now >= statusMessageHoldUntil,
     });
+    updateNorthStarPresentation(layout, state, combatPresentation);
     syncOverlayFocus(decisionOpen);
     sound.setDanger(
       portraitPaused || document.hidden ? 0 : calculateDanger(state),
@@ -408,6 +481,7 @@ export function startPrototypeB(root: HTMLElement): PrototypeBApplication {
       events,
       now,
       portraitPaused || document.hidden ? 0 : delta,
+      combatPresentation,
     );
 
     sampledFrames += 1;
@@ -417,7 +491,7 @@ export function startPrototypeB(root: HTMLElement): PrototypeBApplication {
         sampledTime > 0 ? Math.round((sampledFrames * 1_000) / sampledTime) : 0;
       const stats = renderer.getStats();
       layout.performance.textContent =
-        `${fps} FPS · ${stats.calls} CALL · ${stats.triangles} TRI`;
+        `${fps} FPS · ${stats.width}×${stats.height} · ${stats.calls} CALL · ${stats.triangles} TRI`;
       sampledFrames = 0;
       sampledTime = 0;
       lastStatsAt = now;
@@ -494,6 +568,8 @@ export function startPrototypeB(root: HTMLElement): PrototypeBApplication {
           lastFrameAt = now;
           accumulator = 0;
         },
+        companionPreview: options.companionPreview,
+        qualityProfile: options.renderQuality,
       },
     );
   }
@@ -689,6 +765,119 @@ function commandFromInput(
       ? alternateWeapon(state.player.weaponId)
       : undefined,
   };
+}
+
+function configureExperience(
+  root: HTMLElement,
+  layout: PrototypeBLayout,
+  options: StartPrototypeBOptions,
+): void {
+  if (options.experience !== "north-star") {
+    return;
+  }
+
+  root.classList.add("north-star-shell");
+  layout.stage.classList.add("north-star-stage");
+  layout.stage.dataset.experience = "north-star";
+  layout.stage.setAttribute(
+    "aria-label",
+    "North Star Scene。左手で移動し、通常攻撃は間合いに入ると自動。右手で大技、防御、道具を操作します。",
+  );
+
+  const badge = document.createElement("div");
+  badge.className = "north-star-badge";
+  badge.innerHTML =
+    "<span>VISUAL NORTH STAR</span><strong>PC ULTRA / LIVE COMBAT</strong>";
+  layout.stage.append(badge);
+
+  const combatReadout = document.createElement("div");
+  combatReadout.className = "north-star-combat-readout";
+  combatReadout.innerHTML = `
+    <span>AUTO BASIC / POSITION TO ENGAGE</span>
+    <strong data-ui="north-star-combat-phase">SEARCHING</strong>
+    <i><em data-ui="north-star-combat-progress"></em></i>
+  `;
+  layout.stage.append(combatReadout);
+
+  const kicker = layout.titleOverlay.querySelector<HTMLElement>(
+    ".relic-title__copy .relic-kicker",
+  );
+  const heading = layout.titleOverlay.querySelector<HTMLElement>("h1");
+  const description = layout.titleOverlay.querySelector<HTMLElement>("p");
+  const startLabel = layout.startButton.querySelector<HTMLElement>("span");
+  const startHint = layout.startButton.querySelector<HTMLElement>("small");
+  if (kicker !== null) {
+    kicker.textContent = "PC ULTRA VISUAL + GAME FEEL BENCHMARK";
+  }
+  if (heading !== null) {
+    heading.innerHTML = "緑蝕<br /><em>観測区</em>";
+  }
+  if (description !== null) {
+    description.innerHTML =
+      "自然に呑まれた現代都市を歩く。<br />間合いで通常攻撃を起こし、大技で戦況を変える。";
+  }
+  if (startLabel !== null) {
+    startLabel.textContent = "North Star Sceneを開始";
+  }
+  if (startHint !== null) {
+    startHint.textContent = "MOVE / AUTO BASIC / MANUAL SKILL";
+  }
+
+  const attackButton = layout.stage.querySelector<HTMLButtonElement>(
+    '[data-control="attack"]',
+  );
+  if (attackButton !== null) {
+    attackButton.tabIndex = -1;
+    attackButton.setAttribute("aria-hidden", "true");
+  }
+  const relicButton = layout.stage.querySelector<HTMLButtonElement>(
+    '[data-control="relic"]',
+  );
+  const relicLabel = relicButton?.querySelector<HTMLElement>("span");
+  const relicHint = relicButton?.querySelector<HTMLElement>("small");
+  if (relicLabel !== null && relicLabel !== undefined) {
+    relicLabel.textContent = "大技";
+  }
+  if (relicHint !== null && relicHint !== undefined) {
+    relicHint.textContent = "Q / MANUAL";
+  }
+}
+
+function updateNorthStarPresentation(
+  layout: PrototypeBLayout,
+  state: PrototypeBState,
+  presentation: CombatPresentationState | undefined,
+): void {
+  const readout = layout.stage.querySelector<HTMLElement>(
+    ".north-star-combat-readout",
+  );
+  if (readout === null) {
+    return;
+  }
+
+  const phase = readout.querySelector<HTMLElement>(
+    '[data-ui="north-star-combat-phase"]',
+  );
+  const progress = readout.querySelector<HTMLElement>(
+    '[data-ui="north-star-combat-progress"]',
+  );
+  const phaseName = presentation?.phase ?? "idle";
+  const phaseLabels: Record<CombatPresentationState["phase"], string> = {
+    idle: "SEARCHING",
+    acquire: "TARGET ACQUIRED",
+    windup: state.player.weaponId === "blade" ? "CUTTER WINDUP" : "DRIVER CHARGING",
+    hit: state.player.weaponId === "blade" ? "COUNTER CUT" : "BREACH IMPACT",
+    recover: "RECOVER / REPOSITION",
+  };
+  if (phase !== null) {
+    phase.textContent = phaseLabels[phaseName];
+  }
+  if (progress !== null) {
+    progress.style.width = `${Math.round((presentation?.progress ?? 0) * 100)}%`;
+  }
+  readout.dataset.phase = phaseName;
+  layout.stage.dataset.combatPhase = phaseName;
+  layout.stage.dataset.combatTarget = presentation?.targetId ?? "";
 }
 
 function outcomeFromChoice(

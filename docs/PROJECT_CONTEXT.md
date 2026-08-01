@@ -2,11 +2,11 @@
 
 Last updated: 2026-08-01  
 Status: active  
-Phase: Prototype B public / product design refinement
+Phase: PC Ultra North Star scene / local visual and gameplay development
 
 ## Purpose
 
-仕組みと遊び方で長く遊べる、スマホ対応の生活型ハクスラを開発する。自然に侵食された現代都市を自由に放浪し、通常戦闘は自動、大技は手動で介入する。装備、異形への対処、回収、拠点づくり、帰還結果が次の旅へ巡る小さなworldを目指す。初版はブラウザ／PWAで反復し、ゲーム核の合格後にSteam向けdesktop包装を検討する。
+仕組みと遊び方で長く遊べる、世界記憶型の放浪生活ハクスラを開発する。自然に侵食された現代都市を自由に放浪し、通常戦闘は自動、大技は手動で介入する。装備、異形への対処、回収、拠点づくり、帰還結果が次の旅へ巡る小さなworldを目指す。visualはPC play前提の最高品質masterを先に作り、iPhone 16 Proは同じasset／simulationから縮退する必須tierとする。ブラウザで反復し、Steam向けdesktop包装を視野に入れる。
 
 ## Confirmed current state
 
@@ -43,6 +43,10 @@ Phase: Prototype B public / product design refinement
 - 2026-07-31、ユーザーは追加実装より、これまでの要求、不足設計、具体的な実現方法を先に整理するよう指示した。`docs/GAME_CONSTITUTION.md`と`docs/DESIGN_SYNTHESIS.md`へ、仮称「世界記憶型・放浪生活ハクスラ」を、Gate Aの手動action＋loot／build、Gate Bの自己目的＋world memory、Gate Cのvisual比較へ分離してdesign proposalとして記録した。GameplayContract、Event Log Lite、Causal World Cell、StyleProfile／AssetDNA、mobile renderer tierも未採用の設計案である。
 - 2026-08-01、ユーザーは目標戦闘をElona Mobileに近い「通常戦闘は自動、大技skillは手動」と明示し、自由放浪とworld memoryを支持した。人類が激減し、現代都市を自然が侵食したpost-apocalypse、既存遺構の復旧または選んだ土地への自築拠点も上位方向として確認した。Prototype Bの手動戦闘は実装事実として残るが、製品目標は半自動戦闘へ更新する。
 - 最新一次資料の調査では、Safari 26のWebGPU／HDR Canvas、Three.js WebGPURendererのWebGL2 fallbackとexperimental status、KTX2／Basisのmobile texture利点、2025〜2026年のPBR／rig-aware 3D生成、LLM game-state一貫性とkeypoint validationの現状を確認した。これらは候補技術の確認であり、本project上の実機性能やproduction採用を意味しない。
+- 2026-08-01、独立route `?prototype=north-star`へPC-first North Star候補をlocal実装した。既存のstart-townを再利用し、device pixel ratio連動の可変内部解像度、half-float render target、4× MSAA、GTAO、抑制したbloom、SMAA、AgX、dynamic shadowを一つのpost stackへ統合した。これはWebGL2上の候補であり、WebGPU／true HDRではない。
+- North Star routeでは通常攻撃buttonを外し、`Acquire → Windup → Hit → Recover`の半自動近接攻撃、build別間合い／移動拘束、手動大技、target／windup ring、hit時camera impulseを接続した。格下処理と二buildの最終game feelは未採択。
+- 主人公の24×32×16 recipeを、頭、胴、左右腕、左右脚、装備へsemantic分割し、右腕weapon socketとidle／run／windup／hit／recovery／hurt／skill poseをPC Ultra routeへ接続した。従来のmerged meshはbaseline fallbackへ残した。
+- 1600×900、device pixel ratio 1のlocal desktop ChromeでNorth Star routeを起動し、1598×898内部解像度、half-float MSAA、GTAO、bloom、SMAA、通常攻撃button非表示、windup／hit pose、大技中のauto combat停止、browser error 0件を観測した。strict TypeScript、Vitest 124件、production buildも合格した。
 
 ## Creative reference notes
 
@@ -67,6 +71,9 @@ Phase: Prototype B public / product design refinement
 - 生成ガバナンスは文書化したが、offline generator、schema検査、candidate registry、human curation UIは未実装。runtime AIは接続していない。
 - 自由放浪、world memory、半自動戦闘、自然に侵食された現代都市、自築拠点は確認済みの上位方向。targeting、防御／itemの手動範囲、拠点配置粒度、GameplayContract、Causal World Cell、残響基盤、三visual表現、WebGPU／HDR profile、StyleProfile／AssetDNA、death／succession、World Loop Proof v0.2の具体仕様は設計提案であり、runtime実装、asset生成、実機合格はまだない。
 - このdesign synthesis iterationではgame code、runtime asset、public buildを変更しておらず、deployも行っていない。
+- 上記のdoc-only design synthesisとは別に、2026-08-01のNorth Star iterationではlocal game codeを変更した。公開版とGitHub Pagesは変更しておらず、deployも行っていない。
+- 現North Star sceneはPC Ultra描画／半自動戦闘／部位animationを同じ画面で判断する技術sliceである。背景は既存start-townのため、recognizableな自然侵食現代都市のreference sceneではなく、commercial HD-2D品質にも未達である。
+- 現主人公は既存semantic voxel recipeを部位化した第一段階であり、最終hero design、顔、髪／布のsurface、PBR material、deformation rig、signature motionの完成を意味しない。表示中の調査灯型robotはart review用候補で、開始時加入の仕様変更ではない。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff

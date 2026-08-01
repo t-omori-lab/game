@@ -8,6 +8,7 @@ Last updated: 2026-08-01
 - 主な不一致は、固定arena、接近や位置取りを必要としない常時自動遠隔攻撃、タワーディフェンス的な手触りだった。これは通常戦闘の自動化すべてを否定する結果ではない。
 - ユーザーは、固定俯瞰voxel、scroll探索、手動戦闘を持つPrototype Bが最低限の比較baselineとして成立したことを認めた。これは手動戦闘を製品方向として採用した評価ではない。
 - 2026-08-01、ユーザーは製品目標の戦闘をElona Mobileに近い「通常戦闘は自動、大技skillは手動」と明示した。Prototype Bの手動戦闘は実装事実として残るが、目標仕様は手動移動／位置取り＋条件付き自動通常攻撃＋手動大技へ更新された。
+- ユーザーはvisual ceilingをhigh-end PC前提のfrontier-quality master sceneに置き、iPhone／lower-specは同じart sourceから派生するquality tierとする方向を確認した。これは目標方向の確定であり、WebGPU／true HDR実装、commercial-quality達成、Steam公開の確認ではない。
 - 自由放浪とworld memoryはユーザー意図に合う上位方向として確認された。
 - 世界の基層は、人類が激減し、識別可能な現代都市が植物、水、動物、新しい生活へ侵食・転用されたpost-apocalypseと確認された。崩壊原因、年代、地域、共同体密度は未決定。
 - playerは既存遺構を復旧するか条件の合う土地を選び、自分の拠点を築く方向が確認された。配置自由度、複数拠点、移転、維持、襲撃の詳細は未決定。
@@ -32,6 +33,11 @@ Last updated: 2026-08-01
 - ユーザーはtoken制約下で追加実装を増やさず、これまでの要求、不足している検討、具体的な設計、iPhone前提のrich visual、主人公／同行者design、生成world／assetをgameplayへ接続する方法を先に進めるよう指示した。
 - `docs/GAME_CONSTITUTION.md`と`docs/DESIGN_SYNTHESIS.md`をlocalに追加し、確定要求と設計提案を分離した。仮称「世界記憶型・放浪生活ハクスラ」を、Gate Aの手動action＋loot／buildと、Gate Bの自由な放浪＋world memoryに分け、Gate Cのvisual比較を独立させた。GameplayContract、Causal World Cell、StyleProfile／AssetDNA、Event Log Lite、残響基盤は未採用のdesign proposalであり、runtime、asset、公開buildは変更していない。
 - 2026-08-01、作品憲法と統合設計をv0.2へ更新し、Gate Aを半自動戦闘、Gate Bを候補地選定／module設置／次回差分へ再定義した。`BaseSite`、`BaseModule`、`BaseEvent`と拠点生成hard gateをdraft化し、release durabilityを体験gateから分離した。game code、runtime asset、公開build、deployは変更していない。
+- 2026-08-01、PC最高品質を先に追う独立local North Star候補route `?prototype=north-star`を追加した。既存公開routeは保持し、GitHub Pagesへのpush／deployは行っていない。
+- North Star routeへ、WebGL2 half-float render target、4× MSAA、GTAO、抑制したbloom、SMAA、可変内部解像度、camera impulseを統合した。1600×900／device pixel ratio 1のChromeでは1598×898内部解像度でpost stackがfallbackせず動作した。これはWebGPU／true HDR採用結果ではない。
+- `Acquire → Windup → Hit → Recover`のfixed-tick controllerを実装し、二武器の間合い、周期、移動拘束、target維持、dodge cancelと通常攻撃自動発動をNorth Star routeへ接続した。通常攻撃buttonは同routeで非表示にし、大技、回避／防御、itemは手動のままにした。
+- 24×32×16主人公を7 semantic partへ分割し、右腕weapon socket、idle／run／windup／hit／recovery／hurt／skill poseをPC Ultra routeへ接続した。single merged meshはbaseline fallbackとして保持した。
+- North Star local候補はstrict TypeScript、Vitest 124件、production buildが合格した。desktop Chromeで開始、移動、半自動攻撃windup／hit pose、PC Ultra候補post stack、通常攻撃button非表示、大技中のauto combat停止、武器切替時の即時hit抑止、browser error 0件を確認した。
 
 ## Pending confirmation
 
@@ -51,7 +57,12 @@ Last updated: 2026-08-01
 - [ ] Gate Bで、拠点候補地と機能moduleの選択が自由放浪／world memoryを強め、次回90秒以内に理解できるか。
 - [ ] death／succession、残響基盤、主人公形式、同行者summer scopeの設計提案がユーザー意図に合うか。
 - [ ] literal high-density voxel、semantic voxel surface、stylized low-polyを同条件で比較した結果、どのvisual identityを採るか。
-- [ ] WebGPU／HDR、KTX2、Visual Benchmark Scene、AssetDNA、Causal World CellがiPhone 16 Pro上で知覚品質、performance、制作効率、gameplay改善へ実際につながるか。
+- [ ] PC UltraのWebGPU／HDR、KTX2、Visual Benchmark Scene、AssetDNA、Causal World Cellが知覚品質、制作効率、gameplay改善へ実際につながるか。
+- [ ] PC masterから派生したmobile tierがiPhone 16 Pro上で操作視認性、performance、発熱の条件を満たすか。
+- [ ] North Star routeが、既存start-townの技術sliceから、recognizableな自然侵食現代都市と商業reference級の一画面へ到達するか。現時点では未達。
+- [ ] semantic part化した現主人公が十分な精密さと魅力を持つか。顔／髪／衣装surface、PBR material、deformation rig、signature animationを含む最終hero designは未完成。
+- [ ] Counter cutterとBreach driverが実際の試遊で、DPS以外の位置取り、risk、timingの差として感じられるか。
+- [ ] PC UltraのWebGPU／HDR候補が、現WebGL2 half-float post stackより知覚品質で勝つか。同条件比較は未実施。
 
 ## Rule
 

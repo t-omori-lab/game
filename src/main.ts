@@ -26,6 +26,16 @@ async function boot(applicationRoot: HTMLElement): Promise<void> {
     return;
   }
 
+  if (parameters.get("prototype") === "north-star") {
+    startPrototypeB(applicationRoot, {
+      experience: "north-star",
+      renderQuality: "pc-ultra",
+      companionPreview: true,
+      semiAutoCombat: true,
+    });
+    return;
+  }
+
   startPrototypeB(applicationRoot);
 }
 

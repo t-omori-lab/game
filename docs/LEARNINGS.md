@@ -32,6 +32,12 @@ Last updated: 2026-08-01
 - rendererだけにsolid-looking fixtureを足すと、見た目では塞がっているのにsimulationでは通過できる。visual fixtureごとにcollision ID、interaction reachability、退路を紐付け、追加した6区画を移動testへ入れることで表示とruleの乖離を防げた。
 - 未加入のcompanion候補を開始画面へ置くと「最初から固定相棒」という別の仕様に見える。asset previewとgameplay spawn条件を分離し、加入eventが実装されるまでは通常開始画面で非表示にする。
 - Visual Pass Eの852×393 local browserは35 draw calls／約48〜49k visible trianglesで約47〜54fpsだった。旧Visual Pass Cの60fps表示より重く、内部解像度、texture、shadowの増加は同じlocal budget内でもfpsへ効く。local Chromeの数値からiPhone 16 Proの性能を推定せず、実機Safari／PWAで測る。
+- PC masterを先に作る場合、baseline rendererを直接置換せず独立quality routeとfallbackを残すと、half-float post stackや高DPI cameraを大胆に試しながら、既存mobile比較版を壊さずに済む。mobile budgetは後段の縮退規則として扱い、制作時の上限へしない。
+- 高密度voxel recipeを単一meshで上下動させるだけでは、形状を増やしてもcharacter actingにならない。頭、胴、左右腕、左右脚、装備へsemantic分割し、weapon socketとwindup／hit／recoveryを持たせると、同じ24×32×16 sourceでも攻撃意図を画面上で読ませられる。ただしこれは造形そのものの完成ではない。
+- PC Ultraのhalf-float render target、MSAA、GTAO、bloom、SMAAはedge、接地、highlightを改善するが、既存のblockyな町をcommercial HD-2Dへ変えるものではない。recognizableな都市構成、高解像度surface、hero art、material、animation、lighting compositionを同じreference cellで作る必要がある。
+- 半自動通常攻撃をpure fixed-tick controllerへ分けると、simulationへ渡すのは`attack`と移動倍率だけになり、target／windup ring、HUD、hero poseは同じpresentation stateから派生できる。game ruleと演出の同期点を一つに保てる。
+- `Hit`をgame rule上の1 tickにすると、30Hz simulationでは正しくても60Hz以上のrender frameへ表示されないことがある。damageは1 tickのまま、heroのfollow-throughは`player-attacked` eventから短いrender clockで再生し、大技／武器切替はauto controllerを明示的に抑止すると、ruleの決定性と読めるactionを両立できる。
+- headless desktop Chromeの1600×900／device pixel ratio 1で1598×898内部解像度を確認できても、Retina desktopの2倍scale、HDR display、wide color、WebGPU性能の証明にはならない。quality名ではなく実deviceの内部解像度、pipeline status、frame time、最終画面を別々に記録する。
 
 ## Working hypotheses to validate
 
@@ -42,7 +48,7 @@ Last updated: 2026-08-01
 - 人物、monster、item、遺跡を単品生成するより、旧用途、現在資源、actor need、衝突、証拠、複数対処、reward、world mutation、future hookを一つのCausal World Cellとして先に作る方が、装飾的な生成物を減らし、gameplayへ接続しやすい可能性が高い。
 - 主人公／同行者の完成meshを一発生成するより、version付きStyleProfileと、role、silhouette、semantic parts、material、rig、socket、物理budget、wearを持つAssetDNAからgeometryとgame dataをcompileする方が、シリーズ内一貫性、mobile budget、item合成、破損表現を両立しやすい。最新3D／rig生成はpart／static candidateとして比較する。
 - literal high-density voxel、semantic voxel surface、stylized low-polyは、同じcamera、light、animation、effectで比較するまで優劣を確定しない。人型／犬猫の変形meshは、既知rigとedge loopを持つmodular topologyを正本にする案が安全である。
-- iPhone向けの最高品質層はWebGPU／HDRを試せるが、Three.js WebGPURendererはexperimentalであり、API移行だけでは美しさを保証しない。同一Visual Benchmark SceneをWebGPU／WebGL2、HDR／SDR、複数render scaleで実機比較し、baked hybrid、KTX2、character qualityの寄与を分離する。half-float内部照明、P3、HDR outputは別能力として測る。
+- 最高品質層はPC Ultra masterで比較し、iPhoneは同じsceneから派生するmobile tierとしてWebGPU／HDRを試す。Three.js WebGPURendererはexperimentalであり、API移行だけでは美しさを保証しない。同一Visual Benchmark SceneをWebGPU／WebGL2、HDR／SDR、複数render scaleで実機比較し、baked hybrid、KTX2、character qualityの寄与を分離する。half-float内部照明、P3、HDR outputは別能力として測る。
 - fixed cameraでは、moving character、collision、occlusion、dynamic shadowだけをrealtime 3Dへ残し、地面、道、背景、建物面を高解像度生成／baked layerへ分けることで、見える面へquality budgetを集中できる可能性が高い。まだユーザーのart acceptanceは得ていない。light direction、palette、scale、contact shadowを同一camera previewで検査し、2D／3Dの貼り合わせ感が出ないか確かめる。
 - MSAA、高い内部解像度、AgX、生成textureの組合せがVisual Pass Dより商業HD-2D基準へ近づくかは未確認である。公開後のユーザーreviewをquality gateにする。
 

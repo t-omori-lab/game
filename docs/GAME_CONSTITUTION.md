@@ -11,7 +11,7 @@ Status: v0.2。`確定要求`と`設計提案`を分け、詳細未検証の案�
 
 ## 確定要求
 
-- iPhone 16 Proを基準端末とするsmartphone-first。将来はSteam公開も視野に入れる。
+- visualのNorth Starは、PC playを前提に端末性能を先に制限しない先端的な最高品質master sceneとする。iPhone 16 Pro対応は必須だが、PC masterから自動／手動quality tierで縮退させ、制作時の表現上限にはしない。将来はSteam公開を視野に入れる。
 - 移動、接敵、位置取り、撤退はplayerが行い、通常戦闘は自動、大技skillは手動で発動する半自動戦闘を目標にする。
 - 固定arenaで常時自動遠隔攻撃を眺める遊びには戻さない。自動戦闘は、playerが作った位置関係、装備のtarget条件、武器build、有限resourceの判断を実行する層として使う。
 - cameraは固定俯瞰、mapは主人公を中心にscrollする。
@@ -19,6 +19,7 @@ Status: v0.2。`確定要求`と`設計提案`を分け、詳細未検証の案�
 - 崩壊世界でも画面と基調感情は暗くしすぎない。自然、生活、修理、色、好奇心、乾いたhumorを残す。
 - 既存の遺構を復旧するか、条件の合う土地を選び、自分の拠点を築けるようにする。配置自由度と建築粒度は試遊で決める。
 - 主人公、同行者、地面、建物を含む画面全体を、商業HD-2D作品を基準に美しくする。voxelは目的ではなく、整合するなら別表現も比較する。
+- 主人公と同行者はhero assetとして特別扱いし、精密なsilhouette、顔／sensor、衣装、装備、material、part変形、signature motionまで作る。背景と同じ生成密度や単一merged voxel meshへ品質上限を合わせない。
 - 同行者は開始時の固定相棒ではない。world内で発見・加入し、人、robot、犬、猫、動物型robotなどから交代できるrosterを目指す。
 - 世界、人物、遺跡、item、monster、visual、audioは開発時に生成を活用する。ただし世界法則、科学的／技術的制約、gameplay上の役割、権利情報、人間の採否を持たせる。
 - 参考作品の固有設定、人物、台詞、画面、音楽を複製せず、好みの構造だけを抽出する。
@@ -34,12 +35,13 @@ Status: v0.2。`確定要求`と`設計提案`を分け、詳細未検証の案�
 
 ## Visual constitution
 
+- PC Ultra masterを先に定義し、WebGPU、half-float lighting、HDR／wide color、PBR、baked indirect light、高解像度surface、選択的post effectを同じbenchmark sceneで比較する。名称ではなく最終画面の知覚品質で採否を決める。
 - 最終cameraの小画面でsilhouette、向き、予兆、interactionが最初に読めること。
 - 固定cameraを活かし、dynamic character／item／effectと、高品質にbakeした地面／建物／遠景を統合する。
 - 鮮やかさはneonやbloomの量ではなく、自然光、material差、奥行き、生活痕跡、色の意味、animation、音の一貫性で作る。
 - 主人公は武器を外しても識別でき、同行者は機能、感情、加入経緯が形と動きに現れる。
 - `StyleProfile`を全assetの正本にし、同じcamera、scale、光、palette、material、摩耗、edge、LOD、effect密度で生成・検査する。
-- true HDR／WebGPUは対応端末のenhancement。美しさと操作性をWebGL2／SDRでも成立させる。
+- PC masterで成立したlight、material、character、compositionを正本とし、WebGL2／SDRとmobileは機能を順に削るfallbackとする。fallbackでもgameplayの読みやすさは失わない。
 
 ## Generation constitution
 
@@ -81,7 +83,7 @@ iPhone実機で、移動だけで通常交戦が理解でき、大技を使う�
 
 ### Gate C — Visual benchmark
 
-まず主人公＋同行者blockout＋小背景vignetteだけを同じcameraと照明で制作し、literal high-density voxel、semantic voxel surface、stylized low-polyを比較する。方式決定後、勝った一案だけで開始町一画面を仕上げる。これはA／Bと並行でき、visual未完成を理由にcore testを止めない。
+まず主人公＋同行者blockout＋小背景vignetteだけを同じcameraと照明で制作し、literal high-density voxel、semantic voxel surface、stylized low-polyをPC Ultra条件で比較する。方式決定後、勝った一案だけで自然侵食都市の一画面をreference qualityへ仕上げ、同じsceneをmobile tierへ縮退させる。これはA／Bと並行し、visualとgameplayをどちらも後回しにしない。
 
 内部gameplay proofの必須条件はA＋B。ユーザーへ目標品質の完成候補として公開する版はA＋B＋Cに加え、save／migration／実機安定性のrelease durability合格を必要とする。CはA／Bの実装順を塞がないが、商業級visual達成の主張と完成候補公開を塞ぐ独立gateである。
 

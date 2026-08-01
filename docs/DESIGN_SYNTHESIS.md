@@ -11,7 +11,7 @@ Status: design synthesis v0.2 — 確定方向と未検証の実装案を分離
 
 > 人類が激減し、植物と水に侵食された現代都市を、選ばれた英雄ではない旅人として歩く。通常攻撃は装備の規則に任せ、自分は接敵、位置取り、撤退、大技の時機を判断する。遺物と部品を原理のある装備へ組み替え、既存の遺構を直すか選んだ土地へ拠点を築く。旅の途中で人、robot、犬や猫などの同行者と出会い、誰と行くかを選ぶ。帰還、失敗、死亡、売買、建築の結果は、拠点、噂、価格、道、敵、人物、品物として残り、次の旅の理由になる。
 
-画面は暗い終末を美化するのではなく、陽光、植物、水、錆、現代都市のrecognizableなinfra、生活の修理跡、色のある廃墟を、スマートフォン上で最も魅力的に見せる。美しいvisualは必須条件だが、作品の固有性を決める中心はrendererそのものではなく、**装備build、半自動戦闘への手動介入、複数の対処、放浪、拠点、世界の記憶が循環する仕組み**である。
+画面は暗い終末を美化するのではなく、陽光、植物、水、錆、現代都市のrecognizableなinfra、生活の修理跡、色のある廃墟を、まずPC play前提の最高品質master sceneとして作る。iPhoneはその表現をquality tierで縮退させる必須platformであり、制作時の上限ではない。美しいvisualは必須条件だが、作品の固有性を決める中心はrendererだけでなく、**装備build、半自動戦闘への手動介入、複数の対処、放浪、拠点、世界の記憶が循環する仕組み**である。
 
 Prototype Bは、手動action、scroll探索、固定俯瞰表現、一回の依頼を成立させた「部品の技術証明」である。次は二つの核を別々に証明し、別々に採否を判断する。
 
@@ -605,11 +605,11 @@ Wave Function Collapseは、隣接patternを整える能力は高いが、依頼
 
 この仮説なら、自然が鮮やかな理由も、旧保守基盤と植物／菌類の共適応として説明できる。ただし正式themeは、この案と別案を同じgameplay cellへ着せて比較してから確定する。
 
-## 10. Mobile-firstでvisualを最もrichにする方針
+## 10. PC-first masterを作り、mobileへ段階縮退する方針
 
 ### 10.1 結論
 
-最もrichな画面は、全要素を高polygon 3Dにすることではない。**固定cameraをbake可能性へ変え、dynamicなものだけを高品質3Dで残す、art-directed hybrid 2.5D**が本作とiPhoneに最も合う。
+最もrichな画面は、全要素を高polygon 3Dにすることではない。**固定cameraをbake可能性へ変え、dynamicなものだけを高品質3Dで残す、art-directed hybrid 2.5D**をPC Ultra masterとする。mobileは同じart source、camera、material ID、depth、collisionを共有し、render scale、shadow、foliage、post、texture解像度を順に縮退する。
 
 ```text
 Realtime 3D:
@@ -628,8 +628,8 @@ Shared contract:
 
 | Profile | 方針 | 判断 |
 |---|---|---|
-| `webgpu-hdr-experiment` | half-float内部照明、`extended` tone mapping／HDR canvas、4× MSAA、限定的half-resolution bloom | configure成功、実画面、SDR fallbackを確認した端末だけの実験層 |
-| `webgpu-sdr` | WebGPU、half-float内部照明、AgX、P3またはsRGB | WebGPUは使えるがHDR表示できない場合 |
+| `pc-ultra-webgpu-hdr` | half-float内部照明、HDR canvas、4× MSAAまたはtemporal AA、選択的bloom、最高密度character／surface／shadow | North Star。対応desktopでreference sceneの知覚品質が勝った場合にmaster採用 |
+| `pc-high-webgpu-sdr` | WebGPU、half-float内部照明、AgX、P3またはsRGB、高品質PBR／baked GI | HDR表示できないdesktopとSteam候補baseline |
 | `webgl2-p3` | 現行project固有のcolor-space登録＋`drawingBufferColorSpace` probe、MSAA、AgX、Display-P3、KTX2 | probeと実画面が合格したSafari向けenhancement。stock設定とみなさない |
 | `webgl2-srgb` | WebGL2、MSAA、AgX、sRGB、KTX2 | 最終互換層 |
 
@@ -639,7 +639,7 @@ Safari 26はiOSを含めWebGPUを出荷し、HDR imageをWebGPU Canvasでも扱�
 
 Three.jsのstock `WebGLRenderer`設定を選ぶだけでDisplay-P3になるわけではない。現projectはcustom `ColorSpaces.js`登録とWebGL drawing bufferの`drawingBufferColorSpace` probeを持つ固有経路であり、これをasset／renderer contractへ明記する。probe失敗、色差不合格、wrapper非対応時はsRGBへ戻す（[Three.js WebGLRenderer docs](https://threejs.org/docs/pages/WebGLRenderer.html)、[Safari WebGL P3](https://developer.apple.com/documentation/safari-release-notes/safari-16_4-release-notes)）。
 
-最初に本編を全面移行せず、同じ主人公、同行者、草地、遺構、発光遺物を四profileで切り替える**Visual Benchmark Scene**を作る。固定したCSS寸法ではなく、`window.innerWidth／innerHeight`、`visualViewport`、safe areaを実機で記録し、内部scale 1.25／1.5／1.75、MSAA、shadow、bloom、P3／HDRを比較する。品質profileは30fpsならp95 frame time 33.3ms以内、性能profileは60fpsなら16.7ms以内を初期目標とする。発熱は実機観察とOSのdimming／throttling兆候、texture memoryはoffline推計とresource寸法として記録し、Webページから正確に自動取得した値とは扱わない。10分後のframe-time分布、context loss、入力遅延、輪郭、地面の細密感を全assetのbudgetへする。
+最初に本編を全面移行せず、同じ主人公、同行者、草地、現代遺構、発光遺物を四profileで切り替える**Visual Benchmark Scene**を作る。最初の採点はdesktop 2560×1440相当のPC Ultraで行い、characterの顔／sensor、material、髪／外装、武器、part animation、wet surface、植生、間接光、effectが一枚の画として成立するまでmobile budgetで切らない。その後、同じsceneをdesktop highとiPhone 16 Proへ縮退し、実`visualViewport`、safe area、render scale、MSAA、shadow、bloom、P3／HDRを比較する。
 
 ### 10.3 Asset delivery
 
@@ -672,7 +672,7 @@ silhouette
 
 ### 10.5 Platform architecture
 
-初版は現在のTypeScript＋Three.js browser／PWAを継続する。iPhoneへ即試遊でき、同じcontent packとsimulationをdesktop browserでも検証できる利点が大きい。release baselineはWebGL2／SDR、WebGPU／P3／HDRはprogressive enhancementとする。
+初版は現在のTypeScript＋Three.js browser／PWAを継続する。PC Ultra masterとiPhone向けtierが同じcontent pack、camera、simulationを共有できる利点が大きい。visual開発はWebGPU／HDRを含むPC masterから始め、公開互換層としてWebGL2／SDRを残す。
 
 game coreから、storage、audio resume、fullscreen／orientation、safe area、input、share、install promptを`PlatformAdapter`で分ける。これによりSafari／PWA固有処理をsimulationへ混ぜず、将来のSteam wrapperでも同じworld、save、renderer契約を再利用する。
 
@@ -686,7 +686,7 @@ Steam包装はGate A＋B合格後にElectronとTauri等を同じacceptance test�
 
 一辺16のcube集合をそのまま描画する方式では、密度を増やしてもMinecraft的な表面と硬いanimationが残る。ただしsemantic voxelも既定路線にはしない。三案すべてで開始町を作るのは制作過多なので、二段階で決める。
 
-1. **C0 blockout comparison** — 主人公、同行者、地面／遺構の小背景vignetteだけを、同じcamera、light、短いanimation、effect、端末budgetで三案比較する。
+1. **C0 blockout comparison** — 主人公、同行者、地面／遺構の小背景vignetteだけを、同じcamera、light、短いanimation、effect、PC Ultra条件で三案比較する。
 2. **C1 reference scene** — C0で勝った一案だけを、主人公、同行者、開始町一画面のreference qualityへ仕上げる。
 
 C0で比較する三案:
@@ -797,7 +797,7 @@ type CharacterGenome = {
   moduleSockets: readonly SocketSpec[];
   rigProfile: RigProfile;
   animationProfile: AnimationProfile;
-  mobileBudget: AssetBudget;
+  qualityBudgets: Record<"pc-ultra" | "pc-high" | "mobile-high" | "mobile-safe", AssetBudget>;
 };
 ```
 
@@ -1075,7 +1075,7 @@ Runtime browser / PWA
 |---|---|---|---|
 | A: Position-and-build | iPhoneで条件付き自動通常戦闘と手動大技が気持ちよく、buildが位置取りと介入判断を変える | 既存mapの一部、敵2、weapon frame 2、module 4〜6、build最低2／目標3、manual skill 1〜2、loot UI | 2 buildの差を説明でき、名付き敵は立ち止まり／大技なしでは安定勝利できない。第三buildは目標枠 |
 | B: Roam／settle／remember | 自分で居場所を選び、その結果が次回の外見と遊びを変える | 同じ小map、二つの自己目的＝拠点候補2、機能module選択2以上／設置1、persistent variable 1〜2 | 候補地／moduleを選び、二回目90秒以内に因果を認識して行動を変える |
-| C: Visual benchmark | 主人公、同行者、町が一つの商業品質方向へ収束する | C0は主人公＋同行者＋小背景vignetteの三表現blockout。C1は勝った一案だけで開始町一画面 | C0で一案を採り、C1を実機でsilhouette、material、depth、生活感、操作視認性まで合格させる |
+| C: Visual benchmark | 主人公、同行者、町が一つの商業品質方向へ収束する | C0は主人公＋同行者＋小背景vignetteの三表現blockout。C1は勝った一案だけで開始町一画面 | PC Ultra desktopでC0の一案を採り、C1のsilhouette、material、depth、生活感をreviewする。その後、派生mobile tierで操作視認性とperformanceを別に合格させる |
 
 内部gameplay proofで必須なのはA＋B。Cは並行制作するが、commercial art pass全体をA／Bの検証blockerにしない。ユーザーへ目標品質の完成候補として公開する版はA＋B＋C＋release durabilityを必要とし、A／Bが弱い状態をCの美しさで、Cが弱い状態をA／Bの強さで完成扱いにしない。
 
@@ -1171,7 +1171,7 @@ Experience gates:
 7. **遠距離攻撃** — 自動通常攻撃、有限resourceの手動大技、同行者支援のどこへ置くか。
 8. **同行者／visual** — 夏版を加入proof／交代proofのどこまで作り、三表現のどれを採るか。
 
-推奨する検証順は、Gate Aの半自動combat／build、Gate Bの自己目的／拠点／world memory、Gate Cの三表現比較である。自由放浪、world memory、人類激減、自然に侵食された現代都市、自築拠点という上位方向は確認済みである。targeting、defense、建築粒度、event-driven worldの詳細、world graph＋local map、複数旅人save、同行枠1は設計提案であり未検証。semantic voxel surfaceもGate Cの一候補であり既定路線にしない。runtime AIなしだけは、初版scopeの安全なdefaultとする。
+推奨する次の実装順は、まずGate C0／C1のPC Ultra North Star候補を一画面に限定して作り、その同じsceneへGate Aの半自動combat／buildとGate Bの自己目的／拠点／world memoryを接続する。release合格にはA＋B＋Cをすべて要求する。自由放浪、world memory、人類激減、自然に侵食された現代都市、自築拠点という上位方向は確認済みである。targeting、defense、建築粒度、event-driven worldの詳細、world graph＋local map、複数旅人save、同行枠1は設計提案であり未検証。semantic voxel surfaceもGate Cの一候補であり既定路線にしない。runtime AIなしだけは、初版scopeの安全なdefaultとする。
 
 ## 18. Sources reviewed by evidence type
 

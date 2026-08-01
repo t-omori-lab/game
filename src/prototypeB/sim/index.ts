@@ -29,6 +29,19 @@ export {
   isWithinAnomalyInteractionReach,
   stepPrototypeB,
 } from "./simulation";
+export {
+  SEMI_AUTO_COMBAT_PROFILES,
+  createSemiAutoCombatController,
+  stepSemiAutoCombatController,
+} from "./SemiAutoCombatController";
+export type {
+  CombatPresentationState,
+  SemiAutoCombatCommandContribution,
+  SemiAutoCombatControllerState,
+  SemiAutoCombatPhase,
+  SemiAutoCombatProfile,
+  SemiAutoCombatStepResult,
+} from "./SemiAutoCombatController";
 export type {
   AudioCue,
   CommandRejectionReason,

@@ -1,4 +1,8 @@
-# Task Plan: Prototype B — 生活型ハクスラ原型
+# Iteration Log: ゲーム開発
+
+Active authority: 末尾の`PC Ultra North Star scene`。それ以前のPrototype B、mobile、手動戦闘の節は履歴であり、現在の優先順位や[GAME_CONSTITUTION](../docs/GAME_CONSTITUTION.md)を上書きしない。
+
+## Historical Iteration: Prototype B — 生活型ハクスラ原型
 
 ## Goal
 
@@ -172,7 +176,7 @@ Prototype 0.1「境界調査録」は、移動、自動攻撃、強化選択、�
 
 ### Status
 
-**Completed and publicly verified** — commit `773aaf6`をmainへpushし、GitHub Actions run #7のbuild／deploy成功を確認した。公開URLは新JS／WebPを配信し、852×393 mobile browserで60fps表示、MSAA、AgX、texture `ready`、double tap scale 1、browser error 0件を確認した。次のgateはユーザーart reviewとiPhone 16 Pro実機性能である。
+**Deployment verified; art acceptance pending** — commit `773aaf6`をmainへpushし、GitHub Actions run #7のbuild／deploy成功を確認した。公開URLは新JS／WebPを配信し、852×393 mobile browserで60fps表示、MSAA、AgX、texture `ready`、double tap scale 1、browser error 0件を確認した。次のgateはユーザーart reviewとiPhone 16 Pro実機性能である。
 
 ---
 
@@ -245,3 +249,41 @@ Prototype Bの実装事実と、長期的に作りたい放浪・生活・ハク
 ### Status
 
 **Completed locally** — 半自動戦闘、自然侵食された現代都市、最小拠点loopを文書へ反映した。独立design reviewでP0残件0を確認し、`git diff --check`、相対link、確定／仮説境界、Workspace postflightが合格した。game code、runtime asset、public build、deployは変更していない。
+
+---
+
+## Current Iteration: PC Ultra North Star scene
+
+### Trigger
+
+2026-08-01、ユーザーは正本に残るタスクを確認し、そのまま実行するよう指示した。
+
+### Goal
+
+PC play前提の最高品質を先に定義し、自然侵食された現代都市、精密な主人公／同行者候補、半自動戦闘、二build、手動大技を一つのNorth Star sceneへ統合する。iPhoneは同じmasterから後で縮退する。数値contractと検証は反復を止めない最低限にし、visual、game feel、表現、設計判断へ制作時間を集中する。
+
+### Phases
+
+- [x] Phase G1: North Star、正本、現renderer／hero／effect／combat architectureを監査し、PC Ultraの変更面を固定する
+- [x] Phase G2: PC Ultra scene、heroのsemantic part化、二build、manual skill、visual feedbackを設計する。companion最終造形は次sliceへ残す
+- [x] Phase G3: 独立routeへNorth Star playable sceneを実装する
+- [x] Phase G4: 既存版を壊さない最低限のVitest、strict TypeScript、production build、desktop browser visual smokeを実行する
+- [x] Phase G5: Context／Next Tasks／Outcomes／Learningsを更新し、postflightとexact-scope local commitを行う
+
+### Constraints
+
+- PC masterの表現上限をiPhone budgetで先に下げない。mobileはquality tierとして後で最適化する。
+- Prototype Bの既存runtimeと公開版は比較可能な状態を保持する。
+- iPhone 16 Pro実機試遊はユーザー操作が必要であり、local／browser検査を実機合格として扱わない。
+- public deploy／pushはこの指示に含めず、local実装と検証までを今回の外部操作境界とする。
+- 網羅的な数値固定やtest作り込みより、visual、game feel、character表現、二buildの差を優先する。壊れやすい境界だけsmoke testへ残す。
+
+### Status
+
+**Completed locally; not deployed** — PC-first North Star候補へWebGL2 half-float post stack、半自動戦闘、部位化主人公を統合し、desktop実画面まで確認した。現sceneは技術sliceであり、自然侵食現代都市、最終hero／companion造形、WebGPU／true HDR比較、commercial art acceptanceは次sliceへ残る。
+
+### Error log
+
+| Date | Command | Failure | Resolution |
+|---|---|---|---|
+| 2026-08-01 | `pnpm exec tsc --noEmit` | bundled pnpmがregistry metadata取得と非TTYのmodules再作成を要求して停止 | bundled Nodeでlocal TypeScript CLIを直接実行し、strict TypeScript合格を確認 |

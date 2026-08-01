@@ -33,14 +33,20 @@ import {
   type StartTownArtSlice,
 } from "./startTownArt";
 import { configureDisplayColor } from "./displayColor";
+import {
+  alignObjectGripToSocket,
+  createHeroVisual,
+  type HeroMotion,
+  type HeroVisual,
+} from "./hero";
+import { UltraRenderPipeline } from "./UltraRenderPipeline";
 import reclaimedMeadowTextureUrl from "./assets/reclaimed-meadow-v1.webp";
 
 const INTERNAL_WIDTH = 854;
 const INTERNAL_HEIGHT = 480;
 const CAMERA_VIEW_HEIGHT = 600;
+const PC_ULTRA_CAMERA_VIEW_HEIGHT = 510;
 const MAX_INTERNAL_WIDTH = 1_075;
-const DEFAULT_CAMERA_VIEW_WIDTH =
-  CAMERA_VIEW_HEIGHT * (INTERNAL_WIDTH / INTERNAL_HEIGHT);
 const CAMERA_OFFSET = new THREE.Vector3(510, 680, 510);
 const BLADE_VOXEL_SIZE = 2.1;
 const IMPACT_VOXEL_SIZE = 2;
@@ -113,6 +119,16 @@ export type PrototypeBRenderStats = {
   readonly triangles: number;
   readonly geometries: number;
   readonly textures: number;
+  readonly width: number;
+  readonly height: number;
+};
+
+export type PrototypeBRenderQuality = "baseline" | "pc-ultra";
+
+export type CombatPresentationState = {
+  readonly targetId: string | null;
+  readonly phase: "idle" | "acquire" | "windup" | "hit" | "recover";
+  readonly progress: number;
 };
 
 export interface PrototypeBRendererOptions {
@@ -123,16 +139,21 @@ export interface PrototypeBRendererOptions {
    * discovery/roster state explicitly selects one.
    */
   readonly companionPreview?: boolean;
+  readonly qualityProfile?: PrototypeBRenderQuality;
 }
 
 export class PrototypeBRenderer {
   private readonly renderer: THREE.WebGLRenderer;
+  private readonly qualityProfile: PrototypeBRenderQuality;
+  private readonly cameraViewHeight: number;
+  private ultraPipeline: UltraRenderPipeline | null = null;
   private readonly scene = new THREE.Scene();
   private readonly camera: THREE.OrthographicCamera;
   private readonly startTownArt: StartTownArtSlice;
   private readonly cameraTarget = new THREE.Vector3();
   private readonly playerGroup = new THREE.Group();
   private readonly playerBody: HeroVoxelMesh;
+  private readonly playerHeroVisual: HeroVisual | null;
   private readonly bladeMesh: THREE.Mesh<
     THREE.BufferGeometry,
     THREE.MeshStandardMaterial
@@ -155,6 +176,14 @@ export class PrototypeBRenderer {
   private readonly lootVisuals = new Map<string, THREE.Group>();
   private readonly ringEffects: RingEffect[] = [];
   private readonly burstEffects: BurstEffect[] = [];
+  private readonly targetRing: THREE.Mesh<
+    THREE.RingGeometry,
+    THREE.MeshBasicMaterial
+  >;
+  private readonly windupRing: THREE.Mesh<
+    THREE.RingGeometry,
+    THREE.MeshBasicMaterial
+  >;
   private readonly reusableMatrix = new THREE.Matrix4();
   private readonly reusablePosition = new THREE.Vector3();
   private readonly reusableQuaternion = new THREE.Quaternion();
@@ -174,12 +203,18 @@ export class PrototypeBRenderer {
   private attackWeapon: WeaponId = "blade";
   private effectLightEnergy = 0;
   private internalRenderWidth = INTERNAL_WIDTH;
+  private internalRenderHeight = INTERNAL_HEIGHT;
   private viewportCssWidth = 0;
   private viewportCssHeight = 0;
   private resizeObserver: ResizeObserver | null = null;
   private windowResizeHandler: (() => void) | null = null;
   private companionInitialized = false;
   private companionReaction = 0;
+  private cameraTrauma = 0;
+  private heroHurtAnimation = 0;
+  private heroSkillAnimation = 0;
+  private lastPlayerX: number | null = null;
+  private lastPlayerY: number | null = null;
   private elapsed = 0;
   private disposed = false;
 
@@ -188,6 +223,11 @@ export class PrototypeBRenderer {
     initialState: PrototypeBState,
     options: PrototypeBRendererOptions = {},
   ) {
+    this.qualityProfile = options.qualityProfile ?? "baseline";
+    this.cameraViewHeight =
+      this.qualityProfile === "pc-ultra"
+        ? PC_ULTRA_CAMERA_VIEW_HEIGHT
+        : CAMERA_VIEW_HEIGHT;
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: false,
@@ -199,13 +239,18 @@ export class PrototypeBRenderer {
     configureDisplayColor(this.renderer);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.setPixelRatio(1);
+    this.renderer.setPixelRatio(
+      this.qualityProfile === "pc-ultra"
+        ? Math.min(2, Math.max(1, window.devicePixelRatio || 1))
+        : 1,
+    );
     this.renderer.setSize(INTERNAL_WIDTH, INTERNAL_HEIGHT, false);
     this.renderer.domElement.dataset.testid = "game-canvas";
     this.renderer.domElement.dataset.antialias =
       this.renderer.getContextAttributes().antialias === true
         ? "msaa"
         : "none";
+    this.renderer.domElement.dataset.qualityProfile = this.qualityProfile;
     this.renderer.domElement.setAttribute(
       "aria-label",
       "辺境遺物録 ボクセルゲーム画面",
@@ -232,15 +277,40 @@ export class PrototypeBRenderer {
     this.scene.fog = new THREE.Fog(DAYLIGHT_FOG_COLOR, 900, 2_450);
     this.createLighting();
 
+    const defaultCameraViewWidth =
+      this.cameraViewHeight * (INTERNAL_WIDTH / INTERNAL_HEIGHT);
     this.camera = new THREE.OrthographicCamera(
-      -DEFAULT_CAMERA_VIEW_WIDTH / 2,
-      DEFAULT_CAMERA_VIEW_WIDTH / 2,
-      CAMERA_VIEW_HEIGHT / 2,
-      -CAMERA_VIEW_HEIGHT / 2,
+      -defaultCameraViewWidth / 2,
+      defaultCameraViewWidth / 2,
+      this.cameraViewHeight / 2,
+      -this.cameraViewHeight / 2,
       1,
       3_200,
     );
     this.initializeViewportSync(mount);
+    if (this.qualityProfile === "pc-ultra") {
+      this.ultraPipeline = new UltraRenderPipeline(
+        this.renderer,
+        this.scene,
+        this.camera,
+        {
+          maxPixelRatio: 2,
+          samples: 4,
+          gtao: true,
+          bloom: true,
+          smaa: true,
+          onFallback: (reason) => {
+            this.renderer.domElement.dataset.ultraFallback =
+              reason instanceof Error ? reason.message : "post-processing";
+          },
+        },
+      );
+      this.ultraPipeline.resize(
+        Math.max(1, mount.clientWidth),
+        Math.max(1, mount.clientHeight),
+      );
+      this.syncUltraPipelineDataset();
+    }
 
     this.createGround(initialState);
     this.startTownArt = createStartTownArtSlice();
@@ -266,6 +336,14 @@ export class PrototypeBRenderer {
     this.playerGroup.add(this.playerBody);
     this.playerBody.castShadow = true;
     this.playerBody.receiveShadow = true;
+    this.playerHeroVisual =
+      this.qualityProfile === "pc-ultra"
+        ? createHeroVisual({ mode: "articulated" })
+        : null;
+    if (this.playerHeroVisual !== null) {
+      this.playerBody.visible = false;
+      this.playerGroup.add(this.playerHeroVisual.root);
+    }
     this.bladeMesh = createVoxelMesh(
       BLADE_WEAPON_RECIPE,
       BLADE_VOXEL_SIZE,
@@ -280,11 +358,28 @@ export class PrototypeBRenderer {
     configureHeldWeapon(this.impactMesh, "impact");
     this.bladeMesh.castShadow = true;
     this.impactMesh.castShadow = true;
-    this.playerGroup.add(this.bladeMesh, this.impactMesh);
+    if (this.playerHeroVisual !== null) {
+      this.playerHeroVisual.attachWeapon(
+        this.bladeMesh,
+        BLADE_GRIP_ANCHOR,
+      );
+      this.playerHeroVisual.attachWeapon(
+        this.impactMesh,
+        IMPACT_GRIP_ANCHOR,
+      );
+    } else {
+      this.playerGroup.add(this.bladeMesh, this.impactMesh);
+    }
 
     this.playerShadow = createBlobShadow(38, 22, 0.32);
     this.playerGroup.add(this.playerShadow);
     this.scene.add(this.playerGroup);
+
+    this.targetRing = createTargetRing(0x61e5d1, 0.76);
+    this.windupRing = createTargetRing(0xf4a950, 0.92);
+    this.targetRing.visible = false;
+    this.windupRing.visible = false;
+    this.scene.add(this.targetRing, this.windupRing);
 
     this.companionBody = createHeroVoxelMesh(
       COMPANION_RECIPE,
@@ -309,6 +404,7 @@ export class PrototypeBRenderer {
     events: readonly PrototypeBEvent[],
     timeMs: number,
     deltaMs: number,
+    combatPresentation?: CombatPresentationState,
   ): void {
     if (this.disposed) {
       return;
@@ -317,14 +413,20 @@ export class PrototypeBRenderer {
     const deltaSeconds = Math.min(0.05, Math.max(0, deltaMs / 1_000));
     this.elapsed += deltaSeconds;
     this.handleEvents(events);
-    this.syncPlayer(state, deltaSeconds);
+    this.syncPlayer(state, deltaSeconds, combatPresentation);
     this.syncCompanion(state, deltaSeconds);
     this.syncEnemies(state);
+    this.syncCombatPresentation(state, combatPresentation);
     this.syncLoot(state);
     this.updateEffects(deltaSeconds);
     this.updateCamera(state, deltaSeconds);
     this.updateAmbientMotion(state, timeMs / 1_000);
-    this.renderer.render(this.scene, this.camera);
+    if (this.ultraPipeline !== null) {
+      this.ultraPipeline.render(deltaSeconds);
+      this.syncUltraPipelineDataset();
+    } else {
+      this.renderer.render(this.scene, this.camera);
+    }
   }
 
   private initializeViewportSync(mount: HTMLElement): void {
@@ -381,6 +483,38 @@ export class PrototypeBRenderer {
       16 / 9,
       2.24,
     );
+    if (this.qualityProfile === "pc-ultra") {
+      const pixelRatio = Math.min(
+        2,
+        Math.max(1, window.devicePixelRatio || 1),
+      );
+      if (this.ultraPipeline !== null) {
+        this.ultraPipeline.resize(cssWidth, cssHeight, pixelRatio);
+      } else {
+        this.renderer.setPixelRatio(pixelRatio);
+        this.renderer.setSize(
+          Math.max(1, Math.round(cssWidth)),
+          Math.max(1, Math.round(cssHeight)),
+          false,
+        );
+      }
+      this.internalRenderWidth = Math.max(
+        1,
+        Math.round(cssWidth * pixelRatio),
+      );
+      this.internalRenderHeight = Math.max(
+        1,
+        Math.round(cssHeight * pixelRatio),
+      );
+      const cameraWidth = this.cameraViewHeight * aspect;
+      this.camera.left = -cameraWidth / 2;
+      this.camera.right = cameraWidth / 2;
+      this.camera.updateProjectionMatrix();
+      this.renderer.domElement.dataset.internalResolution =
+        `${this.internalRenderWidth}x${this.internalRenderHeight}`;
+      this.syncUltraPipelineDataset();
+      return;
+    }
     const nextWidth = THREE.MathUtils.clamp(
       Math.round(INTERNAL_HEIGHT * aspect),
       INTERNAL_WIDTH,
@@ -391,8 +525,12 @@ export class PrototypeBRenderer {
     }
 
     this.internalRenderWidth = nextWidth;
+    this.internalRenderHeight = INTERNAL_HEIGHT;
     this.renderer.setSize(nextWidth, INTERNAL_HEIGHT, false);
-    const cameraWidth = CAMERA_VIEW_HEIGHT * (nextWidth / INTERNAL_HEIGHT);
+    this.renderer.domElement.dataset.internalResolution =
+      `${nextWidth}x${INTERNAL_HEIGHT}`;
+    const cameraWidth =
+      this.cameraViewHeight * (nextWidth / INTERNAL_HEIGHT);
     this.camera.left = -cameraWidth / 2;
     this.camera.right = cameraWidth / 2;
     this.camera.updateProjectionMatrix();
@@ -404,6 +542,8 @@ export class PrototypeBRenderer {
       triangles: this.renderer.info.render.triangles,
       geometries: this.renderer.info.memory.geometries,
       textures: this.renderer.info.memory.textures,
+      width: this.internalRenderWidth,
+      height: this.internalRenderHeight,
     };
   }
 
@@ -431,6 +571,8 @@ export class PrototypeBRenderer {
       this.windowResizeHandler = null;
     }
     this.startTownArt.dispose();
+    this.ultraPipeline?.dispose();
+    this.ultraPipeline = null;
     this.groundTexture?.dispose();
     this.groundTexture = null;
 
@@ -464,6 +606,25 @@ export class PrototypeBRenderer {
     this.renderer.domElement.remove();
   }
 
+  private syncUltraPipelineDataset(): void {
+    if (this.ultraPipeline === null) {
+      return;
+    }
+
+    const status = this.ultraPipeline.getStatus();
+    this.renderer.domElement.dataset.ultraPipeline = status.mode;
+    this.renderer.domElement.dataset.ultraGtao = String(status.gtao);
+    this.renderer.domElement.dataset.ultraBloom = String(status.bloom);
+    this.renderer.domElement.dataset.ultraSmaa = String(status.smaa);
+    this.renderer.domElement.dataset.ultraSamples = String(status.samples);
+    if (status.fallbackReason === null) {
+      delete this.renderer.domElement.dataset.ultraFallback;
+    } else {
+      this.renderer.domElement.dataset.ultraFallback =
+        status.fallbackReason;
+    }
+  }
+
   private createLighting(): void {
     const skyFill = new THREE.HemisphereLight(
       0xf6f0d2,
@@ -478,7 +639,8 @@ export class PrototypeBRenderer {
     this.keyLightTarget.position.set(390, 0, 900);
     this.keyLight.target = this.keyLightTarget;
     this.keyLight.castShadow = true;
-    this.keyLight.shadow.mapSize.set(512, 512);
+    const shadowMapSize = this.qualityProfile === "pc-ultra" ? 2_048 : 512;
+    this.keyLight.shadow.mapSize.set(shadowMapSize, shadowMapSize);
     this.keyLight.shadow.bias = -0.0012;
     this.keyLight.shadow.normalBias = 1.4;
     this.keyLight.shadow.camera.left = -460;
@@ -611,10 +773,10 @@ export class PrototypeBRenderer {
       );
       texture.minFilter = THREE.LinearMipmapLinearFilter;
       texture.magFilter = THREE.LinearFilter;
-      texture.anisotropy = Math.min(
-        4,
-        this.renderer.capabilities.getMaxAnisotropy(),
-      );
+      texture.anisotropy =
+        this.qualityProfile === "pc-ultra"
+          ? this.renderer.capabilities.getMaxAnisotropy()
+          : Math.min(4, this.renderer.capabilities.getMaxAnisotropy());
     };
 
     this.renderer.domElement.dataset.groundTexture = "loading";
@@ -1090,8 +1252,18 @@ export class PrototypeBRenderer {
   private syncPlayer(
     state: PrototypeBState,
     deltaSeconds: number,
+    combatPresentation: CombatPresentationState | undefined,
   ): void {
     const player = state.player;
+    const movementDistance =
+      this.lastPlayerX === null || this.lastPlayerY === null
+        ? 0
+        : Math.hypot(
+            player.x - this.lastPlayerX,
+            player.y - this.lastPlayerY,
+          );
+    this.lastPlayerX = player.x;
+    this.lastPlayerY = player.y;
     this.playerGroup.position.x = player.x;
     this.playerGroup.position.z = player.y;
     this.playerGroup.position.y = Math.sin(this.elapsed * 5.2) * 0.6;
@@ -1113,14 +1285,49 @@ export class PrototypeBRenderer {
       : 0;
     this.bladeMesh.rotation.z = -0.42 - swing;
     this.impactMesh.rotation.z = -0.28 - swing;
-    alignHeldWeapon(this.bladeMesh, "blade");
-    alignHeldWeapon(this.impactMesh, "impact");
-    setHeroMeshTint(
-      this.playerBody,
+    const tint =
       player.invulnerableTicks > 0 && state.tick % 2 === 0
         ? 0xb8fff4
-        : 0xffffff,
+        : 0xffffff;
+    if (this.playerHeroVisual === null) {
+      alignHeldWeapon(this.bladeMesh, "blade");
+      alignHeldWeapon(this.impactMesh, "impact");
+      setHeroMeshTint(this.playerBody, tint);
+      return;
+    }
+
+    alignObjectGripToSocket(this.bladeMesh, BLADE_GRIP_ANCHOR);
+    alignObjectGripToSocket(this.impactMesh, IMPACT_GRIP_ANCHOR);
+    this.heroHurtAnimation = Math.max(
+      0,
+      this.heroHurtAnimation - deltaSeconds * 3.8,
     );
+    this.heroSkillAnimation = Math.max(
+      0,
+      this.heroSkillAnimation - deltaSeconds * 1.45,
+    );
+    const moveAmount =
+      deltaSeconds > Number.EPSILON
+        ? THREE.MathUtils.clamp(
+            movementDistance / deltaSeconds / 118,
+            0,
+            1,
+          )
+        : 0;
+    const pose = resolveHeroMotion(
+      combatPresentation,
+      this.heroHurtAnimation,
+      this.heroSkillAnimation,
+      this.attackAnimation,
+      moveAmount,
+    );
+    this.playerHeroVisual.updatePose({
+      motion: pose.motion,
+      timeSeconds: this.elapsed,
+      progress: pose.progress,
+      moveAmount,
+    });
+    this.playerHeroVisual.setTint(tint);
   }
 
   private syncCompanion(
@@ -1236,6 +1443,45 @@ export class PrototypeBRenderer {
     }
   }
 
+  private syncCombatPresentation(
+    state: PrototypeBState,
+    presentation: CombatPresentationState | undefined,
+  ): void {
+    if (presentation === undefined || presentation.targetId === null) {
+      this.targetRing.visible = false;
+      this.windupRing.visible = false;
+      return;
+    }
+
+    const target = state.enemies.find(
+      (enemy) => enemy.id === presentation.targetId && !enemy.defeated,
+    );
+    if (target === undefined) {
+      this.targetRing.visible = false;
+      this.windupRing.visible = false;
+      return;
+    }
+
+    const radius = Math.max(24, target.radius * 1.45);
+    this.targetRing.visible = true;
+    this.targetRing.position.set(target.x, 2.8, target.y);
+    this.targetRing.scale.setScalar(radius / 30);
+    this.targetRing.material.color.setHex(
+      state.player.weaponId === "blade" ? 0x61e5d1 : 0xf4a950,
+    );
+    this.targetRing.material.opacity =
+      0.56 + Math.sin(this.elapsed * 6) * 0.12;
+
+    const windup = presentation.phase === "windup";
+    this.windupRing.visible = windup;
+    if (windup) {
+      this.windupRing.position.set(target.x, 3, target.y);
+      const remaining = Math.max(0.05, 1 - presentation.progress);
+      this.windupRing.scale.setScalar((radius / 30) * (1.6 * remaining + 0.72));
+      this.windupRing.material.opacity = 0.3 + presentation.progress * 0.66;
+    }
+  }
+
   private createEnemyVisual(enemy: EnemyState): EntityVisual {
     const recipe = recipeForEnemy(enemy.kind);
     const body = createVoxelMesh(
@@ -1314,6 +1560,15 @@ export class PrototypeBRenderer {
           );
           break;
         case "enemy-damaged": {
+          this.cameraTrauma = Math.min(
+            1,
+            this.cameraTrauma +
+              (event.source === "impact"
+                ? 0.82
+                : event.source === "relic"
+                  ? 0.66
+                  : 0.28),
+          );
           const enemy = this.enemyVisuals.get(event.enemyId);
           if (enemy !== undefined) {
             this.addBurst(
@@ -1340,6 +1595,7 @@ export class PrototypeBRenderer {
           break;
         }
         case "player-damaged":
+          this.heroHurtAnimation = 1;
           this.addBurst(
             this.playerGroup.position.x,
             this.playerGroup.position.z,
@@ -1371,16 +1627,27 @@ export class PrototypeBRenderer {
           );
           break;
         case "relic-activated":
+          this.heroSkillAnimation = 1;
           this.companionReaction = 1;
           this.addRing(
             event.x,
             event.y,
             0x61e5d1,
-            28,
-            event.radius,
-            0.5,
-            1.9,
+            event.radius * 0.76,
+            event.radius * 0.82,
+            0.62,
+            1.36,
           );
+          this.addRing(
+            event.x,
+            event.y,
+            0xc6fff3,
+            event.radius * 0.38,
+            event.radius * 0.42,
+            0.44,
+            1.82,
+          );
+          this.addBurst(event.x, event.y, 0x9cf8e8, 16);
           this.pulseEffectLight(
             event.x,
             event.y,
@@ -1645,9 +1912,24 @@ export class PrototypeBRenderer {
       .copy(this.cameraTarget)
       .add(CAMERA_OFFSET);
     this.camera.position.lerp(desiredPosition, follow);
+    this.cameraTrauma = Math.max(
+      0,
+      this.cameraTrauma - deltaSeconds * 3.4,
+    );
+    if (this.cameraTrauma > 0.001) {
+      const amplitude = this.cameraTrauma * this.cameraTrauma * 7.5;
+      this.camera.position.x += Math.sin(this.elapsed * 137.3) * amplitude;
+      this.camera.position.y += Math.sin(this.elapsed * 173.1) * amplitude * 0.28;
+      this.camera.position.z += Math.cos(this.elapsed * 151.7) * amplitude;
+    }
     this.camera.lookAt(this.cameraTarget);
 
-    const worldUnitsPerPixel = CAMERA_VIEW_HEIGHT / INTERNAL_HEIGHT;
+    if (this.qualityProfile === "pc-ultra") {
+      return;
+    }
+
+    const worldUnitsPerPixel =
+      this.cameraViewHeight / this.internalRenderHeight;
     this.camera.position.x =
       Math.round(this.camera.position.x / worldUnitsPerPixel) *
       worldUnitsPerPixel;
@@ -1818,6 +2100,25 @@ function createBlobShadow(
   return mesh;
 }
 
+function createTargetRing(
+  color: number,
+  opacity: number,
+): THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> {
+  const geometry = new THREE.RingGeometry(25, 30, 64);
+  const material = new THREE.MeshBasicMaterial({
+    color,
+    transparent: true,
+    opacity,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.renderOrder = 12;
+  return mesh;
+}
+
 function createGrowthClusterGeometry(): THREE.BufferGeometry {
   const components = [
     {
@@ -1932,6 +2233,39 @@ function configureHeldWeapon(
   mesh.rotation.z = weapon === "blade" ? -0.42 : -0.28;
   mesh.scale.setScalar(weapon === "blade" ? 0.9 : 0.86);
   alignHeldWeapon(mesh, weapon);
+}
+
+function resolveHeroMotion(
+  presentation: CombatPresentationState | undefined,
+  hurtAnimation: number,
+  skillAnimation: number,
+  attackAnimation: number,
+  moveAmount: number,
+): { readonly motion: HeroMotion; readonly progress: number } {
+  if (hurtAnimation > 0) {
+    return { motion: "hurt", progress: 1 - hurtAnimation };
+  }
+  if (skillAnimation > 0) {
+    return { motion: "skill", progress: 1 - skillAnimation };
+  }
+  if (attackAnimation > 0) {
+    return { motion: "hit", progress: 1 - attackAnimation };
+  }
+
+  switch (presentation?.phase) {
+    case "windup":
+      return { motion: "windup", progress: presentation.progress };
+    case "hit":
+      return { motion: "hit", progress: presentation.progress };
+    case "recover":
+      return { motion: "recovery", progress: presentation.progress };
+    case "idle":
+    case "acquire":
+    case undefined:
+      return moveAmount > 0.08
+        ? { motion: "run", progress: 0 }
+        : { motion: "idle", progress: 0 };
+  }
 }
 
 export function alignHeldWeapon(mesh: THREE.Mesh, weapon: WeaponId): void {

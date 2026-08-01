@@ -229,6 +229,7 @@ export interface PrototypeBState {
 export interface PrototypeBCommand {
   moveX?: number;
   moveY?: number;
+  moveSpeedScale?: number;
   attack?: boolean;
   guard?: boolean;
   dodge?: boolean;

@@ -4,7 +4,19 @@ Last updated: 2026-08-01
 
 ## P0
 
-- [ ] Gate Aの`Combat Feel Contract`、`Loot／Build Contract`、`Mobile Interaction Contract`を半自動戦闘用に数値化する。
+Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生成、mobile実機項目は同sceneへ順次接続するqueueであり、North Star候補の制作とvisual reviewをblockしない。
+
+- [ ] PC play前提の`North Star Scene v0.1`を最優先で作る。
+  - [x] `?prototype=north-star`を独立routeにし、PC Ultra WebGL2 post stack、半自動通常攻撃、手動大技、部位化主人公、同行者候補previewを一画面へ接続した。
+  - [ ] 既存start-townの再利用を終え、道路、鉄道／高架、集合住宅、商業／公共設備の旧用途が一目で分かる自然侵食現代都市cellへ置き換える。
+  - 自然に侵食されたrecognizableな現代都市一画面、精密な主人公、同行者候補一体、格下一体、名付き敵一体、遺物effectを同じ固定cameraへ置く。
+  - 2560×1440相当のPC Ultraをmasterとし、WebGPU／HDR、half-float lighting、PBR、baked indirect light、高解像度surface、shadow、選択的postを比較する。WebGL2／SDRとmobileは後から同じsceneを縮退する。
+  - 主人公／同行者は単一merged voxel meshの上下動に留めず、顔／sensor、衣装／外装、武器、semantic parts、material差、signature pose、part animationを持つhero assetにする。
+  - 半自動通常攻撃、build切替、手動大技、敵予兆、hit-stop／camera impulse／light／soundを同じsceneで触れるようにし、rendererだけのdemoにしない。
+  - Done when: 2560×1440相当のPC Ultra候補を静止画と操作captureでreviewでき、backend／color outputをcapability evidenceとともに記録する。二buildと大技の差を同じsceneで判断できる。ユーザーのart acceptanceまではcommercial-quality達成と呼ばない。
+- [ ] Gate Aの`Combat Feel Contract`、`Loot／Build Contract`、`Mobile Interaction Contract`を、調整を止めない軽量contractとして半自動戦闘へ接続する。
+  - [x] `Acquire → Windup → Hit → Recover`、二buildの間合い／周期／移動倍率、dodge cancel、target hysteresisをpure fixed-tick controllerとして実装し、North Star routeへ接続した。
+  - [ ] build切替を実戦中に触れる導線、手動大技のbuild固有成立条件、格下／名付き敵の差、loot比較を同じ短いplay loopへ接続する。
   - `Acquire → Windup → Hit → Recover`、target score／drop、attack中の移動／cancel、成立間合い、攻撃周期、manual skill、敵予兆、safe area、loot比較／装備／分解を定義する。
   - guard／dodge、item、target上書き、通常の同行者行動、遠距離通常攻撃をどこまで手動にするか、二案以内で比較する。
   - 遠距離通常攻撃は画面外、遮蔽越し、無制限追尾を禁止し、名付き敵の立ち止まり／manual skillなし安定勝利をhard failにする。
@@ -22,11 +34,13 @@ Last updated: 2026-08-01
   - 旧用途、水／日照／土壌、植生遷移、現在の生活、資源、危険、route、拠点候補を同じ因果で記述する。
   - 崩壊原因、経過年数、地域、共同体密度、妖怪／残響基盤の関係は未決定のまま比較可能にする。
   - Done when: recognizableな現代infra、自然侵食、回収、拠点、encounterが一つの`WorldCellSpec`から説明できる。
-- [ ] `Visual Benchmark Scene`の比較仕様を作り、iPhone 16 Proで描画architectureを決める。
-  - C0では主人公、同行者、草地／遺構の小vignetteだけをliteral high-density voxel／semantic voxel surface／stylized low-polyで比較し、C1では勝った一案だけで開始町一画面を仕上げる。
-  - 同じC1 sceneを`webgpu-hdr-experiment`／`webgpu-sdr`／`webgl2-p3`／`webgl2-srgb`で比較する。
-  - 実`visualViewport`、safe area、internal scale、KTX2、MSAA、shadow、限定bloomを記録し、half-float、P3、HDR outputを別々に判定する。
-  - Done when: visual方式、backend、render scale、texture／shadow／post budgetが実機evidenceで決まり、voxel／WebGPU採用を名称だけで判断しない。
+- [ ] North Star Scene v0.1の内部workstreamとして、PC Ultra masterの描画architectureとcharacter方式を決め、その後iPhone 16 Proのtierを作る。
+  - [x] WebGL2上のhalf-float render target、4× MSAA、GTAO、抑制したbloom、SMAAを既存sceneで動かす技術候補を実装した。WebGPU／HDR profile比較とart採択は未実施。
+  - [x] 既存24×32×16主人公をsemantic partsへ分け、weapon socketと7種poseをPC Ultra routeで動かした。これは最終hero造形ではない。
+  - C0では主人公、同行者、草地／現代遺構の小vignetteをliteral high-density voxel／semantic voxel surface／stylized low-polyで比較し、C1では勝った一案だけをreference qualityへ仕上げる。
+  - 同じC1 sceneを`pc-ultra-webgpu-hdr`／`pc-high-webgpu-sdr`／`webgl2-p3`／`webgl2-srgb`で比較する。
+  - PCでは2560×1440相当を起点に、character、surface、indirect light、shadow、AA、postの知覚品質を先に詰める。次にiPhoneの実`visualViewport`、safe area、internal scale、KTX2、MSAA、shadow、限定bloomを決める。
+  - Done when: PC masterのvisual方式とhero表現が決まり、同じart sourceからmobile tierへ縮退できる。
 - [ ] 主人公一体、同行者一体、武器一つで`AssetDNA` pilotを設計する。
   - version付き`StyleProfile`と、gameplay role、silhouette、semantic parts、material、rig、socket、power／heat／mass、wear、mobile budgetを一つのschemaへ持たせる。
   - AI 3Dはpart／static candidateに限定し、geometry、rig、collision、PBR、actual-camera readability、licenseを検査する。
@@ -52,9 +66,9 @@ Last updated: 2026-08-01
   - 公開URL: `https://t-omori-lab.github.io/game/`
   - 開始、依頼板、移動、二武器、guard／回避、遺物、item、loot、名付き反響体、帰還の順に確認する。
   - Done when: 操作不能、誤入力、文字、safe area、音の判別、発熱、fps低下、もう一度遊びたいか、100点中の評価を記録する。
-- [ ] Prototype Bの実機結果を比較baselineとして凍結した後、別routeでGate Aの半自動戦闘spikeを作る。
-  - Prototype Bの手動攻撃／guardを製品目標として再調整せず、weapon一系統、格下敵一体、名付き敵一体で`Acquire → Windup → Hit → Recover`とmanual skillを比較する。
-  - Done when: 30秒以内にauto-engageを理解し、90秒以内にmanual skillを使い、格下は自動処理できる一方、名付き敵は立ち止まり／大技なしでは安定勝利できない。
+- [x] Prototype Bを比較可能なまま保持し、別routeでGate Aの半自動戦闘技術spikeを作る。
+  - `?prototype=north-star`で`Acquire → Windup → Hit → Recover`とmanual skillをlocal接続した。
+  - 30秒以内のauto-engage理解、90秒以内のmanual skill理解、格下／名付き敵の難度差はユーザー試遊待ち。
 - [ ] Prototype Bの開始から三結果・町帰還までをbrowser E2Eで固定する。
   - Done when: 破壊、鎮静、接続の三経路で進行不能がなく、結果画面まで自動検査できる。
 - [ ] Prototype Bの依頼結果をversion付きsaveへ接続する。
@@ -78,6 +92,7 @@ Last updated: 2026-08-01
 
 ## Recently completed
 
+- [x] PC Ultra North Star技術sliceへhalf-float MSAA／GTAO／bloom／SMAA、半自動近接戦闘、部位化主人公と7種poseを統合し、desktop browserでvisual smokeを実施 — 2026-08-01
 - [x] 自由放浪、world memory、Elona Mobile型の半自動戦闘、自然に侵食された現代都市、自築拠点を上位方向として作品憲法と設計正本へ反映 — 2026-08-01
 - [x] これまでの要求を、提案中の仮称「世界記憶型・放浪生活ハクスラ」として統合し、短い`GAME_CONSTITUTION.md`、Gate A／B／C、Causal World Cell、GameplayContract、StyleProfile／AssetDNA、mobile renderer tierを設計 — 2026-07-31
 - [x] Safari／Three.js／KTX2、2025〜2026年の3D／rig生成、PCG／LLM検証、Steam AI申告の一次資料を調査し、採用／保留境界を設計文書へ反映 — 2026-07-31

@@ -63,6 +63,14 @@ function finiteAxis(value: number | undefined): number {
   return clamp(value, -1, 1);
 }
 
+function finiteMovementScale(value: number | undefined): number {
+  if (value === undefined || !Number.isFinite(value)) {
+    return 1;
+  }
+
+  return clamp(value, 0, 1);
+}
+
 function normalizedVector(x: number, y: number): Point {
   const magnitude = Math.hypot(x, y);
 
@@ -425,8 +433,12 @@ function moveOrDodgePlayer(
     state.player.x,
     state.player.y,
     state.player.radius,
-    direction.x * (state.player.speed / TICK_RATE),
-    direction.y * (state.player.speed / TICK_RATE),
+    direction.x *
+      (state.player.speed / TICK_RATE) *
+      finiteMovementScale(command.moveSpeedScale),
+    direction.y *
+      (state.player.speed / TICK_RATE) *
+      finiteMovementScale(command.moveSpeedScale),
   );
   state.player.x = destination.x;
   state.player.y = destination.y;
