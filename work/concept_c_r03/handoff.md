@@ -1,6 +1,6 @@
 # Handoff: Concept C Complete Reconstruction R03
 
-Status: local candidate complete / deployment pending
+Status: deployed / public browser verified / user visual review pending
 
 ## Architecture
 
@@ -27,9 +27,17 @@ Status: local candidate complete / deployment pending
 - Final read-only code review after camera and walkable-polygon fixes: P0 0 / P1 0 / public GO.
 - Actual 1672 × 941 browser boundary check: a `(950,260)` shelter-roof tap stopped at `(877.06,441.44)` and camera remained `(0.00,0.00)`.
 
+## Deployment
+
+- Commit: `79bf341696e015ece815e40eefdd6e5d8cb2adb6`
+- GitHub Actions: run #11 / success
+- R03: `https://t-omori-lab.github.io/game/r03/`
+- Catalog: `https://t-omori-lab.github.io/game/`
+- R02 archive: `https://t-omori-lab.github.io/game/r02/`
+- Public HTTP: catalog, R03, R02, R02 snapshot, root service worker all 200.
+- Public browser: catalog order R03 → R02 → R01; R03 rendered and responded to tap movement; R02 static bundle rendered independently.
+
 ## Pending
 
-- Exact-file commit and push
-- GitHub Pages run and public HTTP verification
-- Public in-app browser verification of R03, catalog order, and retained R02
-- Final commit/run/public URLs and evidence
+- User visual acceptance of R03 against Concept C
+- C1 depth-aware layered conversion after the review

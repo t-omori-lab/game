@@ -12,7 +12,7 @@ Active P0は、R02を漸進改良せず独立再構築した`R03 Concept C Beaut
   - [x] Concept C正本と同じ1672×941の最終comparisonを作り、独立visual QAでP0 0／P1 0／非blocking P2 3、`final result: passed`を得た。
   - [x] strict TypeScript、Vitest 27 files／168 tests、production build、874×402 browser policy、double-click scale 1をlocal確認した。
   - [x] follow cameraをplate overscan内へ制限し、keyboard／tapを同じ10頂点road polygonへ接続した。公開前code review再監査はP0 0／P1 0でGO。
-  - [ ] exact-file commit、GitHub push、Pages run成功、公開R03／catalog／R02 freezeのHTTPと実browser描画を確認する。
+  - [x] commit `79bf341`をpushし、Pages run #11成功、公開R03／catalog／R02 freezeのHTTP 200と実browser描画を確認した。
   - [ ] ユーザーreviewでConcept Cとの残差を最大3点に絞り、C1へ持ち越す差分を決める。
 - [ ] `C1 Layered Beauty Cell`でR03の知覚品質をdepth-awareなHD-2D基盤へ移す。
   - 道路、階段、停留所、作業台をmodular geometry、depth、occlusion、collision、navigationへ分解する。
@@ -122,6 +122,7 @@ Active P0は、R02を漸進改良せず独立再構築した`R03 Concept C Beaut
 
 ## Recently completed
 
+- [x] commit `79bf341`をGitHub Pagesへ反映し、run #11成功、公開R03／catalog／R02 static snapshot／service workerのHTTPS応答と実browser操作を確認 — 2026-08-02
 - [x] R03をR02非依存の2.5D Beauty Benchmarkとして再構築し、Concept Cとの同一1672×941比較、独立visual QA P0 0／P1 0、四方向操作、手動skill、safe camera／road polygon、Vitest 168件、strict TypeScript、production buildをlocal合格 — 2026-08-02
 - [x] R02をcommit `0b5fd9f6…`由来の静的bundle、固有service worker、snapshot、11ファイルのSHA-256 manifestへ凍結 — 2026-08-02
 - [x] commit `e1cdb57`をGitHub Pagesへ反映し、run #9成功、公開catalog／R01静的snapshot／R02 Beauty Cell／service workerのHTTPS応答と実browser描画を確認 — 2026-08-02

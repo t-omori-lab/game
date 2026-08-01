@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: R03 Concept C Beauty Benchmark / public deployment pending
+Phase: R03 Concept C Beauty Benchmark / public user review pending
 
 ## Purpose
 
@@ -71,6 +71,8 @@ Phase: R03 Concept C Beauty Benchmark / public deployment pending
 - R02はcommit `0b5fd9f6…`由来の静的bundle、固有service worker、`SNAPSHOT.json`、11ファイルのSHA-256 manifestとして`public/r02/`へ凍結した。通常R02起動は今後のshared source変更で変質しない。
 - R03 local候補はstrict TypeScript、Vitest 27 files／168 tests、production buildに合格した。874×402のiPhone 16 Pro landscape相当browserではworldとHUDの別contain、手動skill control、double-click前後scale 1を確認した。これはiPhone 16 Pro実機、Safari／PWA性能、発熱、true HDRの証明ではない。
 - 公開前code reviewで、follow cameraによるplate外の黒帯露出と、矩形walk boundsによるshelter／wall上への侵入をP1として検出した。cameraを実cover overscan内へ制限し、keyboard／tapの両方を中央roadの10頂点polygonへclampした。再監査はP0 0／P1 0で公開GOと判定した。
+- GitHub Actions `Deploy GitHub Pages` run #11はcommit `79bf341`のtest／build／deployに成功した。公開catalog、R03、R02、R02 `SNAPSHOT.json`、root service workerがHTTPS 200を返し、R03の本番bundleとenvironment preload、R02のsource commit `0b5fd9f6…`／`frozen: true`を確認した。
+- 公開browserでcatalogのR03→R02→R01順と各linkを確認した。公開R03は1280×720で2560×1440 canvas、hero／companion／anomaly／HUDを描画し、tap移動でhero `(757.00,651.00)`→`(870.05,662.19)`、facing right、camera `(0.00,0.23)`、半自動照準statusまで動作した。R02保存版も独立title、canvas、既存game stateを描画した。
 - R03はConcept Cのcamera、density、palette、actor scale、light、material、DOFを固定するvisual contractであり、完成したHD-2D world engineではない。次段階C1は中央道路／階段／停留所／作業台をdepth-aware geometry、occlusion、collision、navigation、dynamic lightingへ分解し、R03承認captureとのP1差分ゼロを保つ。
 
 ## Creative reference notes

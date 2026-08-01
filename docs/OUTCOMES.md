@@ -22,8 +22,10 @@ Last updated: 2026-08-02
 - R03をR02 renderer非依存のappとしてlocal実装した。Concept C由来の高品質environment plate、高解像度4方向女性SF hero、robot dog、遠景anomaly、動的影／反射／bloom／particle、半自動通常攻撃、手動遺物skill、tap-to-moveを、一つのwide fixed-camera 2.5D benchmarkへ統合した。
 - Concept C正本とR03の1672×941同条件comparisonに対する独立visual QAは、修正後P0 0、P1 0、非blocking P2 3で`final result: passed`と判定した。strict TypeScript、Vitest 27 files／168 tests、production buildもlocalで合格した。
 - 公開前code reviewでfollow cameraのplate外露出と矩形walk boundsによる構造物上への侵入をP1として検出し、camera overscan clampと10頂点road polygonへ修正した。再監査はP0 0／P1 0、公開GOと判定した。
-- R02はcommit `0b5fd9f6…`由来の静的bundle、固有service worker、snapshot、11ファイルのSHA-256 manifestとして凍結した。R03のGitHub Pages公開と公開browser確認は未実施であり、local completionと分けて保留する。
+- R02はcommit `0b5fd9f6…`由来の静的bundle、固有service worker、snapshot、11ファイルのSHA-256 manifestとして凍結した。
 - R03は指定初期frameのBeauty Benchmarkであって完成したHD-2D engineではない。`R03_HD2D_ARCHITECTURE.md`で、World Model、Layered Scene Compiler、actor representation、render graph、AI-native manifest、C0〜C3 gateを定義した。
+- GitHub Actions run #11はcommit `79bf341`のtest／build／deployに成功した。公開catalog、R03、R02、R02 `SNAPSHOT.json`、root service workerはHTTPS 200で、R03本番bundle／environment preloadとR02 `frozen: true`を確認した。
+- 公開browserでcatalogはR03→R02→R01の順に表示された。R03は1280×720 viewportで2560×1440 canvasを描画し、tap移動、4方向facing、safe camera、半自動照準statusが動作した。R02保存版も独立bundleで起動した。
 - 自由放浪とworld memoryはユーザー意図に合う上位方向として確認された。
 - 世界の基層は、人類が激減し、識別可能な現代都市が植物、水、動物、新しい生活へ侵食・転用されたpost-apocalypseと確認された。崩壊原因、年代、地域、共同体密度は未決定。
 - playerは既存遺構を復旧するか条件の合う土地を選び、自分の拠点を築く方向が確認された。配置自由度、複数拠点、移転、維持、襲撃の詳細は未決定。
@@ -63,7 +65,6 @@ Last updated: 2026-08-02
 
 ## Pending confirmation
 
-- R03のPages deployment、公開browser描画、catalogのR03→R02→R01順、R02静的freezeが公開環境で成立するか。
 - R03がConcept Cの知覚品質へ十分近づいたか、ユーザーart reviewで合格するか。local independent visual QAのpassはユーザーacceptanceの代替ではない。
 - R03のplate型benchmarkをC1のdepth-aware geometry、occlusion、collision、navigation、dynamic lightingへ移しても同じ画面品質を維持できるか。
 

@@ -35,6 +35,7 @@ Date: 2026-08-02
 - Keyboard movement and tap destinations share one inset 10-point road polygon, preventing the hero from crossing the shelter, wall, vegetation, or foreground parapet baked into the plate.
 - At 1672 × 941, tapping the forbidden shelter-roof point `(950,260)` stopped the hero at road edge `(877.06,441.44)` with camera `(0.00,0.00)`.
 - Final read-only code re-review: P0 0, P1 0, public GO.
+- GitHub Pages run #11 deployed commit `79bf341`; public R03 loaded its hashed runtime and environment asset, rendered a 2560 × 1440 canvas at 1280 × 720, and responded to tap movement without exposing the plate.
 
 ## Non-blocking P2 observations
 

@@ -22,7 +22,7 @@ Concept Cの画面を知覚的・構造的な唯一のvisual truthとして再�
 - [x] Phase 3: R03専用scene、camera、hero、environment、render pipeline、controlsを実装する
 - [x] Phase 4: 同一条件のvisual comparisonを反復し、P0/P1差分を解消してP2を分類する
 - [x] Phase 5: 型検査、test、build、操作、公開版保持、route一覧を検証する
-- [ ] Phase 6: exact-file commit、GitHub push、Pages deployment、公開R03実ブラウザ確認を完了する（進行中）
+- [x] Phase 6: exact-file commit、GitHub push、Pages deployment、公開R03実ブラウザ確認を完了する
 
 ## Key questions
 
@@ -57,7 +57,8 @@ Concept Cの画面を知覚的・構造的な唯一のvisual truthとして再�
 - 公開前code reviewで、基準viewportのcoverぴったりなplateに対してcameraを最大108px動かすと背景外の黒帯が露出するP1を検出した。追従量を実際のcover overscan内へclampし、基準1672×941ではcamera offset 0、横長画面では余白がある軸だけを追従させる回帰testを追加した。
 - 同reviewで、旧矩形walk boundsがshelter／wall／植栽の見た目を無視し、短時間の上移動で背景構造物へ重なれるP1を検出した。中央road形状へinsetした10頂点polygon、point-in-polygon、segment最近傍clampへ変更し、keyboard移動とtap destinationの両方を同じwalkable contractへ接続した。
 - 最初のexact-file commitはsandboxの`.git/index.lock`書込制限で失敗し、承認済み外部実行へ切り替えた。次の試行は凍結したVite bundle内部のshader文字列に由来する既存末尾空白を`git diff --check`が検出して停止した。snapshot bytesとSHA-256を変えないため、R01／R02の凍結JS bundleを`.gitattributes`でbinary release artifactとして分類した。
+- 公開R02へのbrowser遷移待機は一度timeoutしたが、URL／titleはすでに切り替わっていた。追加5秒後に独立canvasと既存game stateの描画を確認し、HTTP確認とは分けて合格とした。
 
 ## Status
 
-**Currently in Phase 6** — 1672×941の最終比較は独立QAでP0 0／P1 0／非blocking P2 3、`final result: passed`。camera／walkable修正後のcode再監査もP0 0／P1 0でGO。Vitest 168件、strict TypeScript、production buildも再合格し、exact-file commit、Pages deploy、公開browser確認へ進む。
+**Completed** — commit `79bf341`、GitHub Actions run #11、公開R03／catalog／R02 static snapshotを確認。R03の次gateは追加plate機能ではなく、ユーザーvisual review後のC1 Layered Beauty Cellである。
