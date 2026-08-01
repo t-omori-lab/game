@@ -36,6 +36,7 @@ import {
 import { createNorthStarCityArtSlice } from "./northStarCityArt";
 import { configureDisplayColor } from "./displayColor";
 import {
+  FIXED_CAMERA_OFFSET,
   composeCameraTarget,
   type CameraCompositionProfile,
 } from "./CameraComposition";
@@ -54,7 +55,11 @@ const CAMERA_VIEW_HEIGHT = 600;
 const PC_ULTRA_CAMERA_VIEW_HEIGHT = 360;
 const PC_ULTRA_EXPOSURE = 0.98;
 const MAX_INTERNAL_WIDTH = 1_075;
-const CAMERA_OFFSET = new THREE.Vector3(510, 680, 510);
+const CAMERA_OFFSET = new THREE.Vector3(
+  FIXED_CAMERA_OFFSET.x,
+  FIXED_CAMERA_OFFSET.y,
+  FIXED_CAMERA_OFFSET.z,
+);
 const BLADE_VOXEL_SIZE = 2.1;
 const IMPACT_VOXEL_SIZE = 2;
 const ENEMY_VOXEL_SIZE = 4;

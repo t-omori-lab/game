@@ -142,3 +142,14 @@
 - Decision: 識別可能な現代都市とinfraを、植物、水、動物、新しい生活が侵食／転用した世界を基層にする。playerは既存遺構を復旧するか条件の合う土地を選び、回収資源で自分の拠点を築く。拠点は別の建築gameではなく、放浪、loot build、同行者、world memoryを束ねる恒久stateにする。
 - Consequences: 地域生成は旧用途、水／日照／土壌、植生遷移、現在の生活、資源、route、拠点候補を同じ因果から作る。夏版は候補地二つ、稼働拠点一つ、機能module候補二つ以上／今回設置一つ、次回差分一つへ縮小する。崩壊原因、経過年数、地域、配置自由度、複数拠点、移転、維持、襲撃は未決定。
 - Supersedes: none
+
+---
+
+## ADR-014: Select Concept C as a realtime micro-voxel hybrid North Star
+
+- Date: 2026-08-01
+- Status: accepted direction / runtime art acceptance pending
+- Context: A〜Eのvisual conceptを比較し、ユーザーはCの高密度voxel／rich pixel-artに感じられる小型3D造形、fixed diagonal diorama、HD-2D的なボケ味を最も近い方向として選んだ。同時に、Cの人物と武器が中世fantasyへ寄る点を修正し、女性型をbaseにしつつ種族、性別／gender表現、体格、顔、髪、装備を選ぶcharacter creationを求めた。斜めcameraではworld axis直結の上入力が画面斜めへ出る懸念も確認された。
+- Decision: Concept Cをvisual North Starとする。人物、装備、同行者、enemy、occlusion、近景の動きはhigh-density micro-voxel／grid-quantized sourceからcompileしたrealtime 3Dとし、static city density、間接光、AO、遠景はbaked assetへ分ける。被写界深度は主人公、敵予兆、interactionをsharpに保つmulti-layer方式とする。default protagonist presetは女性型だが固定heroineにはせず、appearanceをversioned `CharacterGenome`へ分離する。武器と衣装は動力、sensor、冷却、service機構の読めるpost-apocalyptic SFへ直す。keyboard／virtual stick／future gamepadはscreen-relative axisで受け、共有camera basisからsimulation world axisへ変換する。
+- Consequences: CのPNGを背景、texture、literal topologyとして使用しない。最初のproofは96-cell級女性default、SF survey cutter、別gender presentation、別humanoid species、四足同行者candidateを一つのC Beauty Cellで動かし、2560×1440 actual gameplayでCのcamera、actor scale、light、material、density、DOFを比較する。Gamepad API、click／tap-to-move、runtime character creator、C Beauty Cell、mobile tierは別実装であり、今回の方向決定だけでは完成としない。
+- Supersedes: Visual North Star Concept Set v0.4でのconcept E暫定選択。ADR-010のfixed-camera hybrid構造は継続し、人型surfaceの最終密度とcharacter creationを具体化する

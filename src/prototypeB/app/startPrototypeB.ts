@@ -29,6 +29,7 @@ import {
   type CombatPresentationState,
   type PrototypeBRenderQuality,
 } from "../render";
+import { screenMovementToWorld } from "../render/CameraComposition";
 import {
   createPrototypeBLayout,
   type PrototypeBLayout,
@@ -765,9 +766,11 @@ function commandFromInput(
     return outcome === undefined ? {} : { chooseOutcome: outcome };
   }
 
+  const movement = screenMovementToWorld(input.moveX, input.moveY);
+
   return {
-    moveX: input.moveX,
-    moveY: input.moveY,
+    moveX: movement.moveX,
+    moveY: movement.moveY,
     attack: input.attack,
     guard: input.guard,
     dodge: input.dodge,

@@ -9,6 +9,8 @@ Last updated: 2026-08-01
 - ユーザーは、固定俯瞰voxel、scroll探索、手動戦闘を持つPrototype Bが最低限の比較baselineとして成立したことを認めた。これは手動戦闘を製品方向として採用した評価ではない。
 - 2026-08-01、ユーザーは製品目標の戦闘をElona Mobileに近い「通常戦闘は自動、大技skillは手動」と明示した。Prototype Bの手動戦闘は実装事実として残るが、目標仕様は手動移動／位置取り＋条件付き自動通常攻撃＋手動大技へ更新された。
 - ユーザーはvisual ceilingをhigh-end PC前提のfrontier-quality master sceneに置き、iPhone／lower-specは同じart sourceから派生するquality tierとする方向を確認した。これは目標方向の確定であり、WebGPU／true HDR実装、commercial-quality達成、Steam公開の確認ではない。
+- 2026-08-01、ユーザーはAI concept A〜EのうちCをVisual North Starとして選んだ。high-density voxel／rich pixel-artのような画面密度、fixed diagonal diorama、HD-2D的なボケ味を評価し、この画面関係をactual gameplayで再現するよう指示した。C画像そのものはliteral pixel art／cube voxel runtime captureではない。
+- Cの主人公／武器に見える中世fantasy driftは採用せず、post-apocalyptic SFへ修正する。最初のcharacter benchmarkは女性型presetとし、種族、性別／gender表現、体格、顔、髪、surface、装備を選べるcharacter creatorへ接続する。女性型は唯一の主人公や能力制限ではない。
 - 自由放浪とworld memoryはユーザー意図に合う上位方向として確認された。
 - 世界の基層は、人類が激減し、識別可能な現代都市が植物、水、動物、新しい生活へ侵食・転用されたpost-apocalypseと確認された。崩壊原因、年代、地域、共同体密度は未決定。
 - playerは既存遺構を復旧するか条件の合う土地を選び、自分の拠点を築く方向が確認された。配置自由度、複数拠点、移転、維持、襲撃の詳細は未決定。
@@ -44,6 +46,7 @@ Last updated: 2026-08-01
 - ユーザーは、都市構造やpartを増やす前に、単純な構造物でも美しく見える画面描写、主人公造形、個別asset、画面構成、UI、光を先に追求し、『NieR:Automata』とcommercial HD-2D級を目標にするよう優先順位を明示した。
 - Visual Fidelity Foundation v0.3をlocal実装した。North Star専用にPMREM IBL、warm key／cool rim／reduced fill、PC露出／fog、探索／戦闘camera composition、cloth／metal／HDR signal material、world-first intro、縮小HUD、debug表示の明示切替を接続した。1280×720／DPR 2で2556×1436、Display-P3、AgX 0.98、half-float MSAA 4、GTAO／bloom／SMAA、PMREM、texture ready、PC touch UI非表示を確認した。strict TypeScript、Vitest 141件、production buildが合格した。public deploy／pushとユーザーart acceptanceは行っていない。
 - AI生成によるVisual North Star conceptをA〜Eの五案作成し、1672×941 PNG、全prompt、SHA-256 manifestをlocal projectへ保存した。比較の結果、Dの単純な交差点構図を、明るい中間調、拡大した主人公／四足同行者、sage／rust衣装と折り畳み半円survey frameで修正したEを暫定North Starにした。fixed-camera VisualCell、rigged GLB、baked PBR／indirect light、GLB／KTX2、AssetDNA／provenance、PC masterからmobile tierへの実装案も文書化した。これはconceptとlocal設計の完了であり、runtime再現、commercial art acceptance、user approval、public deploy／pushではない。
+- 固定cameraのworld X/Yへkeyboard／virtual-stick X/Yを直結すると、上入力が画面斜めへ投影されることをcode上で確認した。screen-relative controlをrendererと共有するcamera basisでworld座標へ回転するlocal実装を追加し、上下左右、analog magnitude、実Three.js camera投影を含むVitest 144件、strict TypeScript、production buildが合格した。Gamepad APIとclick／tap-to-moveはまだ接続していない。
 
 ## Pending confirmation
 
@@ -62,7 +65,7 @@ Last updated: 2026-08-01
 - [ ] Gate Aの半自動戦闘で、target取得、位置取り、build、自動通常攻撃、手動大技がiPhone上でユーザー意図に合うか。
 - [ ] Gate Bで、拠点候補地と機能moduleの選択が自由放浪／world memoryを強め、次回90秒以内に理解できるか。
 - [ ] death／succession、残響基盤、主人公形式、同行者summer scopeの設計提案がユーザー意図に合うか。
-- [ ] literal high-density voxel、semantic voxel surface、stylized low-polyを同条件で比較した結果、どのvisual identityを採るか。
+- [ ] 選定済みconcept Cのhigh-density micro-voxel知覚を、96-cell級女性default preset、SF装備、character variation、実際のanimation／scroll／combatを持つrealtime Beauty Cellで再現し、ユーザーのart acceptanceを得られるか。
 - [ ] PC UltraのWebGPU／HDR、KTX2、Visual Benchmark Scene、AssetDNA、Causal World Cellが知覚品質、制作効率、gameplay改善へ実際につながるか。
 - [ ] PC masterから派生したmobile tierがiPhone 16 Pro上で操作視認性、performance、発熱の条件を満たすか。
 - [ ] North Star routeの自然侵食現代都市第一候補がユーザーにrecognizableで魅力的と評価され、さらに商業reference級の一画面へ到達するか。local候補は実装済みだが、commercial art acceptanceは未確認。
@@ -71,7 +74,7 @@ Last updated: 2026-08-01
 - [ ] Visual Fidelity Foundation v0.3のlighting／camera／UI統合がユーザーのcommercial benchmarkへ十分近づいたか。現主人公のliteral voxel造形はlocal visual reviewでも次の最大課題であり、commercial-quality達成とは確認していない。
 - [ ] Counter cutterとBreach driverが実際の試遊で、DPS以外の位置取り、risk、timingの差として感じられるか。
 - [ ] PC UltraのWebGPU／HDR候補が、現WebGL2 half-float post stackより知覚品質で勝つか。同条件比較は未実施。
-- [ ] Visual North Star concept Eの画面構成、明るさ、主人公のsurvey motif、四足同行者、hybrid production grammarがユーザーの理想方向として採択されるか。採択後もBeauty Cellのactual gameplayで再現できるかは別gateとする。
+- [x] Visual North Starとしてconcept Cの画面方向をユーザーが採択した。runtime Beauty Cellで同等の画面を再現できるかは別gateとする。
 
 ## Rule
 

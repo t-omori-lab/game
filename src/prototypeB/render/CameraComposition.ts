@@ -23,9 +23,55 @@ export interface CameraComposition {
 
 export type CameraCompositionProfile = "baseline" | "north-star";
 
+export interface FixedCameraOffset {
+  readonly x: number;
+  readonly y: number;
+  readonly z: number;
+}
+
+export interface MovementVector {
+  readonly moveX: number;
+  readonly moveY: number;
+}
+
+/** Shared by rendering and screen-relative controls so their axes cannot drift. */
+export const FIXED_CAMERA_OFFSET: FixedCameraOffset = Object.freeze({
+  x: 510,
+  y: 680,
+  z: 510,
+});
+
 const EXPLORE_LOOK_AHEAD = 46;
 const COMBAT_TARGET_WEIGHT = 0.38;
 const MAX_COMBAT_OFFSET = 72;
+
+/**
+ * Rotates screen-space input onto the ground plane of the fixed camera.
+ *
+ * `screenY` follows DOM/gamepad convention: negative is screen-up. The
+ * simulation continues to own world X/Y, so replays and collision remain
+ * independent of the renderer while Up/W always moves visually upward.
+ */
+export function screenMovementToWorld(
+  screenX: number,
+  screenY: number,
+  cameraOffset: Pick<FixedCameraOffset, "x" | "z"> = FIXED_CAMERA_OFFSET,
+): MovementVector {
+  const offsetLength = Math.hypot(cameraOffset.x, cameraOffset.z);
+  if (offsetLength <= Number.EPSILON) {
+    return { moveX: screenX, moveY: screenY };
+  }
+
+  const rightX = cameraOffset.z / offsetLength;
+  const rightY = -cameraOffset.x / offsetLength;
+  const downX = cameraOffset.x / offsetLength;
+  const downY = cameraOffset.z / offsetLength;
+
+  return {
+    moveX: screenX * rightX + screenY * downX,
+    moveY: screenX * rightY + screenY * downY,
+  };
+}
 
 /**
  * Keeps the hero out of a mechanically centered framing while remaining a

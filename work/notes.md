@@ -280,6 +280,23 @@
 - accepted packはAssetDNA、StyleProfile、GameplayContract、SHA-256、tool／generator version、prompt／spec、license review、人間修正、validation、採否理由を持つ。runtime AIはphysics、collision、damage、合成可否を決めない。
 - 最初の実装単位はBeauty Cell一件。road、wall、shelter、rain collector、water、garden、hero、quadruped robot candidate、enemyだけを同じE cameraで作り、2560×1440のidle／move／combat／wet frameをuser reviewする。
 
+## 2026-08-01 — Concept C direction lock v0.5 working notes
+
+- ユーザーはA〜EからCを正式選択。評価点は、high-density voxel／pixel-artに感じられる画面密度、fixed diagonal diorama、HD-2D的な被写界深度。Cの画面関係を実playへ再現する。
+- Cは生成prompt上も実画面上もliteralなpixel sprite／個別cube voxelではない。小型3D造形、高密度surface、orthogonalな都市部品、俯瞰縮小、baked light、wet material、DOFが「上質なdot／miniature」の印象へ統合されている。実装ではこの知覚結果をcontractにする。
+- 3D realtimeにする意味は、character creator、装備hack-and-slash、全方向animation、同行者交換、dynamic combat light、連続scroll／occlusion、拠点の状態変化にある。静的な間接光、far detail、細草、道路wearまで毎frame計算する意味はなくbakeする。
+- high-density characterは一cell一Object／draw callにせず、96〜160 cell程度のsource volumeをhidden-face／surface mergeし、semantic part／bone weight、material atlas、LODを付けたoptimized mesh／GLBへcompileする。現24×32×16 heroはfallback／blockoutであり目標密度ではない。
+- Cの白髪、長coat、青い直刀はgeneral fantasy／anime RPGへ寄る。構図／scale／poseは保持し、都市作業服、hard-shell protector、utility harness、電源、heat sink、sensor、service connectorを持つpost-apocalyptic SFへ置換する。武器は剣ではなくsample cutting／defense用resonance cutter等のtechnical toolとして機構を見せる。
+- initial character creatorのdefault presetは女性。唯一のcanon protagonistにはせず、humanoid rig family上でspecies module、body frame、face／hair、gender identity／presentation、voice／pronoun、palette、augment、equipment slotを分離する。non-humanoid／multi-arm等は別rig familyへ送る。
+- DOFはCより強めてよいが、simple BokehPassだけでactor／enemyまで一律にぼかさない。depthにactor／interaction maskを加え、hero 0〜0.75px、同じcombat plane最大1.5px、far 4〜6px、foreground最大8pxを2560×1440の開始候補にする。combat時はfocus bandを30〜50%広げる。
+- Three.jsにはWebGL `BokehPass`がありfocus／aperture／maxblurをruntime更新できる。見た目spikeには使えるが、最終gameplay DOFはactor／interaction保護を追加する。公式: https://threejs.org/docs/pages/BokehPass.html
+- OCTOPATH TRAVELER II公式interviewでも、mapは高密度化しdynamic lightを適用、characterは2D pixel、backgroundはほぼ3D、移動時camera固定で一画面内の探索誘導を設計している。本作はcharacterも3D micro-voxelにするが、「modern technologyでpixel-art memoryをrich化する」構造は実在例がある。公式: https://www.unrealengine.com/developer-interviews/octopath-traveler-ii-builds-a-bigger-bolder-world-in-its-stunning-hd-2d-style?lang=ja
+- 現camera offsetはworld X/Zとも+510の45度方位。一方、現controlsはscreen X/Yをsimulation world X/Yへ直結していたため、上入力が画面斜めへ出る懸念は正しい。
+- `screenMovementToWorld`をcamera ground basisと同一moduleへ追加。screen-up `(0,-1)`をworld `(-√1/2,-√1/2)`、screen-right `(1,0)`をworld `(+√1/2,-√1/2)`へ回転し、analog magnitudeを維持する。rendererも同じ`FIXED_CAMERA_OFFSET`を参照する。
+- keyboard／virtual stickはsimulationへ渡す直前にscreen-relative変換済み。future gamepadは同じcontrol frameへaxisを入れる。future click／tap-to-moveはscreen rayをground／navigationへ落とすため別方式で解決する。現prototypeにGamepad APIとclick-to-moveはまだ未実装。
+- unit evidence: camera basisの数値、analog magnitude、actual Three.js camera projectionでUp／Rightが対応screen edgeへ動くことをtest化。focused camera／controls 11 testsとstrict TypeScriptが合格。
+- final local verification: Vitest 21 files／144 tests、strict TypeScript、Vite production buildが合格。buildは既存の500 kB超chunk warningを出すが失敗ではない。public deploy／pushは行わない。
+
 ## 2026-08-01 — North Star Surface Pass v0.2 working notes
 
 - 判断レベルは引き続き`Revise one thing`。今回直すのは大面積surfaceの平坦さであり、gameplayやrenderer方式は広げない。

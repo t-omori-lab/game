@@ -8,9 +8,16 @@
     "modelVersion": "not exposed by tool",
     "seed": "not exposed by tool"
   },
-  "status": "art-direction candidates only",
+  "status": "user-selected art-direction reference; not a runtime asset",
   "runtimeAsset": false,
   "commercialArtAcceptance": false,
+  "selectedNorthStar": {
+    "assetId": "C",
+    "authority": "user selection",
+    "selectedAt": "2026-08-01",
+    "interpretation": "perceptual target for high-density micro-voxel realtime 3D, baked static density, and gameplay-safe multi-layer depth of field",
+    "notEvidenceOf": "literal voxel topology, runtime implementation, or commercial-quality completion"
+  },
   "promptSource": "README.md",
   "sourceReference": {
     "kind": "local gameplay screenshot",
@@ -39,7 +46,7 @@
       "width": 1672,
       "height": 941,
       "sha256": "9190e60398b794f5e423e40f9084f1988a7c2b055d06304e4aee43c3fce57e02",
-      "decision": "candidate"
+      "decision": "user-selected visual North Star"
     },
     {
       "id": "D",
@@ -47,7 +54,7 @@
       "width": 1672,
       "height": 941,
       "sha256": "a3b16647bf23377570e259f5bda5b9c2dce0683d465fc6d242ac8dc2c41490e1",
-      "decision": "superseded by E"
+      "decision": "comparison candidate"
     },
     {
       "id": "E",
@@ -55,7 +62,7 @@
       "width": 1672,
       "height": 941,
       "sha256": "462643fb23832eb51d54313284c54f93445589f291d1e614be6088ae366daf2a",
-      "decision": "provisional visual North Star"
+      "decision": "comparison candidate"
     }
   ]
 }

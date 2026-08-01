@@ -1,7 +1,7 @@
 # 設計統合案: 世界記憶型・放浪生活ハクスラ
 
 Last updated: 2026-08-01  
-Status: design synthesis v0.2 — 確定方向と未検証の実装案を分離
+Status: design synthesis v0.3 — 確定方向と未検証の実装案を分離
 
 ## 0. この文書の結論
 
@@ -37,7 +37,7 @@ Prototype Bは、手動action、scroll探索、固定俯瞰表現、一回の依
 
 `確定要求を中心に、一部を設計解釈として明記`
 
-- `設計解釈`: 主人公は世界を救う運命を初めから背負った英雄ではなく、仕事、装備、人間関係、生き方を選ぶ旅人である。主人公像自体は未決定。
+- `確定方向`: 主人公は世界を救う運命を初めから背負った英雄ではなく、仕事、装備、人間関係、生き方を選ぶ旅人である。最初のbenchmarkは女性型presetだが、完成版では種族、性別／gender表現、体格、顔、髪、surface／色、身体拡張、装備をcharacter creationで選ぶ。固有名、出身、過去、具体的な選択数は未決定。
 - `確定要求`: playerは移動、接敵、位置取り、撤退を担い、通常戦闘は自動、大技skillは手動で発動する。固定arenaの常時自動遠隔攻撃は中心にしない。
 - `設計解釈`: 依頼に従うだけでなく、噂を追う、遺跡へ寄る、商売する、遺品を取り戻す、危険を避けるなど、自分で今回の目的を決められる。
 - `確定要求`: 既存の遺構を復旧するか条件の合う場所を選び、持ち帰った資源で自分の拠点を築く。
@@ -271,6 +271,7 @@ type BaseEventPayload = {
 mobile操作はbutton数を増やさない。
 
 - 左手: movement stick。
+- 固定の斜め俯瞰cameraでも移動はscreen-relativeとする。keyboard／virtual stick／将来のgamepadの上入力を画面上方のground basisへ変換してからsimulationのworld X／Yへ渡し、world軸に直接割り当てない。
 - 右手主操作: 有限resourceの大技。押す意味のない通常攻撃buttonは置かない。
 - tap enemy／脅威方向入力によるtarget優先上書きはGate Aで比較する。
 - 右手副操作: 防御／回避を手動で残す案。位置取りと装備へ統合する案と比較する。
@@ -609,11 +610,11 @@ Wave Function Collapseは、隣接patternを整える能力は高いが、依頼
 
 ### 10.1 結論
 
-最もrichな画面は、全要素を高polygon 3Dにすることではない。**固定cameraをbake可能性へ変え、dynamicなものだけを高品質3Dで残す、art-directed hybrid 2.5D**をPC Ultra masterとする。mobileは同じart source、camera、material ID、depth、collisionを共有し、render scale、shadow、foliage、post、texture解像度を順に縮退する。
+最もrichな画面は、全要素を高polygon 3Dにすることではない。Concept Cをvisual North Starとし、**主人公、同行者、enemy、武器、interactionを高密度micro-voxel／上質なpixel-artの知覚を持つrealtime 3D、固定worldをbaked light／PBR surface／depth proxyで統合するart-directed hybrid 2.5D**をPC Ultra masterとする。mobileは同じart source、camera、material ID、depth、collisionを共有し、render scale、shadow、foliage、DoF、texture解像度を順に縮退する。
 
 ```text
 Realtime 3D:
-  主人公、enemy、同行者、item、武器、interaction形状、low-poly occluder proxy、contact shadow、effect
+  高密度micro-voxel surfaceの主人公／enemy／同行者、item、SF武器、interaction形状、low-poly occluder proxy、contact shadow、effect
 
 Baked / tiled 2.5D:
   ground / mid / roof / foreground層、道、建物面、遠景、静的影、間接光、汚れ、植生群、生活小物群
@@ -680,32 +681,23 @@ Steam包装はGate A＋B合格後にElectronとTauri等を同じacceptance test�
 
 ## 11. 主人公と同行者を断然良くする生成design
 
-### 11.1 表現方式は三案を同条件で決める
+### 11.1 Concept Cの表現方式を実装する
 
-`設計提案・未決定`
+`確定方向。runtime再現は未検証`
 
-一辺16のcube集合をそのまま描画する方式では、密度を増やしてもMinecraft的な表面と硬いanimationが残る。ただしsemantic voxelも既定路線にはしない。三案すべてで開始町を作るのは制作過多なので、二段階で決める。
+五つの外部visual conceptからCをNorth Starに選定したため、literal high-density voxel、semantic voxel surface、stylized low-polyの方向比較は終了した。ただしCのPNG自体はpixel-art screenshotでも実在rendererの出力でもない。固定斜め俯瞰、高密度な段差形状、PBR material、baked／dynamic light、接地、植生、奥行き別のDoFに分解し、actual gameplayでその関係を再現する。
 
-1. **C0 blockout comparison** — 主人公、同行者、地面／遺構の小背景vignetteだけを、同じcamera、light、短いanimation、effect、PC Ultra条件で三案比較する。
-2. **C1 reference scene** — C0で勝った一案だけを、主人公、同行者、開始町一画面のreference qualityへ仕上げる。
+主人公の24×32×16 recipeをそのまま拡大した「cubeで作った人形」は採用しない。選定後のproduction grammarは次とする。
 
-C0で比較する三案:
+- 主人公、人型同行者、enemyは高密度semantic micro-voxelを正本とし、一つのindexed skinned surfaceへcompileする。cell一つをruntime object／draw callにしない。
+- initial masterは主人公の高さ96 authored cellsを基準とし、現行v2のaxis 64／32³ volume capは残したまま、16³ chunk単位のsparse source schemaを別に作る。128 cellsはcreator接写の将来上限候補であり、初期必須にしない。
+- skin／cloth／hairはsurface netsまたはcontrolled topologyをhalf-cell精度へquantizeし、機械／gear／武器はhidden-face、material-aware greedy surface、selective bevelを使う。
+- material境界、bone weight境界、意図した段差では面をmergeせず、corner AO、weighted normal、micro-normalで小さなfacetの光を保つ。
+- body、顔、髪、内着、外着、保護具、back gear、武器、種族固有部位はmodule化し、shared skeleton、fit profile、occlusion／erase mask、socketで交換する。
+- 人型変形部は既知rigと変形用weightを持つcontrolled templateを正本にする。hard-surfaceは原則rigid weight、肩・肘・膝と布の一部だけsoft weightにする。
+- PC Ultraの主人公目安は35〜60k triangles／48 bones以下。PC Highは15〜28k／36 bones、mobileは同じsource volumeからsilhouette／material保護付きdownsampleを行い3〜14k／32 bones以下へ縮退する。
 
-1. literal high-density voxel。
-2. semantic voxel volumeから作るsurface。
-3. stylized low-poly＋painted／PBR surface。
-
-semantic volumeを使う場合の安全な役割:
-
-- semantic partごとのoccupancy／volumeを作る。
-- surface nets、dual contouring、部位別merged meshは体型blockout、hard-surface、prop、terrainの候補生成に使う。
-- silhouetteを壊さない範囲でbevel、weighted normal、material boundaryを入れる。
-- 角を残す箇所と滑らかにする箇所をpart tagで制御する。
-- 服、装備、髪、sensor、repair patchを別layerにする。
-- 主人公、人型、犬、猫の変形部は、既知rigと変形用edge loopを持つ人手制作template／modular topologyを正本にする。
-- 4〜8方向animationとsignature poseをrigまたはpart transformで作る。
-
-semantic案を採る場合も、結果は「cubeで作った人形」ではなく、**pixel／voxelの論理で設計された小さな立体character**を目指す。生成しやすさではなく、silhouette、変形、surface、画面整合、制作修正時間の総合で選ぶ。
+この方式であれば、fixed cameraでもscroll中のdepth／occlusion、装備交換、体格や種族のvariation、skeletal animation、dynamic shadow、濡れ／effectに同じ立体assetを使える。2D spriteの方向／装備／actionの全組合せを手作業で増やすより、本作のcharacter creationと世界生成に適する。
 
 ### 11.2 Semantics-First Asset Compiler
 
@@ -780,15 +772,36 @@ type MaterialGenome = {
 
 ```ts
 type CharacterGenome = {
+  schemaVersion: "character-genome/1";
   stableId: string;
+  revision: string;
   styleProfileVersion: string;
   role: GameplayRole;
   bodyPlan: "biped" | "quadruped" | "floating" | "wheeled" | "custom";
+  rigFamilyId: string;
+  speciesId: string;
+  bodyFrameId: string;
+  identity: {
+    displayName: string;
+    genderIdentityId: string;
+    presentationId: string;
+    pronounSetId: string;
+    voiceId: string;
+    originId: string;
+  };
   proportions: ProportionSpec;
+  morphology: {
+    faceId: string;
+    skinOrShellId: string;
+    eyeModuleId: string;
+    earHornTailModuleIds: readonly string[];
+    augmentationModuleIds: readonly string[];
+  };
   silhouetteKeys: readonly SilhouetteKey[];
   faceOrSensor: FaceSpec;
   locomotion: LocomotionSpec;
   semanticParts: readonly PartSpec[];
+  appearanceModules: Readonly<Record<CharacterSlotId, StableAssetId>>;
   materialSlots: readonly MaterialSlot[];
   paletteRoles: PaletteRoleMap;
   asymmetry: readonly AsymmetrySpec[];
@@ -801,6 +814,8 @@ type CharacterGenome = {
 };
 ```
 
+player用はこのgenomeに保存したstable ID／revisionから承認済みmoduleを解決する。generated meshそのものをsaveの正本にしない。最初は`humanoid-v1`と少数のdiscrete body frameを使い、大きく骨格が異なる種族は別rig familyへ分ける。性別／gender、visual presentation、body frame、voice、pronounを独立fieldとし、能力、職業、装備可否は別のGameplayContractがない限り変えない。詳細は[CHARACTER_CREATOR_CONTRACT.md](./CHARACTER_CREATOR_CONTRACT.md)に定める。
+
 ### 11.4 制作flow
 
 1. **Role brief** — 戦闘、探索、生活、性格、加入経緯を先に書く。
@@ -812,25 +827,21 @@ type CharacterGenome = {
 7. **Topology／rig gate** — deformation、anchor、collision、LOD、UV、material数を検査する。
 8. **Material bake** — albedo、normal、roughness、emissiveを作りKTX2へ変換する。
 9. **Animation and sound** — idle、移動、auto-basic、manual skill、必要ならguard／dodge、hurt、interaction、signature actionを作る。
-10. **Actual-view acceptance** — iPhone実機の`window.innerWidth／innerHeight`、`visualViewport`、safe areaを記録し、その実画面で前後左右、明所、影、戦闘effect中を人が判定する。
+10. **Actual-view acceptance** — まず2560×1440のPC Ultra gameplay captureで前後左右、明所、影、戦闘effect、DoF、装備variationを人が判定する。その後、同じassetから派生したiPhone tierで`window.innerWidth／innerHeight`、`visualViewport`、safe area、視認性、performanceを別に判定する。
 
 2025〜2026年の個別研究は、それぞれPBR、polygon budget、UV／normal bake、automatic rigの一部を前進させている。一つの公開toolがhero制作をend-to-endで保証しているわけではなく、最新surveyもtopology、UV、PBR、rig、physics、scene assemblyまで含むproduction-ready gapが残ると整理している（[production-ready 3D survey](https://arxiv.org/abs/2604.23629)、[AssetGen](https://arxiv.org/abs/2605.26137)）。主人公と主要同行者は、AI meshを無検査で完成品にせず、**conceptと部品候補を生成し、構造は自前のgenomeとvalidatorで所有する**。
 
 ### 11.5 主人公のart gate
 
-`設計提案。主人公設定そのものは未決定`
+`女性型default presetとcharacter creationは確定。顔、色、固有名、種族数は未決定`
 
 最初に「何者か」が武器なしでも読めるrole briefを作る。仮の職能は**回収品を運びながら道、機械、水場を修理する辺境の旅仕事人**とし、華美な軍人や選ばれた英雄の記号を避ける。衣服には日除け、雨、工具、荷重分散、修理を理由として持たせ、旅の履歴を継ぎ布、交換部品、擦れ、所有札で示す。
 
-同じbody／animationへ着せる最初の三concept:
+最初のasset／gameplay benchmarkは`preset.player.fieldworker_f_01`とし、女性型presentationの標準humanoid frame、通常cameraで読める髪、都市作業着由来の非対称な短いfield jacket、hard-shell protector、utility harness、計測sensor、repair tag、機能interfaceの読めるtechnical packを持たせる。これはpipelineの正本となるdefault presetであり、全playthroughの固定heroineではない。
 
-| Concept | 一形状 | 一色 | 読ませる生活／職能 |
-|---|---|---|---|
-| A「風受けの修理屋」 | 片側だけ大きい三角の肩布／雨除け | 黄土amber | 日差し、雨、荷物を受ける。布の補修線が旅の地図に見える |
-| B「環状回収具の旅人」 | 背中から片側へずれるbroken ring | 青緑verdigris | 巻上げ、測量、運搬を一つのframeへまとめた仕事道具 |
-| C「長脚の境界測り」 | 膝下と測量rodが作る二本の長い縦線 | coral red | 悪路を越え、地面とsignalを測る軽装のfield worker |
+初期の近接具は中世fantasyの装飾剣／青い発光刃ではなく、回収物の切断、sample採取、障害物加工、防衛を兼ねsurvey cutterとする。交換可能なceramic edge、power／駆動経路、sensor、heat sink、service connector、repair latchのうち複数を形で読ませ、emissiveは状態表示と作用点に限る。
 
-この名称や色はcanonではない。front／back／side、武器なし、通常立ち、signature pose、最終cameraサイズで比較し、次を満たす一案だけを採る。
+front／back／side、武器なし、通常立ち、signature pose、最終cameraサイズで次を満たすまで修正する。
 
 - 画面上の小さなsilhouetteだけで、頭、胴、左右の脚、武器、向きが読める。
 - 3色程度の大きなcolor blockと、一つのsignal accentで識別できる。
@@ -1075,7 +1086,7 @@ Runtime browser / PWA
 |---|---|---|---|
 | A: Position-and-build | iPhoneで条件付き自動通常戦闘と手動大技が気持ちよく、buildが位置取りと介入判断を変える | 既存mapの一部、敵2、weapon frame 2、module 4〜6、build最低2／目標3、manual skill 1〜2、loot UI | 2 buildの差を説明でき、名付き敵は立ち止まり／大技なしでは安定勝利できない。第三buildは目標枠 |
 | B: Roam／settle／remember | 自分で居場所を選び、その結果が次回の外見と遊びを変える | 同じ小map、二つの自己目的＝拠点候補2、機能module選択2以上／設置1、persistent variable 1〜2 | 候補地／moduleを選び、二回目90秒以内に因果を認識して行動を変える |
-| C: Visual benchmark | 主人公、同行者、町が一つの商業品質方向へ収束する | C0は主人公＋同行者＋小背景vignetteの三表現blockout。C1は勝った一案だけで開始町一画面 | PC Ultra desktopでC0の一案を採り、C1のsilhouette、material、depth、生活感をreviewする。その後、派生mobile tierで操作視認性とperformanceを別に合格させる |
+| C: Visual benchmark | Concept Cの高密度micro-voxel知覚、SF character／武器、自然侵食都市が一つの商業品質方向へ収束する | 女性型default preset＋同行者candidate＋小背景vignetteをrealtime 3D hybridで作る | PC Ultraのactual gameplayでsilhouette、material、depth／DoF、光、生活感、screen-relative操作をreviewする。その後、同じassetから派生mobile tierを別に合格させる |
 
 内部gameplay proofで必須なのはA＋B。Cは並行制作するが、commercial art pass全体をA／Bの検証blockerにしない。ユーザーへ目標品質の完成候補として公開する版はA＋B＋C＋release durabilityを必要とし、A／Bが弱い状態をCの美しさで、Cが弱い状態をA／Bの強さで完成扱いにしない。
 
@@ -1166,12 +1177,12 @@ Experience gates:
 2. **時間構造** — 完全realtimeか、短いpause／tickを認めるか。
 3. **拠点自由度** — 有効区域内の自由設置、slot式候補地、複数拠点／移転をどこまで許すか。
 4. **死** — 完全死亡、行方不明／救出、重傷復帰のどれをbaselineにするか。
-5. **主人公** — 固有主人公一人を深く描くか、複数旅人の人生を巡らせるか。
+5. **主人公の継承** — character creationした一人を継続するか、死亡／引退後に複数旅人を巡らせるか。具体的な種族／body frame／voice／origin数も未決定。
 6. **世界法則** — 崩壊原因、経過年数、地域、残響基盤、妖怪、旧文明技術の関係をどうするか。
 7. **遠距離攻撃** — 自動通常攻撃、有限resourceの手動大技、同行者支援のどこへ置くか。
-8. **同行者／visual** — 夏版を加入proof／交代proofのどこまで作り、三表現のどれを採るか。
+8. **同行者／visual** — 夏版を加入proof／交代proofのどこまで作り、Concept Cのproduction grammarを人、動物、robotの別rig familyへどこまで展開するか。
 
-推奨する次の実装順は、まずGate C0／C1のPC Ultra North Star候補を一画面に限定して作り、その同じsceneへGate Aの半自動combat／buildとGate Bの自己目的／拠点／world memoryを接続する。release合格にはA＋B＋Cをすべて要求する。自由放浪、world memory、人類激減、自然に侵食された現代都市、自築拠点という上位方向は確認済みである。targeting、defense、建築粒度、event-driven worldの詳細、world graph＋local map、複数旅人save、同行枠1は設計提案であり未検証。semantic voxel surfaceもGate Cの一候補であり既定路線にしない。runtime AIなしだけは、初版scopeの安全なdefaultとする。
+推奨する次の実装順は、まずConcept CのPC Ultra reference cellを一画面に限定し、96-cellの女性型default preset、SF survey cutter、同行者candidate、depth-of-fieldを実画面で成立させる。その同じsceneへGate Aの半自動combat／buildとGate Bの自己目的／拠点／world memoryを接続する。release合格にはA＋B＋Cをすべて要求する。自由放浪、world memory、人類激減、自然に侵食された現代都市、自築拠点、Concept C、character creationという上位方向は確認済みである。targeting、defense、建築粒度、event-driven worldの詳細、world graph＋local map、複数旅人save、同行枠1、具体的なcreator選択数は設計提案または未決定。runtime AIなしだけは、初版scopeの安全なdefaultとする。
 
 ## 18. Sources reviewed by evidence type
 

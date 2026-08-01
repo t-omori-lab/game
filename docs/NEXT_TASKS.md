@@ -12,9 +12,9 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
   - [ ] 現都市cellをcommercial reference級へ引き上げる。
     - [x] Surface Pass v0.2でasphalt／concrete 1024²、roof 512²のalbedo／normal／roughness、面別UV、歩道目地、provenance／digestを実装し、actual-cameraでmacro反復と骨材格子を改稿した。
     - [x] Visual Fidelity Foundation v0.3で、都市partを増やさずPMREM IBL、direct／rim／fill、露出／fog、PC camera、cloth／metal／signal material、world-first intro、縮小HUDを実装し、actual browserで一度改稿した。
-    - [x] Visual North Star concept A〜Eを生成・比較し、明るい中間調、normal gameplay scaleで読めるstylized 3D protagonist／四足同行者、fixed-camera baked hybrid worldを持つEを暫定targetにした。prompt、SHA-256、実装案をprojectへ保存した。これはruntime実装やuser art acceptanceではない。
-    - [ ] 次はEを基準に、Blender正本のstylized modular rigged hero一体、四足robot candidate一体、武器一つを同じcamera／light／normal gameplay sizeで作る。顔、髪、sage／rustの非対称衣装、折り畳み半円survey frame、cyan-amber blade、silhouette、deformation、signature motionをactual-cameraで採否する。
-    - [ ] 単純な道路、壁一枚、shelter、rain collector、水、植生、主人公、同行者candidate、敵一体だけのBeauty Cellを切り出し、建築密度なしでも昼光、接地、material差、空気、色、UIが成立することを2560×1440の静止画と操作captureでgate化する。
+    - [x] Visual North Star concept A〜Eを生成・比較し、ユーザーがCを正式targetに選んだ。Cのhigh-density voxel／rich pixel-art知覚、fixed diagonal diorama、HD-2D的DOFをrealtime 3D hybridで再構築する。prompt、SHA-256、実装案をprojectへ保存したが、runtime実装やcommercial art acceptanceではない。
+    - [ ] 次はCを基準に、高さ96-cell級の女性型default preset、SF survey cutter、hair／fieldwear一式を`humanoid-v1`へcompileし、別gender presentationと別humanoid speciesを同じrig／clip／socketで交換できる`CharacterGenome` pilotにする。
+    - [ ] 単純な道路、壁一枚、shelter、rain collector、水、植生、主人公、同行者candidate、敵一体だけのC Beauty Cellを切り出し、建築密度なしでも昼光、接地、wet material、空気、色、UI、foreground／far DOFが成立することを2560×1440の静止画と操作captureでgate化する。主人公、敵予兆、interactionはblurしない。
     - [ ] 上のhero／simple-cell gateをユーザーが選択した後にだけ、高架／駅のdeck、縁、支持体、設備、植生縁の構造分節を再開する。
     - [ ] `AssetPackLoader`、GLTFLoader＋Meshopt、KTX2Loader、generated precache manifest、approved voxel fallbackを実装する。runtime同期生成をversioned baked asset＋非同期preloadへ移し、初回scene生成のmain-thread停止を残したままproduction採用しない。
   - 自然に侵食されたrecognizableな現代都市一画面、精密な主人公、同行者候補一体、格下一体、名付き敵一体、遺物effectを同じ固定cameraへ置く。
@@ -45,7 +45,7 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
 - [ ] North Star Scene v0.1の内部workstreamとして、PC Ultra masterの描画architectureとcharacter方式を決め、その後iPhone 16 Proのtierを作る。
   - [x] WebGL2上のhalf-float render target、4× MSAA、GTAO、抑制したbloom、SMAAを既存sceneで動かす技術候補を実装した。WebGPU／HDR profile比較とart採択は未実施。
   - [x] 既存24×32×16主人公をsemantic partsへ分け、weapon socketと7種poseをPC Ultra routeで動かした。これは最終hero造形ではない。
-  - C0では主人公、同行者、草地／現代遺構の小vignetteをliteral high-density voxel／semantic voxel surface／stylized low-polyで比較し、C1では勝った一案だけをreference qualityへ仕上げる。
+  - C0の表現比較はユーザーによるconcept C選択で完了した。C1ではhigh-density micro-voxel authoring sourceを個別cubeではなくoptimized skinned／merged 3D surfaceへcompileし、C Beauty Cellだけをreference qualityへ仕上げる。
   - 同じC1 sceneを`pc-ultra-webgpu-hdr`／`pc-high-webgpu-sdr`／`webgl2-p3`／`webgl2-srgb`で比較する。
   - PCでは2560×1440相当を起点に、character、surface、indirect light、shadow、AA、postの知覚品質を先に詰める。次にiPhoneの実`visualViewport`、safe area、internal scale、KTX2、MSAA、shadow、限定bloomを決める。
   - Done when: PC masterのvisual方式とhero表現が決まり、同じart sourceからmobile tierへ縮退できる。
@@ -53,6 +53,11 @@ Active P0は`North Star Scene v0.1`のみ。以下のcontract、world loop、生
   - version付き`StyleProfile`と、gameplay role、silhouette、semantic parts、material、rig、socket、power／heat／mass、wear、mobile budgetを一つのschemaへ持たせる。
   - AI 3Dはpart／static candidateに限定し、geometry、rig、collision、PBR、actual-camera readability、licenseを検査する。
   - Done when: 同じDNAからgame data、geometry、material、icon、説明、validation reportを生成する一件分のcontractが揃う。
+- [ ] 斜め固定cameraのscreen-relative control frameを全入力方式へ統一する。
+  - [x] keyboard／virtual stickをrendererと共有するcamera ground basisでworld座標へ回転し、cardinal projectionとanalog magnitudeをunit test化した。
+  - [ ] Gamepad APIのleft stick／D-padを同じscreen axisへ接続し、dead zoneとlast-input-device表示を追加する。
+  - [ ] click／tap-to-moveはRaycasterでground／navigationのworld位置へ解決し、CSS／device pixel座標をsimulationへ直接渡さない。
+  - Done when: keyboard、virtual stick、gamepadの上入力が画面上へ進み、8方向の速度が等しく、tap destinationへ到達してもcamera方位による逆転がない。
 - [ ] 夏版の生成実装は、手作業のWorld Cell一件＋最小schema／参照検査／provenanceへ限定する。
   - 汎用geometry／PBR／rig／sound compiler、candidate registry UI、自動repair agentはGate A＋B合格後へ送る。
   - Done when: 雨水再生塔cell一件を同じstable IDとGameplayContractで説明・検査でき、tool開発がgameplay proofを遅らせない。

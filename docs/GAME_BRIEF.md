@@ -212,8 +212,8 @@ Gate Bで最初に検証する:
 
 ### Gate C — Visual benchmark
 
-- 主人公＋同行者＋小背景vignetteを三表現で同条件比較し、一案を採用できる。
-- 勝った一案だけで開始町一画面を仕上げ、商業品質方向の基準sceneにできる。
+- 選定済みconcept Cの高密度micro-voxel／stylized 3D hybridを、女性型default preset、SF装備、同行者candidate、小背景vignetteでactual gameplayへ再構築できる。
+- C Beauty Cell一画面をPC Ultra masterとして仕上げ、主人公とactive threatを鮮明に保つ被写界深度、character variation、scroll／occlusionを含む商業品質方向の基準sceneにできる。
 - iPhone 16 Proで10分間、操作不能、500ms級停止、戻せない拡大がない。
 - 選択profileのp95 frame-time目標、safe area、実`visualViewport`、色、発熱観察を記録する。
 

@@ -10,24 +10,29 @@ Generation mode: Codex built-in `image_gen`, 2026-08-01. The current local North
 |---|---|---|---|---|
 | A | [Hybrid HD-2D](ideal-screen-a-hybrid-hd2d.png) | high-resolution baked environment + realtime stylized 3D actors | wet surfaces, water, material realism, natural light | hero is too small; environment production cost is high |
 | B | [Precision micro-voxel](ideal-screen-b-micro-voxel.png) | 80–110-cell characters + dense modular voxel environment | generatable grammar, coherent miniature world, infrastructure detail | hero identity still reads weakly at gameplay scale; density can become noise |
-| C | [Stylized 3D](ideal-screen-c-stylized-3d.png) | modular non-voxel actor meshes + baked hybrid environment | strongest hero silhouette, companion readability, combat composition | generic stylized-RPG drift unless AssetDNA and palette are tightly authored |
-| D | [Recommended synthesis](ideal-screen-d-recommended-synthesis.png) | C actor language + A material/light + B modular environment logic | best target for this project | still a concept; generated hero scale is smaller than the runtime target |
-| E | [Final target refinement](ideal-screen-e-final-target.png) | D corrected for exposure, actor scale, original survey motif, and restrained world-specific markings | strongest current North Star: luminous world, readable hero and companion, implementable simple cell | still an AI concept; final silhouette, topology, animation, material response, and actual-camera play must be authored and accepted |
+| C | [Stylized 3D](ideal-screen-c-stylized-3d.png) | user-selected perceptual target: dense miniature-like realtime 3D + baked hybrid environment | strongest hero silhouette, companion readability, combat composition, and the desired high-density pixel-art impression | the generated raster does not prove literal voxel topology; its medieval-fantasy character drift must be replaced with authored SF equipment |
+| D | [Synthesis comparison](ideal-screen-d-recommended-synthesis.png) | C actor language + A material/light + B modular environment logic | useful production comparison | generated hero scale is smaller than the selected C target |
+| E | [Refinement comparison](ideal-screen-e-final-target.png) | brighter D variant with an alternate survey motif | useful exposure and readability reference | not the selected North Star; its smoother actor language and layout must not overwrite C |
 
 ## Recommendation
 
-Use E as the provisional visual North Star. It is D revised to correct the problems found in the four-way audit:
+Concept C is the user-selected visual North Star. The implementation must reproduce its gameplay frame—camera, actor scale, dense miniature-like forms, material response, light, composition, and stronger HD-2D-like depth separation—rather than use the PNG as a background or assume that the generated image reveals a literal voxel topology.
 
-- brighter middle tones and no global dark vignette, while keeping deep contact and material separation;
-- protagonist and companion enlarged at the same gameplay camera scale;
-- an original survey identity: dark windswept hair, pale sage asymmetrical field coat, rust-orange panel, folded semicircular survey frame, and cyan-amber short blade;
-- only two restrained cyan-and-amber repair/relic marks, so world identity begins without clutter;
-- exploration hero height remains 10–14% of the viewport; combat framing may reach 14–18%;
-- architecture remains simple until light, wetness, water, vegetation, contact, hero, and UI pass the benchmark;
-- companion shown here is a discovered roster candidate, not a mandatory starting partner;
-- UI occupies less than 8% at idle and appears by state, input device, and threat.
+The selected implementation interpretation is:
 
-The final implementation should combine a stylized modular 3D hero and companions with fixed-camera baked environment layers. The precision-voxel route remains useful for props, machines, buildable modules, destruction masks, and procedural authoring, but not as the default final human-character surface unless a later same-scale comparison wins.
+- realtime 3D actors, equipment, companions, threats, occlusion, water highlights, vegetation motion, shadows, and effects;
+- high-density micro-voxel source forms compiled into optimized skinned or rigid meshes, rather than one draw object per cube;
+- baked static density, indirect light, AO, surface detail, distant vegetation, and noninteractive city clutter;
+- gameplay-safe multi-layer depth of field: the hero and relevant actors stay sharp while noninteractive foreground and distance receive more bokeh than C currently shows;
+- an optimistic reclaimed contemporary city, with recognizable modern infrastructure and technically plausible repair/reuse;
+- a young adult female presentation as the default character-creation preset, while sex/gender presentation, body frame, face, hair, palette, and initially humanoid species traits remain selectable;
+- explicitly SF field equipment. The white-haired long-coat and glowing straight-blade appearance in C is reference-image drift, not canon; accepted weapons must visibly communicate a power source, actuator, sensor, cooling path, or service connection;
+- exploration hero height remains 14–17% of the viewport, with a readable companion and threat on the same gameplay plane;
+- screen-relative movement and aim: input follows the visible camera axes, then is deterministically transformed onto the world plane;
+- companion shown in C is one discoverable roster candidate, not a mandatory starting partner;
+- idle UI occupies less than 8% and remains outside world depth-of-field processing.
+
+The exact generation prompts below are retained as provenance for the images. They are not the revised production specification; the implementation authority is the selected contract above and [the Visual North Star implementation document](../../VISUAL_NORTH_STAR_IMPLEMENTATION.md).
 
 ## Prompt set
 

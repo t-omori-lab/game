@@ -1,6 +1,6 @@
 # Iteration Log: ゲーム開発
 
-Active authority: 末尾の`Visual North Star Concept Set v0.4`。それ以前のPrototype B、mobile、手動戦闘、都市part追加の節は履歴であり、現在の優先順位や[GAME_CONSTITUTION](../docs/GAME_CONSTITUTION.md)を上書きしない。
+Active authority: 末尾の`Concept C Direction Lock v0.5`。それ以前のPrototype B、mobile、手動戦闘、都市part追加、暫定Eの節は履歴であり、現在の優先順位や[GAME_CONSTITUTION](../docs/GAME_CONSTITUTION.md)を上書きしない。
 
 ## Historical Iteration: Prototype B — 生活型ハクスラ原型
 
@@ -442,3 +442,53 @@ North Starのgameplayと現代都市の意味を保ちつつ、geometry量へ依
 ### Status
 
 **Completed locally; not deployed; art acceptance pending** — 1672×941の五案、全prompt、SHA-256 manifest、実装設計をproject内へ保存した。manifest JSON、Vitest 21 files／141 tests、strict TypeScript、production build、`git diff --check`、Workspace postflightが合格した。Eを暫定North Starとするが、user art acceptance、runtime再現、public deployは未実施。
+
+---
+
+## Current Iteration: Concept C Direction Lock v0.5
+
+### Trigger
+
+2026-08-01、ユーザーは五案の中からCを選択した。Cの高密度なvoxel／pixel-art的印象、fixed-camera diorama、HD-2D的なボケ味を評価し、「game画面としてこのまま実装して再現する」と指示した。人物／武器が中世fantasyへ寄っている点は修正し、女性characterを最初のbaseにしつつ、種族、性別／gender表現、体格、顔、髪、装備を選ぶcharacter creationを要求した。
+
+### Goal
+
+Cを正式なvisual North Starへ変更し、静止conceptのどの成分をrealtime 3D、baked asset、pixel／voxel shading、depth-of-field postで再現するかを明示する。SF世界とcharacter creationを壊さないcharacter architectureへ接続し、最初の実装sliceを確定する。
+
+### Phases
+
+- [x] Phase R1: Cを原寸で再確認し、現renderer／voxel mesher／post stackとの差を監査する
+- [x] Phase R2: realtime 3Dでの再現可能性、意味、費用、hybrid境界を一次資料とrepo evidenceで決める
+- [x] Phase R3: high-density voxel character creator、SF装備、female base preset、species／body／gender variationのcontractを設計する
+- [x] Phase R4: fixed diagonal cameraに対し、keyboard／virtual stick／future gamepadの上方向がscreen上方向になるcamera-relative input transformを実装・検査する
+- [x] Phase R5: visual North Star、project context、next tasks、outcomes、learningsへユーザー決定を反映する
+- [x] Phase R6: test／build／docs検査、Workspace postflight、exact-scope local commitを完了する
+
+### Current decisions
+
+- 正式North StarはEではなくC。Eは比較履歴へ戻す。
+- C画像はliteralなpixel-art screenshotではない。3D diorama、high-frequency texture／geometry、baked light、dynamic actor／effect、depth-of-fieldを合成したconceptとして分解して再現する。
+- 見た目の目標はCの画面関係を保つ。中世fantasyに見えるcoat／glowing swordはそのまま採用せず、post-apocalyptic SFの材質、工具、sensor、energy／mechanical functionへ置換する。
+- 最初のcanonical presetは女性character。ただし性別を能力値、職業、装備制限へ固定せず、character creatorの一presetとして扱う。
+- character creatorはspecies/body framework、body presentation、face／hair、surface／palette、voice／pronoun、origin、equipmentを分離する方向で設計する。
+
+### Constraints
+
+- CのPNGを背景として貼るだけでは再現と呼ばない。scroll、collision、occlusion、lighting、wetness、actor animation、combat effectが同じ空間で成立すること。
+- high-density voxelはcube一個一draw callにしない。hidden-face／greedy surface、merged geometry、material atlas、LODで実装する。
+- ボケは雰囲気のためにactive gameplay planeを読めなくしない。主人公、敵、予兆、interaction routeはfocus bandへ置く。
+- female baseは唯一の主人公設定ではない。種族／性別／体格の選択肢を後付けskinではなく、最初からsocket、rig family、equipment fitへ反映する。
+- 斜めcameraでも入力はscreen-relativeにする。stick／D-padの上は画面上へ動き、simulationへ渡す直前にcamera ground basisでworld X/Yへ回転する。world座標へ直接割り当てない。
+- public deploy／pushは今回の指示に含めない。
+
+### Error log
+
+| Date | Command | Failure | Resolution |
+|---|---|---|---|
+| 2026-08-01 | `sed src/prototypeB/render/voxelMesher.ts` | file pathを誤り、実体は`src/prototypeB/voxel/mesher.ts` | `rg`結果から正しいmoduleへ読み替えた |
+| 2026-08-01 | `pnpm vitest ...` | pnpm wrapperがregistry metadata取得とmodules purge確認を開始し、network／non-TTYで停止 | installを変更せず、bundled Nodeから既存local `vitest.mjs`／TypeScript／Viteを直接実行した |
+| 2026-08-01 | `node_modules/.bin/vitest` | shell wrapperのPATHに`node`がなく停止 | Workspace dependency loaderでbundled Nodeの絶対pathを解決した |
+
+### Status
+
+**Completed locally; not deployed; C runtime art acceptance pending** — Cの選択、realtime／baked／post境界、character schema、SF修正、screen-relative input、正本更新を実施した。Vitest 21 files／144 tests、strict TypeScript、production build、manifest JSON、`git diff --check`、Workspace postflightが合格。Gamepad API／click-to-moveとC Beauty Cell自体は次sliceで、public push／deployは行っていない。

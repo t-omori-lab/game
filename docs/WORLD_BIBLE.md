@@ -10,6 +10,7 @@ Status: v0.2 draft
 - 遊びの約束と現在の範囲: [GAME_BRIEF.md](./GAME_BRIEF.md)
 - 確定要求、提案中の作品核、次のproof: [GAME_CONSTITUTION.md](./GAME_CONSTITUTION.md)
 - 因果生成とvisual／asset統合案: [DESIGN_SYNTHESIS.md](./DESIGN_SYNTHESIS.md)
+- 主人公のcharacter creationとasset契約: [CHARACTER_CREATOR_CONTRACT.md](./CHARACTER_CREATOR_CONTRACT.md)
 - 実装済み事実と未確認事項: [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md)
 - 開発時generatorの規則: [GENERATION_RULES.md](./GENERATION_RULES.md)
 
@@ -50,7 +51,7 @@ provenance:
     recorded_at: 2026-07-31
 summary: 開始時は単独で、自分の移動、位置取り、撤退、大技の判断を担う旅人。
 open_questions:
-  - 出身、年齢、外見、過去、固有名
+  - 出身、年齢帯、過去、固有名、選択可能な種族／body frameの範囲
 ```
 
 すべての人物、共同体、地図、地域、遺跡、item、武器、monster、同行者、生活要素、音楽参照は、このenvelopeを持つ。AI候補にはさらにseed、generator version、input hash、人間の採否を記録する。
@@ -92,6 +93,8 @@ open_questions:
 ### 4.1 確定
 
 - `person.product.protagonist`: 開始時は単独。移動、接敵、位置取り、撤退、大技、item、最終判断の主体。通常戦闘は装備規則により自動化する。
+- `character.product.creator`: 最初のvisual／gameplay benchmarkは女性型preset。完成版はその一人に固定せず、playerが種族、性別／gender表現、体格、顔、髪、surface／色、身体拡張、装備を選ぶ。これらの表現選択は能力、職業、装備可否へ自動的に結び付けない。
+- `visual.product.protagonist`: concept CをNorth Starとし、高密度micro-voxel／上質なpixel-artの知覚を持つrealtime 3D characterとして描く。従来の24×32×16 recipeや一辺16voxelを最終品質の上限にしない。
 
 ### 4.2 仮説
 
@@ -104,7 +107,7 @@ open_questions:
 
 ### 4.3 未決定
 
-- 主人公と主要人物の固有名、年齢、出身、外見、過去。
+- 主人公と主要人物の固有名、年齢帯、出身、過去。character creatorの具体的な種族数、body frame数、voice／pronoun語彙、origin数、種族がgameplayへ与える差。
 - 人間以外の知性体、身体拡張、network人格の社会的地位。
 - 会話量、relationship段階数、死亡の可逆性。
 
@@ -208,6 +211,7 @@ open_questions:
 - 固定arenaで常時自動遠隔攻撃を眺める形にはせず、武器ごとにtarget取得、成立間合い、攻撃周期、移動拘束、resourceを持つ。
 - 武器差はdamageだけでなく、間合い、速度、impact、resource、危険性、音で判別できるようにする。
 - 強さはrank文字ではなく数値軸で管理する。
+- 主人公のdefault武器／道具はpost-apocalyptic SFの作動原理を形で読ませる。例えばsurvey cutterなら、交換可能な作用刃、電源／駆動経路、sensor、冷却、service connector、修理痕を持ち、中世fantasyの剣と発光だけで記号化しない。
 
 ### 10.2 Prototype Bの実装事実
 
@@ -325,7 +329,7 @@ open_questions:
 
 1. 人類激減と都市崩壊の原因、経過年数、地域、共同体密度。
 2. 正式theme profileと、世界固有法則の範囲。
-3. 主人公、最初の共同体、最初のregionの役割と関係。
+3. character creationで選べる種族／body frame／originの範囲と、主人公、最初の共同体、最初のregionの役割と関係。
 4. 遺物技術の制約、energy源、故障と副作用。
 5. monsterの発生法則と、破壊以外の対処が成立する条件。
 6. 半自動戦闘のtarget、防御／回避、item、遠距離攻撃の手動範囲。

@@ -52,6 +52,9 @@ Last updated: 2026-08-01
 - generated synthesisは、複数案の長所を指定しても、暗いvignette、小さいactor、既視感の強い白髪／白coat／青剣へ収束し得る。normal gameplay scale、mid-tone exposure、避ける組合せ、変更点数、保持するgeometryを明示して再生成すると、実装可能な差分として評価しやすい。
 - 人型の最終surfaceまでliteral voxelへ固定すると、PC masterで求める顔、髪、布、deformation、signature motionの上限が低い。voxel grammarは機械、buildable、damage state、procedural proxyへ残し、人型／動物は既知topologyとrigを持つmodular 3Dを正本候補にすると、同じ生成思想を役割別に使い分けられる。
 - AI生成assetを再現可能なproductionへ接続するには、seedだけでなくraw outputのSHA-256、prompt／spec、tool version、license review、人間修正、validation、採否理由を凍結する。runtimeは承認済みpackを選ぶだけにし、physics、collision、damage、合成可否はdeterministic schemaが所有する。
+- 斜め固定cameraでworld cardinalへinputを直結すると、D-pad／stickの上が画面斜めへ出る。inputをscreen axisとして受け、rendererと同じcamera ground basisでsimulation直前にworld axisへ回転すれば、collision／replayのworld座標を維持しながらcardinalな操作感を作れる。camera offsetと変換basisを別定数にしない。
+- Concept Cのvoxel／pixel-art感はliteral cube数ではなく、小型3D造形、micro-facet、orthogonalな都市形状、俯瞰縮小、wet material、baked light、DOFが統合された知覚である。character creatorと装備換装が中核なら、actorはrealtime skinned 3Dにし、static city densityをlightmap／KTX2／merged shellへbakeする分担に意味がある。
+- character creationは女性／男性というmesh二択ではなく、rig family、species、body frame、gender presentation、face／hair／surface、palette、equipment fitをstable IDで分離すると、default女性presetと多様な旅人を同時に成立させられる。大きく異なるbody planは一つのhumanoid rigへ例外追加せず、後続rig familyへ分ける。
 
 ## Working hypotheses to validate
 
@@ -61,7 +64,7 @@ Last updated: 2026-08-01
 - 人類激減と自然に侵食された現代都市は確認済みの方向だが、魅力は草や廃墟の量だけでは生まれない。旧用途、水／日照／土壌、植生遷移、現在の生活、route、資源を同じ因果から作る必要があるという点は検証仮説である。
 - 人物、monster、item、遺跡を単品生成するより、旧用途、現在資源、actor need、衝突、証拠、複数対処、reward、world mutation、future hookを一つのCausal World Cellとして先に作る方が、装飾的な生成物を減らし、gameplayへ接続しやすい可能性が高い。
 - 主人公／同行者の完成meshを一発生成するより、version付きStyleProfileと、role、silhouette、semantic parts、material、rig、socket、物理budget、wearを持つAssetDNAからgeometryとgame dataをcompileする方が、シリーズ内一貫性、mobile budget、item合成、破損表現を両立しやすい。最新3D／rig生成はpart／static candidateとして比較する。
-- literal high-density voxel、semantic voxel surface、stylized low-polyは、同じcamera、light、animation、effectで比較するまで優劣を確定しない。人型／犬猫の変形meshは、既知rigとedge loopを持つmodular topologyを正本にする案が安全である。
+- Concept Cのhigh-density micro-voxel／stylized 3D hybridをvisual方向として採択した。次の不確実性は方式選定ではなく、voxel-volume-to-skinned-surfaceとgrid-quantized modular meshのどちらが、同じC cameraで変形、装備fit、制作時間、mobile LODを最もよく両立するかである。
 - 最高品質層はPC Ultra masterで比較し、iPhoneは同じsceneから派生するmobile tierとしてWebGPU／HDRを試す。Three.js WebGPURendererはexperimentalであり、API移行だけでは美しさを保証しない。同一Visual Benchmark SceneをWebGPU／WebGL2、HDR／SDR、複数render scaleで実機比較し、baked hybrid、KTX2、character qualityの寄与を分離する。half-float内部照明、P3、HDR outputは別能力として測る。
 - fixed cameraでは、moving character、collision、occlusion、dynamic shadowだけをrealtime 3Dへ残し、地面、道、背景、建物面を高解像度生成／baked layerへ分けることで、見える面へquality budgetを集中できる可能性が高い。まだユーザーのart acceptanceは得ていない。light direction、palette、scale、contact shadowを同一camera previewで検査し、2D／3Dの貼り合わせ感が出ないか確かめる。
 - MSAA、高い内部解像度、AgX、生成textureの組合せがVisual Pass Dより商業HD-2D基準へ近づくかは未確認である。公開後のユーザーreviewをquality gateにする。

@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-01  
 Status: active  
-Phase: Visual North Star Concept Set v0.4 / art direction and implementation planning
+Phase: Concept C Direction Lock v0.5 / realtime hybrid contract and input alignment
 
 ## Purpose
 
@@ -53,6 +53,9 @@ Phase: Visual North Star Concept Set v0.4 / art direction and implementation pla
 - 2026-08-01、ユーザーは都市partの追加を止め、単純な構造でも美しく見えるlighting／material／camera／UIと主人公造形を先にcommercial reference水準へ上げるよう優先順位を変更した。Visual Fidelity Foundation v0.3では、North Star専用にPMREM IBL、warm key／cool rim／reduced fill、PC露出／fog、進行方向／戦闘targetを含むcamera composition、cloth／metal／HDR signal material、world-first introと縮小HUDを接続した。baselineのcamera、lighting、mobile touch UIは保持した。
 - 1280×720／device pixel ratio 2のlocal browserで、2556×1436 canvas、Display-P3、AgX exposure 0.98、PMREM、half-float 4× MSAA、GTAO、bloom、SMAA、texture `ready`、PC touch controls非表示を観測した。第一稿の白浮きと主人公の小ささを、ambient低減と360 world-unit cameraへ一度改稿した。strict TypeScript、Vitest 141件、production buildが合格した。これは画面統合基盤のlocal候補であり、現主人公の造形、commercial HD-2D同等、ユーザーart acceptance、public deployを意味しない。
 - 2026-08-01、Visual North StarのAI conceptを五案生成し、`docs/concepts/visual-fidelity-v03/`へpromptとSHA-256 manifestを含めて保存した。Aはluminous hybrid、Bはprecision micro-voxel、Cはstylized 3D actor、Dは三案統合、EはDの暗部、actor scale、固有性を修正した案。Eを暫定North Starとし、`docs/VISUAL_NORTH_STAR_IMPLEMENTATION.md`へfixed-camera VisualCell、rigged GLB actor、baked PBR／indirect light、GLB／KTX2 pack、AssetDNA、provenance、PCからmobileへのquality tierを設計した。これらはart-direction artifactと実装提案であり、runtime再現、commercial-quality達成、user art acceptance、public deployではない。
+- 2026-08-01、ユーザーは五案からAI concept Cを正式なVisual North Starに選んだ。評価対象は高密度voxel／rich pixel-artのように統合される小型3D造形、fixed diagonal diorama、HD-2D的な被写界深度である。C自体はliteral pixel／cube-voxel画像ではないため、実装はhigh-density micro-voxel由来のrealtime 3D actor、fixed-camera 3D shell、baked static density、wet PBR、gameplay-safe multi-layer DOFに分けて同じ知覚結果を再構築する。Eは比較履歴へ戻した。
+- 主人公は女性型field scavengerを最初のart presetとするが、唯一の主人公には固定しない。`humanoid-v1`から始め、種族、body frame、性別／gender表現、顔、髪、surface、palette、voice／pronoun、augmentation、equipmentをversioned `CharacterGenome`で構成する。Cの白髪、長coat、発光剣はそのまま採らず、都市作業服、sensor、power／heat／service機構を持つpost-apocalyptic SFへ修正する。
+- 固定斜めcameraに対してkeyboard／virtual stickのscreen axisをworld axisへ直結していたため、上入力が画面斜めへ投影される問題を確認した。rendererと同じcamera offsetからscreen-relative input basisを計算し、simulation直前でworld X/Yへ回転する実装へ変更した。上下左右、analog magnitude、実Three.js camera投影をtest化し、Vitest 21 files／144 tests、strict TypeScript、production buildが合格した。Gamepad APIとclick／tap-to-move自体は未実装である。
 
 ## Creative reference notes
 
@@ -75,13 +78,13 @@ Phase: Visual North Star Concept Set v0.4 / art direction and implementation pla
 - Safari tabとHome Screen Web AppのIndexedDB saveは自動継承を仮定できない。Prototype B永続化ではatomic snapshot、quota／eviction、persist request、export／import、初回移行を別gateにする。
 - 人類激減、自然に侵食された現代都市は確認済みの舞台条件。崩壊原因、経過年数、地域、共同体密度、主人公、妖怪と電脳怪異の比率は未確定。現在の固有名とSF辺境の詳細は仮設定。
 - 生成ガバナンスは文書化したが、offline generator、schema検査、candidate registry、human curation UIは未実装。runtime AIは接続していない。
-- 自由放浪、world memory、半自動戦闘、自然に侵食された現代都市、自築拠点は確認済みの上位方向。targeting、防御／itemの手動範囲、拠点配置粒度、GameplayContract、Causal World Cell、残響基盤、三visual表現、WebGPU／HDR profile、StyleProfile／AssetDNA、death／succession、World Loop Proof v0.2の具体仕様は設計提案であり、runtime実装、asset生成、実機合格はまだない。
+- 自由放浪、world memory、半自動戦闘、自然に侵食された現代都市、自築拠点、AI concept Cのvisual方向、女性型defaultから始めるcharacter creationは確認済みの上位方向。targeting、防御／itemの手動範囲、拠点配置粒度、GameplayContract、Causal World Cell、残響基盤、WebGPU／HDR profile、StyleProfile／AssetDNA、death／succession、World Loop Proof v0.2の具体仕様は設計提案であり、Cのruntime再現、final asset生成、実機合格はまだない。
 - このdesign synthesis iterationではgame code、runtime asset、public buildを変更しておらず、deployも行っていない。
 - 上記のdoc-only design synthesisとは別に、2026-08-01のNorth Star iterationではlocal game codeを変更した。公開版とGitHub Pagesは変更しておらず、deployも行っていない。
 - 現North Star sceneはPC Ultra描画／半自動戦闘／部位animationと、recognizableな自然侵食現代都市の第一候補を同じ画面で判断できる。Surface Pass v0.2でmulti-channel高解像度面は入ったが、runtime procedural生成のlocal art candidateである。初回同期生成の停止、build-time bake／非同期preload／KTX2、高架駅の構造分節、最終hero／companion、商業HD-2D相当の密度やユーザーart acceptanceは未達。
 - 現主人公は既存semantic voxel recipeを部位化した第一段階であり、最終hero design、顔、髪／布のsurface、PBR material、deformation rig、signature motionの完成を意味しない。表示中の調査灯型robotはart review用候補で、開始時加入の仕様変更ではない。
-- Visual Fidelity Foundation v0.3でcloth／metal／signalのmaterial responseと画面占有は改善したが、24×32×16 literal voxel source自体の造形不足は残る。都市partを再開する前に、literal high-density voxel、semantic voxel surface、stylized low-polyを同camera／light／poseで比較する。
-- Visual North Star concept Eは、最終画面の構成／露出／actor占有／material family／hybrid production grammarを評価する暫定targetである。主人公のbiography／face／final costume、同行者の加入条件、Eの画面をruntimeで再現できるかは未確認。画像をgameplay captureやaccepted commercial artとして扱わない。
+- Visual Fidelity Foundation v0.3でcloth／metal／signalのmaterial responseと画面占有は改善したが、24×32×16 literal voxel source自体の造形不足は残る。次は選定済みCに向け、96-cell級を開始点とするhigh-density micro-voxel sourceをoptimized skinned meshへcompileし、normal gameplay scaleで検証する。
+- Visual North Star concept Cは、最終画面のcamera／actor占有／detail frequency／material／light／DOF／hybrid production grammarを評価するtargetである。主人公のbiography／final face、選択可能な種族構成、同行者の加入条件、Cの画面をruntimeで再現できるかは未確認。画像をgameplay captureやaccepted commercial artとして扱わない。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff
