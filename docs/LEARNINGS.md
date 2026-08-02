@@ -68,6 +68,9 @@ Last updated: 2026-08-02
 - 高解像度spriteを置くだけでは、baked environmentから浮いて見える。actorにも同じlight directionのrim、contact／cast shadow、wet-surface reflection、distance blur、atmospheric saturationを同時に与え、実際のgameplay scaleで統合を評価する。
 - 「女性型で可愛い」はasset sheetの解像度や設定文では判定できない。通常gameplay scaleのfront viewで顔、髪、目、体形、衣装、SF装備が一目で読めることをvisual gateにし、directional setの初期facingも正面へ固定する。
 - ultra-wide mobileではworldとHUDを同じcover transformで縮小すると操作UIが切れる。worldはcover、HUDはcontainの別transformにし、safe-areaとmanual skill targetを独立して検査すると、PC masterの構図を保ちながらmobile controlを残せる。
+- 静止画plate型benchmarkはvisual targetの固定には強いが、放浪、collision、loot、quest、天候／時間変化を製品基盤へ戻せない。R02のauthoritative stateを残し、R03をgolden referenceとしてpresentation層だけ大胆に差し替えると、画面品質とgame causalityを同じversionで評価できる。
+- realtime sceneへsolidに見える装飾建物を追加する場合、既存colliderの存在だけでは因果一致を証明できない。各solid meshのboundsをauthoritative collider内へ制約し、非collision layerは到達領域外か非solidと読めるmaterialへ分け、生成testで逸脱を失敗させる。
+- prototype catalogのcoverを理想conceptやCSS illustrationだけにすると、選択後の実画面との期待差が広がる。actual gameplay captureをversion cardへ使い、conceptはreferenceだと明記すると、visual goalと現在の到達点を同じ一覧で正直に比較できる。
 
 ## Working hypotheses to validate
 

@@ -1,3 +1,5 @@
+import { R04_LIVE_PROFILE } from "./r04/R04LiveProfile";
+
 export type CameraCompositionPhase =
   | "idle"
   | "acquire"
@@ -21,7 +23,7 @@ export interface CameraComposition {
   readonly targetY: number;
 }
 
-export type CameraCompositionProfile = "baseline" | "north-star";
+export type CameraCompositionProfile = "baseline" | "north-star" | "r04";
 
 export interface FixedCameraOffset {
   readonly x: number;
@@ -33,6 +35,8 @@ export interface MovementVector {
   readonly moveX: number;
   readonly moveY: number;
 }
+
+export type ActorFrontAxis = "+z" | "-z";
 
 /** Shared by rendering and screen-relative controls so their axes cannot drift. */
 export const FIXED_CAMERA_OFFSET: FixedCameraOffset = Object.freeze({
@@ -73,6 +77,17 @@ export function screenMovementToWorld(
   };
 }
 
+/** Rotates an authored local front axis onto the simulation facing vector. */
+export function composeActorFacingRotation(
+  facingX: number,
+  facingY: number,
+  frontAxis: ActorFrontAxis = "-z",
+): number {
+  return frontAxis === "+z"
+    ? Math.atan2(facingX, facingY)
+    : Math.atan2(-facingX, -facingY);
+}
+
 /**
  * Keeps the hero out of a mechanically centered framing while remaining a
  * pure presentation rule. Simulation coordinates and combat targeting stay
@@ -102,24 +117,33 @@ export function composeCameraTarget(
     input.phase !== "idle" &&
     Number.isFinite(input.targetX) &&
     Number.isFinite(input.targetY);
+  const exploreLookAhead = profile === "r04"
+    ? R04_LIVE_PROFILE.camera.exploreLookAhead
+    : EXPLORE_LOOK_AHEAD;
+  const combatTargetWeight = profile === "r04"
+    ? R04_LIVE_PROFILE.camera.combatTargetWeight
+    : COMBAT_TARGET_WEIGHT;
+  const maximumCombatOffset = profile === "r04"
+    ? R04_LIVE_PROFILE.camera.maximumCombatOffset
+    : MAX_COMBAT_OFFSET;
 
   if (!hasCombatTarget) {
     return {
       mode: "explore",
-      targetX: input.playerX + facingX * EXPLORE_LOOK_AHEAD,
-      targetY: input.playerY + facingY * EXPLORE_LOOK_AHEAD,
+      targetX: input.playerX + facingX * exploreLookAhead,
+      targetY: input.playerY + facingY * exploreLookAhead,
     };
   }
 
   const targetOffset = clampVectorMagnitude(
     (input.targetX as number) - input.playerX,
     (input.targetY as number) - input.playerY,
-    MAX_COMBAT_OFFSET,
+    maximumCombatOffset,
   );
   return {
     mode: "combat",
-    targetX: input.playerX + targetOffset.x * COMBAT_TARGET_WEIGHT,
-    targetY: input.playerY + targetOffset.y * COMBAT_TARGET_WEIGHT,
+    targetX: input.playerX + targetOffset.x * combatTargetWeight,
+    targetY: input.playerY + targetOffset.y * combatTargetWeight,
   };
 }
 

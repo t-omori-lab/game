@@ -4,3 +4,4 @@
 # Frozen Vite bundles are byte-for-byte release artifacts, not source diffs.
 public/r01/assets/*.js binary
 public/r02/assets/*.js binary
+public/r03/assets/*.js binary

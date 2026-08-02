@@ -172,11 +172,21 @@ a {
   position: relative;
   min-height: 240px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 70% 30%, rgb(234 196 113 / 42%) 0 1.5%, transparent 2%),
-    linear-gradient(154deg, transparent 0 53%, rgb(104 151 111 / 58%) 53.2% 58%, transparent 58.3%),
-    linear-gradient(26deg, transparent 0 47%, rgb(34 84 63 / 90%) 47.2% 55%, transparent 55.2%),
-    linear-gradient(145deg, #6c9c7c 0 26%, #2b5946 26.2% 52%, #172f29 52.3% 100%);
+  background-color: #183c31;
+  background-position: center;
+  background-size: cover;
+}
+
+.release-card[data-release="r01"] .release-card__visual {
+  background-image:
+    linear-gradient(90deg, rgb(4 13 10 / 8%), transparent 76%),
+    url("/r01/og.png");
+}
+
+.release-card[data-release="r02"] .release-card__visual {
+  background-image:
+    linear-gradient(90deg, rgb(4 13 10 / 8%), transparent 76%),
+    url("/r02/og.png");
 }
 
 .release-card[data-release="r03"] .release-card__visual {
@@ -187,28 +197,15 @@ a {
   background-size: cover;
 }
 
-.release-card--latest .release-card__visual {
-  background:
-    radial-gradient(circle at 69% 26%, #ffe59d 0 1%, rgb(255 203 111 / 25%) 1.2% 10%, transparent 23%),
-    linear-gradient(154deg, transparent 0 53%, rgb(117 169 114 / 72%) 53.2% 60%, transparent 60.3%),
-    linear-gradient(26deg, transparent 0 46%, rgb(40 105 69 / 95%) 46.2% 56%, transparent 56.2%),
-    linear-gradient(145deg, #98bd8e 0 25%, #3b7452 25.2% 50%, #183c31 50.3% 100%);
+.release-card[data-release="r04"] .release-card__visual {
+  background-image:
+    linear-gradient(90deg, rgb(4 13 10 / 8%), transparent 76%),
+    url("./assets/r04-cover.png");
 }
 
-.release-card__visual::before,
 .release-card__visual::after {
   position: absolute;
   content: "";
-}
-
-.release-card__visual::before {
-  right: -18%;
-  bottom: -42%;
-  width: 112%;
-  aspect-ratio: 1;
-  border: 1px solid rgb(233 244 219 / 19%);
-  border-radius: 50%;
-  box-shadow: 0 0 0 26px rgb(7 22 17 / 24%), 0 0 0 58px rgb(7 22 17 / 13%);
 }
 
 .release-card__visual::after {
@@ -225,31 +222,6 @@ a {
   color: rgb(247 242 211 / 74%);
   font: 600 10px/1 "Avenir Next Condensed", sans-serif;
   letter-spacing: 0.2em;
-}
-
-.release-card__horizon {
-  position: absolute;
-  z-index: 1;
-  top: 42%;
-  left: 48%;
-  width: 26%;
-  height: 34%;
-  border: 1px solid rgb(226 239 210 / 32%);
-  background: rgb(8 25 20 / 48%);
-  box-shadow: 20px 24px 0 rgb(9 30 23 / 42%);
-  transform: skewY(-12deg);
-}
-
-.release-card__signal {
-  position: absolute;
-  z-index: 3;
-  right: 18%;
-  bottom: 24%;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #a8f4d5;
-  box-shadow: 0 0 10px #8ee7c0, 0 0 34px #9bf0cb;
 }
 
 .release-card__body {

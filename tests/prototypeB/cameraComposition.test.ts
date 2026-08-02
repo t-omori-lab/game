@@ -3,9 +3,11 @@ import * as THREE from "three";
 
 import {
   FIXED_CAMERA_OFFSET,
+  composeActorFacingRotation,
   composeCameraTarget,
   screenMovementToWorld,
 } from "../../src/prototypeB/render/CameraComposition";
+import { R04_LIVE_PROFILE } from "../../src/prototypeB/render/r04/R04LiveProfile";
 
 describe("North Star camera composition", () => {
   it("maps cardinal controls to cardinal screen movement under the diagonal camera", () => {
@@ -135,5 +137,64 @@ describe("North Star camera composition", () => {
       targetX: 12,
       targetY: -12,
     });
+  });
+
+  it("uses the wider R04 exploration and bounded combat composition profile", () => {
+    const explore = composeCameraTarget(
+      {
+        playerX: 430,
+        playerY: 900,
+        facingX: 0,
+        facingY: -1,
+        phase: "idle",
+      },
+      "r04",
+    );
+    const combat = composeCameraTarget(
+      {
+        playerX: 430,
+        playerY: 900,
+        facingX: 0,
+        facingY: -1,
+        phase: "windup",
+        targetX: 800,
+        targetY: 900,
+      },
+      "r04",
+    );
+
+    expect(explore).toEqual({
+      mode: "explore",
+      targetX: 430,
+      targetY: 900 - R04_LIVE_PROFILE.camera.exploreLookAhead,
+    });
+    expect(combat.mode).toBe("combat");
+    expect(combat.targetX - 430).toBeCloseTo(
+      R04_LIVE_PROFILE.camera.maximumCombatOffset *
+        R04_LIVE_PROFILE.camera.combatTargetWeight,
+    );
+    expect(combat.targetY).toBe(900);
+  });
+
+  it("rotates the R04 hero local +Z front onto all four simulation directions", () => {
+    const localFront = new THREE.Vector3(0, 0, 1);
+    const upAxis = new THREE.Vector3(0, 1, 0);
+    const directions = [
+      { x: 0, y: -1 },
+      { x: 1, y: 0 },
+      { x: 0, y: 1 },
+      { x: -1, y: 0 },
+    ] as const;
+
+    for (const direction of directions) {
+      const projected = localFront.clone().applyAxisAngle(
+        upAxis,
+        composeActorFacingRotation(direction.x, direction.y, "+z"),
+      );
+      expect(projected.x).toBeCloseTo(direction.x);
+      expect(projected.z).toBeCloseTo(direction.y);
+    }
+
+    expect(composeActorFacingRotation(0, -1, "-z")).toBeCloseTo(0);
   });
 });

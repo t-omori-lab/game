@@ -1,56 +1,70 @@
-# R03 Concept C Design QA
+# R04 Design QA
 
-Date: 2026-08-02
-
-## Comparison contract
+## Target and method
 
 - Reference: `docs/concepts/visual-fidelity-v03/ideal-screen-c-stylized-3d.png`
-- Reference SHA-256: `9190e60398b794f5e423e40f9084f1988a7c2b055d06304e4aee43c3fce57e02`
-- Candidate: `work/concept_c_r03/r03-local-p1-fixed-1672x941.jpg`
-- Combined comparison: `work/concept_c_r03/concept-c-vs-r03-p1-fixed-1672x941.png`
-- Viewport: 1672 × 941 for both halves
-- State: initial gameplay state after transient title/help UI has faded
-- Intentional variance: the reference actor is replaced by the user-requested cute female science-fiction explorer; the companion and anomaly remain dynamic gameplay layers.
+- Implementation: `/game/r04/?debug=1`
+- Comparison viewport: 1672 × 941
+- State: initial playable field, quest board prompt visible, PC Ultra profile
+- Combined evidence: `work/r04_r02_successor/concept-c-vs-r04-pass1.png`
+- Contract: R02 gameplay causality remains authoritative; Concept C defines composition, density, light, material, DOF, and hero-readability direction.
 
-## Visual gate
+## Pass 1 — not passed
 
-| Area | Result | Evidence |
-| --- | --- | --- |
-| Camera / world occupancy | passed | Wide fixed 3/4 composition, hero anchor near 45% W / 69% H, world fills more than 95% of the frame. |
-| Environment structure | passed | Road, left stairs, water, transit shelter, workbench, garden, props, and vegetation retain the Concept C composition and density. |
-| Light / color / material / DOF | passed | Warm upper-right light, cool distance, wet road response, sharp central band, and blurred foreground/far field remain visually coherent. |
-| Female hero | passed | Front-facing face, hair, slim female silhouette, pale coat, red accent, backpack, and cyan tool are readable at gameplay scale. |
-| Dynamic actor integration | passed | Hero and robot dog receive warm rim separation, lower-left cast/contact shadows, and restrained wet-road reflection. |
-| Anomaly | passed | Enlarged silhouette, depth blur, reduced saturation, atmospheric pink bloom, particles, and water-side glow place it in the far field. |
-| HUD | passed | HUD remains restricted to the top-left and bottom-left with footprint comparable to Concept C and no central obstruction. |
+### P0
 
-## Interaction and responsive checks
+- None.
 
-- `tests/r03/logic.test.ts` verifies W/up, D/right, S/down, A/left mapping and matching four-direction facing.
-- In-app browser tap-to-move verified all four dynamic facings: initial/down `(757.00,651.00)`, right `(779.72,651.00)`, up `(757.00,633.96)`, left `(745.64,651.00)`, and down `(757.00,662.36)`.
-- Manual relic skill activated from the bottom-left HUD and rendered its effect.
-- iPhone 16 Pro landscape policy was checked at 874 × 402; the HUD uses a separate contain transform and the manual `RELIC / SPACE` control remains available.
-- Double-click at 874 × 402 retained `visualViewport.scale === 1` and `innerWidth === 874`.
-- Follow camera is clamped to the environment plate's real cover overscan; at 1672 × 941 both axes remain zero, so movement cannot reveal an unrendered edge.
-- Keyboard movement and tap destinations share one inset 10-point road polygon, preventing the hero from crossing the shelter, wall, vegetation, or foreground parapet baked into the plate.
-- At 1672 × 941, tapping the forbidden shelter-roof point `(950,260)` stopped the hero at road edge `(877.06,441.44)` with camera `(0.00,0.00)`.
-- Final read-only code re-review: P0 0, P1 0, public GO.
-- GitHub Pages run #11 deployed commit `79bf341`; public R03 loaded its hashed runtime and environment asset, rendered a 2560 × 1440 canvas at 1280 × 720, and responded to tap movement without exposing the plate.
+### P1
 
-## Non-blocking P2 observations
+- The hero is too small and initially reads as a dark-backed generic block figure. The face, hair silhouette, feminine proportions, coat layering, and SF equipment do not reach the reference's immediate character readability.
+- Large unbroken gray roof and wall masses dominate the frame. They read as primitive construction blocks instead of weathered, inhabited ruins with micro-detail, material breakup, and vegetation integration.
+- Scene composition is an overview of a compact diorama rather than the reference's traversable wet street. The hero sits near the middle under major architectural masses; the reference uses an open route, lower-left actor anchor, and layered distant threat.
+- Solid-looking decorative facade layers are not represented in authoritative collision. This contradicts the stated causal-collider parity and can make traversal visually dishonest.
 
-- The anomaly could receive stronger core particles and water spill in a later depth-aware renderer.
-- Sprite rim and reflection remain an authored 2.5D approximation rather than physically derived lighting.
-- HUD item colors can gain stronger semantic differentiation when inventory categories are implemented.
+### P2
 
-## Architecture boundary
+- Tilt-shift is strong enough to erase useful midground texture and makes the implementation feel miniature rather than cinematic.
+- Reflected light and wet-surface highlights are too weak and flat compared with the reference's amber/teal contrast.
+- Vegetation density is improved, but repeated large cuboids reveal the generator grammar too quickly; scale and cluster variation need another pass.
+- Debug/prototype UI is readable, but it competes with the scene more than the sparse reference HUD.
 
-R03 passes as a Beauty Benchmark and playable 2.5D cell. It is not evidence that the complete HD-2D world engine is finished. `docs/R03_HD2D_ARCHITECTURE.md` defines the transition from this visual contract to depth-aware modular geometry, generated PBR assets, occlusion, navigation, lighting, and adjacent-cell generation.
+## Required iteration before release gate
 
-P0: 0
+1. Increase hero readability and correct the R04-facing basis without altering R02.
+2. Reduce blur, rebalance framing, and keep an open traversable route around the hero.
+3. Break up dominant plain surfaces with authored deterministic detail and material variation.
+4. Resolve visual-solid/collider parity for added R04 structures.
+5. Repeat the combined same-viewport comparison and run gameplay/console checks.
 
-P1: 0
+## Pass 2–6 — release candidate
 
-P2: 3 (non-blocking)
+- Same-viewport implementation evidence: `work/r04_r02_successor/r04-local-pass3-1672x941.png`
+- Combined comparison: `work/r04_r02_successor/concept-c-vs-r04-pass3.png`
+- Hero front-read evidence: `work/r04_r02_successor/r04-local-hero-front-final-1672x941.png`
+- Scrolling gameplay evidence: `work/r04_r02_successor/r04-local-roam-combat-1672x941.png`
 
-final result: passed
+### Resolved P1
+
+- Hero scale increased from 1.68 to 2.02. The local `+Z` facing basis is aligned to four-direction movement while R02 keeps its original `-Z` basis.
+- The realtime actor now has a pale-hair female silhouette, lighter face, larger luminous eyes, narrower shoulders and limbs, coat layers, tool pack, and readable SF weapon socket. The inherited dark visor was neutralized so it no longer masks the face.
+- Dominant roof slabs now carry deterministic parapets, repair tiles, solar glass, rooftop plants, facade ribs, window bands, awnings, and vines. The open road received fine paving modules, cracks, drains, worn markings, and local physical puddles.
+- Every solid R04 facade is constrained to the `town-hall` or `south-house` authoritative collider footprint. Decorative skyline layers are translucent, shadowless, and wholly outside the reachable world.
+- Inherited Beauty Cell false-solid shells and the renderer-owned legacy anomaly were removed from R04. Every remaining inherited mesh receives a causal role; unknown meshes fail generation, atmospheric layers are translucent／shadowless, and anomaly authority stays in simulation state.
+
+### Resolved P2
+
+- Tilt-shift strength was reduced from 4.1 to 2.45 and focused around the playable midground.
+- Lighting now separates warm key light, teal rim light, darker ambient fill, and less desaturated ground color.
+- Edge vegetation uses smaller leaves and more scale/cluster variation; component density increased while the open route remains clear.
+- The catalog uses real R01–R04 screenshots instead of generated CSS scenery. R04 has its own install manifest and social preview.
+
+### Remaining North Star delta (non-blocking for this versioned prototype)
+
+- Concept C still has substantially richer authored materials, curved vegetation, reflected light, atmospheric depth, and commercial character animation. R04 does not claim pixel-level Concept C parity or commercial-quality acceptance.
+- The highest-density art pass currently covers the opening beauty cell. The continuous R02-derived world remains playable beyond it, but later regions still need the same compiler density.
+- These are the next art-production milestones, not evidence that the R04 deployment candidate is broken.
+
+## Final result
+
+**Passed for an R02-successor R04 deployment candidate.** This local visual deployability gate does not include full public verification, pixel-level Concept C parity, commercial art acceptance, or user acceptance.

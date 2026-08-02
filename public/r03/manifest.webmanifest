@@ -1,0 +1,23 @@
+{
+  "id": "./",
+  "name": "辺境遺物録 R03 — Concept C Beauty Benchmark",
+  "short_name": "辺境 R03",
+  "description": "Concept Cの画角、密度、光、色、ボケ味を固定した独立2.5D Beauty Benchmark保存版。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape-primary",
+  "background_color": "#07110e",
+  "theme_color": "#18392f",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

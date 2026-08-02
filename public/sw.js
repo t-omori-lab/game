@@ -1,7 +1,7 @@
 "use strict";
 
 const CACHE_PREFIX = "relic-frontier-shell-";
-const CACHE_VERSION = "r03-v1";
+const CACHE_VERSION = "r04-v1";
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`;
 const MANAGED_CACHE_PREFIXES = [CACHE_PREFIX, "small-persistent-world-shell-"];
 const SCOPE_URL = new URL("./", self.registration.scope);
@@ -11,6 +11,7 @@ const ROUTE_INDEX_URLS = Object.freeze({
   r01: new URL("./r01/index.html", SCOPE_URL).href,
   r02: new URL("./r02/index.html", SCOPE_URL).href,
   r03: new URL("./r03/index.html", SCOPE_URL).href,
+  r04: new URL("./r04/index.html", SCOPE_URL).href,
 });
 const STATIC_SHELL_URLS = [
   new URL("./manifest.webmanifest", SCOPE_URL).href,
@@ -166,6 +167,10 @@ function resolveRouteIndexUrl(requestUrl) {
 
   if (/^\/r03(?:\/index\.html)?$/i.test(routePath)) {
     return ROUTE_INDEX_URLS.r03;
+  }
+
+  if (/^\/r04(?:\/index\.html)?$/i.test(routePath)) {
+    return ROUTE_INDEX_URLS.r04;
   }
 
   if (/^\/r01(?:\/index\.html)?$/i.test(routePath)) {

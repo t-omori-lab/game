@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: R03 Concept C Beauty Benchmark / public user review pending
+Phase: R04 R02-derived Causal World Beauty Cell / local deployment candidate
 
 ## Purpose
 
@@ -74,6 +74,13 @@ Phase: R03 Concept C Beauty Benchmark / public user review pending
 - GitHub Actions `Deploy GitHub Pages` run #11はcommit `79bf341`のtest／build／deployに成功した。公開catalog、R03、R02、R02 `SNAPSHOT.json`、root service workerがHTTPS 200を返し、R03の本番bundleとenvironment preload、R02のsource commit `0b5fd9f6…`／`frozen: true`を確認した。
 - 公開browserでcatalogのR03→R02→R01順と各linkを確認した。公開R03は1280×720で2560×1440 canvas、hero／companion／anomaly／HUDを描画し、tap移動でhero `(757.00,651.00)`→`(870.05,662.19)`、facing right、camera `(0.00,0.23)`、半自動照準statusまで動作した。R02保存版も独立title、canvas、既存game stateを描画した。
 - R03はConcept Cのcamera、density、palette、actor scale、light、material、DOFを固定するvisual contractであり、完成したHD-2D world engineではない。次段階C1は中央道路／階段／停留所／作業台をdepth-aware geometry、occlusion、collision、navigation、dynamic lightingへ分解し、R03承認captureとのP1差分ゼロを保つ。
+- 2026-08-02、R03の固定画面方式を製品基盤にせず、R02の3,600×1,800連続world、決定論的simulation、collision、quest、loot、二武器、半自動通常攻撃、手動大技を正本にした次版`R04`をlocal実装した。R01／R02／R03は独立snapshotとして保持し、R04だけをlive Vite entryとする。
+- R04は`r04-live` scene compiler、fixed diagonal camera、PMREM IBL、warm key／teal rim、AgX、half-float 4× MSAA、GTAO、bloom、SMAA、world限定tilt-shift、道路／屋上／facade／植生の決定的detailを統合した。solidに見える構造物は既存`town-hall`／`south-house` collider内へ制約し、非collision skylineは到達領域外の半透明layerとした。
+- R04の主人公は画像plate／spriteではなく、女性型SF探索者のarticulated realtime 3D candidateである。顔、淡い髪、目、coat、tool pack、SF weaponを通常play scaleで読めるよう改稿し、R04だけlocal `+Z` facingを採用して上下左右を修正した。R02の`-Z` basisは変更していない。未加入companionは生成・表示・更新しない。
+- localの最終full checkは30 files／184 tests、strict TypeScript、production buildに合格した。production previewでは依頼板`briefing → travel-to-fork`、手動大技cooldown、武器`blade → impact`、W移動`(430,900) → (411,889)`、R04固有manifest／scene metadata、browser warning／error 0件を確認した。R01は9、R02は11、R03は19ファイルのSHA-256が全件一致した。公開GitHub Pagesの確認は未実施であり、local結果と分ける。
+- 公開直前reviewで、R02 Beauty Cellから継承したcolliderなしの不透明立体3種と、simulation座標に接続されない旧anomalyをP1として検出した。R04構築時に除去し、残る継承meshを因果roleで全件分類、未知meshを生成時に拒否し、non-solid layerは半透明／影なしへ変更した。初回service-worker installで地面textureがprecacheから漏れる問題も、R04 HTMLのVite変換image preloadとrelease testで修正した。
+- Concept Cとの同一viewport QAは、R02-successorの公開候補としてP0／P1を解消した。Concept Cそのものの完全再現、commercial HD-2D同等、ユーザーart acceptance、WebGPU／true HDRの達成を意味しない。開始cellの密度を連続world全域へ展開すること、曲面植生／反射光／大気遠近／最終character rig／animationは次のart-production課題である。
+- ゲーム名の有力候補として`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題「辺境遺物記録モジュール」、呼称「フラム」がユーザーから提示された。遺物の収集・解析・世界記憶と親和性があるが、正式採用とprototype画面名の変更は未決定である。
 
 ## Creative reference notes
 
@@ -106,6 +113,7 @@ Phase: R03 Concept C Beauty Benchmark / public user review pending
 - R02はWebGL2／SDR browser出力のcandidateであり、WebGPU、true HDR、native Steam build、iPhone 16 Pro実機性能、commercial HD-2D同等、ユーザーの最終art acceptanceを証明しない。
 - R03のenvironment plateは遠景／非接触領域とvisual benchmarkには有効だが、plate単独では正しい高さ、遮蔽、建物進入、破壊、時刻／天候による物理的更新、連続world streamingを提供しない。
 - R03の`final result: passed`は、指定された1672×941初期frameにおけるConcept Cとの知覚比較と公開候補判定である。ゲーム全体、全camera state、全装備／天候、commercial HD-2D同等の完成を意味しない。
+- R04はR02由来の因果と連続worldを保持したrealtime 3D次版であるが、`pc-ultra`は描画profile名であってcommercial-qualityの合格評価ではない。公開前local candidateであり、GitHub Pages反映と公開browser確認は別gateとする。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff

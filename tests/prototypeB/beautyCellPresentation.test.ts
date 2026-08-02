@@ -32,9 +32,15 @@ const styles = fileSystem.readFileSync(
 describe("R02 Beauty Cell presentation contract", () => {
   it("keeps R02 as a distinct experience and environment profile", () => {
     expect(applicationSource).toContain('| "beauty-cell"');
-    expect(applicationSource).toContain('options.experience === "beauty-cell"');
-    expect(applicationSource).toContain('? "beauty-cell"');
-    expect(applicationSource).toContain('dataset.prototypeVersion = beautyCell ? "R02" : "R01"');
+    expect(applicationSource).toContain(
+      'const beautyCell = options.experience === "beauty-cell"',
+    );
+    expect(applicationSource).toMatch(
+      /environmentProfile:\s*[\s\S]*?options\.experience === "r04"\s*\? "r04-live"\s*:\s*options\.experience === "beauty-cell"\s*\? "beauty-cell"/,
+    );
+    expect(applicationSource).toMatch(
+      /dataset\.prototypeVersion\s*=\s*r04\s*\? "R04"\s*:\s*beautyCell\s*\? "R02"\s*:\s*"R01"/,
+    );
     expect(rendererSource).toContain('| "beauty-cell"');
     expect(rendererSource).toContain(
       "Always render every terrain/prop that its art",

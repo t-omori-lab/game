@@ -65,7 +65,8 @@ export type PrototypeBApplication = {
 export type PrototypeBExperience =
   | "baseline"
   | "north-star"
-  | "beauty-cell";
+  | "beauty-cell"
+  | "r04";
 
 export type StartPrototypeBOptions = {
   readonly experience?: PrototypeBExperience;
@@ -224,7 +225,8 @@ export function startPrototypeB(
     started = true;
     if (
       options.experience === "north-star" ||
-      options.experience === "beauty-cell"
+      options.experience === "beauty-cell" ||
+      options.experience === "r04"
     ) {
       layout.stage.dataset.presentationState = "active";
     }
@@ -584,12 +586,16 @@ export function startPrototypeB(
         },
         companionPreview: options.companionPreview,
         cameraCompositionProfile:
-          options.experience === "baseline" ||
-          options.experience === undefined
-            ? "baseline"
-            : "north-star",
+          options.experience === "r04"
+            ? "r04"
+            : options.experience === "baseline" ||
+                options.experience === undefined
+              ? "baseline"
+              : "north-star",
         environmentProfile:
-          options.experience === "beauty-cell"
+          options.experience === "r04"
+            ? "r04-live"
+            : options.experience === "beauty-cell"
             ? "beauty-cell"
             : options.experience === "north-star"
               ? "north-star-city"
@@ -801,7 +807,8 @@ function configureExperience(
 ): void {
   if (
     options.experience !== "north-star" &&
-    options.experience !== "beauty-cell"
+    options.experience !== "beauty-cell" &&
+    options.experience !== "r04"
   ) {
     return;
   }
@@ -809,12 +816,21 @@ function configureExperience(
   root.classList.add("north-star-shell");
   layout.stage.classList.add("north-star-stage");
   const beautyCell = options.experience === "beauty-cell";
-  if (beautyCell) {
+  const r04 = options.experience === "r04";
+  if (beautyCell || r04) {
     root.classList.add("beauty-cell-shell");
     layout.stage.classList.add("beauty-cell-stage");
   }
+  if (r04) {
+    root.classList.add("r04-shell");
+    layout.stage.classList.add("r04-stage");
+  }
   layout.stage.dataset.experience = options.experience;
-  layout.stage.dataset.prototypeVersion = beautyCell ? "R02" : "R01";
+  layout.stage.dataset.prototypeVersion = r04
+    ? "R04"
+    : beautyCell
+      ? "R02"
+      : "R01";
   layout.stage.dataset.presentationState = "intro";
   const debugEnabled = isNorthStarDebugEnabled(window.location.search);
   layout.stage.classList.toggle("is-north-star-debug", debugEnabled);
@@ -822,7 +838,9 @@ function configureExperience(
   layout.performance.hidden = !debugEnabled;
   layout.stage.setAttribute(
     "aria-label",
-    beautyCell
+    r04
+      ? "R02系統 R04。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。"
+      : beautyCell
       ? "AI-native Beauty Cell。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。"
       : "North Star Scene。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。",
   );
@@ -830,8 +848,10 @@ function configureExperience(
   const badge = document.createElement("div");
   badge.className = "north-star-badge";
   badge.hidden = !debugEnabled;
-  badge.innerHTML = beautyCell
-    ? "<span>AI-NATIVE BEAUTY CELL</span><strong>R02 / PC ULTRA / LIVE SYSTEMS</strong>"
+  badge.innerHTML = r04
+    ? "<span>CAUSAL BEAUTY CELL</span><strong>R04 / R02 SYSTEMS / PC ULTRA</strong>"
+    : beautyCell
+      ? "<span>AI-NATIVE BEAUTY CELL</span><strong>R02 / PC ULTRA / LIVE SYSTEMS</strong>"
     : "<span>VISUAL NORTH STAR</span><strong>PC ULTRA / LIVE COMBAT</strong>";
   layout.stage.append(badge);
 
@@ -856,30 +876,40 @@ function configureExperience(
     ".relic-hud__identity strong",
   );
   if (kicker !== null) {
-    kicker.textContent = beautyCell
-      ? "AI-NATIVE CONCEPT C / REALTIME BEAUTY CELL"
+    kicker.textContent = r04
+      ? "R02 CAUSAL WORLD / CONCEPT C VISUAL REBUILD"
+      : beautyCell
+        ? "AI-NATIVE CONCEPT C / REALTIME BEAUTY CELL"
       : "PC ULTRA VISUAL + GAME FEEL BENCHMARK";
   }
   if (heading !== null) {
-    heading.innerHTML = beautyCell
-      ? "緑蝕<br /><em>交差区</em>"
+    heading.innerHTML = r04
+      ? "緑蝕<br /><em>雨庭区</em>"
+      : beautyCell
+        ? "緑蝕<br /><em>交差区</em>"
       : "緑蝕<br /><em>観測区</em>";
   }
   if (description !== null) {
-    description.innerHTML = beautyCell
-      ? "光と水と緑が都市を更新している。<br />調査員は歩き、拾い、間合いを選び、大技だけを自分で撃つ。"
+    description.innerHTML = r04
+      ? "雨上がりの都市は、滅びたあとも鮮やかだ。<br />歩き、拾い、戦い、世界の記憶を自分の経路にする。"
+      : beautyCell
+        ? "光と水と緑が都市を更新している。<br />調査員は歩き、拾い、間合いを選び、大技だけを自分で撃つ。"
       : "自然に呑まれた現代都市を歩く。<br />間合いで通常攻撃を起こし、大技で戦況を変える。";
   }
   if (startLabel !== null) {
-    startLabel.textContent = beautyCell
-      ? "Beauty Cellを歩く"
+    startLabel.textContent = r04
+      ? "雨庭区へ降りる"
+      : beautyCell
+        ? "Beauty Cellを歩く"
       : "North Star Sceneを開始";
   }
   if (startHint !== null) {
     startHint.textContent = "MOVE / AUTO BASIC / MANUAL SKILL";
   }
-  if (beautyCell && identity !== null) {
-    identity.textContent = "緑蝕・第04交差区";
+  if ((beautyCell || r04) && identity !== null) {
+    identity.textContent = r04
+      ? "緑蝕・第07雨庭区"
+      : "緑蝕・第04交差区";
   }
 
   const attackButton = layout.stage.querySelector<HTMLButtonElement>(
@@ -978,7 +1008,9 @@ function updateInterface(
   layout.stage.dataset.weapon = player.weaponId;
   layout.stage.dataset.status = state.status;
   layout.zoneLabel.textContent =
-    layout.stage.dataset.experience === "beauty-cell"
+    layout.stage.dataset.experience === "r04"
+      ? "緑蝕・第07雨庭区"
+      : layout.stage.dataset.experience === "beauty-cell"
       ? "緑蝕・第04交差区"
       : zoneText(player.x, player.y);
   layout.objectiveText.textContent = objectiveText(state);

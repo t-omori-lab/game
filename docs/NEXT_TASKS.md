@@ -4,16 +4,24 @@ Last updated: 2026-08-02
 
 ## P0
 
-Active P0は、R02を漸進改良せず独立再構築した`R03 Concept C Beauty Benchmark`の公開とユーザーvisual reviewである。以下のcontract、world loop、生成、mobile実機項目はqueueであり、R03の公開確認をblockしない。
+Active P0は、R02の遊べる因果を正本にし、R03／Concept Cの知覚品質へ近づけた`R04 R02-successor`の公開確認とユーザーvisual reviewである。以下のcontract、world loop、生成、mobile実機項目はqueueであり、R04の公開確認をblockしない。
 
-- [ ] `R03`をGitHub Pagesへ公開し、公開版をConcept Cのvisual contractとして確認する。
+- [ ] `R04`をGitHub Pagesへ公開し、R02-derived realtime 3D次版として確認する。
+  - [x] R02の連続world、決定論的simulation、collision、quest、loot、二武器、半自動通常攻撃、手動大技を同じruntime stateのまま接続した。
+  - [x] R03／Concept Cをgolden referenceにし、camera、DOF、light、PBR、surface密度、realtime女性型SF heroを改稿した。solid structureとauthoritative colliderの対応も回帰test化した。
+  - [x] R01／R02／R03を独立snapshotとして保持し、R04専用route、manifest、service worker cache、catalogの実play画像を追加した。
+  - [x] Concept Cとの同一viewport comparisonでR02-successor公開候補としてP0／P1を解消した。これはConcept C完全再現やcommercial art acceptanceではない。
+  - [x] 30 files／184 tests、strict TypeScript、production build、R01 9／R02 11／R03 19 checksum、production previewの依頼／大技／武器／移動、browser warning／error 0をlocal確認した。
+  - [ ] scope限定commit、push、Pages run成功、公開catalog／R04／R01〜R03保存版、公開browser操作を確認する。
+  - [ ] ユーザーreviewでConcept Cとの残差を最大3点に絞り、次のart-production milestoneを決める。
+- [x] `R03`をGitHub Pagesへ公開し、公開版をConcept Cのvisual contractとして確認する。
   - [x] wide camera、高解像度女性SF hero、robot dog、遠景anomaly、高DPI 2.5D描画、半自動通常攻撃、手動遺物skill、tap-to-moveをR02非依存のappとして実装した。
   - [x] W／↑、D／→、S／↓、A／←のscreen directionとcharacter facingを一致させ、四方向の動的browser checkを行った。
   - [x] Concept C正本と同じ1672×941の最終comparisonを作り、独立visual QAでP0 0／P1 0／非blocking P2 3、`final result: passed`を得た。
   - [x] strict TypeScript、Vitest 27 files／168 tests、production build、874×402 browser policy、double-click scale 1をlocal確認した。
   - [x] follow cameraをplate overscan内へ制限し、keyboard／tapを同じ10頂点road polygonへ接続した。公開前code review再監査はP0 0／P1 0でGO。
   - [x] commit `79bf341`をpushし、Pages run #11成功、公開R03／catalog／R02 freezeのHTTP 200と実browser描画を確認した。
-  - [ ] ユーザーreviewでConcept Cとの残差を最大3点に絞り、C1へ持ち越す差分を決める。
+  - [ ] R03単体の残差はR04 reviewへ統合し、次のC1へ持ち越す差分を決める。
 - [ ] `C1 Layered Beauty Cell`でR03の知覚品質をdepth-awareなHD-2D基盤へ移す。
   - 道路、階段、停留所、作業台をmodular geometry、depth、occlusion、collision、navigationへ分解する。
   - approved R03 captureを回帰基準にし、dynamic light／装備／移動中もP1差分ゼロを維持する。
@@ -122,6 +130,7 @@ Active P0は、R02を漸進改良せず独立再構築した`R03 Concept C Beaut
 
 ## Recently completed
 
+- [x] R04 local deployment candidateへR02-derived連続world／因果、realtime 3D女性型SF hero、R04 scene compiler、camera／light／PBR／DOF、versioned shellを統合し、Vitest 184件、strict TypeScript、production build、checksum、production browser操作を合格 — 2026-08-02
 - [x] commit `79bf341`をGitHub Pagesへ反映し、run #11成功、公開R03／catalog／R02 static snapshot／service workerのHTTPS応答と実browser操作を確認 — 2026-08-02
 - [x] R03をR02非依存の2.5D Beauty Benchmarkとして再構築し、Concept Cとの同一1672×941比較、独立visual QA P0 0／P1 0、四方向操作、手動skill、safe camera／road polygon、Vitest 168件、strict TypeScript、production buildをlocal合格 — 2026-08-02
 - [x] R02をcommit `0b5fd9f6…`由来の静的bundle、固有service worker、snapshot、11ファイルのSHA-256 manifestへ凍結 — 2026-08-02

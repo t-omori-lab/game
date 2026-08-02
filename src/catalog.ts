@@ -47,8 +47,6 @@ function renderCatalog(applicationRoot: HTMLElement): void {
       <article class="release-card ${isLatest ? "release-card--latest" : ""}" data-release="${release.id}">
         <div class="release-card__visual" aria-hidden="true">
           <span class="release-card__index">0${index + 1}</span>
-          <span class="release-card__horizon"></span>
-          <span class="release-card__signal"></span>
         </div>
         <div class="release-card__body">
           <div class="release-card__meta">

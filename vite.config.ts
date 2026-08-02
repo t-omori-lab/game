@@ -7,7 +7,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         catalog: "index.html",
-        r03: "r03/index.html",
+        r04: "r04/index.html",
       },
     },
   },

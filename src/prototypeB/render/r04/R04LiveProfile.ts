@@ -1,0 +1,65 @@
+export const R04_LIVE_PROFILE = Object.freeze({
+  schemaVersion: "1.0.0",
+  stableId: "concept-c-r04-live-v1",
+  seed: 0x52_30_34_43,
+  environmentProfile: "r04-live" as const,
+  cameraCompositionProfile: "r04" as const,
+  camera: Object.freeze({
+    viewHeight: 540,
+    targetHeight: 28,
+    targetOffsetX: -76,
+    targetOffsetZ: -82,
+    followSpeed: 6.4,
+    exploreLookAhead: 62,
+    combatTargetWeight: 0.34,
+    maximumCombatOffset: 92,
+  }),
+  display: Object.freeze({
+    exposure: 1.02,
+    fogColor: 0xaec9bb,
+    fogNear: 1_420,
+    fogFar: 3_200,
+    groundWhiteMix: 0.08,
+  }),
+  post: Object.freeze({
+    tiltShiftFocus: 0.61,
+    tiltShiftStrength: 2.45,
+  }),
+  actors: Object.freeze({
+    heroScale: 2.02,
+    companionPreviewScale: 1.36,
+  }),
+  lighting: Object.freeze({
+    skyColor: 0xfff2cf,
+    groundColor: 0x255647,
+    skyIntensity: 0.34,
+    keyColor: 0xffd8a0,
+    keyIntensity: 3.28,
+    keyOffsetX: -510,
+    keyOffsetY: 860,
+    keyOffsetZ: 210,
+    shadowHalfExtent: 560,
+    shadowNormalBias: 0.68,
+    rimColor: 0x8ce7dc,
+    rimIntensity: 0.76,
+    environmentIntensity: 0.19,
+  }),
+  composition: Object.freeze({
+    heroScreenAnchor: Object.freeze({ x: 0.45, y: 0.62 }),
+    openRoute: Object.freeze({
+      minimumX: 390,
+      maximumX: 820,
+      centerZ: 900,
+      halfWidth: 82,
+    }),
+    rule: "open-wet-route-with-edge-layered-ruins" as const,
+  }),
+  generation: Object.freeze({
+    mode: "deterministic-r04-scene-compiler" as const,
+    externalAssets: false,
+    referenceImageUsedAtRuntime: false,
+    causalColliderParity: true,
+  }),
+});
+
+export type R04LiveProfile = typeof R04_LIVE_PROFILE;
