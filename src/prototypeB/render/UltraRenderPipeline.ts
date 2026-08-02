@@ -61,6 +61,72 @@ const BandedTiltShiftShader = {
   `,
 };
 
+const DepthAwareDofShader = {
+  name: "DepthAwareDofShader",
+  uniforms: {
+    tDiffuse: { value: null },
+    tDepth: { value: null },
+    resolution: { value: new THREE.Vector2(1, 1) },
+    focusDepth: { value: 0.5 },
+    focusRange: { value: 0.024 },
+    blurPixels: { value: 2.35 },
+    edgeThreshold: { value: 0.0065 },
+  },
+  vertexShader: /* glsl */`
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: /* glsl */`
+    uniform sampler2D tDiffuse;
+    uniform sampler2D tDepth;
+    uniform vec2 resolution;
+    uniform float focusDepth;
+    uniform float focusRange;
+    uniform float blurPixels;
+    uniform float edgeThreshold;
+    varying vec2 vUv;
+
+    void main() {
+      float centerDepth = texture2D(tDepth, vUv).r;
+      float depthDistance = abs(centerDepth - focusDepth);
+      float coc = smoothstep(focusRange * 0.42, focusRange, depthDistance);
+      coc *= 0.82;
+      vec2 radius = (blurPixels * coc) / resolution;
+
+      vec4 sum = texture2D(tDiffuse, vUv) * 1.8;
+      float weightSum = 1.8;
+      vec2 taps[8];
+      taps[0] = vec2(1.0, 0.0);
+      taps[1] = vec2(-1.0, 0.0);
+      taps[2] = vec2(0.0, 1.0);
+      taps[3] = vec2(0.0, -1.0);
+      taps[4] = vec2(0.7071, 0.7071);
+      taps[5] = vec2(-0.7071, 0.7071);
+      taps[6] = vec2(0.7071, -0.7071);
+      taps[7] = vec2(-0.7071, -0.7071);
+
+      for (int index = 0; index < 8; index += 1) {
+        vec2 sampleUv = clamp(vUv + taps[index] * radius, vec2(0.001), vec2(0.999));
+        float sampleDepth = texture2D(tDepth, sampleUv).r;
+        float depthDelta = abs(sampleDepth - centerDepth);
+        float sameSurface = 1.0 - smoothstep(
+          edgeThreshold * 0.38,
+          edgeThreshold,
+          depthDelta
+        );
+        float weight = 0.72 * sameSurface;
+        sum += texture2D(tDiffuse, sampleUv) * weight;
+        weightSum += weight;
+      }
+
+      gl_FragColor = sum / max(weightSum, 0.001);
+    }
+  `,
+};
+
 export type UltraRenderPipelineMode =
   | "half-float-msaa"
   | "half-float"
@@ -87,6 +153,11 @@ export interface UltraRenderPipelineOptions {
   readonly tiltShiftClearBand?: number;
   readonly tiltShiftFarBlurPixels?: number;
   readonly tiltShiftNearBlurPixels?: number;
+  /** Scene-depth bilateral softness. It is mutually exclusive with tilt-shift. */
+  readonly depthAwareDof?: boolean;
+  readonly depthFocusRange?: number;
+  readonly depthBlurPixels?: number;
+  readonly depthEdgeThreshold?: number;
   readonly onFallback?: (reason: unknown) => void;
 }
 
@@ -105,6 +176,11 @@ export interface UltraRenderPipelineStatus {
   readonly tiltShiftClearBand: number;
   readonly tiltShiftFarBlurPixels: number;
   readonly tiltShiftNearBlurPixels: number;
+  readonly depthAwareDof: boolean;
+  readonly depthFocus: number;
+  readonly depthFocusRange: number;
+  readonly depthBlurPixels: number;
+  readonly depthEdgeThreshold: number;
   readonly fallbackReason: string | null;
 }
 
@@ -141,6 +217,15 @@ export class UltraRenderPipeline {
   private tiltShiftClearBand = 0.14;
   private tiltShiftFarBlurPixels = 13;
   private tiltShiftNearBlurPixels = 19;
+  private depthAwareDofEnabled = false;
+  private depthTarget: THREE.WebGLRenderTarget | null = null;
+  private depthMaterial: THREE.MeshDepthMaterial | null = null;
+  private depthAwareDofPass: ShaderPass | null = null;
+  private depthFocus = 0.5;
+  private depthFocusRange = 0.024;
+  private depthBlurPixels = 2.35;
+  private depthEdgeThreshold = 0.0065;
+  private readonly projectedFocus = new THREE.Vector3();
   private fallbackReason: string | null = null;
   private disposed = false;
 
@@ -178,6 +263,7 @@ export class UltraRenderPipeline {
 
     if (this.composer !== null) {
       try {
+        this.renderDepthMap();
         this.composer.render(deltaSeconds);
         return;
       } catch (reason: unknown) {
@@ -216,6 +302,7 @@ export class UltraRenderPipeline {
       this.composer.setPixelRatio(this.pixelRatio);
       this.composer.setSize(this.width, this.height);
       this.syncTiltShiftUniforms();
+      this.syncDepthAwareDofUniforms();
     } catch (reason: unknown) {
       this.fallbackToDirect(reason);
     }
@@ -237,8 +324,25 @@ export class UltraRenderPipeline {
       tiltShiftClearBand: this.tiltShiftClearBand,
       tiltShiftFarBlurPixels: this.tiltShiftFarBlurPixels,
       tiltShiftNearBlurPixels: this.tiltShiftNearBlurPixels,
+      depthAwareDof: this.depthAwareDofEnabled,
+      depthFocus: this.depthFocus,
+      depthFocusRange: this.depthFocusRange,
+      depthBlurPixels: this.depthBlurPixels,
+      depthEdgeThreshold: this.depthEdgeThreshold,
       fallbackReason: this.fallbackReason,
     };
+  }
+
+  /** Keeps the miniature focus plane on a world-space subject. */
+  public setDepthFocusPoint(worldPosition: THREE.Vector3): void {
+    if (!this.depthAwareDofEnabled) return;
+    this.projectedFocus.copy(worldPosition).project(this.camera);
+    this.depthFocus = THREE.MathUtils.clamp(
+      this.projectedFocus.z * 0.5 + 0.5,
+      0,
+      1,
+    );
+    this.syncDepthAwareDofUniforms();
   }
 
   public dispose(): void {
@@ -371,6 +475,45 @@ export class UltraRenderPipeline {
         this.syncTiltShiftUniforms();
       }
 
+      if (options.depthAwareDof ?? false) {
+        this.depthFocusRange = THREE.MathUtils.clamp(
+          options.depthFocusRange ?? 0.024,
+          0.006,
+          0.12,
+        );
+        this.depthBlurPixels = THREE.MathUtils.clamp(
+          options.depthBlurPixels ?? 2.35,
+          0.5,
+          5,
+        );
+        this.depthEdgeThreshold = THREE.MathUtils.clamp(
+          options.depthEdgeThreshold ?? 0.0065,
+          0.001,
+          0.04,
+        );
+        this.depthTarget = new THREE.WebGLRenderTarget(1, 1, {
+          depthBuffer: true,
+          stencilBuffer: false,
+          minFilter: THREE.NearestFilter,
+          magFilter: THREE.NearestFilter,
+          type: THREE.UnsignedByteType,
+        });
+        this.depthTarget.texture.name = "R07 linear scene depth";
+        this.depthMaterial = new THREE.MeshDepthMaterial({
+          depthPacking: THREE.BasicDepthPacking,
+          blending: THREE.NoBlending,
+          side: THREE.DoubleSide,
+        });
+        this.depthMaterial.name = "R07 bilateral depth prepass";
+        this.depthAwareDofPass = new ShaderPass(DepthAwareDofShader);
+        this.depthAwareDofPass.material.name = "R07 depth-aware miniature softness";
+        this.depthAwareDofPass.uniforms["tDepth"]!.value = this.depthTarget.texture;
+        composer.addPass(this.depthAwareDofPass);
+        passes.push(this.depthAwareDofPass);
+        this.depthAwareDofEnabled = true;
+        this.syncDepthAwareDofUniforms();
+      }
+
       if (options.bloom ?? true) {
         const bloomPass = new UnrealBloomPass(
           new THREE.Vector2(
@@ -405,6 +548,7 @@ export class UltraRenderPipeline {
         target?.dispose();
       }
       disposePostProcessing(composer, passes);
+      this.disposeDepthResources();
       this.resetFeatureStatus();
       this.fallbackReason = describeReason(reason);
       this.onFallback?.(reason);
@@ -438,6 +582,15 @@ export class UltraRenderPipeline {
     this.passes = [];
     this.horizontalTiltShift = null;
     this.verticalTiltShift = null;
+    this.depthAwareDofPass = null;
+    this.disposeDepthResources();
+  }
+
+  private disposeDepthResources(): void {
+    this.depthTarget?.dispose();
+    this.depthTarget = null;
+    this.depthMaterial?.dispose();
+    this.depthMaterial = null;
   }
 
   private resetFeatureStatus(): void {
@@ -447,6 +600,7 @@ export class UltraRenderPipeline {
     this.bloomEnabled = false;
     this.smaaEnabled = false;
     this.tiltShiftEnabled = false;
+    this.depthAwareDofEnabled = false;
   }
 
   private syncTiltShiftUniforms(): void {
@@ -479,6 +633,46 @@ export class UltraRenderPipeline {
     this.verticalTiltShift.uniforms["v"]!.value =
       this.tiltShiftStrength / renderHeight;
     this.verticalTiltShift.uniforms["r"]!.value = this.tiltShiftFocus;
+  }
+
+  private syncDepthAwareDofUniforms(): void {
+    if (this.depthAwareDofPass === null || this.depthTarget === null) return;
+    const renderWidth = Math.max(1, Math.round(this.width * this.pixelRatio));
+    const renderHeight = Math.max(1, Math.round(this.height * this.pixelRatio));
+    this.depthTarget.setSize(renderWidth, renderHeight);
+    this.depthAwareDofPass.uniforms["resolution"]!.value.set(
+      renderWidth,
+      renderHeight,
+    );
+    this.depthAwareDofPass.uniforms["focusDepth"]!.value = this.depthFocus;
+    this.depthAwareDofPass.uniforms["focusRange"]!.value = this.depthFocusRange;
+    this.depthAwareDofPass.uniforms["blurPixels"]!.value = this.depthBlurPixels;
+    this.depthAwareDofPass.uniforms["edgeThreshold"]!.value =
+      this.depthEdgeThreshold;
+  }
+
+  private renderDepthMap(): void {
+    if (
+      !this.depthAwareDofEnabled ||
+      this.depthTarget === null ||
+      this.depthMaterial === null
+    ) {
+      return;
+    }
+    const previousTarget = this.renderer.getRenderTarget();
+    const previousOverride = this.scene.overrideMaterial;
+    const previousBackground = this.scene.background;
+    try {
+      this.scene.overrideMaterial = this.depthMaterial;
+      this.scene.background = null;
+      this.renderer.setRenderTarget(this.depthTarget);
+      this.renderer.clear();
+      this.renderer.render(this.scene, this.camera);
+    } finally {
+      this.renderer.setRenderTarget(previousTarget);
+      this.scene.overrideMaterial = previousOverride;
+      this.scene.background = previousBackground;
+    }
   }
 }
 

@@ -83,6 +83,11 @@ Last updated: 2026-08-02
 - 保存版を残すことと、入口で保存版assetを全部downloadすることは別である。CSS backgroundによる全card画像のeager loadとroot service workerの全route precacheを避け、軽量thumbnail、route訪問時cache、cold／warm timelineへ分離する。
 - minimal HUDは情報を消すことではない。通常は探索に必要な状態／方向／manual actionを見せ、combat、interaction、危機、onboardingで必要情報だけを増やすdynamic HUDにすると、画面の静けさと操作理解を両立できる。
 
+- 頭身の数値だけを変えても、成人型scaffold由来のtorso／pelvis／limb／coat macro volumeは少女造形にならない。通常gameplay画角の可愛さには、顔面window、目の占有率、前髪の下端、横髪silhouette、肩幅、衣装丈をsemantic volumeとして別々にauthoringする必要がある。
+- 固定斜めcameraでは、正面だけに小さなface pixelを置くと髪massに消え、camera側面へ別eyeを足すとmask／goggleに見える。head全体をarticulated facingで回しつつ、20-cell超の単一face planeと高密度hair shellを使う方が安定する。
+- miniature softnessはscreen vertical positionから作ると、地面やUIを横帯状に汚す。scene depth、actor focus、CoC、depth-edge rejectionを使い、1〜2px未満から比較すると、sharp baselineを失わず効果を評価できる。
+- PC Ultra canvasをbrowserで動かしたままCPU-heavy生成testを並列実行すると、値の回帰がなくてもtest timeoutを起こす。release testでは描画tabを一時停止してからsuiteを実行し、失敗は値不一致とtimeoutを分けて再確認する。
+
 ## Working hypotheses to validate
 
 - Prototype Bには二つの独立した不足がある可能性が高い。Gate Aでは条件付き自動通常攻撃、手動大技、loot比較、異なるbuildを、Gate Bでは自分で選ぶ同時目的／拠点と、一回目が二回目のloadout／routeを変える因果を別々に検証する。一方を他方の代替にしない。

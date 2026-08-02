@@ -95,6 +95,9 @@ Phase: F.R.A.M. R06 Sharp Navigation deployed and public-browser verified; R01�
 - R06 local production artifactはstrict TypeScript、Vitest 32 files／191 tests、production build、R05 15-file checksum、1280×720のcatalog／R05 archive／R06 active browser smokeに合格した。
 - commit `2fd05c2`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #17は成功した。公開catalogはR06→R05→R04→R03→R02→R01で、latest coverだけeager、archivesはlazyだった。公開R06は`R06`／`r06`／`sharpPresentation=true`／`ultraTiltShift=false`／7,734 cells、mini-map、目的地9m、WASD／AUTO／Q／SHIFT／E／R guideを実browserで確認した。公開R05は独立した`R05`／`r05`起動画面を維持した。これはR06評価版の配信確認であり、Concept C完全再現、commercial art合格、ユーザーvisual acceptanceではない。
 
+- R07 local candidateはR06のworld／gameplay／HUDを保持し、characterとminiature softnessだけを独立検証するrouteである。主人公頭部をbody cellの0.56倍で再authoringし、semantic face／eyes／brow／cheek／bob／side locksとshort technical jacketを接続、9,627 visible cellsとした。
+- R07のworld softnessはscreen-Y tilt-shiftではなくscene depth、player focus、CoC、bilateral edge rejectionで構成する。local 1280×720ではhalf-float MSAA、focus range 0.036、最大1.45px、fallbackなしを確認した。公開R01〜R06とcatalogは変更せず、R07のpublic deploy／user acceptanceは未実施である。
+
 ## Creative reference notes
 
 - 探索場面のBGMイメージとして、MYUKKE.「Go, Go, Heartbreaker!」を参照する。
@@ -128,6 +131,7 @@ Phase: F.R.A.M. R06 Sharp Navigation deployed and public-browser verified; R01�
 - R03の`final result: passed`は、指定された1672×941初期frameにおけるConcept Cとの知覚比較と公開候補判定である。ゲーム全体、全camera state、全装備／天候、commercial HD-2D同等の完成を意味しない。
 - R04はR02由来の因果と連続worldを保持した公開realtime 3D次版であるが、`pc-ultra`は描画profile名であってcommercial-qualityの合格評価ではない。GitHub Pages反映と公開browser動作は確認済みだが、Concept C完全再現とユーザーart acceptanceは別gateとする。
 - R05はcamera、miniature-depth、主人公identityと高密度voxel少女表現を優先したlocal presentation passである。actor方向はordinary smooth 3Dへ戻さない。一方、Concept Cと同等のmacro composition、environment microdetail、湿潤PBR、植生密度、間接光、commercial HD-2D品質、ユーザーart acceptance、public deployは未証明で、現visual gateはblockedである。
+- R07はR06より顔／髪の可読性とscene-depth softnessを進めたlocal比較候補であり、最終character designではない。全方向の表情、衣装／体型、animation、weather／time／equipment変化、Concept C完全再現、commercial HD-2D同等、user acceptance、public routeは未確認である。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff

@@ -71,7 +71,8 @@ export type PrototypeBExperience =
   | "beauty-cell"
   | "r04"
   | "r05"
-  | "r06";
+  | "r06"
+  | "r07";
 
 export type StartPrototypeBOptions = {
   readonly experience?: PrototypeBExperience;
@@ -147,7 +148,11 @@ export function startPrototypeB(
   const sound = new RelicSoundscape();
   const listeners: Array<() => void> = [];
   let state = createPrototypeBState(RUN_SEED);
-  if (options.experience === "r05" || options.experience === "r06") {
+  if (
+    options.experience === "r05" ||
+    options.experience === "r06" ||
+    options.experience === "r07"
+  ) {
     // Start in a front three-quarter read so the high-density voxel face,
     // hair silhouette and fitted coat are visible before the player moves.
     state.player.facingX = 0;
@@ -175,7 +180,9 @@ export function startPrototypeB(
   let previousResultOpen = false;
   let statusMessageHoldUntil = 0;
   const captureState =
-    options.experience === "r05" || options.experience === "r06"
+    options.experience === "r05" ||
+      options.experience === "r06" ||
+      options.experience === "r07"
     ? new URLSearchParams(window.location.search).get("capture")
     : null;
   let capturedFrameCount = 0;
@@ -244,7 +251,8 @@ export function startPrototypeB(
       options.experience === "beauty-cell" ||
       options.experience === "r04" ||
       options.experience === "r05" ||
-      options.experience === "r06"
+      options.experience === "r06" ||
+      options.experience === "r07"
     ) {
       layout.stage.dataset.presentationState = "active";
     }
@@ -613,7 +621,9 @@ export function startPrototypeB(
         },
         companionPreview: options.companionPreview,
         cameraCompositionProfile:
-          options.experience === "r05" || options.experience === "r06"
+          options.experience === "r05" ||
+            options.experience === "r06" ||
+            options.experience === "r07"
             ? "r05"
             : options.experience === "r04"
             ? "r04"
@@ -624,7 +634,8 @@ export function startPrototypeB(
         environmentProfile:
           options.experience === "r04" ||
             options.experience === "r05" ||
-            options.experience === "r06"
+            options.experience === "r06" ||
+            options.experience === "r07"
             ? "r04-live"
             : options.experience === "beauty-cell"
             ? "beauty-cell"
@@ -632,13 +643,16 @@ export function startPrototypeB(
               ? "north-star-city"
               : "start-town",
         presentationProfile:
-          options.experience === "r05" || options.experience === "r06"
+          options.experience === "r07"
+            ? "r07-fram"
+            : options.experience === "r05" || options.experience === "r06"
             ? "r05-fram"
             : options.experience === "r04"
               ? "r04"
               : "default",
         qualityProfile: options.renderQuality,
-        sharpPresentation: options.experience === "r06",
+        sharpPresentation:
+          options.experience === "r06" || options.experience === "r07",
       },
     );
   }
@@ -851,7 +865,8 @@ function configureExperience(
     options.experience !== "beauty-cell" &&
     options.experience !== "r04" &&
     options.experience !== "r05" &&
-    options.experience !== "r06"
+    options.experience !== "r06" &&
+    options.experience !== "r07"
   ) {
     return;
   }
@@ -862,7 +877,9 @@ function configureExperience(
   const r04 = options.experience === "r04";
   const r05 = options.experience === "r05";
   const r06 = options.experience === "r06";
-  const fram = r05 || r06;
+  const r07 = options.experience === "r07";
+  const fram = r05 || r06 || r07;
+  const sharpNavigation = r06 || r07;
   if (beautyCell || r04 || fram) {
     root.classList.add("beauty-cell-shell");
     layout.stage.classList.add("beauty-cell-stage");
@@ -875,12 +892,18 @@ function configureExperience(
     root.classList.add("r05-shell");
     layout.stage.classList.add("r05-stage");
   }
-  if (r06) {
+  if (sharpNavigation) {
     root.classList.add("r06-shell");
     layout.stage.classList.add("r06-stage");
   }
+  if (r07) {
+    root.classList.add("r07-shell");
+    layout.stage.classList.add("r07-stage");
+  }
   layout.stage.dataset.experience = options.experience;
-  layout.stage.dataset.prototypeVersion = r06
+  layout.stage.dataset.prototypeVersion = r07
+    ? "R07"
+    : r06
     ? "R06"
     : r05
       ? "R05"
@@ -897,7 +920,7 @@ function configureExperience(
   layout.stage.setAttribute(
     "aria-label",
     fram
-      ? `F.R.A.M. ${r06 ? "R06" : "R05"}。WASDまたは画面左で移動。通常攻撃は間合いに入ると自動。Qで大技、Shiftで防御と回避、Eで調査、Rで道具を使います。`
+      ? `F.R.A.M. ${r07 ? "R07" : r06 ? "R06" : "R05"}。WASDまたは画面左で移動。通常攻撃は間合いに入ると自動。Qで大技、Shiftで防御と回避、Eで調査、Rで道具を使います。`
       : r04
       ? "R02系統 R04。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。"
       : beautyCell
@@ -909,7 +932,7 @@ function configureExperience(
   badge.className = "north-star-badge";
   badge.hidden = !debugEnabled;
   badge.innerHTML = fram
-    ? `<span>FRONTIER RELICS ARCHIVE MODULE</span><strong>${r06 ? "R06 / SHARP NAVIGATION" : "R05 / WIDE WORLD"} / PC ULTRA</strong>`
+    ? `<span>FRONTIER RELICS ARCHIVE MODULE</span><strong>${r07 ? "R07 / SEMANTIC VOXEL GIRL" : r06 ? "R06 / SHARP NAVIGATION" : "R05 / WIDE WORLD"} / PC ULTRA</strong>`
     : r04
     ? "<span>CAUSAL BEAUTY CELL</span><strong>R04 / R02 SYSTEMS / PC ULTRA</strong>"
     : beautyCell
@@ -1082,7 +1105,8 @@ function updateInterface(
   layout.zoneLabel.textContent =
     layout.stage.dataset.experience === "r04" ||
       layout.stage.dataset.experience === "r05" ||
-      layout.stage.dataset.experience === "r06"
+      layout.stage.dataset.experience === "r06" ||
+      layout.stage.dataset.experience === "r07"
       ? "緑蝕・第07雨庭区"
       : layout.stage.dataset.experience === "beauty-cell"
       ? "緑蝕・第04交差区"

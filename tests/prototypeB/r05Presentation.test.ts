@@ -33,7 +33,9 @@ describe("F.R.A.M. R06 presentation contract", () => {
     expect(mainSource).toContain('experience: "r06"');
     expect(applicationSource).toContain('options.experience === "r05" || options.experience === "r06"');
     expect(applicationSource).toContain('? "r05-fram"');
-    expect(applicationSource).toContain('sharpPresentation: options.experience === "r06"');
+    expect(applicationSource).toMatch(
+      /sharpPresentation:\s*options\.experience === "r06" \|\| options\.experience === "r07"/,
+    );
     expect(rendererSource).toContain("createR04ArtSlice()");
     expect(rendererSource).toContain("createR05ConceptCArtSlice()");
     expect(rendererSource).toContain("createR05FramHeroVisual()");

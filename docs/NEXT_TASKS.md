@@ -4,7 +4,16 @@ Last updated: 2026-08-02
 
 ## P0
 
-R06 Sharp Navigationのdeploy／public確認は完了した。Active P0は`user visual review → 高密度voxel少女preset採択 → depth-aware DOF`である。都市part追加はこの基盤より後にする。R06をConcept C／commercial art合格とは扱わない。
+R06 Sharp Navigationのdeploy／public確認は完了し、R07 Character／Depth candidateをlocal実装した。Active P0は`R07 user visual review → 顔／髪／衣装preset採択 → C案との差を次の一画面へ限定`である。都市part追加はこの基盤より後にする。R06／R07をConcept C／commercial art合格とは扱わない。
+
+- [x] `F.R.A.M. R07 Character／Depth candidate`をlocal production routeとして作る。
+  - [x] R06の因果world、camera、mini-map、marker、操作guide、半自動通常攻撃、手動大技を保持し、公開R01〜R06とcatalogは変更しなかった。
+  - [x] AI生成した4面character directionをreferenceに、頭部だけを0.56倍cellのsemantic micro-voxel gridへ再構築した。通常画角で顔を覆っていた旧hair／faceを除去し、前面face、eyes、brow、cheek、asymmetric bob、side locks、短いtechnical jacketを別volumeとして持つ。
+  - [x] visible cellを7,734から9,627へ増やし、R06の白いhair massから、目／口／顔面とcompact silhouetteが読めるR07 presetへ変更した。同一1280×720のfull view／3倍hero crop／比較板を保存した。
+  - [x] screen-Y bandではなくscene depth target、player focus、CoC、bilateral depth-edge rejectionを使うworld-only DOFを追加した。R07既定値はfocus range 0.036、最大1.45pxで、DOM HUDはsharpのまま。
+  - [x] strict TypeScript、Vitest 34 files／195 tests、production build、1280×720 local production browserで9,627 cells、half-float MSAA、depth-aware DOF、fallbackなしを確認した。
+  - [ ] ユーザーがR07 local candidateをreviewし、(1)顔／髪、(2)衣装／体型、(3)world softnessの最大3点で次差分を決める。
+  - [ ] 採択後にのみR07を保存版化し、catalog追加／GitHub Pages deployを行う。現時点ではpublic push／deployしない。
 
 - [x] `F.R.A.M. R06 Sharp Navigation Build`をGitHub Pagesへ公開する。
   - [x] R05をrelative bundle、scope別worker、snapshot、SHA-256 manifestを持つ自己完結保存版へ凍結した。

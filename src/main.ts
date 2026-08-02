@@ -12,7 +12,11 @@ void boot(root).catch((error: unknown) => {
   showBootFailure(root, error);
 });
 
-if ("serviceWorker" in navigator && import.meta.env.PROD) {
+if (
+  "serviceWorker" in navigator &&
+  import.meta.env.PROD &&
+  resolvePrototypeRelease(window.location.pathname, window.location.search) === "r06"
+) {
   window.addEventListener("load", () => {
     void navigator.serviceWorker.register(
       `${import.meta.env.BASE_URL}r06/sw.js`,
@@ -34,6 +38,16 @@ async function boot(applicationRoot: HTMLElement): Promise<void> {
     window.location.pathname,
     window.location.search,
   );
+
+  if (release === "r07") {
+    startPrototypeB(applicationRoot, {
+      experience: "r07",
+      renderQuality: "pc-ultra",
+      companionPreview: false,
+      semiAutoCombat: true,
+    });
+    return;
+  }
 
   if (release === "r06") {
     startPrototypeB(applicationRoot, {

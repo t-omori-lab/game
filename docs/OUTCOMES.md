@@ -77,11 +77,17 @@ Last updated: 2026-08-02
 - R06はscreen-Y banded tilt-shiftを既定OFFにし、3.65頭身／7,734 visible cell／Box cellのcompact主人公、2D mini-map、目的地方向／距離、PC操作guide、controller一致target HUDを統合した。strict TypeScript、Vitest 32 files／191 tests、production build、1280×720 production browser smokeが合格した。
 - commit `2fd05c2`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #17は成功した。公開catalogはR06→R05→R04→R03→R02→R01で、最新coverのみeager、保存版cover 5件はlazyだった。公開R06は`R06`／`r06`／`sharpPresentation=true`／`ultraTiltShift=false`／7,734 cells、mini-map、目的地9m、WASD／AUTO／Q／SHIFT／E／R guideを実browserで確認した。公開R05は`R05`／`r05`の独立起動画面を維持した。Concept C／commercial art合格、depth-aware DOF、ユーザーvisual acceptanceは未確認である。
 
+- R07 local candidateをR06-derived live routeとして実装した。R06／公開R01〜R06／公開catalogは変更していない。R07はR06の連続world、collision、quest、loot、半自動通常攻撃、手動大技、mini-map、marker、PC操作guideを継承する。
+- R07主人公は、AI生成した4面character directionをruntime referenceには使わず、deterministic semantic micro-voxel volumeへ翻訳した。頭部cellをbodyの0.56倍へ細分化し、旧head surfaceを置換、visible cellを7,734から9,627へ増加した。同一1280×720比較では、R06の顔を覆う白いhair massから、目／口／顔面、短いbob、小柄なsilhouetteが読める状態へ変化した。これは最終character art／Concept C同等／ユーザーvisual acceptanceの確認ではない。
+- R07はworld-onlyのscene-depth DOFを実装した。MeshDepthMaterialによるdepth target、player world focus、CoC、bilateral depth-edge rejectionを使い、screen-Y bandを使わない。local browserではfocus range 0.036、最大1.45px、edge threshold 0.0045、fallbackなし、HUD sharpを観測した。
+- R07 local candidateはstrict TypeScript、Vitest 34 files／195 tests、production buildに合格した。1280×720 production browserでは1917×1077内部buffer、`r07-fram`、`semantic-high-density-articulated-voxel-girl`、9,627 cells、half-float MSAA、GTAO、bloom、SMAA、depth-aware DOF、tilt-shift falseを確認した。public push／deployは行っていない。
+
 ## Pending confirmation
 
 - R04がR02の遊べる基盤を維持しつつ、ユーザーのConcept C／commercial HD-2D基準へ十分近づいたと評価されるか。local design QAのpassはユーザーacceptanceの代替ではない。
 - F.R.A.M. moduleの製造者、起源、network／組織との関係、複製／継承、instance名、logoをどう定義するか。
 - local R05の高密度voxel少女F.R.A.M. F-01の顔／髪／衣装／動作を含む可愛さと、Concept C型へ再構築するmacro layout／material／lightがユーザー基準を満たすか。ordinary smooth 3Dへ戻さないことは確定したが、Concept C完全再現、commercial HD-2D同等、公開合格は未確認である。
+- local R07のsemantic micro-voxel少女が、R06より明確な前進としてユーザー基準を満たすか。顔／髪の最終造形、体型／衣装、secondary motion、全方向read、Concept C／commercial HD-2D同等、公開採択は未確認である。
 - R03がConcept Cの知覚品質へ十分近づいたか、ユーザーart reviewで合格するか。local independent visual QAのpassはユーザーacceptanceの代替ではない。
 - R03のplate型benchmarkをC1のdepth-aware geometry、occlusion、collision、navigation、dynamic lightingへ移しても同じ画面品質を維持できるか。
 
