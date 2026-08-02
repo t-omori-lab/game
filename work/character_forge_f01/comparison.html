@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>F-01 Beauty Sheet / Runtime Comparison</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, sans-serif; background: #101413; color: #eef2ed; }
+      * { box-sizing: border-box; }
+      body { width: 1280px; height: 720px; margin: 0; overflow: hidden; background: #101413; }
+      header { height: 66px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; border-bottom: 1px solid #303733; }
+      header strong { font-size: 14px; letter-spacing: .12em; }
+      header span { color: #7f8c84; font: 9px/1 monospace; letter-spacing: .12em; }
+      main { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; height: 654px; background: #303733; }
+      figure { position: relative; display: grid; grid-template-rows: 1fr 58px; min-width: 0; margin: 0; background: #171c1a; }
+      img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain; background: #66645f; }
+      figcaption { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 18px; border-top: 1px solid #303733; }
+      figcaption strong { font-size: 11px; letter-spacing: .08em; }
+      figcaption span { max-width: 380px; color: #8e9a92; font-size: 8px; line-height: 1.45; text-align: right; }
+      .label { position: absolute; top: 14px; left: 14px; padding: 7px 9px; color: #111817; background: #62eee6; font: 8px/1 monospace; letter-spacing: .1em; }
+      .runtime .label { color: white; background: #ef685d; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>F.R.A.M. CHARACTER FORGE F-01 / SAME-SCREEN VISUAL GATE</strong>
+      <span>IDENTITY · PROPORTION · SILHOUETTE · MATERIAL · GAME READABILITY</span>
+    </header>
+    <main>
+      <figure>
+        <span class="label">REFERENCE / BEAUTY SHEET</span>
+        <img src="../r07_character_depth/fram-r07-character-direction.png" alt="F-01 Beauty Sheet" />
+        <figcaption><strong>IDENTITY TARGET</strong><span>白髪の束感、大きな目、小頭身、淡色技術ジャケット、シアンとコーラルの識別点</span></figcaption>
+      </figure>
+      <figure class="runtime">
+        <span class="label">IMPLEMENTATION / LIVE 3D</span>
+        <img src="./f01-runtime-1280x720.png" alt="F-01 runtime reconstruction" />
+        <figcaption><strong>F-01 VISUAL HULL</strong><span>4面図 → 37,990セル正本 → 9,454表面セル → 7意味パーツ。可愛さと髪束は未達</span></figcaption>
+      </figure>
+    </main>
+  </body>
+</html>

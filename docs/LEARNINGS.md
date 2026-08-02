@@ -90,6 +90,10 @@ Last updated: 2026-08-02
 
 ## Working hypotheses to validate
 
+- 全身のfront／back silhouetteとside silhouetteをそのまま直積するvisual hullは、腕の横幅とbackpackの奥行きを組み合わせ、実在しない膨らんだ胴体を作る。rig familyが持つhead／torso／arm／leg／equipmentのsemantic volumeを再構築時のgateにするとmacro形状は改善するが、Beauty Sheet完全一致にはhair／face／jacket等のmodule別復元が必要である。
+- AI生成character sheetをproduction inputにする場合、魅力を決めるBeauty Sheetと、strict orthographic／同一scale／neutral pose／module分離を持つBuild Sheetを分けると、画像の良さと3D変換条件を両立できる。raw output、crop calibration、palette、rig family、生成器、hashを一つのsource definitionへ束ねる必要がある。
+- cell解像度を72から92へ上げると目と髪の色境界は残りやすくなったが、可愛さはcell数だけでは決まらない。front hemisphereの顔色をBeauty正面へ所有させ、side projectionの別顔が3/4で重ならないようにし、次にhair shell／face planeを別moduleへ分ける順序が有効である。
+
 - Prototype Bには二つの独立した不足がある可能性が高い。Gate Aでは条件付き自動通常攻撃、手動大技、loot比較、異なるbuildを、Gate Bでは自分で選ぶ同時目的／拠点と、一回目が二回目のloadout／routeを変える因果を別々に検証する。一方を他方の代替にしない。
 - 通常攻撃を自動化するとsmartphoneの連打負荷を減らせる可能性がある。ただし深さは、接敵、間合い、target優先、撤退、build固有の攻撃周期、有限resourceの大技へ移さなければならない。格下は自動で処理でき、名付き敵は立ち止まったままでは安定して倒せない難度差を比較する。
 - 自築拠点は独立した建築gameへ広げず、放浪の成果とworld memoryを物理化する最初の永続因果にできる可能性がある。候補地二つ、機能module候補二つ以上／今回設置一つ、次回差分一つで「場所と設備の選択が次の遠征を変えるか」を先に試す。

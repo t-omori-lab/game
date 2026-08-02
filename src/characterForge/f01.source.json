@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "fram.character.f01.build-sheet-visual-hull-v1",
+  "displayName": "The Archivist / F-01",
+  "sourceKind": "ai-build-sheet-multiview",
+  "grid": {
+    "width": 48,
+    "height": 92,
+    "depth": 42,
+    "cellSize": 0.058,
+    "surfaceGap": 0.9
+  },
+  "views": {
+    "front": { "x": 170, "y": 76, "width": 220, "height": 440 },
+    "left": { "x": 540, "y": 76, "width": 220, "height": 440 },
+    "back": { "x": 905, "y": 76, "width": 220, "height": 440 },
+    "right": { "x": 1280, "y": 76, "width": 220, "height": 440 }
+  },
+  "segmentation": {
+    "backgroundDistance": 21,
+    "saturationFloor": 0.11,
+    "sampleRadius": 0.28
+  },
+  "rig": {
+    "family": "fram-humanoid-compact-v1",
+    "headStart": 0.625,
+    "hipHeight": 0.39,
+    "shoulderHeight": 0.625,
+    "armOuterStart": 0.245,
+    "backEquipmentDepth": -0.18
+  },
+  "palette": [
+    { "id": "ivory", "hex": "#e6e4da", "surface": "cloth" },
+    { "id": "warm-gray", "hex": "#c8c6bd", "surface": "cloth" },
+    { "id": "sage-gray", "hex": "#a6a89a", "surface": "cloth" },
+    { "id": "graphite", "hex": "#7f8676", "surface": "cloth" },
+    { "id": "near-black", "hex": "#353b3b", "surface": "polymer" },
+    { "id": "cyan", "hex": "#38e7f0", "surface": "emissive" },
+    { "id": "coral", "hex": "#ef685d", "surface": "cloth" },
+    { "id": "skin", "hex": "#f2b28c", "surface": "skin" },
+    { "id": "eye-teal", "hex": "#174f55", "surface": "glass" }
+  ],
+  "provenance": {
+    "beautySheet": "work/r07_character_depth/fram-r07-character-direction.png",
+    "buildSheet": "work/character_forge_f01/fram-f01-production-build-sheet.png",
+    "generatedOn": "2026-08-02",
+    "generator": "OpenAI image generation plus deterministic multiview visual-hull reconstruction"
+  }
+}

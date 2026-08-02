@@ -2,13 +2,17 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: F.R.A.M. R08 unified character local candidate verified; public R06 unchanged; R01–R07 preserved
+Phase: Character Forge F-01 local pipeline proof verified; public R06 unchanged; R01–R08 preserved
 
 ## Purpose
 
 仕組みと遊び方で長く遊べる、世界記憶型の放浪生活ハクスラを開発する。自然に侵食された現代都市を自由に放浪し、通常戦闘は自動、大技は手動で介入する。装備、異形への対処、回収、拠点づくり、帰還結果が次の旅へ巡る小さなworldを目指す。visualはPC play前提の最高品質masterを先に作り、iPhone 16 Proは同じasset／simulationから縮退する必須tierとする。ブラウザで反復し、Steam向けdesktop包装を視野に入れる。
 
 ## Confirmed current state
+
+- 2026-08-02、R08の手書きcell増築を続けず、独立route`/game/forge/f01/`へCharacter Forge F-01をlocal実装した。選定済みBeauty Sheetからstrict four-view＋module Build Sheetを生成し、外部`f01.source.json`のcrop／palette／rig定義と画像投影から、48×92×42／37,990 solid cellsの3D volumeを再生成する。
+- F-01は全身visual hullの膨張を`fram-humanoid-compact-v1` semantic volumeで分離し、9,454 outer surface cells、9 materials、7 rig partsをrounded instancingで描画する。`idle / run / hit`、front／left／back／right／3-quarter、close／game、wireframe／turntable、Beauty／Build／R05／R08比較を同一画面で操作できる。
+- 1280×720のlocal in-app browserで3方向表示、run、hit後のidle復帰、比較tabを確認した。strict TypeScript、Vitest 37 files／202 tests、production buildに合格した。F-01 pipeline proofのdesign QAはpassだが、Beauty Sheetの髪束／顔／衣装を完全再現した商用character art、Concept C全景、ユーザー採択、public deployではない。公開R06／catalogは変更していない。
 
 - 既定起動をPrototype B「辺境遺物録」へ切り替えた。Prototype 0.1「境界調査録」は比較用に`?prototype=0.1`で起動できる。
 - Prototype Bは、町―三叉路―聴取廃区を連続scrollする3,600×1,800のworldと固定斜め俯瞰cameraを持つ。moving character、collision silhouette、occluder、dynamic shadowはrealtime 3Dを維持し、地面、背景、建物面は高解像度の生成／baked surfaceを併用できるhybrid HD-2Dへ移行した。playerの現行authoring gridは24×32×16。

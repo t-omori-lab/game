@@ -4,7 +4,16 @@ Last updated: 2026-08-02
 
 ## P0
 
-R06 Sharp Navigationのdeploy／public確認は完了し、R07 Character／DepthとR08 unified full-body character candidateをlocal実装した。Active P0は`R08 user visual review → face／hair／jacket／body silhouette採択 → 次の一画面を限定`である。都市part追加はこの基盤より後にする。R08 character design QAのpassをConcept C全景／commercial art合格とは扱わない。
+R06 Sharp Navigationのdeploy／public確認は完了し、R07／R08に続いてCharacter Forge F-01のAI sheet→3D volume→semantic rig工程をlocal実証した。Active P0は`F-01 user review → module-first F-02へ進むか判断`である。都市part追加はcharacter source方式の判断より後にする。F-01 pipeline design QAのpassをConcept C全景／commercial character art合格とは扱わない。
+
+- [x] `Character Forge F-01`でBeauty Sheetから再生成可能な3D character正本を作る。
+  - [x] 同一人物のstrict four-view＋module Build Sheetを生成し、raw imageとprovenanceを保存した。
+  - [x] 外部`f01.source.json`から48×92×42／37,990 solid cellsを再構築し、9,454 outer surface cells、9 materials、7 semantic rig partsへcompileした。
+  - [x] 独立`/game/forge/f01/`でidle／run／hit、5視点、2距離、wireframe／turntable、Beauty／Build／R05／R08比較を操作可能にした。
+  - [x] 1280×720 same-screen visual comparison、strict TypeScript、37 files／202 tests、production buildをpassした。
+  - [ ] ユーザーがF-01をreviewし、F-02を(1)hair＋face、(2)torso＋jacket、(3)full module buildのどこまで進めるか決める。
+  - [ ] F-02ではBuild Sheet下段のmodule別正投影を独立復元し、全身visual hullを置き換える。Beauty Sheet完全一致／commercial art acceptanceを別gateにする。
+  - [ ] 明示的deploy指示があるまでForgeをcatalog／GitHub Pagesへ追加しない。公開R06を維持する。
 
 - [x] `F.R.A.M. R08 Unified Character Art candidate`をlocal production routeとして作る。
   - [x] R07のrig／weapon socketを保持し、15 pivotのvisible surfaceを19,221-cellの統一semantic characterへ置換した。

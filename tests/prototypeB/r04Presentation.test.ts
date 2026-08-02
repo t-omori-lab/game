@@ -72,7 +72,7 @@ describe("R04 R02-successor presentation contract", () => {
     );
 
     expect(mainSource).toContain(
-      'import { startPrototypeB } from "./prototypeB/app"',
+      'await import("./prototypeB/app")',
     );
     expect(r04Branch).toContain("startPrototypeB(applicationRoot");
     expect(r04Branch).toContain('experience: "r04"');

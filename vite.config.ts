@@ -10,6 +10,7 @@ export default defineConfig({
         r06: "r06/index.html",
         r07: "r07/index.html",
         r08: "r08/index.html",
+        forgeF01: "forge/f01/index.html",
       },
     },
   },

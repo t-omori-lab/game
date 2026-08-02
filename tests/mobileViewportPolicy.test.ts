@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import indexHtml from "../index.html?raw";
+import forgeF01IndexHtml from "../forge/f01/index.html?raw";
 import r06IndexHtml from "../r06/index.html?raw";
 import r07IndexHtml from "../r07/index.html?raw";
 import r08IndexHtml from "../r08/index.html?raw";
@@ -22,7 +23,13 @@ const styles = nodeGlobal.process
 
 describe("mobile viewport gesture policy", () => {
   it("blocks double-tap zoom without trapping the user at a fixed scale", () => {
-    for (const html of [indexHtml, r06IndexHtml, r07IndexHtml, r08IndexHtml]) {
+    for (const html of [
+      indexHtml,
+      r06IndexHtml,
+      r07IndexHtml,
+      r08IndexHtml,
+      forgeF01IndexHtml,
+    ]) {
       expect(html).toContain(
         "width=device-width, initial-scale=1, viewport-fit=cover",
       );

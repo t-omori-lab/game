@@ -1,5 +1,4 @@
 import "./styles.css";
-import { startPrototypeB } from "./prototypeB/app";
 import { resolvePrototypeRelease } from "./prototypeRoutes";
 
 const root = document.querySelector<HTMLElement>("#app");
@@ -28,6 +27,14 @@ if (
 async function boot(applicationRoot: HTMLElement): Promise<void> {
   const parameters = new URLSearchParams(window.location.search);
 
+  if (/\/forge\/f01(?:\/|$)/i.test(window.location.pathname)) {
+    const { startCharacterForge } = await import(
+      "./characterForge/startCharacterForge"
+    );
+    await startCharacterForge(applicationRoot);
+    return;
+  }
+
   if (parameters.get("prototype") === "0.1") {
     const { startGame } = await import("./app/startGame");
     startGame(applicationRoot);
@@ -38,6 +45,7 @@ async function boot(applicationRoot: HTMLElement): Promise<void> {
     window.location.pathname,
     window.location.search,
   );
+  const { startPrototypeB } = await import("./prototypeB/app");
 
   if (release === "r08") {
     startPrototypeB(applicationRoot, {

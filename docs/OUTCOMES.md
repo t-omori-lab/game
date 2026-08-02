@@ -82,6 +82,8 @@ Last updated: 2026-08-02
 - R07はworld-onlyのscene-depth DOFを実装した。MeshDepthMaterialによるdepth target、player world focus、CoC、bilateral depth-edge rejectionを使い、screen-Y bandを使わない。local browserではfocus range 0.036、最大1.45px、edge threshold 0.0045、fallbackなし、HUD sharpを観測した。
 - R07 local candidateはstrict TypeScript、Vitest 34 files／195 tests、production buildに合格した。1280×720 production browserでは1917×1077内部buffer、`r07-fram`、`semantic-high-density-articulated-voxel-girl`、9,627 cells、half-float MSAA、GTAO、bloom、SMAA、depth-aware DOF、tilt-shift falseを確認した。public push／deployは行っていない。
 
+- Character Forge F-01を独立local routeとして実装した。AI生成Beauty Sheetからstrict four-view＋module Build Sheetを作り、外部source definitionと4方向投影から48×92×42／37,990 solid cellsの3D正本を再生成、9,454 outer surface cells、9 materials、7 semantic rig partsで`idle / run / hit`を動かした。1280×720 same-screen comparison、strict TypeScript、37 files／202 tests、production buildに合格した。F-01 pipeline proofはpassだが、Beauty Sheet完全一致、commercial character art、Concept C全景、ユーザー採択、公開／deployは未実施である。
+
 ## Pending confirmation
 
 - R04がR02の遊べる基盤を維持しつつ、ユーザーのConcept C／commercial HD-2D基準へ十分近づいたと評価されるか。local design QAのpassはユーザーacceptanceの代替ではない。
