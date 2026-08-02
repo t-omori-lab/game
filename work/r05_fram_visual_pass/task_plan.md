@@ -23,8 +23,8 @@ R04の決定論的world／戦闘／questを維持したまま、Concept Cを基�
 - [x] Phase 5: 強い帯状blurを撤去し、広いplay planeを鮮明に保つminiature-depth optics、低いR05 camera、asphalt／canal／density layerを統合する。
 - [x] Phase 6: 同一viewport visual QA、gameplay regression、TypeScript、test、production buildを通し、release-integrityのP0／P1を解消する。Concept Cとの差分は次版のvisual gateとして残す。
 - [x] Phase 7: R04を自己完結snapshotへ凍結し、R05 route、catalog、root service workerの公開境界を完成させる。
-- [ ] Phase 8: project docsを更新し、scope限定commitをmainへpushする。
-- [ ] Phase 9: GitHub Pages workflow、公開catalog、R01〜R05、R05操作／metadataを実URLで検証する。
+- [x] Phase 8: project docsを更新し、scope限定commitをmainへpushする。
+- [x] Phase 9: GitHub Pages workflow、公開catalog、R01〜R05、R05操作／metadataを実URLで検証する。
 
 ## Key questions
 
@@ -60,4 +60,4 @@ R04の決定論的world／戦闘／questを維持したまま、Concept Cを基�
 
 ## Status
 
-**Deployment candidate verified; visual gate remains blocked** — 公開済みcommit `3cb27cd…`由来のR04を自己完結snapshotへ固定し、R01〜R04 checksum、190 tests、strict TypeScript、production build、catalog→R05、frozen R04、R05 start／move／skill／metadata／consoleをlocal production artifactで確認した。次はscope限定commit／pushとPages実URL検証。Concept C再現・commercial品質は引き続き未宣言。
+**Public evaluation build verified; visual gate remains blocked** — commits `0980f0f`／`35cf75f`のPages run #15成功、公開catalog R05→R04→R03→R02→R01、全route、frozen R04、R05 start／move／Q／7,734 cells metadata／consoleを実URLで確認した。Concept C再現・commercial品質は引き続き未宣言。

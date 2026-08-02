@@ -1,6 +1,6 @@
 # Handoff: F.R.A.M. R05 visual pass
 
-Status: deployment candidate verified locally; visual gate blocked; public push pending
+Status: public R05 evaluation build verified; visual gate blocked
 
 ## What is now true
 
@@ -13,7 +13,7 @@ Status: deployment candidate verified locally; visual gate blocked; public push 
 
 ## Current evidence
 
-- Local route: `http://127.0.0.1:5174/game/r05/`
+- Public route: `https://t-omori-lab.github.io/game/r05/`
 - Current frame: `r05-current-final-1280x720.png`
 - Same-frame Concept C comparison: `concept-c-vs-r05-current.png`
 - Focused actor comparison: `concept-c-vs-r05-hero-current.png`
@@ -22,6 +22,8 @@ Status: deployment candidate verified locally; visual gate blocked; public push 
 - Design QA: project-root `design-qa.md`, `final result: blocked`.
 - Release checks: 32 files／190 tests, strict TypeScript, production build and R01–R04 SHA-256 manifests pass.
 - Production artifact browser: catalog order R05→R04→R03→R02→R01; frozen R04 bundle starts; R05 starts, moves and accepts Q with zero warning／error.
+- Public deployment: commits `0980f0f`／`35cf75f`; GitHub Pages run #15 succeeded. Catalog and R01–R05, R04 snapshot, R05 manifest／OG and root service worker return HTTPS 200.
+- Public browser: R04 frozen bundle reports `r04-live`／`pc-ultra`／2556×1436. R05 moves `430,900 → 426,896` and reports `r05-fram`／`r04-live`／1917×1077／`high-density-articulated-voxel-surface`／7,734 cells with zero warning／error.
 
 ## Remaining blockers
 
@@ -35,5 +37,5 @@ Status: deployment candidate verified locally; visual gate blocked; public push 
 
 - Not Concept C complete reproduction.
 - Not commercial HD-2D art acceptance.
-- Not yet public at this handoff point; push and GitHub Pages verification remain.
+- Public availability is verified, but it remains an evaluation build rather than an art-accepted release.
 - Not iPhone 16 Pro real-device validation.

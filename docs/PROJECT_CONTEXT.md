@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: F.R.A.M. R05 high-density voxel-girl / Concept C causal-cell rebuild; local visual gate blocked; public R04 preserved
+Phase: F.R.A.M. R05 high-density voxel-girl evaluation build deployed; visual gate blocked; R01–R04 preserved
 
 ## Purpose
 
@@ -85,8 +85,9 @@ Phase: F.R.A.M. R05 high-density voxel-girl / Concept C causal-cell rebuild; loc
 - 正式作品名として`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題「辺境遺物記録モジュール」、呼称「フラム」を採用した。player characterは辺境踏査、遺物解析、world memoryを担う身体化module instanceであり、character creation後の各身体もF.R.A.M. identityを保つ。起源、製造者、network、複製／継承は未決定である。
 - R05 local候補はR04の3,600×1,800連続world、collision、quest、loot、半自動通常攻撃、手動大技を正本として保持し、presentationだけを`r05-fram`へ分離した。cameraはR04の540から640 world-unitへ引き、R05専用offset Yを560へ下げて、周囲の可視範囲と低めの固定斜め俯瞰を両立した。
 - R05はfocus 0.57、clear band 0.30、far 6.5px、near 8.5pxの抑制したbanded miniature-depthをworldだけへ適用する。主人公AssetDNA `actor.fram.module-f01.archive-runner`のvisible surfaceは、約90 cell高／7,734個の決定的micro-voxelだけで構成する4.8頭身のarticulated少女presetへ再構築した。白いtwin-hair silhouette、分離したface pixel、細い四肢、split sage coat、coral textile、小型archive module、weapon socketを持ち、smooth source meshはruntimeでload／renderしない。
-- local browserの1280×720でR05を起動し、start、ArrowUp移動、Q手動skillを確認した。canvasは1917×1077、`presentation=r05-fram`、`environment=r04-live`、Display-P3 capability path、AgX、`tilt=banded`を観測した。Concept Cとのfull-view／hero crop comparisonを保存したが、macro layout、surface material、warm／cool light hierarchyがP0で`design-qa.md`は`final result: blocked`である。R05は未公開で、公開R04とR01〜R03は変更していない。
-- R05 deploy準備では、公開済みcommit `3cb27cd…`からR04 production bundleを再生成し、relative asset、scope別service worker、`SNAPSHOT.json`、`SHA256SUMS`を持つ自己完結版としてlocal `public/r04/`へ凍結した。R01〜R04 checksum、Vitest 190件、strict TypeScript、production build、production artifactのcatalog／R04／R05 browser起動・操作は合格した。main pushと公開Pages確認はまだ行っていない。
+- local browserの1280×720でR05を起動し、start、ArrowUp移動、Q手動skill入力を確認した。canvasは1917×1077、`presentation=r05-fram`、`environment=r04-live`、Display-P3 capability path、AgX、`tilt=banded`を観測した。Concept Cとのfull-view／hero crop comparisonを保存したが、macro layout、surface material、warm／cool light hierarchyがP0で`design-qa.md`は`final result: blocked`である。
+- R05 deployでは、公開済みcommit `3cb27cd…`からR04 production bundleを再生成し、relative asset、scope別service worker、`SNAPSHOT.json`、`SHA256SUMS`を持つ自己完結版として`public/r04/`へ凍結した。R01〜R04 checksum、Vitest 190件、strict TypeScript、production build、production artifactのcatalog／R04／R05 browser起動・操作は合格した。
+- commits `0980f0f`／`35cf75f`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #15はtest／build／deployに成功した。公開catalogはR05→R04→R03→R02→R01で、全route、R04 `SNAPSHOT.json`、R05 manifest／OG、root service workerはHTTPS 200を返した。公開R04は独立bundleで`r04-live`／`pc-ultra`／2556×1436、公開R05はstart、移動`430,900 → 426,896`、Q入力、`r05-fram`／`r04-live`／1917×1077、`high-density-articulated-voxel-surface`／7,734 cellsを確認し、browser warning／errorは0件だった。これは公開評価版の配信確認であり、Concept C再現やcommercial art合格ではない。
 
 ## Creative reference notes
 

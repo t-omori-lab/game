@@ -36,7 +36,7 @@
 
 ## Public boundary
 
-- Latest public version remains R04 until the user explicitly asks to deploy R05.
+- R05 is now the latest public evaluation version. R01–R03 remain frozen, and R04 is a self-contained snapshot sourced from commit `3cb27cd…`.
 
 ## Final browser evidence
 
@@ -70,3 +70,6 @@
 - root service workerは`r05-v1`へ上げ、catalog／R01〜R05の各indexをroute別にcacheする。
 - local production artifactではcatalogがR05→R04→R03→R02→R01、R04が自己完結bundle、R05が`r05-fram`／7,734 visible voxel cellsとして起動した。
 - R05でArrowUp後にplayer座標が`430,900 → 419,889`へ変わり、Qも入力した。browser warning／errorは0件。
+- commits `0980f0f`／`35cf75f`をmainへpushし、GitHub Pages run #15の成功を確認した。
+- 公開catalogはR05→R04→R03→R02→R01。全route、R04 snapshot、R05 manifest／OG、root service workerはHTTPS 200。
+- 公開R05でstart、ArrowUp、Qを入力し、座標`430,900 → 426,896`、`r05-fram`／`r04-live`／1917×1077／7,734 cells、browser warning／error 0件を確認した。
