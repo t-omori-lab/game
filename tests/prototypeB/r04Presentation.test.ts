@@ -88,10 +88,10 @@ describe("R04 R02-successor presentation contract", () => {
       /cameraCompositionProfile:\s*[\s\S]*?options\.experience === "r04"\s*\? "r04"/,
     );
     expect(applicationSource).toMatch(
-      /environmentProfile:\s*[\s\S]*?options\.experience === "r04"[\s\S]*?options\.experience === "r07"[\s\S]*?\? "r04-live"\s*:\s*options\.experience === "beauty-cell"/,
+      /environmentProfile:\s*[\s\S]*?options\.experience === "r04"[\s\S]*?options\.experience === "r08"[\s\S]*?\? "r04-live"\s*:\s*options\.experience === "beauty-cell"/,
     );
     expect(applicationSource).toMatch(
-      /dataset\.prototypeVersion\s*=\s*r07\s*\? "R07"\s*:\s*r06\s*\? "R06"\s*:\s*r05\s*\? "R05"[\s\S]*?r04\s*\? "R04"/,
+      /dataset\.prototypeVersion\s*=\s*r08\s*\? "R08"\s*:\s*r07\s*\? "R07"[\s\S]*?r06\s*\? "R06"[\s\S]*?r05\s*\? "R05"[\s\S]*?r04\s*\? "R04"/,
     );
     expect(applicationSource).toContain('root.classList.add("r04-shell")');
     expect(applicationSource).toContain(

@@ -9,6 +9,7 @@ export default defineConfig({
         catalog: "index.html",
         r06: "r06/index.html",
         r07: "r07/index.html",
+        r08: "r08/index.html",
       },
     },
   },

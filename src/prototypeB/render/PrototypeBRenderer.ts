@@ -39,6 +39,7 @@ import { createR04ArtSlice } from "./r04/R04Art";
 import { R04_LIVE_PROFILE } from "./r04/R04LiveProfile";
 import { R05_FRAM_PROFILE } from "./r05/R05FramProfile";
 import { R07_FRAM_PROFILE } from "./r07/R07FramProfile";
+import { R08_FRAM_PROFILE } from "./r08/R08FramProfile";
 import { configureDisplayColor } from "./displayColor";
 import {
   FIXED_CAMERA_OFFSET,
@@ -61,6 +62,7 @@ import {
 import { createR04HeroVisual } from "./hero/R04HeroVisual";
 import { createR05FramHeroVisual } from "./hero/R05FramHeroVisual";
 import { createR07FramHeroVisual } from "./hero/R07FramHeroVisual";
+import { createR08FramHeroVisual } from "./hero/R08FramHeroVisual";
 import { createR05ConceptCArtSlice } from "./r05/R05ConceptCArt";
 import { UltraRenderPipeline } from "./UltraRenderPipeline";
 import reclaimedMeadowTextureUrl from "./assets/reclaimed-meadow-v1.webp";
@@ -168,12 +170,21 @@ export type PrototypeBPresentationProfile =
   | "default"
   | "r04"
   | "r05-fram"
-  | "r07-fram";
+  | "r07-fram"
+  | "r08-fram";
 
 function isFramPresentation(
   profile: PrototypeBPresentationProfile,
 ): boolean {
-  return profile === "r05-fram" || profile === "r07-fram";
+  return profile === "r05-fram" ||
+    profile === "r07-fram" ||
+    profile === "r08-fram";
+}
+
+function isDepthAwareFramPresentation(
+  profile: PrototypeBPresentationProfile,
+): boolean {
+  return profile === "r07-fram" || profile === "r08-fram";
 }
 
 export type CombatPresentationState = {
@@ -428,7 +439,9 @@ export class PrototypeBRenderer {
         this.camera,
         {
           maxPixelRatio: isFramPresentation(this.presentationProfile)
-            ? this.presentationProfile === "r07-fram"
+            ? this.presentationProfile === "r08-fram"
+              ? R08_FRAM_PROFILE.post.maxPixelRatio
+              : this.presentationProfile === "r07-fram"
               ? R07_FRAM_PROFILE.post.maxPixelRatio
               : R05_FRAM_PROFILE.post.maxPixelRatio
             : 2,
@@ -459,14 +472,20 @@ export class PrototypeBRenderer {
           tiltShiftNearBlurPixels: isFramPresentation(this.presentationProfile)
             ? R05_FRAM_PROFILE.post.tiltShiftNearBlurPixels
             : undefined,
-          depthAwareDof: this.presentationProfile === "r07-fram",
-          depthFocusRange: this.presentationProfile === "r07-fram"
+          depthAwareDof: isDepthAwareFramPresentation(this.presentationProfile),
+          depthFocusRange: this.presentationProfile === "r08-fram"
+            ? R08_FRAM_PROFILE.post.focusRange
+            : this.presentationProfile === "r07-fram"
             ? R07_FRAM_PROFILE.post.focusRange
             : undefined,
-          depthBlurPixels: this.presentationProfile === "r07-fram"
+          depthBlurPixels: this.presentationProfile === "r08-fram"
+            ? R08_FRAM_PROFILE.post.blurPixels
+            : this.presentationProfile === "r07-fram"
             ? R07_FRAM_PROFILE.post.blurPixels
             : undefined,
-          depthEdgeThreshold: this.presentationProfile === "r07-fram"
+          depthEdgeThreshold: this.presentationProfile === "r08-fram"
+            ? R08_FRAM_PROFILE.post.edgeThreshold
+            : this.presentationProfile === "r07-fram"
             ? R07_FRAM_PROFILE.post.edgeThreshold
             : undefined,
           onFallback: (reason) => {
@@ -545,7 +564,9 @@ export class PrototypeBRenderer {
     this.playerBody.castShadow = true;
     this.playerBody.receiveShadow = true;
     this.playerHeroVisual =
-      this.presentationProfile === "r07-fram"
+      this.presentationProfile === "r08-fram"
+        ? createR08FramHeroVisual()
+        : this.presentationProfile === "r07-fram"
         ? createR07FramHeroVisual()
         : this.presentationProfile === "r05-fram"
         ? createR05FramHeroVisual()
@@ -560,6 +581,10 @@ export class PrototypeBRenderer {
       this.playerBody.visible = false;
       if (this.environmentProfile === "beauty-cell") {
         this.playerHeroVisual.root.scale.setScalar(1.28);
+      } else if (this.presentationProfile === "r08-fram") {
+        this.playerHeroVisual.root.scale.setScalar(
+          R08_FRAM_PROFILE.actors.heroScale,
+        );
       } else if (this.presentationProfile === "r07-fram") {
         this.playerHeroVisual.root.scale.setScalar(
           R07_FRAM_PROFILE.actors.heroScale,
@@ -760,7 +785,9 @@ export class PrototypeBRenderer {
     if (this.qualityProfile === "pc-ultra") {
       const pixelRatio = Math.min(
         isFramPresentation(this.presentationProfile)
-          ? this.presentationProfile === "r07-fram"
+          ? this.presentationProfile === "r08-fram"
+            ? R08_FRAM_PROFILE.post.maxPixelRatio
+            : this.presentationProfile === "r07-fram"
             ? R07_FRAM_PROFILE.post.maxPixelRatio
             : R05_FRAM_PROFILE.post.maxPixelRatio
           : 2,

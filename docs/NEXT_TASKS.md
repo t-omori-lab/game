@@ -4,7 +4,13 @@ Last updated: 2026-08-02
 
 ## P0
 
-R06 Sharp Navigationのdeploy／public確認は完了し、R07 Character／Depth candidateをlocal実装した。Active P0は`R07 user visual review → 顔／髪／衣装preset採択 → C案との差を次の一画面へ限定`である。都市part追加はこの基盤より後にする。R06／R07をConcept C／commercial art合格とは扱わない。
+R06 Sharp Navigationのdeploy／public確認は完了し、R07 Character／DepthとR08 unified full-body character candidateをlocal実装した。Active P0は`R08 user visual review → face／hair／jacket／body silhouette採択 → 次の一画面を限定`である。都市part追加はこの基盤より後にする。R08 character design QAのpassをConcept C全景／commercial art合格とは扱わない。
+
+- [x] `F.R.A.M. R08 Unified Character Art candidate`をlocal production routeとして作る。
+  - [x] R07のrig／weapon socketを保持し、15 pivotのvisible surfaceを19,221-cellの統一semantic characterへ置換した。
+  - [x] 同一1,280×720のR07／R08比較、focused crop、browser metadata、warning／error 0件を保存し、character-art scopeの`design-qa.md`をpassした。
+  - [ ] ユーザーがR08をreviewし、次をface close-up、body／jacket、world全景のどれにするか最大1点へ限定する。
+  - [ ] 採択と明示的deploy指示があるまでR08をcatalog／GitHub Pagesへ追加しない。公開R06を維持する。
 
 - [x] `F.R.A.M. R07 Character／Depth candidate`をlocal production routeとして作る。
   - [x] R06の因果world、camera、mini-map、marker、操作guide、半自動通常攻撃、手動大技を保持し、公開R01〜R06とcatalogは変更しなかった。

@@ -126,3 +126,7 @@ promotion_status: observed
 ```
 
 1案件の観察は自動的に共通ルールへ昇格させません。
+
+- 高密度cell sizeだけを縮めると、既存rig pivotはworld unitのままでもsemantic volumeの整数座標が縮み、頭・肩・腰が分離する。cell frequencyを変更するcharacter passでは、各partのworld-space接続点を正本にし、cell coordinateを再計算してsame-view silhouetteで検証する。
+- Material paletteをmesh materialとinstance colorの両方へ適用すると乗算でskin／pale clothが暗化し、detailを増やしてもgraphiteの塊に見える。paletteはmaterial、instance colorは白基準の微小value variationへ分離する。
+- 全身rootの非等方scaleを継承するsemantic headは、local head scaleの数値だけでは頭形状を判断できない。world-space合成scaleと通常camera captureでface aspectを確認し、rig motionは維持したままhead groupで補償する。

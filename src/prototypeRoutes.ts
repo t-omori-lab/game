@@ -5,7 +5,8 @@ export type PrototypeReleaseId =
   | "r04"
   | "r05"
   | "r06"
-  | "r07";
+  | "r07"
+  | "r08";
 
 export interface PrototypeRelease {
   readonly id: PrototypeReleaseId;
@@ -59,7 +60,7 @@ export const PROTOTYPE_RELEASES: readonly PrototypeRelease[] = [
   },
 ] as const;
 
-const RELEASE_PATH_PATTERN = /\/(r01|r02|r03|r04|r05|r06|r07)(?:\/|$)/i;
+const RELEASE_PATH_PATTERN = /\/(r01|r02|r03|r04|r05|r06|r07|r08)(?:\/|$)/i;
 
 export function resolvePrototypeRelease(
   pathname: string,
@@ -80,7 +81,8 @@ export function resolvePrototypeRelease(
     releaseId === "r04" ||
     releaseId === "r05" ||
     releaseId === "r06" ||
-    releaseId === "r07"
+    releaseId === "r07" ||
+    releaseId === "r08"
     ? releaseId
     : null;
 }

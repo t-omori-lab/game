@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: F.R.A.M. R06 Sharp Navigation deployed and public-browser verified; R01–R05 preserved
+Phase: F.R.A.M. R08 unified character local candidate verified; public R06 unchanged; R01–R07 preserved
 
 ## Purpose
 
@@ -97,6 +97,7 @@ Phase: F.R.A.M. R06 Sharp Navigation deployed and public-browser verified; R01�
 
 - R07 local candidateはR06のworld／gameplay／HUDを保持し、characterとminiature softnessだけを独立検証するrouteである。主人公頭部をbody cellの0.56倍で再authoringし、semantic face／eyes／brow／cheek／bob／side locksとshort technical jacketを接続、9,627 visible cellsとした。
 - R07のworld softnessはscreen-Y tilt-shiftではなくscene depth、player focus、CoC、bilateral edge rejectionで構成する。local 1280×720ではhalf-float MSAA、focus range 0.036、最大1.45px、fallbackなしを確認した。公開R01〜R06とcatalogは変更せず、R07のpublic deploy／user acceptanceは未実施である。
+- R08 local candidateはR07のarticulated rig／world／HUD／戦闘／scene-depth DOFを保持し、継承visible body surfaceをhair、face、collar、short jacket、under-suit、hands、legs、boots、archive packを含む統一semantic micro-voxel surfaceへ置換した。1,280×720 browserで19,221 visible cells、起動、S移動／正面向き、fallbackなし、warning／error 0件を確認した。R08 character-art scopeのdesign QAはpassしたが、Concept C全景、commercial HD-2D同等、user acceptance、public deployは未確認である。
 
 ## Creative reference notes
 
@@ -132,6 +133,7 @@ Phase: F.R.A.M. R06 Sharp Navigation deployed and public-browser verified; R01�
 - R04はR02由来の因果と連続worldを保持した公開realtime 3D次版であるが、`pc-ultra`は描画profile名であってcommercial-qualityの合格評価ではない。GitHub Pages反映と公開browser動作は確認済みだが、Concept C完全再現とユーザーart acceptanceは別gateとする。
 - R05はcamera、miniature-depth、主人公identityと高密度voxel少女表現を優先したlocal presentation passである。actor方向はordinary smooth 3Dへ戻さない。一方、Concept Cと同等のmacro composition、environment microdetail、湿潤PBR、植生密度、間接光、commercial HD-2D品質、ユーザーart acceptance、public deployは未証明で、現visual gateはblockedである。
 - R07はR06より顔／髪の可読性とscene-depth softnessを進めたlocal比較候補であり、最終character designではない。全方向の表情、衣装／体型、animation、weather／time／equipment変化、Concept C完全再現、commercial HD-2D同等、user acceptance、public routeは未確認である。
+- R08はR07より全身のsemantic art grammarを統一したlocal比較候補である。design QA passはcharacter-art scopeに限定し、最終face、dialogue close-up、character creator variation、全装備fit、commercial parity、ユーザー採択、公開を証明しない。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff

@@ -27,6 +27,7 @@ import r06Html from "../../r06/index.html?raw";
 import r06Manifest from "../../public/r06/manifest.webmanifest?raw";
 import r06ServiceWorker from "../../public/r06/sw.js?raw";
 import r07Html from "../../r07/index.html?raw";
+import r08Html from "../../r08/index.html?raw";
 import serviceWorker from "../../public/sw.js?raw";
 import deployWorkflow from "../../.github/workflows/deploy-pages.yml?raw";
 import catalogSource from "../../src/catalog.ts?raw";
@@ -92,6 +93,9 @@ describe("versioned public release shell", () => {
     expect(r07Html).toContain('src="/src/main.ts"');
     expect(r07Html).toContain("F.R.A.M. R07");
     expect(viteConfig).toContain('r07: "r07/index.html"');
+    expect(r08Html).toContain('src="/src/main.ts"');
+    expect(r08Html).toContain("F.R.A.M. R08");
+    expect(viteConfig).toContain('r08: "r08/index.html"');
   });
 
   it("renders the version manifest in declared newest-first order", () => {

@@ -116,6 +116,7 @@ Last updated: 2026-08-02
 - [ ] Counter cutterとBreach driverが実際の試遊で、DPS以外の位置取り、risk、timingの差として感じられるか。
 - [ ] PC UltraのWebGPU／HDR候補が、現WebGL2 half-float post stackより知覚品質で勝つか。同条件比較は未実施。
 - [x] Visual North Starとしてconcept Cの画面方向をユーザーが採択した。runtime Beauty Cellで同等の画面を再現できるかは別gateとする。
+- R08 unified characterをlocal candidateとして実装した。R07のworld／gameplay／HUD／scene-depth DOFとarticulated rigを保持し、全身visible surfaceを19,221-cellのsemantic hair／face／jacket／limbs／boots／archive packへ置換した。strict TypeScript、199 tests、production build、1,280×720 browser起動／S移動、warning／error 0件、character-art scopeのdesign QAに合格した。公開R06／catalogは変更せず、GitHub push／Pages deploy、ユーザーvisual acceptance、Concept C全景／commercial parityは未実施である。
 
 ## Rule
 

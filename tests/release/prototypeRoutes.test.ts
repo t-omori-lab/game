@@ -33,6 +33,7 @@ describe("prototype release routing", () => {
     expect(resolvePrototypeRelease("/game/r05/index.html", "")).toBe("r05");
     expect(resolvePrototypeRelease("/game/r06/index.html", "")).toBe("r06");
     expect(resolvePrototypeRelease("/game/r07/index.html", "")).toBe("r07");
+    expect(resolvePrototypeRelease("/game/r08/index.html", "")).toBe("r08");
   });
 
   it("keeps compatibility aliases pinned to their intended release", () => {
@@ -52,6 +53,7 @@ describe("prototype release routing", () => {
     expect(createReleaseHref("r05", "/game")).toBe("/game/r05/");
     expect(createReleaseHref("r06", "/game")).toBe("/game/r06/");
     expect(createReleaseHref("r07", "/game")).toBe("/game/r07/");
+    expect(createReleaseHref("r08", "/game")).toBe("/game/r08/");
     expect(createReleaseHref("r03", "/game")).toBe("/game/r03/");
     expect(createReleaseHref("r02", "/game")).toBe("/game/r02/");
     expect(

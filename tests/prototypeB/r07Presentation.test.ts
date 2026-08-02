@@ -28,7 +28,9 @@ describe("F.R.A.M. R07 character and depth contract", () => {
     expect(mainSource).toContain('if (release === "r07")');
     expect(mainSource).toContain('experience: "r07"');
     expect(applicationSource).toContain('? "r07-fram"');
-    expect(applicationSource).toContain('options.experience === "r06" || options.experience === "r07"');
+    expect(applicationSource).toMatch(
+      /options\.experience === "r06"[\s\S]*?options\.experience === "r07"/,
+    );
     expect(rendererSource).toContain("createR07FramHeroVisual()");
     expect(rendererSource).toContain("R07_FRAM_PROFILE.actors.heroScale");
   });
@@ -36,7 +38,9 @@ describe("F.R.A.M. R07 character and depth contract", () => {
   it("uses restrained scene-depth softness rather than screen-Y bands", () => {
     expect(R07_FRAM_PROFILE.post.depthAwareDof).toBe(true);
     expect(R07_FRAM_PROFILE.post.blurPixels).toBeLessThan(3);
-    expect(rendererSource).toContain('depthAwareDof: this.presentationProfile === "r07-fram"');
+    expect(rendererSource).toContain(
+      "depthAwareDof: isDepthAwareFramPresentation(this.presentationProfile)",
+    );
     expect(pipelineSource).toContain("DepthAwareDofShader");
     expect(pipelineSource).toContain("sameSurface");
     expect(pipelineSource).toContain("setDepthFocusPoint");

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>F.R.A.M. R08 Character Art Comparison</title>
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; background: #101916; color: #e5fff6; font-family: Inter, system-ui, sans-serif; }
+      body { padding: 24px; }
+      h1 { margin: 0 0 18px; font-size: 24px; font-weight: 650; letter-spacing: .02em; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+      figure { margin: 0; border: 1px solid #33564d; background: #15211e; overflow: hidden; }
+      figcaption { padding: 10px 14px; font-size: 14px; letter-spacing: .03em; border-bottom: 1px solid #33564d; }
+      img { display: block; width: 100%; height: auto; }
+      .crop { height: 420px; overflow: hidden; background: #1a2a25; }
+      .crop img { width: 200%; max-width: none; transform: translate(-25%, -18%); }
+      .note { margin: 18px 0 0; color: #9fc0b7; font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <h1>F.R.A.M. R08 — selected character direction / browser implementation</h1>
+    <div class="grid">
+      <figure>
+        <figcaption>Selected direction — layered bob, pale short jacket, graphite body, cyan archive signal</figcaption>
+        <img src="../r07_character_depth/fram-r07-character-direction.png" alt="Selected character direction sheet" />
+      </figure>
+      <figure>
+        <figcaption>R08 browser capture — 1,280 × 720 / active gameplay / 19,221 visible cells</figcaption>
+        <img src="r08-unified-05-1280x720.png" alt="R08 active gameplay browser capture" />
+      </figure>
+      <figure>
+        <figcaption>R07 baseline — face and jacket overlays on inherited body</figcaption>
+        <img src="r07-baseline-1280x720.png" alt="R07 active gameplay baseline" />
+      </figure>
+      <figure>
+        <figcaption>R08 result — unified hair, face, jacket, limbs, boots and archive pack</figcaption>
+        <img src="r08-unified-05-1280x720.png" alt="R08 unified semantic character" />
+      </figure>
+      <figure>
+        <figcaption>R07 focused crop — inherited column silhouette remains</figcaption>
+        <div class="crop"><img src="r07-baseline-1280x720.png" alt="R07 focused character crop" /></div>
+      </figure>
+      <figure>
+        <figcaption>R08 focused crop — coherent bob, pale shoulder mass, articulated limbs</figcaption>
+        <div class="crop"><img src="r08-unified-05-1280x720.png" alt="R08 focused character crop" /></div>
+      </figure>
+    </div>
+    <p class="note">The direction sheet is a character-spec view, not the gameplay camera. R07 and R08 are the normalized same-viewport comparison.</p>
+  </body>
+</html>

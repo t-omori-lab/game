@@ -1,94 +1,71 @@
-# Design QA — F.R.A.M. R05 / Concept C fidelity gate
+# Design QA: F.R.A.M. R08 Unified Character Art Pass
 
-## Comparison contract
+Date: 2026-08-02  
+Scope: R07由来の通常gameplay画角を保持した、主人公character art一体のR08 local candidate。Concept C全景の完全再現、都市asset刷新、commercial art acceptanceはこのpassの合格範囲に含めない。
 
-- Source visual truth: `docs/concepts/visual-fidelity-v03/ideal-screen-c-stylized-3d.png`
-- Browser-rendered implementation: `work/r05_fram_visual_pass/r05-current-final-1280x720.png`
-- Full-view same-frame comparison: `work/r05_fram_visual_pass/concept-c-vs-r05-current.png`
-- Focused actor comparison: `work/r05_fram_visual_pass/concept-c-vs-r05-hero-current.png`
-- Route: `http://127.0.0.1:5174/game/r05/`
-- State: initial active gameplay, fixed diagonal camera, F.R.A.M. F-01 in front three-quarter idle
-- CSS viewport / screenshot: 1280 × 720 px
-- Source pixels: 1672 × 941 px; normalized to 1280 × 720 with Lanczos resampling
-- Implementation screenshot: 1280 × 720 px; browser DPR 2; canvas 1917 × 1077 px capped at 1.5 render scale
-- Runtime: `presentation=r05-fram`, `environment=r04-live`, `art=fram-r05-concept-c-causal-cell-v2`, Display-P3, AgX, banded focus 0.57 / clear band 0.30 / far 6.5 / near 8.5
+## Comparison target
 
-The Concept C image is the visual North Star, not a runtime texture. R05 must nevertheless be judged against its visible result: high-density voxel/pixel-derived actor, coherent street-scale composition, wet material response, warm/cool lighting hierarchy, reclaimed-city density, restrained miniature depth, and unobtrusive HUD.
+- Source visual truth: `work/r07_character_depth/fram-r07-character-direction.png`
+- Full-screen context: `docs/concepts/visual-fidelity-v03/ideal-screen-c-stylized-3d.png`
+- R07 normalized baseline: `work/r08_character_art/r07-baseline-1280x720.png`
+- Final browser implementation: `work/r08_character_art/r08-unified-05-1280x720.png`
+- Combined comparison input: `work/r08_character_art/r08-design-comparison.png`
+- Local route: `http://127.0.0.1:4175/game/r08/`
+
+## Normalization
+
+- Source direction／Concept C pixels: 1,672 × 941。
+- R07／R08 implementation pixels: 1,280 × 720。
+- Browser CSS viewport: 1,280 × 720、viewport override、density 1相当の同pixel capture。
+- State: `active` gameplay、開始地点、同一camera／world／HUD／objective。R07とR08は同じ16:9 viewportとstate。character direction sheetはstudio specであり同一cameraではないため、pixel-perfect比較ではなくsignature silhouette／material readsの基準に限定した。
 
 ## Findings
 
-- [P0] The macro scene is still a different composition.
-  Location: complete playable cell.
-  Evidence: Concept C is organized around one open wet road with a left retaining stair, upper-left water, one small shelter, right work area and edge-to-edge ruins. R05 is still dominated by two large roof volumes, a rectangular lot boundary and uniform meadow outside the cell.
-  Impact: the screen reads as an upgraded R04 prototype rather than the selected C game screen.
-  Fix: make a C-shaped graybox/collider cell the next authoritative layout before adding more props; reduce roof dominance and crop or replace empty outer meadow.
-
-- [P0] Road, water, façade and foliage materials remain below the source.
-  Location: center road, northern canal, roofs, façades and vegetation.
-  Evidence: R05 now has one dark asphalt field, worn markings, repair seams, puddles and a visual-only canal, but surfaces remain flat colored geometry. Concept C shows rough asphalt grain, dry/wet roughness variation, reflection, masonry breakup, translucent leaf edges and materially distinct small props.
-  Impact: lighting and DOF cannot create commercial HD-2D richness from low-frequency surfaces.
-  Fix: replace the road and one shelter/façade with authored/baked albedo-normal-roughness-lightmap assets; keep procedural geometry as collision and generation proxy.
-
-- [P0] Light hierarchy is still too green and even.
-  Location: full frame.
-  Evidence: R05 has a stronger warm key, cooler fog and reduced ambient/IBL, yet most world materials remain in the same olive middle-value band. Concept C separates warm sun, deep cool shadow, teal water bounce, local practical light and bright wet highlights.
-  Impact: spatial depth, material identity and the character focal point remain weak.
-  Fix: rebuild the cell around one baked warm-sun/cool-shadow lighting contract, then tune hero rim/contact shadow to the same source.
-
-- [P1] The protagonist representation is now correct in kind but not final in art direction.
-  Location: F.R.A.M. F-01.
-  Evidence: the visible actor is now 7,734 deterministic micro-voxel cells, about 4.8 heads tall, with twin hair masses, separated face pixels, fitted/split coat, coral textile, slim limbs, small archive module and weapon socket. No smooth source mesh is loaded or rendered. At normal scale the actor reads as a small voxel girl, but her cloth volumes, hands, pose and facial appeal still lack Concept C's production finish.
-  Impact: the user-requested voxel/dot direction is preserved, but the default heroine is not yet an accepted key character asset.
-  Fix: make three generated voxel presets at the same camera/pose, art-direct one silhouette, then add authored voxel hair/face/coat clusters and secondary motion without changing representation.
-
-- [P1] The HUD remains heavier than Concept C.
-  Location: top-left mission/vitals, center interaction prompt, bottom loadout.
-  Evidence: Concept C uses a small bar cluster and compact diamond actions. R05 covers more of the world with mission text and a centered prompt.
-  Impact: the visual benchmark reads as a development/gameplay overlay instead of a cinematic exploration frame.
-  Fix: collapse the mission to one line, move contextual prompts off the actor silhouette, and keep detailed text for pause/catalog states.
+- P0／P1／P2: R08 character-art scopeでは残件なし。
+- [P3] 顔の微表情は通常画角で数pixelへ縮小される。
+  Location: F-01B head／face clusters.
+  Evidence: source sheetの拡大faceは目・頬・口を明瞭に読めるが、gameplay full viewでは主にwhite bobとskin windowとして読む。
+  Impact: 放浪中のsilhouetteは成立するが、会話close-upには専用camera／expression stateが必要。
+  Follow-up: dialogue portrait／close-up gateで眉・まぶた・口clusterとsecondary hair motionを追加する。
 
 ## Required fidelity surfaces
 
-- Fonts and typography: readable and technically stable, but the mission/prompt hierarchy is more verbose and heavier than C. P1 remains.
-- Spacing and layout rhythm: camera is wider and lower than the earlier R05, but the large roofs and outer meadow still determine the frame. P0 remains.
-- Colors and visual tokens: F.R.A.M. white hair, sage coat, coral textile, graphite under-suit and restrained cyan signal separate better than before. World olive wash still compresses the palette. P0 remains.
-- Image quality and asset fidelity: actor is genuine realtime micro-voxel geometry; Concept C is not used at runtime. Environment surface fidelity is still insufficient. P0 remains.
-- Copy and content: official F.R.A.M. identity and Japanese game text are present. The quantity of visible copy is above the source benchmark. P1 remains.
+- Fonts and typography: R07の既存HUDを意図的に保持。1,280 × 720で階層、weight、letter spacing、操作guideの判読に新規退行なし。
+- Spacing and layout rhythm: camera、HUD、mini-map、objective、control guideはR07と同一。characterだけを差し替え、persistent controlのoverflow／cropなし。
+- Colors and visual tokens: direction sheetのpearl hair、pale sage jacket、graphite under-suit、coral textile、cyan archive signalをruntime materialへ分離。instance colorの二重乗算による暗化を修正した。
+- Image quality and asset fidelity: direction sheet／Concept C画像はruntimeへ貼らず、visible 19,221 instanced micro-voxel cellで描画。scene-depth DOF、SMAA、AgX、lightingはR07契約を維持し、post-process fallbackなし。
+- Copy and content: F.R.A.M. R08 identity、mission、mini-map、操作説明は既存product copyを保持。debug時のみR08／UNIFIED VOXEL GIRLを表示する。
+
+## Full-view and focused evidence
+
+- Full view: `r08-design-comparison.png`上段。R08は選定方向のwhite bob／short pale jacket／graphite legs／cyan toolを通常gameplay scaleで保持する。
+- Normalized R07／R08: 同比較中段。R07のhead overlay＋旧body columnから、R08ではhair、face、shoulder、jacket、limbs、boots、archive packが同じcell／material grammarへ移った。
+- Focused region: combined comparison下段のCSS 2× crop。full viewでは小さいcharacter差を、同一source image／同一cropで比較した。
 
 ## Comparison history
 
-1. Primitive-hero pass — `r05-active-1280x720.png`
-   - Earlier scoped pass was withdrawn after user review. Smooth rounded primitives, narrow blur band and inherited environment were P0.
-2. First high-density voxel pass — `r05-concept-c-voxel-final-1280x720.png`
-   - Replaced the smooth actor with a rig-guided voxel surface, widened the clear band and added density props. The actor still read as a broad archive box and the scene remained green/flat.
-3. Voxel-girl silhouette pass — `r05-voxel-girl-05-final-1280x720.png`
-   - Reduced the pack, split the coat, added white hair/twin silhouette, face pixels, coral textile, slimmer limbs, a lower camera and stronger warm/cool lighting.
-4. Current pass — `r05-current-final-1280x720.png`
-   - Recompiled the actor to 4.8-head proportions using 7,734 visible cells, added a coherent asphalt overlay, worn markings, sparse repair seams and a northern visual-only canal. The same-frame comparison still shows P0 scene/material/light mismatch.
+1. `r08-unified-01-1280x720.png`
+   - Earlier P1: BODY_CELLを小さくした一方でtorso／equipment座標を補正せず、頭と胴が分離し、旧bodyより細い柱状silhouetteになった。
+   - Fix: torso、collar、hip panels、packのY coordinateをrig pivot基準へ再配置し、hero scaleを調整。
+2. `r08-unified-02-1280x720.png` → `r08-unified-03-1280x720.png`
+   - Earlier P1: material paletteとinstance colorの両方へ同じ色を掛け、skin／jacketがgraphite近くまで暗化した。
+   - Fix: materialをpalette truth、instance colorを0.92〜1.00のvalue variationだけに変更。pale jacket panelとshoulder massを追加。
+3. `r08-unified-04-1280x720.png` → `r08-unified-05-1280x720.png`
+   - Earlier P2: inherited compact-rootのY 0.69によりheadが横長helmetへ圧縮された。
+   - Fix: semantic head scaleでroot compressionを相殺し、head widthを縮め、fringe／side locks／collar／bootの比率を再調整。
+   - Post-fix: same-view combined comparisonでP0／P1／P2なし。残るface close-upはP3 follow-upへ限定。
 
-## Primary interactions and runtime checks
+## Functional browser evidence
 
-- Started from `F.R.A.M.を起動`.
-- Pressed ArrowUp and confirmed screen-relative movement remained active.
-- Pressed Q and confirmed the manual relic-skill path remained active.
-- Confirmed 1917 × 1077 internal canvas, Display-P3 capability path, AgX, `r05-fram`, R05 art ID, banded miniature-depth, `high-density-articulated-voxel-surface` and 7,734 visible-cell metadata.
-- Full automated regression and production build are recorded separately; this visual gate does not convert technical success into art acceptance.
+- Primary interactions: F.R.A.M.起動、S入力による正面向き／移動、既存HUD表示。
+- Runtime metadata: `experience=r08`、`prototypeVersion=R08`、`heroRepresentation=unified-semantic-high-density-articulated-voxel-girl`、`heroVoxelCells=19221`、`ultraDepthAwareDof=true`。
+- Browser console: warning／error 0件。post-process fallbackなし。
+- Automated verification: strict TypeScript、199 tests、production build（最終再実行はtask report参照）。
 
-## Implementation checklist
+## Follow-up polish
 
-- [x] Keep R01–R04 and public R04 unchanged.
-- [x] Remove smooth primitive hero from R05 runtime.
-- [x] Preserve visible micro-voxel/dot construction through pose, equipment and lighting changes.
-- [x] Rebuild the default actor as a short-proportion voxel girl with articulated parts and socketed weapon.
-- [x] Reduce the conspicuous blur band and lower the R05 camera angle.
-- [x] Add a coherent road material layer and water/vegetation composition cues.
-- [ ] Replace the inherited macro layout with a C-shaped causal graybox.
-- [ ] Produce one baked PBR/lightmap road-shelter-façade material benchmark.
-- [ ] Pass the next same-frame full-view and actor-focused comparison.
+- Dialogue／character-create close-up専用の表情と髪secondary motion。
+- 装備換装時のjacket／pack silhouette validation。
+- Concept C全景とcommercial HD-2D parityは別passで再評価し、R08 character passの合格と混同しない。
 
-## Open questions
-
-- Which of three future voxel-girl silhouette presets should become the default F.R.A.M. body preset.
-- Whether the C-shaped layout becomes R05 itself or a clean R06 successor while this local R05 remains comparison history.
-
-final result: blocked
+final result: passed
