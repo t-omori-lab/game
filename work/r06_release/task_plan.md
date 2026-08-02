@@ -23,8 +23,8 @@ R05を独立保存版として残し、直前の監査で確認した読み込�
 - [x] Phase 2: R05 freeze and catalog／service-worker performance fix
 - [x] Phase 3: R06 sharp visual、compact hero、dynamic HUD／navigation implementation
 - [x] Phase 4: Automated checks、production build、same-viewport browser review
-- [ ] Phase 5: Project docs、release evidence、exact-file commit／push
-- [ ] Phase 6: GitHub Pages and public-browser verification
+- [x] Phase 5: Project docs、release evidence、exact-file commit／push
+- [x] Phase 6: GitHub Pages and public-browser verification
 
 ## Decisions made
 
@@ -40,4 +40,4 @@ R05を独立保存版として残し、直前の監査で確認した読み込�
 
 ## Status
 
-**Phase 5 in progress** — 191 tests、strict TypeScript、production build、R05 checksum、local catalog／R05／R06 browser smokeは合格。exact-file commit、push、Pages、公開browser確認が残る。
+**Complete** — commit `2fd05c2`を`main`へpushし、GitHub Actions Pages run #17が成功した。公開catalogはR06→R05→R04→R03→R02→R01、公開R06は`sharpPresentation=true`／`ultraTiltShift=false`／7,734 cellsとnavigation UI、公開R05は独立保存版として実browserで確認した。

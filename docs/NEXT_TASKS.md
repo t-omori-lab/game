@@ -4,16 +4,16 @@ Last updated: 2026-08-02
 
 ## P0
 
-R06 Sharp Navigationのlocal candidateは完了した。Active P0は`R06 deploy／public確認 → user visual review → 高密度voxel少女preset採択 → depth-aware DOF`である。都市part追加はこの基盤より後にする。R06をConcept C／commercial art合格とは扱わない。
+R06 Sharp Navigationのdeploy／public確認は完了した。Active P0は`user visual review → 高密度voxel少女preset採択 → depth-aware DOF`である。都市part追加はこの基盤より後にする。R06をConcept C／commercial art合格とは扱わない。
 
-- [ ] `F.R.A.M. R06 Sharp Navigation Build`をGitHub Pagesへ公開する。
+- [x] `F.R.A.M. R06 Sharp Navigation Build`をGitHub Pagesへ公開する。
   - [x] R05をrelative bundle、scope別worker、snapshot、SHA-256 manifestを持つ自己完結保存版へ凍結した。
   - [x] catalogを720px gameplay thumbnail、latest eager、archives lazyへ変更し、root workerの全archive precacheを廃止した。
   - [x] screen-Y banded blurをR06既定OFFにし、sharp baselineへ戻した。
   - [x] 主人公を3.65頭身のcompact high-density voxel presetへ変更し、Box cellでper-cell geometryを軽量化した。
   - [x] 2D mini-map、目的地方向／距離、player／enemy／target、PC操作guide、controller一致target HUDを追加した。
   - [x] strict TypeScript、Vitest 191件、production build、R05 checksum、local catalog／R05／R06 browser smokeが合格した。
-  - [ ] exact-file commitをmainへpushし、Pages deployと公開catalog／R05／R06を確認する。
+  - [x] commit `2fd05c2`をmainへpushし、Pages run #17成功、公開catalogのR06→R01、公開R06のsharp表示／7,734 cells／navigation UI、公開R05独立保存版を実browserで確認した。
   - [ ] 公開R06をユーザーがreviewし、主人公の可愛さ、UI、sharp baselineの次差分を3点以内で決める。
 
 - [x] `F.R.A.M. R05`のlocal review candidateを作る。

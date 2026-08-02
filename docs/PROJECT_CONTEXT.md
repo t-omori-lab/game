@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: F.R.A.M. R06 Sharp Navigation local candidate verified; deployment in progress; R01–R05 preserved
+Phase: F.R.A.M. R06 Sharp Navigation deployed and public-browser verified; R01–R05 preserved
 
 ## Purpose
 
@@ -92,7 +92,8 @@ Phase: F.R.A.M. R06 Sharp Navigation local candidate verified; deployment in pro
 - R06 local candidateでは、R05をrelative static bundle、route-scoped service worker、snapshot、SHA-256 manifestへ凍結した。catalogは720px gameplay thumbnailへ切り替え、latestだけeager、archivesをlazyにし、root service workerの全archive precacheを廃止した。
 - R06はscreen-Y banded tilt-shiftを既定OFFにし、sharpなworldへ戻した。GTAO、bloom、SMAA、AgX、R04由来の連続world／collision／quest／loot／半自動戦闘は維持する。depth-aware DOFは未実装の次gateである。
 - R06主人公は7,734 visible cellを保ち、3.65頭身のcompact proportionとBox cellへ変更した。2D mini-map、player／enemy／objective、方向／距離marker、WASD／AUTO／Q／SHIFT／E／RのPC guide、combat controllerと一致するtarget HUDを追加した。これは可愛さの最終採択やConcept C再現の合格ではない。
-- R06 local production artifactはstrict TypeScript、Vitest 32 files／191 tests、production build、R05 15-file checksum、1280×720のcatalog／R05 archive／R06 active browser smokeに合格した。GitHub Pagesの公開結果はまだ未確認である。
+- R06 local production artifactはstrict TypeScript、Vitest 32 files／191 tests、production build、R05 15-file checksum、1280×720のcatalog／R05 archive／R06 active browser smokeに合格した。
+- commit `2fd05c2`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #17は成功した。公開catalogはR06→R05→R04→R03→R02→R01で、latest coverだけeager、archivesはlazyだった。公開R06は`R06`／`r06`／`sharpPresentation=true`／`ultraTiltShift=false`／7,734 cells、mini-map、目的地9m、WASD／AUTO／Q／SHIFT／E／R guideを実browserで確認した。公開R05は独立した`R05`／`r05`起動画面を維持した。これはR06評価版の配信確認であり、Concept C完全再現、commercial art合格、ユーザーvisual acceptanceではない。
 
 ## Creative reference notes
 

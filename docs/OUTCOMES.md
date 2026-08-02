@@ -75,7 +75,7 @@ Last updated: 2026-08-02
 - R06 local candidateを実装した。R05はrelative static bundle、固有service worker、snapshot、15-file SHA-256 manifestへ凍結し、全checksum一致とlocal browser起動を確認した。
 - catalog coverを720px gameplay JPEGへ置き換え、R06のみeager、R05〜R01をlazyにした。root service workerはcatalog shellだけを管理し、全archive routeのinstall-time precacheを廃止した。
 - R06はscreen-Y banded tilt-shiftを既定OFFにし、3.65頭身／7,734 visible cell／Box cellのcompact主人公、2D mini-map、目的地方向／距離、PC操作guide、controller一致target HUDを統合した。strict TypeScript、Vitest 32 files／191 tests、production build、1280×720 production browser smokeが合格した。
-- 上記はlocal candidateの確認である。GitHub Pages deploy、公開URL、ユーザーvisual acceptance、Concept C／commercial art合格、depth-aware DOFは未確認である。
+- commit `2fd05c2`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #17は成功した。公開catalogはR06→R05→R04→R03→R02→R01で、最新coverのみeager、保存版cover 5件はlazyだった。公開R06は`R06`／`r06`／`sharpPresentation=true`／`ultraTiltShift=false`／7,734 cells、mini-map、目的地9m、WASD／AUTO／Q／SHIFT／E／R guideを実browserで確認した。公開R05は`R05`／`r05`の独立起動画面を維持した。Concept C／commercial art合格、depth-aware DOF、ユーザーvisual acceptanceは未確認である。
 
 ## Pending confirmation
 

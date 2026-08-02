@@ -18,6 +18,9 @@ Updated: 2026-08-02
 - 2D mini-map、現在地、敵、目的地、方向／距離marker、PC操作guide、combat controllerと一致するtarget HUDを追加した。
 - 1280×720 production browserでcatalog、R06 active、R05 archiveを確認。R06 DOMではWASD、AUTO、Q、SHIFT、E、R、mini-map、目的地9mが読める。
 - strict TypeScript、Vitest 32 files／191 tests、production buildが合格。
+- commit `2fd05c2`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #17は成功した。
+- 公開catalogを実browserで確認し、R06がlatest、R05〜R01がarchiveとして新しい順に並び、最新coverだけ`eager`、5保存版coverは`lazy`であることを確認した。
+- 公開R06は`R06`／`r06`／`sharpPresentation=true`／`ultraTiltShift=false`／`heroVoxelCells=7734`を返し、mini-map、目的地9m、WASD／AUTO／Q／SHIFT／E／R guideを確認した。公開R05は`R05`／`r05`の独立titleと起動画面を維持した。
 
 ## Errors
 
