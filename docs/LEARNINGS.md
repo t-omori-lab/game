@@ -4,6 +4,8 @@ Last updated: 2026-08-02
 
 ## Validated project learnings
 
+- static first viewをHTMLへ置いても、そのentryがfull CSSをstatic importするとViteはrender-blocking stylesheet linkをHTMLへ挿入する。critical styleをinlineに保ち、full catalog CSSをenhancement時にdynamic importしてからDOMを置換すると、JS／CSS障害時も入口を使えるままfirst paintを分離できる。
+- 重いWebGL routeで空のapplication root、tiny dynamic-import entry、大きなbackground preloadを同時に使うと、blank screenとnetwork waterfallが重なる。inline boot shell、route専用static entry、主要chunkのmodulepreload、非critical imageの後回しを一組で行い、描画初期化前に一taskだけyieldすると、asset総量を変えずに待機の知覚と読み込み順を改善できる。
 - post stackだけではConcept Cへ届かない。単純な構造物でも、foreground／play band／backgroundのmass composition、heroとrouteの画面占有、wet／cloth／ceramic／metal／emissiveのmaterial分離、warm key／cool shadowを同時に設計すると、part数を増やす前に画面全体の知覚品質を大きく動かせる。
 - fixed cameraではtilt-shiftをworld renderへだけ適用し、DOM HUDをcomposer外へ残すと、HD-2D的なdepth bandと操作情報の可読性を両立できる。hero／enemy telegraphがplay bandから外れないcamera契約と一組で扱う。
 - `experience → environment profile → versioned spec compiler`を分けると、R01のsimulation／routeを凍結したままR02のcomposition、material、actorを大胆に変更できる。stable ID、seed、causal rule、AssetDNA／provenanceは、runtime LLMにworld truthを任せずAI-native生成基盤へ進む最小単位になる。

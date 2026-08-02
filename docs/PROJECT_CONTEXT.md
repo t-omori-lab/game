@@ -10,6 +10,7 @@ Phase: R09 First Memory Expedition planned; world-memory loop and playable actor
 
 ## Confirmed current state
 
+- 2026-08-03、公開`/game/`とR06の起動経路を軽量化した。catalogはfull CSSをdynamic enhancementへ回し、static first viewをstylesheet待ちから分離した。R06は空のrootを廃止してinline critical boot shellを先に表示し、専用static entryからThree.js／prototype chunkをmodulepreloadし、452,720-byteの地面画像を初期preload競合から外した。strict TypeScript、Vitest 38 files／205 tests、production buildに合格し、commit `d553898`のGitHub Pages run #22は成功した。公開HTMLはcatalog 5,275 bytes、R06 3,812 bytesで、no-cache HTTP確認は両route 200だった。iPhone実機、cold低速回線、first-controllable時間は別gateである。
 - 2026-08-03、次の主milestoneをR09 `First Memory Expedition / 最初の記憶遠征`へ整理した。R09Aでは二site×二module、回収物消費、撤退、専用namespaceのversioned save、二回目の見た目／gameplay差分を、現行actorだけでFirst Memory Logic Proofとして先に証明する。R09Bでは同じsceneへF-01をbridgeし、actual gameplayのpass／fail manifestで露呈したmoduleだけをF-02へ再構築する。character完成待ちでworld-memory実装を止めず、visualも別demoへしない。これは計画の確定であり、R09／F-02 runtime実装、user art acceptance、public deployではない。
 - 2026-08-03、公開catalogの不合格点だったidentity、copy、first paintをlocalで再構築した。JavaScript前から`F.R.A.M.`、正式名／日本語副題、世界記憶型・放浪RPG、AI-native game development project、`最新版を遊ぶ`／`AI開発実験を見る`が読めるgame-first first viewとし、actual R06 gameplay imageを主役にした。public見出しは`遊べるAI開発実験`、archive分類は`TECHNICAL EPOCHS / 技術エポック`とした。
 - catalog用R06 heroを720×405／94,317 bytesのderivativeとして追加し、正本画像は保持した。archive画像はnative lazy指定だけに頼らず、IntersectionObserver直前まで実`src`を持たないhard gateへ変更した。production buildのfirst-view transfer概算は約105 KBで、local browserのscroll前はvisible raster 1件、archive image request 0件だった。
