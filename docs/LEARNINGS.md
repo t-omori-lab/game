@@ -72,11 +72,13 @@ Last updated: 2026-08-02
 - realtime sceneへsolidに見える装飾建物を追加する場合、既存colliderの存在だけでは因果一致を証明できない。各solid meshのboundsをauthoritative collider内へ制約し、非collision layerは到達領域外か非solidと読めるmaterialへ分け、生成testで逸脱を失敗させる。
 - prototype catalogのcoverを理想conceptやCSS illustrationだけにすると、選択後の実画面との期待差が広がる。actual gameplay captureをversion cardへ使い、conceptはreferenceだと明記すると、visual goalと現在の到達点を同じ一覧で正直に比較できる。
 
-- fixed-cameraで周囲を見せるためにview heightだけを増やすと、主人公の識別性が落ちる。cameraの可視範囲とhero scaleを別parameterにし、R05では640 world-unitと2.7倍actorを組み合わせることで、R04より広い探索視野と通常play scaleの顔を同時に保てた。
-- HD-2D的なボケ味は単一の全画面blur強度では制御しにくい。主人公周辺のclear bandを固定し、far／nearを非対称に分けると、奥行きを明示しながらinteraction routeとHUDをsharpに維持できる。
-- 「女性型で可愛い」はpolygon数や頭身だけでは成立しない。通常cameraで顔を最初に見せるinitial facing、大きな目、顔を隠さない前髪、肩幅、A-line silhouette、低面積の色accentを同時に調整し、full-viewとhero cropの両方で検査する必要がある。
-- 高密度voxelはauthoring元やcell総数ではなく、最終画面にvisibleな表現契約である。R05ではsmooth CC0 body／hairをoffline anatomy scaffoldへ限定し、7,734 cellのquantized surface、semantic part pivot、piecewise proportion補正へcompileしたことで、ordinary 3Dではなくvoxel少女として読める方向へ移った。
-- cell総数が多くても、archive packやcoatが一塊なら画面では大きなboxに見える。4.8頭身への再配分、pack縮小、split coat、顔／髪cluster、細い四肢のようにscreen-space silhouetteとdetail frequencyをart-directする必要がある。
+- fixed-cameraで周囲を見せるためにview heightだけを増やすと主人公の識別性が落ちる。cameraの可視範囲、actorのscreen占有、顔を見せる初期向きは別parameterとして同じviewportで検査する。R05は周囲を広げたが、可愛さと顔の判読性はuser gateに未達だった。
+- HD-2D的DOFをscreen Yのclear bandで代用すると、同じ高さにある異なるdepthの物体が一緒にぼけ、輪郭越しの色漏れと水平境界が生じる。まずsharpな画面を合格させ、scene depth、CoC、depth-edge rejection、actor／telegraph maskから弱いminiature softnessを再構築する。
+- 「女性型で可愛い」はpolygon数やmetadata頭身だけでは成立しない。R05はlabel上4.8頭身でも最終形状比と知覚が一致しなかった。脚比率、coatの縦線、手、髪と衣装の明度分離、左右非対称pose、front-view face、通常screen占有を最終組立から測る。
+- 汎用smooth bodyの表面を高密度cellでsampleしても、可愛いvoxel characterが自動的に得られるわけではない。head、face、hair、ribcage、pelvis、limb、coat、packをsemantic voxel volumeとしてmacro／meso／microの順にart-directする。
+- visible cell数と描画costを同じにしない。R05の7,734 RoundedBox cellは約840k trianglesになった。cell recipeをauthoring truthとして保持し、内部面を除いた40〜80k triangleのouter surfaceと2〜5k triangleのshadow proxyへbuild-time compileできる。
+- 保存版を残すことと、入口で保存版assetを全部downloadすることは別である。CSS backgroundによる全card画像のeager loadとroot service workerの全route precacheを避け、軽量thumbnail、route訪問時cache、cold／warm timelineへ分離する。
+- minimal HUDは情報を消すことではない。通常は探索に必要な状態／方向／manual actionを見せ、combat、interaction、危機、onboardingで必要情報だけを増やすdynamic HUDにすると、画面の静けさと操作理解を両立できる。
 
 ## Working hypotheses to validate
 

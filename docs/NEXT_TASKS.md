@@ -4,7 +4,7 @@ Last updated: 2026-08-02
 
 ## P0
 
-R05評価版のGitHub Pages公開とR01〜R04保存は完了した。Active P0は、Concept Cと同じmacro構図を持つcausal graybox、道路／停留所／facadeのbaked PBR／lightmap、同一camera／poseの高密度voxel少女三preset比較である。公開済みR05をcommercial art合格とは扱わない。
+R05評価版のGitHub Pages公開とR01〜R04保存は完了した。2026-08-02のユーザー評価を受け、Active P0は`fast catalog／route cache → banded blurを外したsharp beauty baseline → 高密度voxel少女三preset選定 → dynamic HUD／mini-map → depth-aware DOF`である。都市part追加はこの基盤より後にする。詳細は`work/r05_improvement_strategy/R05_IMPROVEMENT_STRATEGY.md`。公開済みR05をcommercial art合格とは扱わない。
 
 - [x] `F.R.A.M. R05`のlocal review candidateを作る。
   - [x] 正式名称、full name、日本語副題、F-01 instanceをtitle／route／設定正本へ接続した。
@@ -17,6 +17,12 @@ R05評価版のGitHub Pages公開とR01〜R04保存は完了した。Active P0�
   - [x] 公開済みcommit `3cb27cd…`由来のR04をrelative bundle、scope別service worker、snapshot、SHA-256 manifestを持つ自己完結保存版へ凍結した。
   - [x] R01〜R04 checksum、Vitest 190件、strict TypeScript、production build、production artifactのcatalog／R04／R05起動・操作をlocal確認した。
   - [x] commits `0980f0f`／`35cf75f`をmainへpushし、Pages run #15、公開catalog／R01〜R05／R04独立bundle／R05 start・移動・Q入力・7,734 cells metadataを実URLで確認した。
+  - [x] 公開catalog／R05／Concept Cを同一1280×720で監査し、読み込み、DOF、主人公、HUDの構造的原因と次版実装順を文書化した。runtime／deployは未変更。
+  - [ ] catalog cardをlazy thumbnailへ移し、root service workerのR01〜R05全precacheを廃止する。R05 shell／engineをdynamic splitし、cold／warm timelineを記録する。
+  - [ ] 現在のscreen-Y banded blurを既定OFFにし、Concept C、Sharp Audit、R05を同一frameで比較してlight／material／contrastを先に合格させる。
+  - [ ] F-01A 3.75頭身、F-01B 4.05頭身、F-01C 4.35頭身を同一camera／pose／screen占有で生成し、正面／3方向／動作をuser reviewして一案を採択する。第一候補はF-01Bだが未採択。
+  - [ ] R05 actual screenshotを背景にFigmaでPC探索、PC戦闘、iPhone探索、iPhone戦闘、map＋relic compareを設計し、HudViewModel、2D mini-map、world marker、onboarding、pause／controlsへ実装する。
+  - [ ] depth-aware CoC、depth-edge rejection、actor／target sharp maskを持つC Gameplay DOFを実装し、Sharp／Gameplay／Photoの三presetとPC／mobile budgetを比較する。
 
 - [x] `R04`をGitHub Pagesへ公開し、R02-derived realtime 3D次版として確認する。
   - [x] R02の連続world、決定論的simulation、collision、quest、loot、二武器、半自動通常攻撃、手動大技を同じruntime stateのまま接続した。
