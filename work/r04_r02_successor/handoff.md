@@ -1,6 +1,6 @@
 # Handoff: R04 R02-successor
 
-Status: local deployment candidate; public verification pending
+Status: publicly deployed and browser-verified; user visual review pending
 
 ## Implemented
 
@@ -19,9 +19,17 @@ Status: local deployment candidate; public verification pending
 - Design QA passed for this versioned R02-successor deployment candidate. It does not claim exact Concept C parity, commercial-quality art acceptance, WebGPU, true HDR, native Steam, or iPhone 16 Pro performance.
 - Final P1 fixes remove inherited false-solid shells／legacy anomaly, enforce causal classification for all inherited meshes, and expose the hashed ground texture in built R04 HTML for first-install offline caching.
 
-## Remaining before completion
+## Public verification
 
-- Exact-file commit and push.
-- GitHub Pages workflow success for that commit.
-- Public catalog, R04 and frozen R01–R03 verification in the in-app browser.
-- Record commit SHA, Pages run URL, public URL, and the remaining North Star visual delta.
+- Release commit: `ab33dd8cef35c588b24b7e65365fe2c25b148dd4` on `main`.
+- GitHub Pages: run #13, success — `https://github.com/t-omori-lab/game/actions/runs/30730721269`.
+- Public catalog: `https://t-omori-lab.github.io/game/`; R04: `https://t-omori-lab.github.io/game/r04/`.
+- Catalog order and direct routes R04→R03→R02→R01 were browser-verified. All four routes, R04 manifest, root service worker, and hashed meadow texture returned HTTPS 200.
+- Public R04 kept quest acceptance, weapon switch, movement／scroll, and manual relic cooldown. R04 renderer metadata and ground texture `ready` were present; browser warning／error: 0.
+- Evidence capture: `r04-public-final-1672x941.png`.
+
+## Remaining art gate
+
+- User visual acceptance against Concept C／commercial HD-2D remains pending.
+- Richer authored materials, curved vegetation, reflected light, atmospheric depth, the final commercial character rig／animation, and equivalent density across later continuous-world regions remain the largest visual delta.
+- `F.R.A.M. (Frontier Relics Archive Module)`／「辺境遺物記録モジュール」／「フラム」は a strong naming candidate, not an adopted title.

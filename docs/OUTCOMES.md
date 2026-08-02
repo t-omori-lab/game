@@ -28,8 +28,9 @@ Last updated: 2026-08-02
 - 公開browserでcatalogはR03→R02→R01の順に表示された。R03は1280×720 viewportで2560×1440 canvasを描画し、tap移動、4方向facing、safe camera、半自動照準statusが動作した。R02保存版も独立bundleで起動した。
 - R04をR02-derived realtime 3D次版としてlocal実装した。R02の連続world、collision、quest、loot、二武器、半自動通常攻撃、手動大技を保持し、R03／Concept Cはvisual referenceに限定した。R01／R02／R03 snapshotは保持している。
 - R04はfixed diagonal camera、PMREM IBL、warm key／teal rim、AgX、half-float 4× MSAA、GTAO、bloom、SMAA、world限定tilt-shift、決定的なroad／roof／facade／vegetation detailと、articulated realtime 3D女性型SF heroを統合した。未加入companionは開始時に生成・表示しない。
-- R04のlocal full checkは30 files／184 tests、strict TypeScript、production buildに合格した。R01／R02／R03 snapshot checksumは9／9、11／11、19／19一致し、production previewで依頼受注、手動大技cooldown、武器切替、移動、browser warning／error 0件を確認した。GitHub Pages公開はこの時点では未確認である。
+- R04のlocal full checkは30 files／184 tests、strict TypeScript、production buildに合格した。R01／R02／R03 snapshot checksumは9／9、11／11、19／19一致し、production previewで依頼受注、手動大技cooldown、武器切替、移動、browser warning／error 0件を確認した。
 - 公開直前reviewで、継承したcolliderなしの不透明立体／旧anomalyと、初回offline precacheから地面textureが漏れる二件をP1として検出した。R04だけで旧objectを除去・全継承meshを因果分類し、simulation anomalyを正本化した。R04 HTMLへVite変換されるimage preloadを追加し、本番HTMLにhash付きWebPが現れることを確認した。R02保存版は変更していない。
+- commit `ab33dd8`のGitHub Actions run #13はtest／build／deployに成功した。公開catalog、R04、R01〜R03、R04 manifest、root service worker、hash付き地面WebPはHTTPS 200を返した。公開browserでcatalogのR04→R03→R02→R01順、各保存版の独立title、公開R04の依頼受注、武器切替、移動、手動大技cooldownとR04描画metadataを確認し、warning／errorは0件だった。
 - ユーザーはゲーム名候補として`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題「辺境遺物記録モジュール」、呼称「フラム」を提示した。正式名称への採用、logo、prototype画面名の変更は未決定である。
 - 自由放浪とworld memoryはユーザー意図に合う上位方向として確認された。
 - 世界の基層は、人類が激減し、識別可能な現代都市が植物、水、動物、新しい生活へ侵食・転用されたpost-apocalypseと確認された。崩壊原因、年代、地域、共同体密度は未決定。
@@ -70,7 +71,6 @@ Last updated: 2026-08-02
 
 ## Pending confirmation
 
-- R04のGitHub Pages build／deploy成功、公開catalog／R04／R01〜R03保存版、公開browser操作が確認できるか。
 - R04がR02の遊べる基盤を維持しつつ、ユーザーのConcept C／commercial HD-2D基準へ十分近づいたと評価されるか。local design QAのpassはユーザーacceptanceの代替ではない。
 - `F.R.A.M.`を正式名称として採用するか。採用する場合の日本語表記、logo、作中でのmodule／組織／記録systemとしての意味をどう統一するか。
 - R03がConcept Cの知覚品質へ十分近づいたか、ユーザーart reviewで合格するか。local independent visual QAのpassはユーザーacceptanceの代替ではない。

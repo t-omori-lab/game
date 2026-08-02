@@ -26,6 +26,9 @@
 - Browser interaction: quest `briefing → travel-to-fork`, relic `READY → cooldown`, weapon `blade → impact`, W movement `(430,900) → (411,889)`. Browser warning／error: 0.
 - Visual evidence: `r04-production-preview-1672x941.png`, `concept-c-vs-r04-pass3.png`, hero-front and roam／combat captures. Design QA passed for an R02-successor deployment candidate, not for Concept C parity or commercial art acceptance.
 - Final review caught two P1s before commit. R04 now removes inherited unbound solids／legacy anomaly, classifies every inherited Beauty Cell mesh by causal role, rejects unknown meshes, and uses the simulation anomaly as authority. R04 HTML now preloads the meadow texture; the production HTML contains its hashed WebP URL for first-install service-worker discovery.
+- Release commit `ab33dd8` was pushed to `main`; GitHub Pages run #13 completed successfully.
+- Public HTTP checks returned 200 for `/game/`, `/game/r04/`, frozen `/game/r03/`, `/game/r02/`, `/game/r01/`, the R04 manifest, root service worker, and hashed meadow WebP.
+- Public browser catalog order is R04→R03→R02→R01. Public R04 kept the R02-derived quest, weapon, movement, and manual relic flow; R04 render metadata reported `r04-live`, `pc-ultra`, 2556×1436, PMREM, AgX, half-float 4× MSAA, GTAO／bloom／SMAA／tilt-shift, and ground texture `ready`. Warning／error: 0. Evidence: `r04-public-final-1672x941.png`.
 
 ## Open findings
 
@@ -37,4 +40,4 @@
 - Hero must remain articulated realtime 3D, with readable female face／hair／coat／SF tools at gameplay scale.
 - R03 must be frozen as a self-contained relative-base snapshot before R04 becomes the only live route.
 - R04 keeps the opening cell as the densest art pass; later continuous-world regions still need equivalent compiler density.
-- Public Pages run, public URL behavior, and user art acceptance remain separate pending evidence.
+- Public Pages run and public URL behavior are confirmed. User art acceptance remains separate pending evidence.

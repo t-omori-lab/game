@@ -19,7 +19,7 @@ R02の決定論的simulation、world座標、collision、semi-auto combat、loot
 - [x] Phase 3: camera、lighting、surface、environment density、hero／companionをConcept C方向へ改稿する。
 - [x] Phase 4: R02 gameplay invariantsとR04固有testを通す。
 - [x] Phase 5: 同一viewportのbrowser captureとdesign QAを反復し、P0／P1を解消し、残るP2を次版課題として明記する。
-- [ ] Phase 6: project docsを更新し、scope限定commit、push、GitHub Pages成功、公開URLを検証する。
+- [x] Phase 6: project docsを更新し、scope限定commit、push、GitHub Pages成功、公開URLを検証する。
 
 ## Key questions
 
@@ -45,4 +45,4 @@ R02の決定論的simulation、world座標、collision、semi-auto combat、loot
 
 ## Status
 
-**Currently in Phase 6** — local implementation／QAは完了。scope限定commit、push、Pages run、公開browser確認が残る。
+**Complete** — commit `ab33dd8`をpushし、GitHub Pages run #13成功、公開catalog／R04／R01〜R03、主要assetのHTTPS 200、公開R04の依頼・武器・移動・手動大技、browser warning／error 0を確認した。Concept C完全再現とユーザーart acceptanceは次の別gateである。
