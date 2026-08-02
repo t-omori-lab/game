@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: Character Forge F-01 technical epoch publicly verified; F-02 hair／face module reconstruction next; R01–R08 preserved
+Phase: Character Forge F-01 technical epoch publicly verified; catalog identity／load and true FIELD camera pass next; F-02 follows; R01–R08 preserved
 
 ## Purpose
 
@@ -17,6 +17,9 @@ Phase: Character Forge F-01 technical epoch publicly verified; F-02 hair／face 
 - 公開前の追加指示を受け、catalog titleを正式名`F.R.A.M.`＋小さなfull name／日本語副題へ変更し、開発資料調だった説明を、廃都探索、遺物、world memory、各試作の遊びが自然に読めるplayer向け日本語へ改稿した。F-01をfirst viewに置くためR01〜R06 coverは全てlazy loadへ変更した。
 - F-01は毎回1.8 MBのBuild Sheetから37,990 solid cellsを再計算していた。元画像と再現compilerは開発正本として保持し、同じ結果を47,270 bytes／SHA-256 `a77a7e0…`のsurface packへ事前compileしてruntimeに渡す方式へ変更した。表示用Build Sheetは87 KBへ縮小し、3D chunk到着前に静的boot shellを表示する。local production previewでは9,454 cells／37,990 volumeを維持し、warm navigation後のapp ready markerは79〜102 msだった。cold network／実公開端末の時間は未確認である。
 - commit `2c64a5d`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #19のbuild／deploy成功を確認した。公開`/game/`は正式名、full name、日本語副題、Technology Epoch 1件、Playable Builds 6件、R cover全件lazyを実browserで表示した。公開`/game/forge/f01/`は9,454 cells、37,990 volume、7 rig partsで起動し、初回public navigationのapp ready markerは531 ms、Build Sheet previewは1151pxで後続表示された。
+- 公開後のユーザーreviewでは、catalogがゲーム公式ページではなく開発archiveに見え、`F.R.A.M.`がゲーム名であること、ゲーム内容、AI-native game development researchの三点がfirst viewで伝わらないと評価された。`開発の節目`と保存版の抽象copyは不採択。public見出しは`遊べるAI開発実験`、分類名は`TECHNICAL EPOCHS / 技術エポック`を第一候補とし、game landing → AI-native research → technical／playable archiveの順へ再構築するreview案を`work/catalog_identity_review/`へ記録した。
+- 同reviewで、公開catalogはnative lazy指定後もfirst viewで`f01`、`r06`、`r05`、`r04`の4画像、約403 KBを取得していることを実browser asset inventoryで確認した。rootは空の`#app`をmodule scriptで構築するため、blank first paintも残る。次版はstatic title／CTA、first view画像1枚、IntersectionObserverによるhard-gated thumbnail、catalog first-view 150 KB以下を候補contractとする。
+- F-01のcurrent `CLOSE`／`GAME`距離は9.1／12.8で約1.41倍差、manual zoomも16で上限になるため、約3倍小さいactual gameplay-distance確認を満たさない。次版では`CLOSE / FULL / FIELD`へ分け、FIELDをmain gameと同じ固定斜めcamera方向、1280×720でactor高さ14〜18%／target 16%、world-scale reference付きで定義する。
 
 - 既定起動をPrototype B「辺境遺物録」へ切り替えた。Prototype 0.1「境界調査録」は比較用に`?prototype=0.1`で起動できる。
 - Prototype Bは、町―三叉路―聴取廃区を連続scrollする3,600×1,800のworldと固定斜め俯瞰cameraを持つ。moving character、collision silhouette、occluder、dynamic shadowはrealtime 3Dを維持し、地面、背景、建物面は高解像度の生成／baked surfaceを併用できるhybrid HD-2Dへ移行した。playerの現行authoring gridは24×32×16。

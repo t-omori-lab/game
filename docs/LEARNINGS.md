@@ -11,6 +11,9 @@ Last updated: 2026-08-02
 - environment artだけを差し替えてsimulationを共有すると、描画を止めた旧colliderや遠方questが不可視のまま残り得る。art manifestの`replacedTerrainIds`ごとに同boundsのvisual counterpartを検査し、未置換terrain／propはfallback描画することで、画面とworld ruleの整合を保つ。
 - actual cameraでのvisual loopは、data／geometry countでは見えない構図上の欠点を検出した。R02ではbeigeに寄ったroad、過大なshelter、薄いvegetationを画面上で見つけ、dark wet road、mass balance、植生縁へ改稿できた。最終採否は同じcameraの操作画面で行う。
 - version catalogの重さはgame bundleだけでなく、card imageのload方式とroot service workerのscopeで生じる。latest thumbnailだけをeager、archivesをlazy、root workerをcatalog shellだけへ限定し、各releaseをroute-scoped workerへ分けると、保存版を削除せず入口の過剰downloadを止められる。
+- native `loading="lazy"`はnetwork hard gateではなく、viewport外でもbrowserの先読み距離内にある複数card imageを取得する。入口を確実に1画像へ限定するには、canonical captureから軽量derivativeを作り、未表示cardはreal `src`を持たずIntersectionObserver直前に付与する。`content-visibility`はlayout／paintを減らしてもnetwork取得を止めない。
+- acronym、archive count、technical demoをfirst viewの主役にすると、正式作品名を大きく出してもgame landingではなく開発portfolioに見える。actual gameplay image、game genre／loop、play CTAを先に置き、AI-native researchとarchiveを次階層へ分けると、作品、遊び、研究のidentityを混同せず伝えられる。
+- character inspectionのcamera距離名を`GAME`と呼ぶだけではactual gameplay scaleを保証しない。close-up、full-body、fieldを分け、fieldをcamera radiusではなくactual game camera方向とactorのprojected screen占有率で定義すると、造形の接写品質と通常画面の判読性を同じassetで検査できる。
 - high-density voxelのvisible cell数を保ったまま、RoundedBoxをBox cellへ替えると一cellのtriangleを大幅に減らせる。authoring truth、semantic rig、material roleを保ちつつ、outer-surface compilerへ移る前の軽量化として有効だが、可愛さは頭身、顔、髪、衣装silhouetteの別gateである。
 - mini-mapは第二の3D cameraを追加せず、authoritative world stateからCanvas 2Dへ道路、landmark、enemy、player、objectiveを描けば、同じquest stateから目的地方向／距離を派生できる。navigation表示とgame ruleの不一致を避けやすい。
 
@@ -135,3 +138,4 @@ promotion_status: observed
 - 高密度cell sizeだけを縮めると、既存rig pivotはworld unitのままでもsemantic volumeの整数座標が縮み、頭・肩・腰が分離する。cell frequencyを変更するcharacter passでは、各partのworld-space接続点を正本にし、cell coordinateを再計算してsame-view silhouetteで検証する。
 - Material paletteをmesh materialとinstance colorの両方へ適用すると乗算でskin／pale clothが暗化し、detailを増やしてもgraphiteの塊に見える。paletteはmaterial、instance colorは白基準の微小value variationへ分離する。
 - 全身rootの非等方scaleを継承するsemantic headは、local head scaleの数値だけでは頭形状を判断できない。world-space合成scaleと通常camera captureでface aspectを確認し、rig motionは維持したままhead groupで補償する。
+- catalogの性能budgetは総量だけでなく、scroll前archive画像0 byte、LCPまでのrequest数、game／Forge chunk 0件で定義する。今回の約410 KB初期inventoryは500 KB基準なら通ってしまうが、その約98%が不要な画面外画像であり、体感改善を保証しない。

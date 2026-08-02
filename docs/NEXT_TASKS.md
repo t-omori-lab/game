@@ -4,7 +4,18 @@ Last updated: 2026-08-02
 
 ## P0
 
-R06 Sharp Navigationに加え、Character Forge F-01を最初のTechnology Epochとして公開確認した。ユーザーはF-01を暫定約70%と評価し、ゲーム距離での成立可能性を認めた。Active P0は`F-02 hair／face module-first reconstruction → close＋gameplay-distance同時評価`である。都市part追加はcharacter source方式の確立より後にする。
+R06 Sharp Navigationに加え、Character Forge F-01を最初のTechnology Epochとして公開確認した。ユーザーはF-01を暫定約70%と評価した一方、current `GAME` cameraはactual gameplay-distanceではなく、公開catalogのidentity／copy／loadも不合格とした。Active P0は`catalog game-first rebuild＋load hard gate → F-01 FIELD camera → F-02 hair／face module-first reconstruction`である。都市part追加はcharacter source方式の確立より後にする。
+
+- [ ] 公開catalogをgame-first identityと軽量first paintへ再構築する。
+  - first viewで`AI-NATIVE GAME DEVELOPMENT PROJECT`、`F.R.A.M.`、正式名／日本語副題、RPGの一文、`最新版を遊ぶ`CTA、actual gameplay imageを表示する。
+  - `開発の節目`を撤去する。public見出しは`遊べるAI開発実験`、分類名は`TECHNICAL EPOCHS / 技術エポック`を第一候補とする。保存版説明は「各時点の操作／戦闘／画面表現を残したplayable版」と具体化する。
+  - title／description／CTAをstatic HTMLで先に表示し、first view rasterを1枚に限定する。archive thumbnailはreal `src`をIntersectionObserver直前まで持たせない。
+  - Done when: clean navigationでfirst-view transfer 150 KB以下、scroll前archive画像0 byte／visible raster 1件、LCPまで6 request以下、game／Forge chunk 0件、JavaScript前に作品名／RPG／CTAが読め、desktop＋iPhone-sized browserでlayoutと全保存版linkを確認できる。
+
+- [ ] Character Forgeへactual gameplay-distanceの`FIELD` presetを追加する。
+  - current `GAME`は`FULL`へ改名し、`CLOSE / FULL / FIELD`の三段階にする。
+  - FIELDはmain gameの固定斜めcamera方向を共有し、1280×720でactor screen高さ14〜18%／target 16%に合わせる。manual zoom上限、far plane、floor／grid／fogも同scaleへ拡張する。
+  - Done when: closeとFIELDで同じactor／motion／materialを比較でき、FIELDのprojected occupancy、no clipping、preset復帰、world-scale referenceを自動＋実画面で確認できる。
 
 - [x] `Character Forge F-01`でBeauty Sheetから再生成可能な3D character正本を作る。
   - [x] 同一人物のstrict four-view＋module Build Sheetを生成し、raw imageとprovenanceを保存した。
