@@ -10,6 +10,9 @@ Last updated: 2026-08-02
 - 明示的なRXX routeだけでは過去版は凍結されない。同じsource chunkを共有すると将来のbuildで内容が変質するため、公開比較版は元commitから独立buildした静的成果物、source commit、SHA-256 manifestまで固定する。Vite multi-page、route別service worker cache、新しい順のcatalogと組み合わせ、deploy時は既存version保持を明示確認し、削除指示がなければ保存する。
 - environment artだけを差し替えてsimulationを共有すると、描画を止めた旧colliderや遠方questが不可視のまま残り得る。art manifestの`replacedTerrainIds`ごとに同boundsのvisual counterpartを検査し、未置換terrain／propはfallback描画することで、画面とworld ruleの整合を保つ。
 - actual cameraでのvisual loopは、data／geometry countでは見えない構図上の欠点を検出した。R02ではbeigeに寄ったroad、過大なshelter、薄いvegetationを画面上で見つけ、dark wet road、mass balance、植生縁へ改稿できた。最終採否は同じcameraの操作画面で行う。
+- version catalogの重さはgame bundleだけでなく、card imageのload方式とroot service workerのscopeで生じる。latest thumbnailだけをeager、archivesをlazy、root workerをcatalog shellだけへ限定し、各releaseをroute-scoped workerへ分けると、保存版を削除せず入口の過剰downloadを止められる。
+- high-density voxelのvisible cell数を保ったまま、RoundedBoxをBox cellへ替えると一cellのtriangleを大幅に減らせる。authoring truth、semantic rig、material roleを保ちつつ、outer-surface compilerへ移る前の軽量化として有効だが、可愛さは頭身、顔、髪、衣装silhouetteの別gateである。
+- mini-mapは第二の3D cameraを追加せず、authoritative world stateからCanvas 2Dへ道路、landmark、enemy、player、objectiveを描けば、同じquest stateから目的地方向／距離を派生できる。navigation表示とgame ruleの不一致を避けやすい。
 
 - Prototype 0.1の「遊べるが約20点」という評価から、技術的完成とゲーム核の適合は別であると確認できた。不一致は自動化一般ではなく、固定arenaで接近、位置取り、target、大技の判断を伴わず常時自動遠隔攻撃を眺める構造だった。scroll探索とplayer判断へ核を移す必要がある。
 - simulationを表示から分離し、seedと30Hz tickへ限定すると、rendererをPhaserからThree.jsへ変えても、戦闘、分岐、replayをbrowserなしで再現検査できる。

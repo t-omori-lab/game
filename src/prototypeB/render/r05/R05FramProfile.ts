@@ -53,7 +53,7 @@ export const R05_FRAM_PROFILE = Object.freeze({
     environmentIntensity: 0.13,
   },
   actors: {
-    heroScale: 2,
+    heroScale: 2.24,
   },
   identity: {
     title: "F.R.A.M.",

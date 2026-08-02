@@ -11,7 +11,7 @@ function namesIn(root: THREE.Object3D): ReadonlySet<string> {
   return names;
 }
 
-describe("F.R.A.M. R05 protagonist", () => {
+describe("F.R.A.M. compact high-density protagonist", () => {
   it("is a high-density articulated voxel actor with a readable face", () => {
     const visual = createR05FramHeroVisual();
     visual.root.updateMatrixWorld(true);
@@ -20,7 +20,7 @@ describe("F.R.A.M. R05 protagonist", () => {
     const names = namesIn(visual.root);
 
     expect(visual.root.userData.assetDNA).toBe(R05_FRAM_HERO_ASSET_DNA);
-    expect(R05_FRAM_HERO_ASSET_DNA.bodyRatioHeads).toBe(4.8);
+    expect(R05_FRAM_HERO_ASSET_DNA.bodyRatioHeads).toBeCloseTo(3.65);
     expect(R05_FRAM_HERO_ASSET_DNA.voxelCellCount).toBeGreaterThan(7_500);
     expect(R05_FRAM_HERO_ASSET_DNA.representation).toBe(
       "high-density-articulated-voxel-surface",
@@ -28,8 +28,8 @@ describe("F.R.A.M. R05 protagonist", () => {
     expect(visual.root.userData.visibleVoxelCells).toBeGreaterThan(7_500);
     expect(R05_FRAM_HERO_ASSET_DNA.frontAxis).toBe("+z");
     expect(visual.mode).toBe("articulated");
-    expect(size.y).toBeGreaterThan(58);
-    expect(size.y).toBeLessThan(96);
+    expect(size.y).toBeGreaterThan(52);
+    expect(size.y).toBeLessThan(80);
     expect(visual.weaponSocket.parent?.name).toBe(
       "fram-f01-rightHand-voxel-pivot",
     );

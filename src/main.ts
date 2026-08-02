@@ -14,7 +14,10 @@ void boot(root).catch((error: unknown) => {
 
 if ("serviceWorker" in navigator && import.meta.env.PROD) {
   window.addEventListener("load", () => {
-    void navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`);
+    void navigator.serviceWorker.register(
+      `${import.meta.env.BASE_URL}r06/sw.js`,
+      { scope: `${import.meta.env.BASE_URL}r06/` },
+    );
   });
 }
 
@@ -31,6 +34,16 @@ async function boot(applicationRoot: HTMLElement): Promise<void> {
     window.location.pathname,
     window.location.search,
   );
+
+  if (release === "r06") {
+    startPrototypeB(applicationRoot, {
+      experience: "r06",
+      renderQuality: "pc-ultra",
+      companionPreview: false,
+      semiAutoCombat: true,
+    });
+    return;
+  }
 
   if (release === "r05") {
     startPrototypeB(applicationRoot, {

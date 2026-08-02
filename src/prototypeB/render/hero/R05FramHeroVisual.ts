@@ -18,20 +18,20 @@ import {
 } from "./R05VoxelAvatarData.generated";
 
 export const R05_FRAM_HERO_ASSET_DNA = Object.freeze({
-  schemaVersion: 2,
-  id: "actor.fram.module-f01.archive-runner",
-  generatorVersion: "cc0-rig-guided-articulated-voxel-surface-v2",
+  schemaVersion: 3,
+  id: "actor.fram.module-f01.compact-archive-runner",
+  generatorVersion: "cc0-rig-guided-articulated-voxel-surface-v3",
   seed: "fram-f01-rain-garden-0501",
-  rigFamily: "humanoid-fram-voxel-v2",
+  rigFamily: "humanoid-fram-compact-voxel-v3",
   representation: "high-density-articulated-voxel-surface",
   frontAxis: "+z" as const,
-  bodyRatioHeads: 4.8,
+  bodyRatioHeads: 3.65,
   voxelCellCount: R05_VOXEL_COUNT,
   role: "embodied frontier relic archive module",
   silhouette: [
     "fine-cell white hair and readable three-quarter head shape",
     "long split expedition coat with coral field textile",
-    "slim articulated limbs, dark boots and luminous relic blade",
+    "compact articulated limbs, dark boots and luminous relic blade",
     "compact archive pack with restrained cyan record signal",
   ],
   materialGrammar: [
@@ -326,12 +326,10 @@ function createVoxelMeshes(
   ) as unknown as Record<VoxelPart, VoxelMesh[]>;
   const ownedGeometries = new Set<THREE.BufferGeometry>();
   const matrix = new THREE.Matrix4();
-  const cellGeometry = new RoundedBoxGeometry(
-    WORLD_CELL * 0.94,
-    WORLD_CELL * 0.94,
-    WORLD_CELL * 0.94,
-    1,
-    WORLD_CELL * 0.038,
+  const cellGeometry = new THREE.BoxGeometry(
+    WORLD_CELL * 0.97,
+    WORLD_CELL * 0.97,
+    WORLD_CELL * 0.97,
   );
   ownedGeometries.add(cellGeometry);
 
@@ -409,7 +407,7 @@ function createFace(
       ? "fram-f01-left-expressive-eye"
       : "fram-f01-right-expressive-eye";
     group.position.set(
-      side * 0.046 * WORLD_SCALE - headPivot.x,
+      side * 0.04 * WORLD_SCALE - headPivot.x,
       avatarY(1.655) * WORLD_SCALE - headPivot.y,
       0.164 * WORLD_SCALE - headPivot.z,
     );
@@ -423,7 +421,7 @@ function createFace(
       materials.under,
       ROLE_COLORS.under,
     );
-    pupil.scale.set(0.52, 0.66, 0.48);
+    pupil.scale.set(0.58, 0.72, 0.48);
     pupil.position.z = WORLD_CELL * 0.38;
     const highlight = createSingleVoxel(
       `${group.name}-archive-highlight`,
@@ -441,7 +439,7 @@ function createFace(
     materials.mouth,
     ROLE_COLORS.mouth,
   );
-  mouth.scale.set(0.72, 0.32, 0.62);
+  mouth.scale.set(0.56, 0.28, 0.58);
   mouth.position.set(
     -headPivot.x,
     avatarY(1.595) * WORLD_SCALE - headPivot.y,
@@ -530,7 +528,11 @@ export function createR05FramHeroVisual(): R05FramHeroVisual {
 
   const motionRoot = new THREE.Group();
   motionRoot.name = "fram-f01-high-density-voxel-motion";
-  root.add(motionRoot);
+  const proportionRoot = new THREE.Group();
+  proportionRoot.name = "fram-f01-compact-proportion";
+  proportionRoot.scale.set(1.16, 0.69, 1.16);
+  root.add(proportionRoot);
+  proportionRoot.add(motionRoot);
   const rig = createRig(motionRoot);
   const records = decodeVoxelRecords();
   const surfaces = createVoxelMeshes(records, rig, library.byRole);
@@ -608,7 +610,7 @@ export function createR05FramHeroVisual(): R05FramHeroVisual {
       motionRoot.scale.set(...pose.root.scale);
       rig.all.torso.rotation.set(...pose.parts.torso.rotation);
       rig.all.head.rotation.set(...pose.parts.head.rotation);
-      rig.all.head.scale.set(1.25, 1.22, 1.25);
+      rig.all.head.scale.set(1.68, 1.62, 1.68);
       rig.all.leftUpperArm.rotation.set(
         baseRotations.leftUpperArm.x + pose.parts["left-arm"].rotation[0],
         baseRotations.leftUpperArm.y + pose.parts["left-arm"].rotation[1],

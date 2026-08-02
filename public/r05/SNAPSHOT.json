@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "release": "r05",
+  "title": "F.R.A.M. / High-density Voxel Girl",
+  "sourceCommit": "dea41e8",
+  "frozenAt": "2026-08-02T00:00:00+09:00",
+  "note": "The public R05 renderer is frozen before the R06 sharp-navigation pass."
+}

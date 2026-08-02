@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#173c32" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="description"
+      content="F.R.A.M. - Frontier Relics Archive Module. 高密度ボクセル少女として鮮やかな緑蝕都市を歩くR05公開評価版。"
+    />
+    <meta property="og:title" content="F.R.A.M. R05 - Frontier Relics Archive Module" />
+    <meta property="og:description" content="広い視野、miniature-depth、7,734セルの高密度ボクセル少女F.R.A.M.主人公を検証する公開評価版。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./og.png" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="720" />
+    <meta property="og:image:alt" content="自然に侵食された都市を歩く高密度ボクセル少女F.R.A.M. F-01" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="./og.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      crossorigin="anonymous"
+      href="./assets/reclaimed-meadow-v1-CgTL2cqk.webp"
+    />
+    <title>F.R.A.M. R05 - 辺境遺物記録モジュール</title>
+    <script type="module" crossorigin src="./assets/r05-DY3D0AKC.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/prototypeRoutes-VfY_VqqW.js">
+    <link rel="stylesheet" crossorigin href="./assets/r05-D12f74hJ.css">
+  </head>
+  <body>
+    <main id="app" aria-label="F.R.A.M. R05 ゲーム画面"></main>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js", { scope: "./" });
+        });
+      }
+    </script>
+  </body>
+</html>

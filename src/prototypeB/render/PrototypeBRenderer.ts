@@ -185,6 +185,7 @@ export interface PrototypeBRendererOptions {
   readonly environmentProfile?: PrototypeBEnvironmentProfile;
   readonly presentationProfile?: PrototypeBPresentationProfile;
   readonly qualityProfile?: PrototypeBRenderQuality;
+  readonly sharpPresentation?: boolean;
 }
 
 export class PrototypeBRenderer {
@@ -192,6 +193,7 @@ export class PrototypeBRenderer {
   private readonly qualityProfile: PrototypeBRenderQuality;
   private readonly environmentProfile: PrototypeBEnvironmentProfile;
   private readonly presentationProfile: PrototypeBPresentationProfile;
+  private readonly sharpPresentation: boolean;
   private readonly cameraCompositionProfile: CameraCompositionProfile;
   private readonly cameraViewHeight: number;
   private ultraPipeline: UltraRenderPipeline | null = null;
@@ -278,6 +280,7 @@ export class PrototypeBRenderer {
       options.environmentProfile ?? "start-town";
     this.presentationProfile = options.presentationProfile ??
       (this.environmentProfile === "r04-live" ? "r04" : "default");
+    this.sharpPresentation = options.sharpPresentation ?? false;
     this.cameraCompositionProfile =
       options.cameraCompositionProfile ??
       (this.environmentProfile === "r04-live" ? "r04" : "baseline");
@@ -328,6 +331,8 @@ export class PrototypeBRenderer {
         ? "msaa"
         : "none";
     this.renderer.domElement.dataset.qualityProfile = this.qualityProfile;
+    this.renderer.domElement.dataset.sharpPresentation =
+      String(this.sharpPresentation);
     this.renderer.domElement.dataset.cameraCompositionProfile =
       this.cameraCompositionProfile;
     this.renderer.domElement.dataset.environmentProfile =
@@ -420,8 +425,9 @@ export class PrototypeBRenderer {
           gtao: true,
           bloom: true,
           smaa: true,
-          tiltShift: this.environmentProfile === "beauty-cell" ||
-            this.environmentProfile === "r04-live",
+          tiltShift: !this.sharpPresentation &&
+            (this.environmentProfile === "beauty-cell" ||
+              this.environmentProfile === "r04-live"),
           tiltShiftMode: this.presentationProfile === "r05-fram"
             ? R05_FRAM_PROFILE.post.tiltShiftMode
             : "classic",

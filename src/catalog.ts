@@ -42,10 +42,20 @@ function renderCatalog(applicationRoot: HTMLElement): void {
     const isLatest = release.status === "latest";
     const status = isLatest ? "LATEST / PLAYABLE" : "ARCHIVE / PLAYABLE";
     const linkLabel = isLatest ? "最新試作を起動" : "保存版を起動";
+    const thumbnail = `${import.meta.env.BASE_URL}catalog/${release.id}.jpg`;
 
     return `
       <article class="release-card ${isLatest ? "release-card--latest" : ""}" data-release="${release.id}">
-        <div class="release-card__visual" aria-hidden="true">
+        <div class="release-card__visual">
+          <img
+            src="${thumbnail}"
+            alt="${release.title} のプレイ画面"
+            width="720"
+            height="405"
+            loading="${isLatest ? "eager" : "lazy"}"
+            decoding="async"
+            fetchpriority="${isLatest ? "high" : "low"}"
+          />
           <span class="release-card__index">0${index + 1}</span>
         </div>
         <div class="release-card__body">

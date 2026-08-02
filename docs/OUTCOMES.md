@@ -72,6 +72,10 @@ Last updated: 2026-08-02
 - Visual Fidelity Foundation v0.3をlocal実装した。North Star専用にPMREM IBL、warm key／cool rim／reduced fill、PC露出／fog、探索／戦闘camera composition、cloth／metal／HDR signal material、world-first intro、縮小HUD、debug表示の明示切替を接続した。1280×720／DPR 2で2556×1436、Display-P3、AgX 0.98、half-float MSAA 4、GTAO／bloom／SMAA、PMREM、texture ready、PC touch UI非表示を確認した。strict TypeScript、Vitest 141件、production buildが合格した。public deploy／pushとユーザーart acceptanceは行っていない。
 - AI生成によるVisual North Star conceptをA〜Eの五案作成し、1672×941 PNG、全prompt、SHA-256 manifestをlocal projectへ保存した。比較の結果、Dの単純な交差点構図を、明るい中間調、拡大した主人公／四足同行者、sage／rust衣装と折り畳み半円survey frameで修正したEを暫定North Starにした。fixed-camera VisualCell、rigged GLB、baked PBR／indirect light、GLB／KTX2、AssetDNA／provenance、PC masterからmobile tierへの実装案も文書化した。これはconceptとlocal設計の完了であり、runtime再現、commercial art acceptance、user approval、public deploy／pushではない。
 - 固定cameraのworld X/Yへkeyboard／virtual-stick X/Yを直結すると、上入力が画面斜めへ投影されることをcode上で確認した。screen-relative controlをrendererと共有するcamera basisでworld座標へ回転するlocal実装を追加し、上下左右、analog magnitude、実Three.js camera投影を含むVitest 144件、strict TypeScript、production buildが合格した。Gamepad APIとclick／tap-to-moveはまだ接続していない。
+- R06 local candidateを実装した。R05はrelative static bundle、固有service worker、snapshot、15-file SHA-256 manifestへ凍結し、全checksum一致とlocal browser起動を確認した。
+- catalog coverを720px gameplay JPEGへ置き換え、R06のみeager、R05〜R01をlazyにした。root service workerはcatalog shellだけを管理し、全archive routeのinstall-time precacheを廃止した。
+- R06はscreen-Y banded tilt-shiftを既定OFFにし、3.65頭身／7,734 visible cell／Box cellのcompact主人公、2D mini-map、目的地方向／距離、PC操作guide、controller一致target HUDを統合した。strict TypeScript、Vitest 32 files／191 tests、production build、1280×720 production browser smokeが合格した。
+- 上記はlocal candidateの確認である。GitHub Pages deploy、公開URL、ユーザーvisual acceptance、Concept C／commercial art合格、depth-aware DOFは未確認である。
 
 ## Pending confirmation
 

@@ -22,14 +22,18 @@ const pipelineSource = fileSystem.readFileSync(
   new URL("../../src/prototypeB/render/UltraRenderPipeline.ts", import.meta.url),
   "utf8",
 );
+const layoutSource = fileSystem.readFileSync(
+  new URL("../../src/prototypeB/app/layout.ts", import.meta.url),
+  "utf8",
+);
 
-describe("F.R.A.M. R05 presentation contract", () => {
+describe("F.R.A.M. R06 presentation contract", () => {
   it("keeps the R04 causal environment but selects an independent presentation", () => {
-    expect(mainSource).toContain('if (release === "r05")');
-    expect(mainSource).toContain('experience: "r05"');
-    expect(applicationSource).toContain('presentationProfile: options.experience === "r05"');
+    expect(mainSource).toContain('if (release === "r06")');
+    expect(mainSource).toContain('experience: "r06"');
+    expect(applicationSource).toContain('options.experience === "r05" || options.experience === "r06"');
     expect(applicationSource).toContain('? "r05-fram"');
-    expect(applicationSource).toContain('options.experience === "r04" || options.experience === "r05"');
+    expect(applicationSource).toContain('sharpPresentation: options.experience === "r06"');
     expect(rendererSource).toContain("createR04ArtSlice()");
     expect(rendererSource).toContain("createR05ConceptCArtSlice()");
     expect(rendererSource).toContain("createR05FramHeroVisual()");
@@ -37,19 +41,13 @@ describe("F.R.A.M. R05 presentation contract", () => {
     expect(rendererSource).toContain("dataset.heroVoxelCells");
   });
 
-  it("uses a wide playable field and restrained miniature-depth optics", () => {
+  it("uses a wide playable field with a sharp R06 baseline", () => {
     expect(R05_FRAM_PROFILE.camera.viewHeight).toBeGreaterThan(600);
     expect(R05_FRAM_PROFILE.camera.viewHeight).toBeGreaterThan(540);
-    expect(R05_FRAM_PROFILE.post.tiltShiftMode).toBe("banded");
-    expect(R05_FRAM_PROFILE.post.tiltShiftClearBand).toBeGreaterThanOrEqual(0.26);
-    expect(R05_FRAM_PROFILE.post.tiltShiftNearBlurPixels).toBeLessThan(10);
-    expect(R05_FRAM_PROFILE.post.tiltShiftNearBlurPixels).toBeGreaterThan(
-      R05_FRAM_PROFILE.post.tiltShiftFarBlurPixels,
-    );
+    expect(rendererSource).toContain("tiltShift: !this.sharpPresentation");
     expect(pipelineSource).toContain("BandedTiltShiftShader");
-    expect(pipelineSource).toContain("clearBand");
-    expect(pipelineSource).toContain("nearBlur");
-    expect(pipelineSource).toContain("farBlur");
+    expect(layoutSource).toContain('data-ui="minimap"');
+    expect(layoutSource).toContain("relic-control-guide");
   });
 
   it("makes F.R.A.M. the protagonist identity rather than a decorative label", () => {

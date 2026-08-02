@@ -9,6 +9,8 @@ import {
   LOOT_DEFINITIONS,
   TICK_RATE,
   WEAPON_DEFINITIONS,
+  WORLD_HEIGHT,
+  WORLD_WIDTH,
   createPrototypeBState,
   createSemiAutoCombatController,
   isWithinAnomalyInteractionReach,
@@ -55,6 +57,7 @@ type ItemDossier = {
 type InterfaceOptions = {
   readonly decisionOpen?: boolean;
   readonly announceStatus?: boolean;
+  readonly combatPresentation?: CombatPresentationState;
 };
 
 export type PrototypeBApplication = {
@@ -67,7 +70,8 @@ export type PrototypeBExperience =
   | "north-star"
   | "beauty-cell"
   | "r04"
-  | "r05";
+  | "r05"
+  | "r06";
 
 export type StartPrototypeBOptions = {
   readonly experience?: PrototypeBExperience;
@@ -143,7 +147,7 @@ export function startPrototypeB(
   const sound = new RelicSoundscape();
   const listeners: Array<() => void> = [];
   let state = createPrototypeBState(RUN_SEED);
-  if (options.experience === "r05") {
+  if (options.experience === "r05" || options.experience === "r06") {
     // Start in a front three-quarter read so the high-density voxel face,
     // hair silhouette and fitted coat are visible before the player moves.
     state.player.facingX = 0;
@@ -170,7 +174,8 @@ export function startPrototypeB(
   let previousDecisionOpen = false;
   let previousResultOpen = false;
   let statusMessageHoldUntil = 0;
-  const captureState = options.experience === "r05"
+  const captureState =
+    options.experience === "r05" || options.experience === "r06"
     ? new URLSearchParams(window.location.search).get("capture")
     : null;
   let capturedFrameCount = 0;
@@ -238,7 +243,8 @@ export function startPrototypeB(
       options.experience === "north-star" ||
       options.experience === "beauty-cell" ||
       options.experience === "r04" ||
-      options.experience === "r05"
+      options.experience === "r05" ||
+      options.experience === "r06"
     ) {
       layout.stage.dataset.presentationState = "active";
     }
@@ -497,6 +503,7 @@ export function startPrototypeB(
         !portraitPaused &&
         !contextLost &&
         now >= statusMessageHoldUntil,
+      combatPresentation,
     });
     updateNorthStarPresentation(layout, state, combatPresentation);
     syncOverlayFocus(decisionOpen);
@@ -606,7 +613,7 @@ export function startPrototypeB(
         },
         companionPreview: options.companionPreview,
         cameraCompositionProfile:
-          options.experience === "r05"
+          options.experience === "r05" || options.experience === "r06"
             ? "r05"
             : options.experience === "r04"
             ? "r04"
@@ -615,19 +622,23 @@ export function startPrototypeB(
               ? "baseline"
               : "north-star",
         environmentProfile:
-          options.experience === "r04" || options.experience === "r05"
+          options.experience === "r04" ||
+            options.experience === "r05" ||
+            options.experience === "r06"
             ? "r04-live"
             : options.experience === "beauty-cell"
             ? "beauty-cell"
             : options.experience === "north-star"
               ? "north-star-city"
               : "start-town",
-        presentationProfile: options.experience === "r05"
-          ? "r05-fram"
-          : options.experience === "r04"
-            ? "r04"
-            : "default",
+        presentationProfile:
+          options.experience === "r05" || options.experience === "r06"
+            ? "r05-fram"
+            : options.experience === "r04"
+              ? "r04"
+              : "default",
         qualityProfile: options.renderQuality,
+        sharpPresentation: options.experience === "r06",
       },
     );
   }
@@ -839,7 +850,8 @@ function configureExperience(
     options.experience !== "north-star" &&
     options.experience !== "beauty-cell" &&
     options.experience !== "r04" &&
-    options.experience !== "r05"
+    options.experience !== "r05" &&
+    options.experience !== "r06"
   ) {
     return;
   }
@@ -849,21 +861,29 @@ function configureExperience(
   const beautyCell = options.experience === "beauty-cell";
   const r04 = options.experience === "r04";
   const r05 = options.experience === "r05";
-  if (beautyCell || r04 || r05) {
+  const r06 = options.experience === "r06";
+  const fram = r05 || r06;
+  if (beautyCell || r04 || fram) {
     root.classList.add("beauty-cell-shell");
     layout.stage.classList.add("beauty-cell-stage");
   }
-  if (r04 || r05) {
+  if (r04 || fram) {
     root.classList.add("r04-shell");
     layout.stage.classList.add("r04-stage");
   }
-  if (r05) {
+  if (fram) {
     root.classList.add("r05-shell");
     layout.stage.classList.add("r05-stage");
   }
+  if (r06) {
+    root.classList.add("r06-shell");
+    layout.stage.classList.add("r06-stage");
+  }
   layout.stage.dataset.experience = options.experience;
-  layout.stage.dataset.prototypeVersion = r05
-    ? "R05"
+  layout.stage.dataset.prototypeVersion = r06
+    ? "R06"
+    : r05
+      ? "R05"
     : r04
       ? "R04"
     : beautyCell
@@ -876,8 +896,8 @@ function configureExperience(
   layout.performance.hidden = !debugEnabled;
   layout.stage.setAttribute(
     "aria-label",
-    r05
-      ? "F.R.A.M. R05。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。"
+    fram
+      ? `F.R.A.M. ${r06 ? "R06" : "R05"}。WASDまたは画面左で移動。通常攻撃は間合いに入ると自動。Qで大技、Shiftで防御と回避、Eで調査、Rで道具を使います。`
       : r04
       ? "R02系統 R04。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。"
       : beautyCell
@@ -888,8 +908,8 @@ function configureExperience(
   const badge = document.createElement("div");
   badge.className = "north-star-badge";
   badge.hidden = !debugEnabled;
-  badge.innerHTML = r05
-    ? "<span>FRONTIER RELICS ARCHIVE MODULE</span><strong>R05 / WIDE WORLD / PC ULTRA</strong>"
+  badge.innerHTML = fram
+    ? `<span>FRONTIER RELICS ARCHIVE MODULE</span><strong>${r06 ? "R06 / SHARP NAVIGATION" : "R05 / WIDE WORLD"} / PC ULTRA</strong>`
     : r04
     ? "<span>CAUSAL BEAUTY CELL</span><strong>R04 / R02 SYSTEMS / PC ULTRA</strong>"
     : beautyCell
@@ -918,7 +938,7 @@ function configureExperience(
     ".relic-hud__identity strong",
   );
   if (kicker !== null) {
-    kicker.textContent = r05
+    kicker.textContent = fram
       ? "FRONTIER RELICS ARCHIVE MODULE / F-01"
       : r04
       ? "R02 CAUSAL WORLD / CONCEPT C VISUAL REBUILD"
@@ -927,7 +947,7 @@ function configureExperience(
       : "PC ULTRA VISUAL + GAME FEEL BENCHMARK";
   }
   if (heading !== null) {
-    heading.innerHTML = r05
+    heading.innerHTML = fram
       ? "F.R.A.M.<br /><em>辺境遺物記録モジュール</em>"
       : r04
         ? "緑蝕<br /><em>雨庭区</em>"
@@ -936,7 +956,7 @@ function configureExperience(
       : "緑蝕<br /><em>観測区</em>";
   }
   if (description !== null) {
-    description.innerHTML = r05
+    description.innerHTML = fram
       ? "あなたは辺境を歩き、遺物を解析し、世界の記憶を編むモジュール。<br />滅びかけの都市は、今も明るく生きている。"
       : r04
       ? "雨上がりの都市は、滅びたあとも鮮やかだ。<br />歩き、拾い、戦い、世界の記憶を自分の経路にする。"
@@ -945,7 +965,7 @@ function configureExperience(
       : "自然に呑まれた現代都市を歩く。<br />間合いで通常攻撃を起こし、大技で戦況を変える。";
   }
   if (startLabel !== null) {
-    startLabel.textContent = r05
+    startLabel.textContent = fram
       ? "F.R.A.M.を起動"
       : r04
       ? "雨庭区へ降りる"
@@ -956,8 +976,8 @@ function configureExperience(
   if (startHint !== null) {
     startHint.textContent = "MOVE / AUTO BASIC / MANUAL SKILL";
   }
-  if ((beautyCell || r04 || r05) && identity !== null) {
-    identity.textContent = r05
+  if ((beautyCell || r04 || fram) && identity !== null) {
+    identity.textContent = fram
       ? "F.R.A.M. F-01 / 第07雨庭区"
       : r04
       ? "緑蝕・第07雨庭区"
@@ -1061,7 +1081,8 @@ function updateInterface(
   layout.stage.dataset.status = state.status;
   layout.zoneLabel.textContent =
     layout.stage.dataset.experience === "r04" ||
-      layout.stage.dataset.experience === "r05"
+      layout.stage.dataset.experience === "r05" ||
+      layout.stage.dataset.experience === "r06"
       ? "緑蝕・第07雨庭区"
       : layout.stage.dataset.experience === "beauty-cell"
       ? "緑蝕・第04交差区"
@@ -1082,7 +1103,8 @@ function updateInterface(
       ? `斥力環 R-17 / READY`
       : `斥力環 R-17 / ${relicSeconds.toFixed(1)}s`;
   layout.itemCount.textContent = `× ${player.healingItems}`;
-  updateTargetInterface(layout, state);
+  updateTargetInterface(layout, state, options.combatPresentation);
+  updateNavigationInterface(layout, state, now);
   layout.outcomePanel.setAttribute(
     "aria-hidden",
     String(!decisionOpen),
@@ -1142,8 +1164,19 @@ function updateInterface(
 function updateTargetInterface(
   layout: PrototypeBLayout,
   state: PrototypeBState,
+  combatPresentation: CombatPresentationState | undefined,
 ): void {
-  const target = state.enemies
+  const lockedTarget = combatPresentation?.targetId === null ||
+      combatPresentation?.targetId === undefined
+    ? undefined
+    : state.enemies.find(
+        (enemy) =>
+          enemy.id === combatPresentation.targetId &&
+          enemy.active &&
+          !enemy.defeated &&
+          enemy.disposition === "hostile",
+      );
+  const target = lockedTarget ?? state.enemies
     .filter(
       (enemy) =>
         enemy.active &&
@@ -1175,6 +1208,149 @@ function updateTargetInterface(
   layout.targetName.textContent = enemyName(target.kind);
   layout.targetFill.style.width =
     `${Math.round((target.hp / target.maxHp) * 100)}%`;
+}
+
+function updateNavigationInterface(
+  layout: PrototypeBLayout,
+  state: PrototypeBState,
+  now: number,
+): void {
+  const lastPaintAt = Number(layout.minimap.dataset.lastPaintAt ?? "0");
+  if (now - lastPaintAt < 100) {
+    return;
+  }
+  layout.minimap.dataset.lastPaintAt = String(now);
+
+  const context = layout.minimap.getContext("2d");
+  if (context === null) {
+    return;
+  }
+
+  const destination = objectiveDestination(state);
+  const player = state.player;
+  const scaleX = layout.minimap.width / WORLD_WIDTH;
+  const scaleY = layout.minimap.height / WORLD_HEIGHT;
+  const mapX = (x: number): number => x * scaleX;
+  const mapY = (y: number): number => y * scaleY;
+
+  context.clearRect(0, 0, layout.minimap.width, layout.minimap.height);
+  const background = context.createLinearGradient(
+    0,
+    0,
+    layout.minimap.width,
+    layout.minimap.height,
+  );
+  background.addColorStop(0, "#102c27");
+  background.addColorStop(0.52, "#224d3b");
+  background.addColorStop(1, "#162f32");
+  context.fillStyle = background;
+  context.fillRect(0, 0, layout.minimap.width, layout.minimap.height);
+
+  context.strokeStyle = "rgba(213, 207, 160, 0.34)";
+  context.lineWidth = 8;
+  context.lineCap = "round";
+  context.beginPath();
+  context.moveTo(mapX(180), mapY(930));
+  context.bezierCurveTo(
+    mapX(1_060),
+    mapY(860),
+    mapX(2_180),
+    mapY(1_040),
+    mapX(3_160),
+    mapY(880),
+  );
+  context.stroke();
+
+  context.strokeStyle = "rgba(117, 207, 212, 0.38)";
+  context.lineWidth = 3;
+  context.beginPath();
+  context.moveTo(mapX(210), mapY(1_240));
+  context.bezierCurveTo(
+    mapX(1_120),
+    mapY(1_080),
+    mapX(2_040),
+    mapY(1_340),
+    mapX(3_380),
+    mapY(1_120),
+  );
+  context.stroke();
+
+  for (const landmark of Object.values(LANDMARKS)) {
+    context.fillStyle = "rgba(241, 225, 175, 0.22)";
+    context.fillRect(
+      mapX(landmark.bounds.x),
+      mapY(landmark.bounds.y),
+      Math.max(4, mapX(landmark.bounds.width)),
+      Math.max(4, mapY(landmark.bounds.height)),
+    );
+  }
+
+  for (const enemy of state.enemies) {
+    if (!enemy.active || enemy.defeated || enemy.disposition !== "hostile") {
+      continue;
+    }
+    context.fillStyle = "rgba(244, 117, 92, 0.86)";
+    context.beginPath();
+    context.arc(mapX(enemy.x), mapY(enemy.y), 2.3, 0, Math.PI * 2);
+    context.fill();
+  }
+
+  context.fillStyle = "#ffd46f";
+  context.strokeStyle = "rgba(255, 248, 214, 0.92)";
+  context.lineWidth = 2;
+  context.beginPath();
+  context.arc(
+    mapX(destination.x),
+    mapY(destination.y),
+    6,
+    0,
+    Math.PI * 2,
+  );
+  context.fill();
+  context.stroke();
+
+  context.fillStyle = "#82f3d2";
+  context.strokeStyle = "#062b28";
+  context.lineWidth = 2.4;
+  context.beginPath();
+  context.arc(mapX(player.x), mapY(player.y), 5.2, 0, Math.PI * 2);
+  context.fill();
+  context.stroke();
+
+  const distance = Math.hypot(
+    destination.x - player.x,
+    destination.y - player.y,
+  );
+  const worldDeltaX = destination.x - player.x;
+  const worldDeltaY = destination.y - player.y;
+  const screenX = (worldDeltaX - worldDeltaY) / Math.SQRT2;
+  const screenY = (worldDeltaX + worldDeltaY) / Math.SQRT2;
+  const angle = Math.atan2(screenX, -screenY) * (180 / Math.PI);
+
+  layout.waypointName.textContent = destination.name;
+  layout.waypointDistance.textContent = `${Math.max(0, Math.round(distance / 10))} m`;
+  layout.waypointArrow.style.transform = `rotate(${angle.toFixed(1)}deg)`;
+  layout.minimap.setAttribute(
+    "aria-label",
+    `現在地から${destination.name}まで約${Math.round(distance / 10)}メートル。`,
+  );
+}
+
+function objectiveDestination(
+  state: PrototypeBState,
+): { readonly x: number; readonly y: number; readonly name: string } {
+  switch (state.quest.phase) {
+    case "briefing":
+      return { ...LANDMARKS.town.interactionPoint, name: "観測町・依頼板" };
+    case "travel-to-fork":
+      return { ...LANDMARKS.fork.interactionPoint, name: "三叉路" };
+    case "travel-to-ruin":
+    case "confrontation":
+      return { ...LANDMARKS.ruin.interactionPoint, name: "聴取廃区・発信源" };
+    case "return-town":
+    case "result":
+      return { ...LANDMARKS.town.interactionPoint, name: "観測町・帰還点" };
+  }
 }
 
 function objectiveText(state: PrototypeBState): string {
@@ -1269,7 +1445,7 @@ function interactionPrompt(
       return { key: "Q", text: "斥力環で鎮静" };
     }
     if (state.quest.intent === "destroy") {
-      return { key: "J", text: "武器で破壊" };
+      return { key: "AUTO", text: "間合いに入って武器で破壊" };
     }
   }
 

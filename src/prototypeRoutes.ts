@@ -1,4 +1,10 @@
-export type PrototypeReleaseId = "r01" | "r02" | "r03" | "r04" | "r05";
+export type PrototypeReleaseId =
+  | "r01"
+  | "r02"
+  | "r03"
+  | "r04"
+  | "r05"
+  | "r06";
 
 export interface PrototypeRelease {
   readonly id: PrototypeReleaseId;
@@ -9,11 +15,18 @@ export interface PrototypeRelease {
 
 export const PROTOTYPE_RELEASES: readonly PrototypeRelease[] = [
   {
+    id: "r06",
+    title: "F.R.A.M. / Sharp Navigation Build",
+    summary:
+      "不自然な帯状ボケを外し、少女主人公の小頭身化、常時表示の操作HUD、ミニマップと目的地誘導を統合した次版。",
+    status: "latest",
+  },
+  {
     id: "r05",
     title: "F.R.A.M. / High-density Voxel Girl",
     summary:
       "名称と主人公概念をF.R.A.M.へ統合し、広い固定俯瞰、miniature-depth、7,734セルの高密度ボクセル少女を検証する公開評価版。",
-    status: "latest",
+    status: "archive",
   },
   {
     id: "r04",
@@ -45,7 +58,7 @@ export const PROTOTYPE_RELEASES: readonly PrototypeRelease[] = [
   },
 ] as const;
 
-const RELEASE_PATH_PATTERN = /\/(r01|r02|r03|r04|r05)(?:\/|$)/i;
+const RELEASE_PATH_PATTERN = /\/(r01|r02|r03|r04|r05|r06)(?:\/|$)/i;
 
 export function resolvePrototypeRelease(
   pathname: string,
@@ -64,7 +77,8 @@ export function resolvePrototypeRelease(
     releaseId === "r02" ||
     releaseId === "r03" ||
     releaseId === "r04" ||
-    releaseId === "r05"
+    releaseId === "r05" ||
+    releaseId === "r06"
     ? releaseId
     : null;
 }

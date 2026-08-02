@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: F.R.A.M. R05 high-density voxel-girl evaluation build deployed; visual gate blocked; R01–R04 preserved
+Phase: F.R.A.M. R06 Sharp Navigation local candidate verified; deployment in progress; R01–R05 preserved
 
 ## Purpose
 
@@ -89,6 +89,10 @@ Phase: F.R.A.M. R05 high-density voxel-girl evaluation build deployed; visual ga
 - R05 deployでは、公開済みcommit `3cb27cd…`からR04 production bundleを再生成し、relative asset、scope別service worker、`SNAPSHOT.json`、`SHA256SUMS`を持つ自己完結版として`public/r04/`へ凍結した。R01〜R04 checksum、Vitest 190件、strict TypeScript、production build、production artifactのcatalog／R04／R05 browser起動・操作は合格した。
 - commits `0980f0f`／`35cf75f`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #15はtest／build／deployに成功した。公開catalogはR05→R04→R03→R02→R01で、全route、R04 `SNAPSHOT.json`、R05 manifest／OG、root service workerはHTTPS 200を返した。公開R04は独立bundleで`r04-live`／`pc-ultra`／2556×1436、公開R05はstart、移動`430,900 → 426,896`、Q入力、`r05-fram`／`r04-live`／1917×1077、`high-density-articulated-voxel-surface`／7,734 cellsを確認し、browser warning／errorは0件だった。これは公開評価版の配信確認であり、Concept C再現やcommercial art合格ではない。
 - 2026-08-02、ユーザーは公開R05を「かなり良くなった」としつつ、`/game/`からの重い読み込み、不自然で美しくないminiature blur、可愛さに欠ける細長い主人公、操作説明／mini-map／markerを欠くHUDを次のblocking課題として指摘した。公開版とConcept Cを同じ1280×720で監査し、catalogのcard画像約7.93 MB、root service workerによるR01〜R05の38 asset／約8.29 MB precache、screen Yだけを参照するbanded blur、runtime同期surface生成、約840k trianglesのRoundedBox hero、PC action hintのCSS非表示を原因として確認した。`work/r05_improvement_strategy/R05_IMPROVEMENT_STRATEGY.md`へ、fast shell、sharp baseline、F-01三preset、dynamic HUD／2D mini-map、depth-aware DOFの順で次版方針を記録した。この監査ではruntime、public build、deployを変更していない。
+- R06 local candidateでは、R05をrelative static bundle、route-scoped service worker、snapshot、SHA-256 manifestへ凍結した。catalogは720px gameplay thumbnailへ切り替え、latestだけeager、archivesをlazyにし、root service workerの全archive precacheを廃止した。
+- R06はscreen-Y banded tilt-shiftを既定OFFにし、sharpなworldへ戻した。GTAO、bloom、SMAA、AgX、R04由来の連続world／collision／quest／loot／半自動戦闘は維持する。depth-aware DOFは未実装の次gateである。
+- R06主人公は7,734 visible cellを保ち、3.65頭身のcompact proportionとBox cellへ変更した。2D mini-map、player／enemy／objective、方向／距離marker、WASD／AUTO／Q／SHIFT／E／RのPC guide、combat controllerと一致するtarget HUDを追加した。これは可愛さの最終採択やConcept C再現の合格ではない。
+- R06 local production artifactはstrict TypeScript、Vitest 32 files／191 tests、production build、R05 15-file checksum、1280×720のcatalog／R05 archive／R06 active browser smokeに合格した。GitHub Pagesの公開結果はまだ未確認である。
 
 ## Creative reference notes
 

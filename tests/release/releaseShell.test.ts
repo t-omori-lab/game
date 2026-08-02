@@ -18,8 +18,14 @@ import r04Snapshot from "../../public/r04/SNAPSHOT.json?raw";
 import r04Checksums from "../../public/r04/SHA256SUMS?raw";
 import r04ServiceWorker from "../../public/r04/sw.js?raw";
 import r04Manifest from "../../public/r04/manifest.webmanifest?raw";
-import r05Html from "../../r05/index.html?raw";
+import r05Html from "../../public/r05/index.html?raw";
+import r05Snapshot from "../../public/r05/SNAPSHOT.json?raw";
+import r05Checksums from "../../public/r05/SHA256SUMS?raw";
+import r05ServiceWorker from "../../public/r05/sw.js?raw";
 import r05Manifest from "../../public/r05/manifest.webmanifest?raw";
+import r06Html from "../../r06/index.html?raw";
+import r06Manifest from "../../public/r06/manifest.webmanifest?raw";
+import r06ServiceWorker from "../../public/r06/sw.js?raw";
 import serviceWorker from "../../public/sw.js?raw";
 import deployWorkflow from "../../.github/workflows/deploy-pages.yml?raw";
 import catalogSource from "../../src/catalog.ts?raw";
@@ -73,9 +79,15 @@ describe("versioned public release shell", () => {
     expect(r04Snapshot).toContain('"frozen": true');
     expect(r04Checksums).toContain("assets/r04-IriE60sk.js");
     expect(viteConfig).not.toContain('r04: "r04/index.html"');
-    expect(r05Html).toContain('src="/src/main.ts"');
-    expect(r05Html).toContain("F.R.A.M. R05");
-    expect(viteConfig).toContain('r05: "r05/index.html"');
+    expect(r05Html).toContain('src="./assets/r05-');
+    expect(r05Html).not.toContain('/src/main.ts');
+    expect(r05Snapshot).toContain('"release": "r05"');
+    expect(r05Checksums).toContain("assets/r05-DY3D0AKC.js");
+    expect(viteConfig).not.toContain('r05: "r05/index.html"');
+
+    expect(r06Html).toContain('src="/src/main.ts"');
+    expect(r06Html).toContain("F.R.A.M. R06");
+    expect(viteConfig).toContain('r06: "r06/index.html"');
   });
 
   it("renders the version manifest in declared newest-first order", () => {
@@ -108,7 +120,7 @@ describe("versioned public release shell", () => {
     };
 
     expect(r05Html).toContain('href="./manifest.webmanifest"');
-    expect(r05Html).toContain('/game/r05/og.png');
+    expect(r05Html).toContain('./og.png');
     expect(manifest).toMatchObject({
       id: "/game/r05/",
       start_url: "/game/r05/",
@@ -116,18 +128,27 @@ describe("versioned public release shell", () => {
     });
   });
 
+  it("gives R06 its own install identity and canonical start route", () => {
+    const manifest = JSON.parse(r06Manifest) as {
+      readonly id: string;
+      readonly start_url: string;
+      readonly scope: string;
+    };
+
+    expect(r06Html).toContain('href="./manifest.webmanifest"');
+    expect(r06Html).toContain('/game/r06/og.png');
+    expect(manifest).toMatchObject({
+      id: "/game/r06/",
+      start_url: "/game/r06/",
+      scope: "/game/r06/",
+    });
+  });
+
   it("caches and restores each release document independently", () => {
-    expect(serviceWorker).toContain('const CACHE_VERSION = "r05-v1"');
-    expect(serviceWorker).toContain('r01: new URL("./r01/index.html"');
-    expect(serviceWorker).toContain('r02: new URL("./r02/index.html"');
-    expect(serviceWorker).toContain('r03: new URL("./r03/index.html"');
-    expect(serviceWorker).toContain('r04: new URL("./r04/index.html"');
-    expect(serviceWorker).toContain('r05: new URL("./r05/index.html"');
-    expect(serviceWorker).toContain("resolveRouteIndexUrl(request.url)");
-    expect(serviceWorker).toContain('"small-persistent-world-shell-"');
-    expect(serviceWorker).toContain(
-      "cacheDocumentAndLinkedAssets(cache, indexUrl, response.clone())",
-    );
+    expect(serviceWorker).toContain('const CACHE_NAME = "fram-catalog-v2"');
+    expect(serviceWorker).not.toContain('new URL("./r01/index.html"');
+    expect(serviceWorker).not.toContain('new URL("./r05/index.html"');
+    expect(serviceWorker).not.toContain("cacheDocumentAndLinkedAssets");
     expect(r01ServiceWorker).toContain(
       'const CACHE_PREFIX = "relic-frontier-r01-shell-"',
     );
@@ -139,6 +160,12 @@ describe("versioned public release shell", () => {
     );
     expect(r04ServiceWorker).toContain(
       'const CACHE_PREFIX = "relic-frontier-r04-shell-"',
+    );
+    expect(r05ServiceWorker).toContain(
+      'const CACHE_NAME = "fram-r05-snapshot-v1"',
+    );
+    expect(r06ServiceWorker).toContain(
+      'const CACHE_NAME = "fram-r06-shell-v1"',
     );
     expect(serviceWorker).not.toContain("relic-frontier-r01-shell-");
     expect(serviceWorker).not.toContain("relic-frontier-r02-shell-");

@@ -7,6 +7,10 @@ export type PrototypeBLayout = {
   readonly muteButton: HTMLButtonElement;
   readonly zoneLabel: HTMLElement;
   readonly objectiveText: HTMLElement;
+  readonly minimap: HTMLCanvasElement;
+  readonly waypointName: HTMLElement;
+  readonly waypointDistance: HTMLElement;
+  readonly waypointArrow: HTMLElement;
   readonly healthFill: HTMLElement;
   readonly healthText: HTMLElement;
   readonly weaponName: HTMLElement;
@@ -67,6 +71,29 @@ export function createPrototypeBLayout(root: HTMLElement): PrototypeBLayout {
         </div>
       </header>
 
+      <aside class="relic-navigation" aria-label="周辺地図と目的地">
+        <div class="relic-navigation__heading">
+          <span>AREA MAP / LIVE</span>
+          <strong data-ui="waypoint-name">観測町・依頼板</strong>
+        </div>
+        <canvas
+          data-ui="minimap"
+          width="320"
+          height="168"
+          role="img"
+          aria-label="現在地と目的地を示すミニマップ"
+        ></canvas>
+        <div class="relic-navigation__legend" aria-hidden="true">
+          <span><i class="is-player"></i> F-01</span>
+          <span><i class="is-objective"></i> TARGET</span>
+        </div>
+      </aside>
+
+      <div class="relic-waypoint" data-ui="waypoint" aria-live="off">
+        <i data-ui="waypoint-arrow" aria-hidden="true">▲</i>
+        <div><strong data-ui="waypoint-distance">-- m</strong><span>OBJECTIVE</span></div>
+      </div>
+
       <div class="relic-target" data-ui="target" aria-hidden="true">
         <span>NEAREST HOSTILE / <b data-ui="target-name">未分類異形</b></span>
         <i><em data-ui="target-fill"></em></i>
@@ -117,6 +144,15 @@ export function createPrototypeBLayout(root: HTMLElement): PrototypeBLayout {
           </button>
         </div>
       </div>
+
+      <aside class="relic-control-guide" aria-label="PC操作ガイド">
+        <span><kbd>WASD</kbd><strong>移動</strong></span>
+        <span><kbd>AUTO</kbd><strong>通常攻撃</strong></span>
+        <span><kbd>Q</kbd><strong>大技</strong></span>
+        <span><kbd>SHIFT</kbd><strong>防御 / 回避</strong></span>
+        <span><kbd>E</kbd><strong>調査</strong></span>
+        <span><kbd>R</kbd><strong>道具</strong></span>
+      </aside>
 
       <div class="relic-toast" data-ui="toast" role="status" aria-live="polite"></div>
 
@@ -208,6 +244,10 @@ export function createPrototypeBLayout(root: HTMLElement): PrototypeBLayout {
     muteButton: requireButton(root, '[data-ui="mute"]'),
     zoneLabel: requireElement(root, '[data-ui="zone"]'),
     objectiveText: requireElement(root, '[data-ui="objective"]'),
+    minimap: requireCanvas(root, '[data-ui="minimap"]'),
+    waypointName: requireElement(root, '[data-ui="waypoint-name"]'),
+    waypointDistance: requireElement(root, '[data-ui="waypoint-distance"]'),
+    waypointArrow: requireElement(root, '[data-ui="waypoint-arrow"]'),
     healthFill: requireElement(root, '[data-ui="health-fill"]'),
     healthText: requireElement(root, '[data-ui="health-text"]'),
     weaponName: requireElement(root, '[data-ui="weapon-name"]'),
@@ -248,6 +288,16 @@ function requireButton(root: HTMLElement, selector: string): HTMLButtonElement {
 
   if (element === null) {
     throw new Error(`Prototype B layout button is missing: ${selector}`);
+  }
+
+  return element;
+}
+
+function requireCanvas(root: HTMLElement, selector: string): HTMLCanvasElement {
+  const element = root.querySelector<HTMLCanvasElement>(selector);
+
+  if (element === null) {
+    throw new Error(`Prototype B layout canvas is missing: ${selector}`);
   }
 
   return element;
