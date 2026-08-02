@@ -36,7 +36,7 @@ import viteConfig from "../../vite.config.ts?raw";
 describe("versioned public release shell", () => {
   it("uses a dedicated catalog entry and dedicated game entries", () => {
     expect(catalogHtml).toContain('src="/src/catalog.ts"');
-    expect(catalogHtml).toContain("F.R.A.M. — Development Archive");
+    expect(catalogHtml).toContain("F.R.A.M. — AIとつくる世界記憶型・放浪RPG");
 
     expect(r01Html).toContain('src="./assets/index-');
     expect(r01Html).not.toContain("/src/main.ts");
@@ -103,6 +103,21 @@ describe("versioned public release shell", () => {
     expect(catalogSource).toContain('data-testid="prototype-catalog"');
     expect(catalogSource).toContain("createReleaseHref(release.id");
     expect(catalogSource).toContain('prototypeParameter === "0.1"');
+  });
+
+  it("makes the game identity static and hard-gates archive images", () => {
+    expect(catalogHtml).toContain('class="catalog-static"');
+    expect(catalogHtml).toContain("AI-NATIVE GAME DEVELOPMENT PROJECT");
+    expect(catalogHtml).toContain("世界記憶型・放浪RPG");
+    expect(catalogHtml).toContain("最新版を遊ぶ");
+    expect(catalogHtml).toContain("AI開発実験を見る");
+    expect(catalogHtml).toContain("catalog/r06-hero.jpg");
+    expect((catalogHtml.match(/<img/g) ?? [])).toHaveLength(1);
+    expect(catalogSource).toContain("遊べるAI開発実験");
+    expect(catalogSource).toContain("TECHNICAL EPOCHS / 技術エポック");
+    expect(catalogSource).toContain('data-deferred-src="${thumbnail}"');
+    expect(catalogSource).toContain('rootMargin: "220px 0px"');
+    expect(catalogSource).not.toContain('\n            src="${thumbnail}"');
   });
 
   it("gives R04 an install scope that returns to the live R04 route", () => {

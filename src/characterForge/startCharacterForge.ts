@@ -16,6 +16,10 @@ import {
 import "./styles.css";
 
 const buildSheetUrl = `${import.meta.env.BASE_URL}forge/f01-build-sheet.jpg`;
+type ForgeDistance = "close" | "full" | "field";
+
+const FIELD_TARGET_OCCUPANCY = 0.16;
+const FIELD_CAMERA_DIRECTION = new THREE.Vector3(510, 680, 510).normalize();
 
 interface ReferenceItem {
   readonly id: "build" | "beauty" | "r05" | "r08";
@@ -96,7 +100,7 @@ function layout(): string {
           <div class="forge-character-tag">
             <small>CANONICAL ACTOR</small>
             <strong>THE ARCHIVIST</strong>
-            <span>3.7 HEADS · HIGH-DENSITY VOXEL</span>
+            <span data-camera-label>CLOSE STUDY · HIGH-DENSITY VOXEL</span>
           </div>
           <div class="forge-scale" aria-hidden="true"><span>92 CELL HEIGHT</span></div>
           <div class="forge-controls" aria-label="Character controls">
@@ -121,7 +125,8 @@ function layout(): string {
             <div class="forge-control-group forge-control-toggle">
               <small>INSPECT</small>
               <div class="forge-segments">
-                ${button("GAME", "game", "distance")}
+                ${button("FIELD", "field", "distance")}
+                ${button("FULL", "full", "distance")}
                 ${button("CLOSE", "close", "distance", true)}
                 ${button("GRID", "wireframe", "toggle")}
                 ${button("TURN", "turntable", "toggle")}
@@ -191,10 +196,19 @@ function setCameraView(
   camera: THREE.PerspectiveCamera,
   controls: OrbitControls,
   view: ForgeView,
-  distance: "game" | "close",
+  distance: ForgeDistance,
 ): void {
-  const radius = distance === "game" ? 12.8 : 9.1;
-  const height = distance === "game" ? 4.3 : 3.45;
+  controls.target.set(0, 2.55, 0);
+  camera.fov = distance === "field" ? 26 : 29;
+  camera.updateProjectionMatrix();
+  if (distance === "field") {
+    camera.position.copy(controls.target).addScaledVector(FIELD_CAMERA_DIRECTION, 58);
+    controls.update();
+    return;
+  }
+
+  const radius = distance === "full" ? 12.8 : 9.1;
+  const height = distance === "full" ? 4.3 : 3.45;
   const positions: Readonly<Record<ForgeView, readonly [number, number, number]>> = {
     "three-quarter": [radius * 0.43, height, radius * 0.9],
     front: [0, height, radius],
@@ -204,8 +218,103 @@ function setCameraView(
   };
   const position = positions[view];
   camera.position.set(...position);
-  controls.target.set(0, 2.55, 0);
   controls.update();
+}
+
+function actorViewportOccupancy(
+  actor: THREE.Object3D,
+  camera: THREE.PerspectiveCamera,
+): number {
+  actor.updateWorldMatrix(true, true);
+  camera.updateMatrixWorld(true);
+  const bounds = new THREE.Box3().setFromObject(actor);
+  const min = bounds.min;
+  const max = bounds.max;
+  let lower = Number.POSITIVE_INFINITY;
+  let upper = Number.NEGATIVE_INFINITY;
+  for (const x of [min.x, max.x]) {
+    for (const y of [min.y, max.y]) {
+      for (const z of [min.z, max.z]) {
+        const projected = new THREE.Vector3(x, y, z).project(camera);
+        lower = Math.min(lower, projected.y);
+        upper = Math.max(upper, projected.y);
+      }
+    }
+  }
+  return Math.max(0, Math.min(1, (upper - lower) / 2));
+}
+
+function fitFieldCamera(
+  actor: THREE.Object3D,
+  camera: THREE.PerspectiveCamera,
+  controls: OrbitControls,
+): number {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const occupancy = actorViewportOccupancy(actor, camera);
+    if (occupancy <= Number.EPSILON) break;
+    const offset = camera.position.clone().sub(controls.target);
+    const fittedDistance = THREE.MathUtils.clamp(
+      offset.length() * (occupancy / FIELD_TARGET_OCCUPANCY),
+      24,
+      controls.maxDistance,
+    );
+    camera.position.copy(controls.target).add(offset.normalize().multiplyScalar(fittedDistance));
+    controls.update();
+  }
+  return actorViewportOccupancy(actor, camera);
+}
+
+function createFieldReference(): THREE.Group {
+  const root = new THREE.Group();
+  root.name = "F-01 field-scale reference";
+  const roadMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0x343d39,
+    roughness: 0.9,
+    metalness: 0.02,
+    clearcoat: 0.04,
+  });
+  const concreteMaterial = new THREE.MeshStandardMaterial({ color: 0x717a72, roughness: 0.86 });
+  const markingMaterial = new THREE.MeshStandardMaterial({ color: 0xded8ad, roughness: 0.72 });
+  const mossMaterial = new THREE.MeshStandardMaterial({ color: 0x52745b, roughness: 0.93 });
+
+  const road = new THREE.Mesh(new THREE.PlaneGeometry(58, 22), roadMaterial);
+  road.rotation.x = -Math.PI / 2;
+  road.position.y = 0.018;
+  road.receiveShadow = true;
+  root.add(road);
+
+  for (const x of [-22, -14, -6, 6, 14, 22]) {
+    const dash = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 0.24), markingMaterial);
+    dash.rotation.x = -Math.PI / 2;
+    dash.position.set(x, 0.035, 0);
+    root.add(dash);
+  }
+
+  for (const z of [-14.2, 14.2]) {
+    const walk = new THREE.Mesh(new THREE.BoxGeometry(58, 0.28, 5.8), concreteMaterial);
+    walk.position.set(0, 0.12, z);
+    walk.receiveShadow = true;
+    root.add(walk);
+  }
+
+  const structures: readonly [number, number, number, number, number][] = [
+    [-20, 3.2, -16.2, 7.2, 5.8],
+    [16, 4.4, -16.5, 9.4, 6.3],
+    [-15, 2.1, 16.4, 5.2, 5.6],
+    [20, 2.8, 16.1, 6.2, 5.2],
+  ];
+  for (const [x, height, z, width, depth] of structures) {
+    const block = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), concreteMaterial);
+    block.position.set(x, height / 2, z);
+    block.castShadow = true;
+    block.receiveShadow = true;
+    root.add(block);
+    const moss = new THREE.Mesh(new THREE.BoxGeometry(width * 0.72, 0.18, depth * 0.7), mossMaterial);
+    moss.position.set(x - width * 0.08, height + 0.08, z + depth * 0.05);
+    root.add(moss);
+  }
+  root.visible = false;
+  return root;
 }
 
 function createScene(
@@ -217,13 +326,14 @@ function createScene(
   readonly composer: EffectComposer;
   readonly controls: OrbitControls;
   readonly grid: THREE.GridHelper;
+  readonly fieldReference: THREE.Group;
   resize(): void;
   dispose(): void;
 } {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x59605c);
-  scene.fog = new THREE.FogExp2(0x59605c, 0.016);
-  const camera = new THREE.PerspectiveCamera(29, 1, 0.1, 80);
+  scene.fog = new THREE.FogExp2(0x59605c, 0.008);
+  const camera = new THREE.PerspectiveCamera(29, 1, 0.1, 180);
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     powerPreference: "high-performance",
@@ -252,11 +362,11 @@ function createScene(
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
   key.shadow.camera.near = 0.1;
-  key.shadow.camera.far = 30;
-  key.shadow.camera.left = -5;
-  key.shadow.camera.right = 5;
-  key.shadow.camera.top = 7;
-  key.shadow.camera.bottom = -2;
+  key.shadow.camera.far = 90;
+  key.shadow.camera.left = -24;
+  key.shadow.camera.right = 24;
+  key.shadow.camera.top = 28;
+  key.shadow.camera.bottom = -8;
   key.shadow.bias = -0.00035;
   scene.add(key);
   const rim = new THREE.DirectionalLight(0x88e9df, 1.15);
@@ -267,7 +377,7 @@ function createScene(
   scene.add(face);
 
   const floor = new THREE.Mesh(
-    new THREE.CircleGeometry(9, 96),
+    new THREE.CircleGeometry(38, 128),
     new THREE.MeshPhysicalMaterial({
       color: 0x4e5551,
       roughness: 0.82,
@@ -278,19 +388,21 @@ function createScene(
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);
-  const grid = new THREE.GridHelper(14, 28, 0xb4beb4, 0x8a918b);
+  const grid = new THREE.GridHelper(64, 64, 0xb4beb4, 0x8a918b);
   grid.position.y = 0.006;
   grid.material.transparent = true;
   grid.material.opacity = 0.18;
   grid.visible = false;
   scene.add(grid);
+  const fieldReference = createFieldReference();
+  scene.add(fieldReference);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.enablePan = false;
   controls.minDistance = 6.3;
-  controls.maxDistance = 16;
+  controls.maxDistance = 80;
   controls.minPolarAngle = Math.PI * 0.24;
   controls.maxPolarAngle = Math.PI * 0.56;
   controls.target.set(0, 2.55, 0);
@@ -318,6 +430,7 @@ function createScene(
     composer,
     controls,
     grid,
+    fieldReference,
     resize,
     dispose() {
       controls.dispose();
@@ -327,6 +440,16 @@ function createScene(
       (floor.material as THREE.Material).dispose();
       grid.geometry.dispose();
       grid.material.dispose();
+      const geometries = new Set<THREE.BufferGeometry>();
+      const materials = new Set<THREE.Material>();
+      fieldReference.traverse((node) => {
+        if (!(node instanceof THREE.Mesh)) return;
+        geometries.add(node.geometry);
+        const nodeMaterials = Array.isArray(node.material) ? node.material : [node.material];
+        nodeMaterials.forEach((material) => materials.add(material));
+      });
+      geometries.forEach((geometry) => geometry.dispose());
+      materials.forEach((material) => material.dispose());
     },
   };
 }
@@ -338,10 +461,10 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
   const stage = query<HTMLElement>(applicationRoot, ".forge-stage");
   const loading = query<HTMLElement>(applicationRoot, "[data-loading]");
   const sceneState = createScene(stage);
-  setCameraView(sceneState.camera, sceneState.controls, "three-quarter", "close");
   const character = createF01Character();
   sceneState.scene.add(character.root);
   character.root.rotation.y = -0.09;
+  setCameraView(sceneState.camera, sceneState.controls, "three-quarter", "close");
   loading.classList.add("is-complete");
   const navigationStartedAt = Number(
     document.documentElement.dataset.framNavigationStart,
@@ -364,9 +487,34 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
   let motion: ForgeMotion = "idle";
   let motionStartedAt = performance.now() / 1000;
   let view: ForgeView = "three-quarter";
-  let distance: "game" | "close" = "close";
+  let distance: ForgeDistance = "close";
   let turntable = false;
   let wireframe = false;
+  const cameraLabel = query<HTMLElement>(applicationRoot, "[data-camera-label]");
+  const viewButtons = Array.from(
+    applicationRoot.querySelectorAll<HTMLButtonElement>("[data-view]"),
+  );
+
+  const applyCameraPreset = (): void => {
+    setCameraView(sceneState.camera, sceneState.controls, view, distance);
+    sceneState.fieldReference.visible = distance === "field";
+    const occupancy = distance === "field"
+      ? fitFieldCamera(character.root, sceneState.camera, sceneState.controls)
+      : actorViewportOccupancy(character.root, sceneState.camera);
+    applicationRoot.dataset.distance = distance;
+    applicationRoot.dataset.actorViewportHeight = occupancy.toFixed(3);
+    applicationRoot.dataset.fieldTarget = FIELD_TARGET_OCCUPANCY.toFixed(2);
+    cameraLabel.textContent = distance === "field"
+      ? `FIELD VIEW · ${(occupancy * 100).toFixed(1)}% SCREEN HEIGHT`
+      : distance === "full"
+        ? "FULL BODY · ANIMATION STUDY"
+        : "CLOSE STUDY · HIGH-DENSITY VOXEL";
+    viewButtons.forEach((buttonElement) => {
+      buttonElement.disabled = distance === "field";
+      buttonElement.title = distance === "field" ? "FIELDは本編と同じ固定斜め視点です" : "";
+    });
+  };
+  applyCameraPreset();
 
   applicationRoot
     .querySelectorAll<HTMLButtonElement>("[data-motion]")
@@ -384,7 +532,7 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
       viewButton.addEventListener("click", () => {
         setActiveButton(applicationRoot, "[data-view]", viewButton);
         view = viewButton.dataset.view as ForgeView;
-        setCameraView(sceneState.camera, sceneState.controls, view, distance);
+        applyCameraPreset();
       });
     });
 
@@ -393,8 +541,8 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
     .forEach((distanceButton) => {
       distanceButton.addEventListener("click", () => {
         setActiveButton(applicationRoot, "[data-distance]", distanceButton);
-        distance = distanceButton.dataset.distance as "game" | "close";
-        setCameraView(sceneState.camera, sceneState.controls, view, distance);
+        distance = distanceButton.dataset.distance as ForgeDistance;
+        applyCameraPreset();
       });
     });
 

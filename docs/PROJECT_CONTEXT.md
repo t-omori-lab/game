@@ -1,8 +1,8 @@
 # Project Context: ゲーム開発
 
-Last updated: 2026-08-02  
+Last updated: 2026-08-03  
 Status: active  
-Phase: Character Forge F-01 technical epoch publicly verified; catalog identity／load and true FIELD camera pass next; F-02 follows; R01–R08 preserved
+Phase: game-first catalog／load hard gate and F-01 FIELD release candidate locally verified; public deployment next; F-02 follows; R01–R08 preserved
 
 ## Purpose
 
@@ -10,6 +10,10 @@ Phase: Character Forge F-01 technical epoch publicly verified; catalog identity�
 
 ## Confirmed current state
 
+- 2026-08-03、公開catalogの不合格点だったidentity、copy、first paintをlocalで再構築した。JavaScript前から`F.R.A.M.`、正式名／日本語副題、世界記憶型・放浪RPG、AI-native game development project、`最新版を遊ぶ`／`AI開発実験を見る`が読めるgame-first first viewとし、actual R06 gameplay imageを主役にした。public見出しは`遊べるAI開発実験`、archive分類は`TECHNICAL EPOCHS / 技術エポック`とした。
+- catalog用R06 heroを720×405／94,317 bytesのderivativeとして追加し、正本画像は保持した。archive画像はnative lazy指定だけに頼らず、IntersectionObserver直前まで実`src`を持たないhard gateへ変更した。production buildのfirst-view transfer概算は約105 KBで、local browserのscroll前はvisible raster 1件、archive image request 0件だった。
+- Character Forge F-01へ`CLOSE / FULL / FIELD`を実装した。FIELDはmain gameと同じ固定斜めcamera方向、actor screen height target 16%、拡張floor／fog／world-scale road／structure referenceを持つ。1280×720のlocal browserで初期16.3%、CLOSEから戻した再fit 16.2%、FIELD中のview lockを確認した。
+- 本release candidateはstrict TypeScript、Vitest 38 files／205 tests、production build、desktop 1280×720／mobile 390×844 browser QAに合格し、catalog／Forgeともconsole error／warning 0件だった。これはlocal確認であり、GitHub Pages反映、iPhone 16 Pro実機、user visual acceptanceは未確認である。
 - 2026-08-02、R08の手書きcell増築を続けず、独立route`/game/forge/f01/`へCharacter Forge F-01をlocal実装した。選定済みBeauty Sheetからstrict four-view＋module Build Sheetを生成し、外部`f01.source.json`のcrop／palette／rig定義と画像投影から、48×92×42／37,990 solid cellsの3D volumeを再生成する。
 - F-01は全身visual hullの膨張を`fram-humanoid-compact-v1` semantic volumeで分離し、9,454 outer surface cells、9 materials、7 rig partsをrounded instancingで描画する。`idle / run / hit`、front／left／back／right／3-quarter、close／game、wireframe／turntable、Beauty／Build／R05／R08比較を同一画面で操作できる。
 - 1280×720のlocal in-app browserで3方向表示、run、hit後のidle復帰、比較tabを確認した。strict TypeScript、Vitest 37 files／202 tests、production buildに合格した。ユーザーは細部の矛盾を残しつつも暫定約70%と評価し、ゲーム距離ではさらに成立する可能性と、技術的エポックとしての保存公開を認めた。これはBeauty Sheet完全一致、commercial character art、Concept C全景の合格ではない。

@@ -69,6 +69,12 @@ describe("Character Forge F-01 pipeline contract", () => {
     expect(forgeSource).toContain('type ForgeMotion');
     expect(forgeSource).toContain('button("RUN", "run", "motion")');
     expect(forgeSource).toContain('button("HIT", "hit", "motion")');
+    expect(forgeSource).toContain('button("FIELD", "field", "distance")');
+    expect(forgeSource).toContain('button("FULL", "full", "distance")');
+    expect(forgeSource).not.toContain('button("GAME", "game", "distance")');
+    expect(forgeSource).toContain("const FIELD_TARGET_OCCUPANCY = 0.16");
+    expect(forgeSource).toContain("controls.maxDistance = 80");
+    expect(forgeSource).toContain("createFieldReference()");
     expect(forgeSource).toContain('data-reference="${reference.id}"');
     expect(forgeSource).toContain("R05");
     expect(forgeSource).toContain("R08");

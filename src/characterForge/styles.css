@@ -372,6 +372,12 @@ button {
   color: #fff;
 }
 
+.forge-segment:disabled {
+  border-color: rgba(236, 242, 235, 0.06);
+  color: rgba(217, 223, 217, 0.28);
+  cursor: not-allowed;
+}
+
 .forge-segment.is-active {
   border-color: rgba(98, 238, 230, 0.48);
   color: #102422;
