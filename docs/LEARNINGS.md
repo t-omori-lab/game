@@ -53,14 +53,14 @@ Last updated: 2026-08-02
 - 高解像度albedo／normal／roughnessをruntimeで同期生成すると、再現性と候補制作には便利でも初回main threadを止める。source field／digest cacheはrenderer restartの再計算を避けられるが、productionではversioned build-time bake、非同期preload、KTX2等へ移す必要がある。
 - PMREM IBL、hemisphere、direct light、fog、AgX exposureをすべて強くすると、機能数は増えても道路、concrete、foliage、metalが同じ白い明度帯へ圧縮される。明るい終末を暗くせずにmaterial差を戻すには、ambient／environmentを抑え、direct／rimを残し、camera距離に対するfog nearとdisplay exposureを一組でactual-camera調整する。
 - world-firstを目標にしても、開始前からmission、health、loadout、prompt、diagnosticを出すとUIがvisual protagonistになる。introではworld、title、開始action以外を退かせ、play中もtouch UI、idle combat readout、performance表示を入力device／debug stateで限定すると、geometryを増やさず画面の商業感を上げられる。
-- character materialとcamera占有を改善しても、source silhouetteがliteral voxel recipeのままなら顔、髪、衣装、手足の造形上限は超えない。lighting passの次gateを建築追加にせず、複数character representationを同条件・normal gameplay sizeで比較すると、技術の新しさではなく最終画面で方式を選べる。
+- character materialとcamera占有だけを改善しても、低密度voxel recipeの顔、髪、衣装、手足の造形上限は超えない。解決はsmooth 3Dへの置換ではなく、screen-spaceで読めるcell frequency、顔cluster、silhouette、衣装分節を持つ高密度voxel presetを同条件・normal gameplay sizeで比較することである。
 - camera compositionはrender qualityではなくexperienceの演出契約である。North Star mobile tierやbaseline PC tierを将来追加しても誤適用しないよう、`qualityProfile`から推測せず`experience`から明示profileを渡す。
 - 同じworld premiseをhybrid HD-2D、precision micro-voxel、stylized 3Dで画像比較すると、現runtimeとの差がpost stackではなく、actor source、outdoor／baked light、wet material、foliage、fixed-camera environment assetにあることを分離できた。生成conceptは完成証拠ではないが、何を実装しないかを決めるart-direction gateとして有効である。
 - generated synthesisは、複数案の長所を指定しても、暗いvignette、小さいactor、既視感の強い白髪／白coat／青剣へ収束し得る。normal gameplay scale、mid-tone exposure、避ける組合せ、変更点数、保持するgeometryを明示して再生成すると、実装可能な差分として評価しやすい。
-- 人型の最終surfaceまでliteral voxelへ固定すると、PC masterで求める顔、髪、布、deformation、signature motionの上限が低い。voxel grammarは機械、buildable、damage state、procedural proxyへ残し、人型／動物は既知topologyとrigを持つmodular 3Dを正本候補にすると、同じ生成思想を役割別に使い分けられる。
+- 人型を低密度literal voxelの箱へ固定すると顔、髪、布、deformation、signature motionの上限が低いが、本projectではvisible surfaceのvoxel／dot表現自体がart contractである。既知topologyとrigはoffline scaffoldとして使い、最終表示は高密度quantized cell、部位cluster、voxel向けsecondary motionへ再構築する。
 - AI生成assetを再現可能なproductionへ接続するには、seedだけでなくraw outputのSHA-256、prompt／spec、tool version、license review、人間修正、validation、採否理由を凍結する。runtimeは承認済みpackを選ぶだけにし、physics、collision、damage、合成可否はdeterministic schemaが所有する。
 - 斜め固定cameraでworld cardinalへinputを直結すると、D-pad／stickの上が画面斜めへ出る。inputをscreen axisとして受け、rendererと同じcamera ground basisでsimulation直前にworld axisへ回転すれば、collision／replayのworld座標を維持しながらcardinalな操作感を作れる。camera offsetと変換basisを別定数にしない。
-- Concept Cのvoxel／pixel-art感はliteral cube数ではなく、小型3D造形、micro-facet、orthogonalな都市形状、俯瞰縮小、wet material、baked light、DOFが統合された知覚である。character creatorと装備換装が中核なら、actorはrealtime skinned 3Dにし、static city densityをlightmap／KTX2／merged shellへbakeする分担に意味がある。
+- Concept Cのvoxel／pixel-art感はcube数だけでは決まらず、小型3D造形、screen-spaceで読めるvoxel粒、orthogonalな都市形状、俯瞰縮小、wet material、baked light、DOFの統合で成立する。character creatorと装備換装は、visible voxel cellをsemantic part／jointへ所属させてrealtimeに動かし、static city densityをlightmap／KTX2／merged shellへbakeする分担で両立させる。
 - character creationは女性／男性というmesh二択ではなく、rig family、species、body frame、gender presentation、face／hair／surface、palette、equipment fitをstable IDで分離すると、default女性presetと多様な旅人を同時に成立させられる。大きく異なるbody planは一つのhumanoid rigへ例外追加せず、後続rig familyへ分ける。
 
 - 旧scene graphへ高品質post effectや新しいbox assetを足しても、camera composition、object scale、negative space、actor representationがreferenceと違えば、知覚的には旧prototypeの小改良に留まる。reference再現では、再利用量より同一viewport比較を先に置き、到達不能な層は独立再構築する。
@@ -72,6 +72,12 @@ Last updated: 2026-08-02
 - realtime sceneへsolidに見える装飾建物を追加する場合、既存colliderの存在だけでは因果一致を証明できない。各solid meshのboundsをauthoritative collider内へ制約し、非collision layerは到達領域外か非solidと読めるmaterialへ分け、生成testで逸脱を失敗させる。
 - prototype catalogのcoverを理想conceptやCSS illustrationだけにすると、選択後の実画面との期待差が広がる。actual gameplay captureをversion cardへ使い、conceptはreferenceだと明記すると、visual goalと現在の到達点を同じ一覧で正直に比較できる。
 
+- fixed-cameraで周囲を見せるためにview heightだけを増やすと、主人公の識別性が落ちる。cameraの可視範囲とhero scaleを別parameterにし、R05では640 world-unitと2.7倍actorを組み合わせることで、R04より広い探索視野と通常play scaleの顔を同時に保てた。
+- HD-2D的なボケ味は単一の全画面blur強度では制御しにくい。主人公周辺のclear bandを固定し、far／nearを非対称に分けると、奥行きを明示しながらinteraction routeとHUDをsharpに維持できる。
+- 「女性型で可愛い」はpolygon数や頭身だけでは成立しない。通常cameraで顔を最初に見せるinitial facing、大きな目、顔を隠さない前髪、肩幅、A-line silhouette、低面積の色accentを同時に調整し、full-viewとhero cropの両方で検査する必要がある。
+- 高密度voxelはauthoring元やcell総数ではなく、最終画面にvisibleな表現契約である。R05ではsmooth CC0 body／hairをoffline anatomy scaffoldへ限定し、7,734 cellのquantized surface、semantic part pivot、piecewise proportion補正へcompileしたことで、ordinary 3Dではなくvoxel少女として読める方向へ移った。
+- cell総数が多くても、archive packやcoatが一塊なら画面では大きなboxに見える。4.8頭身への再配分、pack縮小、split coat、顔／髪cluster、細い四肢のようにscreen-space silhouetteとdetail frequencyをart-directする必要がある。
+
 ## Working hypotheses to validate
 
 - Prototype Bには二つの独立した不足がある可能性が高い。Gate Aでは条件付き自動通常攻撃、手動大技、loot比較、異なるbuildを、Gate Bでは自分で選ぶ同時目的／拠点と、一回目が二回目のloadout／routeを変える因果を別々に検証する。一方を他方の代替にしない。
@@ -80,7 +86,7 @@ Last updated: 2026-08-02
 - 人類激減と自然に侵食された現代都市は確認済みの方向だが、魅力は草や廃墟の量だけでは生まれない。旧用途、水／日照／土壌、植生遷移、現在の生活、route、資源を同じ因果から作る必要があるという点は検証仮説である。
 - 人物、monster、item、遺跡を単品生成するより、旧用途、現在資源、actor need、衝突、証拠、複数対処、reward、world mutation、future hookを一つのCausal World Cellとして先に作る方が、装飾的な生成物を減らし、gameplayへ接続しやすい可能性が高い。
 - 主人公／同行者の完成meshを一発生成するより、version付きStyleProfileと、role、silhouette、semantic parts、material、rig、socket、物理budget、wearを持つAssetDNAからgeometryとgame dataをcompileする方が、シリーズ内一貫性、mobile budget、item合成、破損表現を両立しやすい。最新3D／rig生成はpart／static candidateとして比較する。
-- Concept Cのhigh-density micro-voxel／stylized 3D hybridをvisual方向として採択した。次の不確実性は方式選定ではなく、voxel-volume-to-skinned-surfaceとgrid-quantized modular meshのどちらが、同じC cameraで変形、装備fit、制作時間、mobile LODを最もよく両立するかである。
+- Concept Cのhigh-density micro-voxel／stylized 3D hybridをvisual方向として採択した。次の不確実性はsmooth surfaceとの方式選定ではなく、visible voxelを保つinstanced cell、clustered voxel mesh、bone-owned voxel volumeのどれが、同じC cameraで変形、装備fit、制作時間、mobile LODを最もよく両立するかである。
 - 最高品質層はPC Ultra masterで比較し、iPhoneは同じsceneから派生するmobile tierとしてWebGPU／HDRを試す。Three.js WebGPURendererはexperimentalであり、API移行だけでは美しさを保証しない。同一Visual Benchmark SceneをWebGPU／WebGL2、HDR／SDR、複数render scaleで実機比較し、baked hybrid、KTX2、character qualityの寄与を分離する。half-float内部照明、P3、HDR outputは別能力として測る。
 - fixed cameraでは、moving character、collision、occlusion、dynamic shadowだけをrealtime 3Dへ残し、地面、道、背景、建物面を高解像度生成／baked layerへ分けることで、見える面へquality budgetを集中できる可能性が高い。まだユーザーのart acceptanceは得ていない。light direction、palette、scale、contact shadowを同一camera previewで検査し、2D／3Dの貼り合わせ感が出ないか確かめる。
 - MSAA、高い内部解像度、AgX、生成textureの組合せがVisual Pass Dより商業HD-2D基準へ近づくかは未確認である。公開後のユーザーreviewをquality gateにする。

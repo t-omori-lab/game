@@ -13,6 +13,54 @@ import { VerticalTiltShiftShader } from "three/examples/jsm/shaders/VerticalTilt
 const DEFAULT_MAX_PIXEL_RATIO = 2;
 const DEFAULT_MSAA_SAMPLES = 4;
 
+const BandedTiltShiftShader = {
+  name: "BandedTiltShiftShader",
+  uniforms: {
+    tDiffuse: { value: null },
+    direction: { value: new THREE.Vector2(1, 0) },
+    focus: { value: 0.58 },
+    clearBand: { value: 0.14 },
+    farBlur: { value: 13 },
+    nearBlur: { value: 19 },
+    resolution: { value: new THREE.Vector2(1, 1) },
+  },
+  vertexShader: /* glsl */`
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: /* glsl */`
+    uniform sampler2D tDiffuse;
+    uniform vec2 direction;
+    uniform vec2 resolution;
+    uniform float focus;
+    uniform float clearBand;
+    uniform float farBlur;
+    uniform float nearBlur;
+    varying vec2 vUv;
+
+    void main() {
+      float signedDistance = vUv.y - focus;
+      float edgeDistance = max(0.0, abs(signedDistance) - clearBand);
+      float availableDistance = max(0.001, signedDistance < 0.0
+        ? focus - clearBand
+        : 1.0 - focus - clearBand);
+      float ramp = smoothstep(0.0, 1.0, edgeDistance / availableDistance);
+      float maxBlur = signedDistance < 0.0 ? farBlur : nearBlur;
+      vec2 stepSize = direction * (maxBlur * ramp) / resolution;
+
+      vec4 color = texture2D(tDiffuse, vUv) * 0.227027;
+      color += texture2D(tDiffuse, vUv + stepSize * 1.384615) * 0.316216;
+      color += texture2D(tDiffuse, vUv - stepSize * 1.384615) * 0.316216;
+      color += texture2D(tDiffuse, vUv + stepSize * 3.230769) * 0.070270;
+      color += texture2D(tDiffuse, vUv - stepSize * 3.230769) * 0.070270;
+      gl_FragColor = color;
+    }
+  `,
+};
+
 export type UltraRenderPipelineMode =
   | "half-float-msaa"
   | "half-float"
@@ -35,6 +83,10 @@ export interface UltraRenderPipelineOptions {
   readonly tiltShift?: boolean;
   readonly tiltShiftFocus?: number;
   readonly tiltShiftStrength?: number;
+  readonly tiltShiftMode?: "classic" | "banded";
+  readonly tiltShiftClearBand?: number;
+  readonly tiltShiftFarBlurPixels?: number;
+  readonly tiltShiftNearBlurPixels?: number;
   readonly onFallback?: (reason: unknown) => void;
 }
 
@@ -48,6 +100,11 @@ export interface UltraRenderPipelineStatus {
   readonly bloom: boolean;
   readonly smaa: boolean;
   readonly tiltShift: boolean;
+  readonly tiltShiftMode: "classic" | "banded";
+  readonly tiltShiftFocus: number;
+  readonly tiltShiftClearBand: number;
+  readonly tiltShiftFarBlurPixels: number;
+  readonly tiltShiftNearBlurPixels: number;
   readonly fallbackReason: string | null;
 }
 
@@ -80,6 +137,10 @@ export class UltraRenderPipeline {
   private verticalTiltShift: ShaderPass | null = null;
   private tiltShiftFocus = 0.48;
   private tiltShiftStrength = 3.4;
+  private tiltShiftMode: "classic" | "banded" = "classic";
+  private tiltShiftClearBand = 0.14;
+  private tiltShiftFarBlurPixels = 13;
+  private tiltShiftNearBlurPixels = 19;
   private fallbackReason: string | null = null;
   private disposed = false;
 
@@ -171,6 +232,11 @@ export class UltraRenderPipeline {
       bloom: this.bloomEnabled,
       smaa: this.smaaEnabled,
       tiltShift: this.tiltShiftEnabled,
+      tiltShiftMode: this.tiltShiftMode,
+      tiltShiftFocus: this.tiltShiftFocus,
+      tiltShiftClearBand: this.tiltShiftClearBand,
+      tiltShiftFarBlurPixels: this.tiltShiftFarBlurPixels,
+      tiltShiftNearBlurPixels: this.tiltShiftNearBlurPixels,
       fallbackReason: this.fallbackReason,
     };
   }
@@ -254,6 +320,7 @@ export class UltraRenderPipeline {
       }
 
       if (options.tiltShift ?? false) {
+        this.tiltShiftMode = options.tiltShiftMode ?? "classic";
         this.tiltShiftFocus = THREE.MathUtils.clamp(
           Number.isFinite(options.tiltShiftFocus)
             ? (options.tiltShiftFocus as number)
@@ -268,10 +335,31 @@ export class UltraRenderPipeline {
           0.5,
           8,
         );
-        this.horizontalTiltShift = new ShaderPass(
-          HorizontalTiltShiftShader,
+        this.tiltShiftClearBand = THREE.MathUtils.clamp(
+          options.tiltShiftClearBand ?? 0.14,
+          0.04,
+          0.32,
         );
-        this.verticalTiltShift = new ShaderPass(VerticalTiltShiftShader);
+        this.tiltShiftFarBlurPixels = THREE.MathUtils.clamp(
+          options.tiltShiftFarBlurPixels ?? 13,
+          2,
+          30,
+        );
+        this.tiltShiftNearBlurPixels = THREE.MathUtils.clamp(
+          options.tiltShiftNearBlurPixels ?? 19,
+          2,
+          36,
+        );
+        this.horizontalTiltShift = new ShaderPass(
+          this.tiltShiftMode === "banded"
+            ? BandedTiltShiftShader
+            : HorizontalTiltShiftShader,
+        );
+        this.verticalTiltShift = new ShaderPass(
+          this.tiltShiftMode === "banded"
+            ? BandedTiltShiftShader
+            : VerticalTiltShiftShader,
+        );
         this.horizontalTiltShift.material.name =
           "beauty-cell-horizontal-depth-separation";
         this.verticalTiltShift.material.name =
@@ -371,6 +459,20 @@ export class UltraRenderPipeline {
 
     const renderWidth = Math.max(1, this.width * this.pixelRatio);
     const renderHeight = Math.max(1, this.height * this.pixelRatio);
+    if (this.tiltShiftMode === "banded") {
+      for (const [pass, x, y] of [
+        [this.horizontalTiltShift, 1, 0],
+        [this.verticalTiltShift, 0, 1],
+      ] as const) {
+        pass.uniforms["direction"]!.value.set(x, y);
+        pass.uniforms["resolution"]!.value.set(renderWidth, renderHeight);
+        pass.uniforms["focus"]!.value = this.tiltShiftFocus;
+        pass.uniforms["clearBand"]!.value = this.tiltShiftClearBand;
+        pass.uniforms["farBlur"]!.value = this.tiltShiftFarBlurPixels;
+        pass.uniforms["nearBlur"]!.value = this.tiltShiftNearBlurPixels;
+      }
+      return;
+    }
     this.horizontalTiltShift.uniforms["h"]!.value =
       this.tiltShiftStrength / renderWidth;
     this.horizontalTiltShift.uniforms["r"]!.value = this.tiltShiftFocus;

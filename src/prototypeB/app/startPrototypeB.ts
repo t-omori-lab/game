@@ -66,7 +66,8 @@ export type PrototypeBExperience =
   | "baseline"
   | "north-star"
   | "beauty-cell"
-  | "r04";
+  | "r04"
+  | "r05";
 
 export type StartPrototypeBOptions = {
   readonly experience?: PrototypeBExperience;
@@ -142,6 +143,12 @@ export function startPrototypeB(
   const sound = new RelicSoundscape();
   const listeners: Array<() => void> = [];
   let state = createPrototypeBState(RUN_SEED);
+  if (options.experience === "r05") {
+    // Start in a front three-quarter read so the high-density voxel face,
+    // hair silhouette and fitted coat are visible before the player moves.
+    state.player.facingX = 0;
+    state.player.facingY = 1;
+  }
   let renderer = createRenderer(layout, state);
   let animationFrame = 0;
   let lastFrameAt = performance.now();
@@ -163,6 +170,10 @@ export function startPrototypeB(
   let previousDecisionOpen = false;
   let previousResultOpen = false;
   let statusMessageHoldUntil = 0;
+  const captureState = options.experience === "r05"
+    ? new URLSearchParams(window.location.search).get("capture")
+    : null;
+  let capturedFrameCount = 0;
   const portraitQuery = window.matchMedia("(orientation: portrait)");
   let portraitPaused = portraitQuery.matches;
 
@@ -226,7 +237,8 @@ export function startPrototypeB(
     if (
       options.experience === "north-star" ||
       options.experience === "beauty-cell" ||
-      options.experience === "r04"
+      options.experience === "r04" ||
+      options.experience === "r05"
     ) {
       layout.stage.dataset.presentationState = "active";
     }
@@ -241,13 +253,15 @@ export function startPrototypeB(
     if (!portraitPaused) {
       layout.stage.focus({ preventScroll: true });
     }
-    void sound.unlock().catch(() => {
-      showToast(
-        layout,
-        "音声を開始できませんでした。ゲームは続行できます。",
-        performance.now(),
-      );
-    });
+    if (captureState === null) {
+      void sound.unlock().catch(() => {
+        showToast(
+          layout,
+          "音声を開始できませんでした。ゲームは続行できます。",
+          performance.now(),
+        );
+      });
+    }
   };
 
   const toggleMute = (): void => {
@@ -520,6 +534,12 @@ export function startPrototypeB(
       layout.dossier.setAttribute("aria-hidden", "true");
     }
 
+    capturedFrameCount += 1;
+    if (captureState !== null && capturedFrameCount >= 4) {
+      document.documentElement.dataset.captureReady = captureState;
+      return;
+    }
+
     animationFrame = requestAnimationFrame(renderFrame);
   };
 
@@ -586,20 +606,27 @@ export function startPrototypeB(
         },
         companionPreview: options.companionPreview,
         cameraCompositionProfile:
-          options.experience === "r04"
+          options.experience === "r05"
+            ? "r05"
+            : options.experience === "r04"
             ? "r04"
             : options.experience === "baseline" ||
                 options.experience === undefined
               ? "baseline"
               : "north-star",
         environmentProfile:
-          options.experience === "r04"
+          options.experience === "r04" || options.experience === "r05"
             ? "r04-live"
             : options.experience === "beauty-cell"
             ? "beauty-cell"
             : options.experience === "north-star"
               ? "north-star-city"
               : "start-town",
+        presentationProfile: options.experience === "r05"
+          ? "r05-fram"
+          : options.experience === "r04"
+            ? "r04"
+            : "default",
         qualityProfile: options.renderQuality,
       },
     );
@@ -661,6 +688,9 @@ export function startPrototypeB(
   }
 
   activeApplications.set(root, application);
+  if (captureState === "active") {
+    begin();
+  }
   animationFrame = requestAnimationFrame(renderFrame);
   return application;
 
@@ -808,7 +838,8 @@ function configureExperience(
   if (
     options.experience !== "north-star" &&
     options.experience !== "beauty-cell" &&
-    options.experience !== "r04"
+    options.experience !== "r04" &&
+    options.experience !== "r05"
   ) {
     return;
   }
@@ -817,17 +848,24 @@ function configureExperience(
   layout.stage.classList.add("north-star-stage");
   const beautyCell = options.experience === "beauty-cell";
   const r04 = options.experience === "r04";
-  if (beautyCell || r04) {
+  const r05 = options.experience === "r05";
+  if (beautyCell || r04 || r05) {
     root.classList.add("beauty-cell-shell");
     layout.stage.classList.add("beauty-cell-stage");
   }
-  if (r04) {
+  if (r04 || r05) {
     root.classList.add("r04-shell");
     layout.stage.classList.add("r04-stage");
   }
+  if (r05) {
+    root.classList.add("r05-shell");
+    layout.stage.classList.add("r05-stage");
+  }
   layout.stage.dataset.experience = options.experience;
-  layout.stage.dataset.prototypeVersion = r04
-    ? "R04"
+  layout.stage.dataset.prototypeVersion = r05
+    ? "R05"
+    : r04
+      ? "R04"
     : beautyCell
       ? "R02"
       : "R01";
@@ -838,7 +876,9 @@ function configureExperience(
   layout.performance.hidden = !debugEnabled;
   layout.stage.setAttribute(
     "aria-label",
-    r04
+    r05
+      ? "F.R.A.M. R05。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。"
+      : r04
       ? "R02系統 R04。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。"
       : beautyCell
       ? "AI-native Beauty Cell。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。"
@@ -848,7 +888,9 @@ function configureExperience(
   const badge = document.createElement("div");
   badge.className = "north-star-badge";
   badge.hidden = !debugEnabled;
-  badge.innerHTML = r04
+  badge.innerHTML = r05
+    ? "<span>FRONTIER RELICS ARCHIVE MODULE</span><strong>R05 / WIDE WORLD / PC ULTRA</strong>"
+    : r04
     ? "<span>CAUSAL BEAUTY CELL</span><strong>R04 / R02 SYSTEMS / PC ULTRA</strong>"
     : beautyCell
       ? "<span>AI-NATIVE BEAUTY CELL</span><strong>R02 / PC ULTRA / LIVE SYSTEMS</strong>"
@@ -876,28 +918,36 @@ function configureExperience(
     ".relic-hud__identity strong",
   );
   if (kicker !== null) {
-    kicker.textContent = r04
+    kicker.textContent = r05
+      ? "FRONTIER RELICS ARCHIVE MODULE / F-01"
+      : r04
       ? "R02 CAUSAL WORLD / CONCEPT C VISUAL REBUILD"
       : beautyCell
         ? "AI-NATIVE CONCEPT C / REALTIME BEAUTY CELL"
       : "PC ULTRA VISUAL + GAME FEEL BENCHMARK";
   }
   if (heading !== null) {
-    heading.innerHTML = r04
-      ? "緑蝕<br /><em>雨庭区</em>"
+    heading.innerHTML = r05
+      ? "F.R.A.M.<br /><em>辺境遺物記録モジュール</em>"
+      : r04
+        ? "緑蝕<br /><em>雨庭区</em>"
       : beautyCell
         ? "緑蝕<br /><em>交差区</em>"
       : "緑蝕<br /><em>観測区</em>";
   }
   if (description !== null) {
-    description.innerHTML = r04
+    description.innerHTML = r05
+      ? "あなたは辺境を歩き、遺物を解析し、世界の記憶を編むモジュール。<br />滅びかけの都市は、今も明るく生きている。"
+      : r04
       ? "雨上がりの都市は、滅びたあとも鮮やかだ。<br />歩き、拾い、戦い、世界の記憶を自分の経路にする。"
       : beautyCell
         ? "光と水と緑が都市を更新している。<br />調査員は歩き、拾い、間合いを選び、大技だけを自分で撃つ。"
       : "自然に呑まれた現代都市を歩く。<br />間合いで通常攻撃を起こし、大技で戦況を変える。";
   }
   if (startLabel !== null) {
-    startLabel.textContent = r04
+    startLabel.textContent = r05
+      ? "F.R.A.M.を起動"
+      : r04
       ? "雨庭区へ降りる"
       : beautyCell
         ? "Beauty Cellを歩く"
@@ -906,8 +956,10 @@ function configureExperience(
   if (startHint !== null) {
     startHint.textContent = "MOVE / AUTO BASIC / MANUAL SKILL";
   }
-  if ((beautyCell || r04) && identity !== null) {
-    identity.textContent = r04
+  if ((beautyCell || r04 || r05) && identity !== null) {
+    identity.textContent = r05
+      ? "F.R.A.M. F-01 / 第07雨庭区"
+      : r04
       ? "緑蝕・第07雨庭区"
       : "緑蝕・第04交差区";
   }
@@ -1008,7 +1060,8 @@ function updateInterface(
   layout.stage.dataset.weapon = player.weaponId;
   layout.stage.dataset.status = state.status;
   layout.zoneLabel.textContent =
-    layout.stage.dataset.experience === "r04"
+    layout.stage.dataset.experience === "r04" ||
+      layout.stage.dataset.experience === "r05"
       ? "緑蝕・第07雨庭区"
       : layout.stage.dataset.experience === "beauty-cell"
       ? "緑蝕・第04交差区"

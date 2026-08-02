@@ -37,6 +37,7 @@ import { createNorthStarCityArtSlice } from "./northStarCityArt";
 import { createBeautyCellArtSlice } from "./beautyCell";
 import { createR04ArtSlice } from "./r04/R04Art";
 import { R04_LIVE_PROFILE } from "./r04/R04LiveProfile";
+import { R05_FRAM_PROFILE } from "./r05/R05FramProfile";
 import { configureDisplayColor } from "./displayColor";
 import {
   FIXED_CAMERA_OFFSET,
@@ -57,6 +58,8 @@ import {
   type BeautyCompanionVisual,
 } from "./hero/BeautyHeroVisual";
 import { createR04HeroVisual } from "./hero/R04HeroVisual";
+import { createR05FramHeroVisual } from "./hero/R05FramHeroVisual";
+import { createR05ConceptCArtSlice } from "./r05/R05ConceptCArt";
 import { UltraRenderPipeline } from "./UltraRenderPipeline";
 import reclaimedMeadowTextureUrl from "./assets/reclaimed-meadow-v1.webp";
 
@@ -68,9 +71,14 @@ const BEAUTY_CELL_CAMERA_VIEW_HEIGHT = 390;
 const PC_ULTRA_EXPOSURE = 0.98;
 const BEAUTY_CELL_EXPOSURE = 0.92;
 const MAX_INTERNAL_WIDTH = 1_075;
-const CAMERA_OFFSET = new THREE.Vector3(
+const BASE_CAMERA_OFFSET = new THREE.Vector3(
   FIXED_CAMERA_OFFSET.x,
   FIXED_CAMERA_OFFSET.y,
+  FIXED_CAMERA_OFFSET.z,
+);
+const R05_CAMERA_OFFSET = new THREE.Vector3(
+  FIXED_CAMERA_OFFSET.x,
+  R05_FRAM_PROFILE.camera.offsetY,
   FIXED_CAMERA_OFFSET.z,
 );
 const BLADE_VOXEL_SIZE = 2.1;
@@ -154,6 +162,10 @@ export type PrototypeBEnvironmentProfile =
   | "north-star-city"
   | "beauty-cell"
   | "r04-live";
+export type PrototypeBPresentationProfile =
+  | "default"
+  | "r04"
+  | "r05-fram";
 
 export type CombatPresentationState = {
   readonly targetId: string | null;
@@ -171,6 +183,7 @@ export interface PrototypeBRendererOptions {
   readonly companionPreview?: boolean;
   readonly cameraCompositionProfile?: CameraCompositionProfile;
   readonly environmentProfile?: PrototypeBEnvironmentProfile;
+  readonly presentationProfile?: PrototypeBPresentationProfile;
   readonly qualityProfile?: PrototypeBRenderQuality;
 }
 
@@ -178,6 +191,7 @@ export class PrototypeBRenderer {
   private readonly renderer: THREE.WebGLRenderer;
   private readonly qualityProfile: PrototypeBRenderQuality;
   private readonly environmentProfile: PrototypeBEnvironmentProfile;
+  private readonly presentationProfile: PrototypeBPresentationProfile;
   private readonly cameraCompositionProfile: CameraCompositionProfile;
   private readonly cameraViewHeight: number;
   private ultraPipeline: UltraRenderPipeline | null = null;
@@ -248,6 +262,12 @@ export class PrototypeBRenderer {
   private elapsed = 0;
   private disposed = false;
 
+  private cameraOffset(): THREE.Vector3 {
+    return this.presentationProfile === "r05-fram"
+      ? R05_CAMERA_OFFSET
+      : BASE_CAMERA_OFFSET;
+  }
+
   public constructor(
     mount: HTMLElement,
     initialState: PrototypeBState,
@@ -256,12 +276,16 @@ export class PrototypeBRenderer {
     this.qualityProfile = options.qualityProfile ?? "baseline";
     this.environmentProfile =
       options.environmentProfile ?? "start-town";
+    this.presentationProfile = options.presentationProfile ??
+      (this.environmentProfile === "r04-live" ? "r04" : "default");
     this.cameraCompositionProfile =
       options.cameraCompositionProfile ??
       (this.environmentProfile === "r04-live" ? "r04" : "baseline");
     this.cameraViewHeight =
-      this.environmentProfile === "r04-live"
-        ? R04_LIVE_PROFILE.camera.viewHeight
+      this.presentationProfile === "r05-fram"
+        ? R05_FRAM_PROFILE.camera.viewHeight
+        : this.environmentProfile === "r04-live"
+          ? R04_LIVE_PROFILE.camera.viewHeight
         : this.environmentProfile === "beauty-cell"
         ? BEAUTY_CELL_CAMERA_VIEW_HEIGHT
         : this.qualityProfile === "pc-ultra"
@@ -277,7 +301,9 @@ export class PrototypeBRenderer {
     });
     configureDisplayColor(
       this.renderer,
-      this.environmentProfile === "r04-live"
+      this.presentationProfile === "r05-fram"
+        ? R05_FRAM_PROFILE.display.exposure
+        : this.environmentProfile === "r04-live"
         ? R04_LIVE_PROFILE.display.exposure
         : this.environmentProfile === "beauty-cell"
         ? BEAUTY_CELL_EXPOSURE
@@ -306,9 +332,13 @@ export class PrototypeBRenderer {
       this.cameraCompositionProfile;
     this.renderer.domElement.dataset.environmentProfile =
       this.environmentProfile;
+    this.renderer.domElement.dataset.presentationProfile =
+      this.presentationProfile;
     this.renderer.domElement.setAttribute(
       "aria-label",
-      "辺境遺物録 ボクセルゲーム画面",
+      this.presentationProfile === "r05-fram"
+        ? "F.R.A.M. 辺境遺物記録モジュール ゲーム画面"
+        : "辺境遺物録 ボクセルゲーム画面",
     );
     mount.append(this.renderer.domElement);
 
@@ -332,7 +362,9 @@ export class PrototypeBRenderer {
     );
 
     const fogColor =
-      this.environmentProfile === "r04-live"
+      this.presentationProfile === "r05-fram"
+        ? R05_FRAM_PROFILE.display.fogColor
+        : this.environmentProfile === "r04-live"
         ? R04_LIVE_PROFILE.display.fogColor
         : this.environmentProfile === "beauty-cell"
         ? 0xa9c4bd
@@ -340,14 +372,18 @@ export class PrototypeBRenderer {
     this.scene.background = new THREE.Color(fogColor);
     this.scene.fog = new THREE.Fog(
       fogColor,
-      this.environmentProfile === "r04-live"
+      this.presentationProfile === "r05-fram"
+        ? R05_FRAM_PROFILE.display.fogNear
+        : this.environmentProfile === "r04-live"
         ? R04_LIVE_PROFILE.display.fogNear
         : this.environmentProfile === "beauty-cell"
         ? 1_020
         : this.qualityProfile === "pc-ultra"
           ? 1_140
           : 900,
-      this.environmentProfile === "r04-live"
+      this.presentationProfile === "r05-fram"
+        ? R05_FRAM_PROFILE.display.fogFar
+        : this.environmentProfile === "r04-live"
         ? R04_LIVE_PROFILE.display.fogFar
         : this.environmentProfile === "beauty-cell"
         ? 2_340
@@ -377,19 +413,35 @@ export class PrototypeBRenderer {
         this.scene,
         this.camera,
         {
-          maxPixelRatio: 2,
+          maxPixelRatio: this.presentationProfile === "r05-fram"
+            ? R05_FRAM_PROFILE.post.maxPixelRatio
+            : 2,
           samples: 4,
           gtao: true,
           bloom: true,
           smaa: true,
           tiltShift: this.environmentProfile === "beauty-cell" ||
             this.environmentProfile === "r04-live",
-          tiltShiftFocus: this.environmentProfile === "r04-live"
+          tiltShiftMode: this.presentationProfile === "r05-fram"
+            ? R05_FRAM_PROFILE.post.tiltShiftMode
+            : "classic",
+          tiltShiftFocus: this.presentationProfile === "r05-fram"
+            ? R05_FRAM_PROFILE.post.tiltShiftFocus
+            : this.environmentProfile === "r04-live"
             ? R04_LIVE_PROFILE.post.tiltShiftFocus
             : 0.49,
           tiltShiftStrength: this.environmentProfile === "r04-live"
             ? R04_LIVE_PROFILE.post.tiltShiftStrength
             : 3.7,
+          tiltShiftClearBand: this.presentationProfile === "r05-fram"
+            ? R05_FRAM_PROFILE.post.tiltShiftClearBand
+            : undefined,
+          tiltShiftFarBlurPixels: this.presentationProfile === "r05-fram"
+            ? R05_FRAM_PROFILE.post.tiltShiftFarBlurPixels
+            : undefined,
+          tiltShiftNearBlurPixels: this.presentationProfile === "r05-fram"
+            ? R05_FRAM_PROFILE.post.tiltShiftNearBlurPixels
+            : undefined,
           onFallback: (reason) => {
             this.renderer.domElement.dataset.ultraFallback =
               reason instanceof Error ? reason.message : "post-processing";
@@ -405,7 +457,9 @@ export class PrototypeBRenderer {
 
     this.createGround(initialState);
     this.environmentArt =
-      this.environmentProfile === "r04-live"
+      this.presentationProfile === "r05-fram"
+        ? createR05ConceptCArtSlice()
+      : this.environmentProfile === "r04-live"
         ? createR04ArtSlice()
         : this.environmentProfile === "beauty-cell"
         ? createBeautyCellArtSlice()
@@ -464,7 +518,9 @@ export class PrototypeBRenderer {
     this.playerBody.castShadow = true;
     this.playerBody.receiveShadow = true;
     this.playerHeroVisual =
-      this.environmentProfile === "r04-live"
+      this.presentationProfile === "r05-fram"
+        ? createR05FramHeroVisual()
+        : this.environmentProfile === "r04-live"
         ? createR04HeroVisual()
         : this.environmentProfile === "beauty-cell"
         ? createBeautyHeroVisual()
@@ -475,12 +531,24 @@ export class PrototypeBRenderer {
       this.playerBody.visible = false;
       if (this.environmentProfile === "beauty-cell") {
         this.playerHeroVisual.root.scale.setScalar(1.28);
+      } else if (this.presentationProfile === "r05-fram") {
+        this.playerHeroVisual.root.scale.setScalar(
+          R05_FRAM_PROFILE.actors.heroScale,
+        );
       } else if (this.environmentProfile === "r04-live") {
         this.playerHeroVisual.root.scale.setScalar(
           R04_LIVE_PROFILE.actors.heroScale,
         );
       }
       this.playerGroup.add(this.playerHeroVisual.root);
+      if (this.presentationProfile === "r05-fram") {
+        this.renderer.domElement.dataset.heroRepresentation = String(
+          this.playerHeroVisual.root.userData.runtimeRepresentation ?? "unknown",
+        );
+        this.renderer.domElement.dataset.heroVoxelCells = String(
+          this.playerHeroVisual.root.userData.visibleVoxelCells ?? "unknown",
+        );
+      }
     }
     if (
       this.environmentProfile === "beauty-cell" ||
@@ -651,7 +719,9 @@ export class PrototypeBRenderer {
     );
     if (this.qualityProfile === "pc-ultra") {
       const pixelRatio = Math.min(
-        2,
+        this.presentationProfile === "r05-fram"
+          ? R05_FRAM_PROFILE.post.maxPixelRatio
+          : 2,
         Math.max(1, window.devicePixelRatio || 1),
       );
       if (this.ultraPipeline !== null) {
@@ -788,6 +858,16 @@ export class PrototypeBRenderer {
     this.renderer.domElement.dataset.ultraTiltShift = String(
       status.tiltShift,
     );
+    this.renderer.domElement.dataset.ultraTiltShiftMode =
+      status.tiltShiftMode;
+    this.renderer.domElement.dataset.ultraTiltShiftFocus =
+      String(status.tiltShiftFocus);
+    this.renderer.domElement.dataset.ultraTiltShiftBand =
+      String(status.tiltShiftClearBand);
+    this.renderer.domElement.dataset.ultraTiltShiftFar =
+      String(status.tiltShiftFarBlurPixels);
+    this.renderer.domElement.dataset.ultraTiltShiftNear =
+      String(status.tiltShiftNearBlurPixels);
     this.renderer.domElement.dataset.ultraSamples = String(status.samples);
     if (status.fallbackReason === null) {
       delete this.renderer.domElement.dataset.ultraFallback;
@@ -799,18 +879,25 @@ export class PrototypeBRenderer {
 
   private createLighting(): void {
     const r04 = this.environmentProfile === "r04-live";
+    const r05 = this.presentationProfile === "r05-fram";
     const skyFill = new THREE.HemisphereLight(
-      r04
+      r05
+        ? R05_FRAM_PROFILE.lighting.skyColor
+        : r04
         ? R04_LIVE_PROFILE.lighting.skyColor
         : this.environmentProfile === "beauty-cell"
           ? 0xfff2ca
           : 0xf6f0d2,
-      r04
+      r05
+        ? R05_FRAM_PROFILE.lighting.groundColor
+        : r04
         ? R04_LIVE_PROFILE.lighting.groundColor
         : this.environmentProfile === "beauty-cell"
           ? 0x173e34
           : 0x355a43,
-      r04
+      r05
+        ? R05_FRAM_PROFILE.lighting.skyIntensity
+        : r04
         ? R04_LIVE_PROFILE.lighting.skyIntensity
         : this.environmentProfile === "beauty-cell"
         ? 0.34
@@ -821,14 +908,18 @@ export class PrototypeBRenderer {
     skyFill.name = "daylight-sky-fill";
 
     this.keyLight.color.setHex(
-      r04
+      r05
+        ? R05_FRAM_PROFILE.lighting.keyColor
+        : r04
         ? R04_LIVE_PROFILE.lighting.keyColor
         : this.environmentProfile === "beauty-cell"
           ? 0xffe0b0
           : 0xffe8bd,
     );
     this.keyLight.intensity =
-      r04
+      r05
+        ? R05_FRAM_PROFILE.lighting.keyIntensity
+        : r04
         ? R04_LIVE_PROFILE.lighting.keyIntensity
         : this.environmentProfile === "beauty-cell"
         ? 2.52
@@ -839,18 +930,26 @@ export class PrototypeBRenderer {
     this.keyLightTarget.name = "daylight-key-target";
     this.keyLightTarget.position.set(r04 ? 430 : 390, 0, 900);
     this.keyLight.position.set(
-      r04
+      r05
+        ? this.keyLightTarget.position.x +
+          R05_FRAM_PROFILE.lighting.keyOffsetX
+        : r04
         ? this.keyLightTarget.position.x +
           R04_LIVE_PROFILE.lighting.keyOffsetX
         : this.environmentProfile === "beauty-cell"
           ? -180
           : 40,
-      r04
+      r05
+        ? R05_FRAM_PROFILE.lighting.keyOffsetY
+        : r04
         ? R04_LIVE_PROFILE.lighting.keyOffsetY
         : this.environmentProfile === "beauty-cell"
           ? 890
           : 820,
-      r04
+      r05
+        ? this.keyLightTarget.position.z +
+          R05_FRAM_PROFILE.lighting.keyOffsetZ
+        : r04
         ? this.keyLightTarget.position.z +
           R04_LIVE_PROFILE.lighting.keyOffsetZ
         : this.environmentProfile === "beauty-cell"
@@ -863,12 +962,16 @@ export class PrototypeBRenderer {
     this.keyLight.shadow.mapSize.set(shadowMapSize, shadowMapSize);
     this.keyLight.shadow.bias = -0.0012;
     this.keyLight.shadow.normalBias =
-      r04
+      r05
+        ? R05_FRAM_PROFILE.lighting.shadowNormalBias
+        : r04
         ? R04_LIVE_PROFILE.lighting.shadowNormalBias
         : this.environmentProfile === "beauty-cell"
           ? 0.82
           : 1.4;
-    const shadowHalfExtent = r04
+    const shadowHalfExtent = r05
+      ? R05_FRAM_PROFILE.lighting.shadowHalfExtent
+      : r04
       ? R04_LIVE_PROFILE.lighting.shadowHalfExtent
       : 460;
     this.keyLight.shadow.camera.left = -shadowHalfExtent;
@@ -893,12 +996,16 @@ export class PrototypeBRenderer {
       rimTarget.name = "daylight-rim-target";
       rimTarget.position.set(430, 24, 860);
       const rimLight = new THREE.DirectionalLight(
-        r04
+        r05
+          ? R05_FRAM_PROFILE.lighting.rimColor
+          : r04
           ? R04_LIVE_PROFILE.lighting.rimColor
           : this.environmentProfile === "beauty-cell"
             ? 0x8bd9d1
             : 0xa9e6df,
-        r04
+        r05
+          ? R05_FRAM_PROFILE.lighting.rimIntensity
+          : r04
           ? R04_LIVE_PROFILE.lighting.rimIntensity
           : this.environmentProfile === "beauty-cell"
             ? 0.48
@@ -929,7 +1036,9 @@ export class PrototypeBRenderer {
       this.environmentTarget = generator.fromScene(environment, 0.04);
       this.scene.environment = this.environmentTarget.texture;
       this.scene.environmentIntensity =
-        this.environmentProfile === "r04-live"
+        this.presentationProfile === "r05-fram"
+          ? R05_FRAM_PROFILE.lighting.environmentIntensity
+          : this.environmentProfile === "r04-live"
           ? R04_LIVE_PROFILE.lighting.environmentIntensity
           : this.environmentProfile === "beauty-cell"
             ? 0.19
@@ -991,7 +1100,9 @@ export class PrototypeBRenderer {
         );
         color.lerp(
           white,
-          this.environmentProfile === "r04-live"
+          this.presentationProfile === "r05-fram"
+            ? R05_FRAM_PROFILE.display.groundWhiteMix
+            : this.environmentProfile === "r04-live"
             ? R04_LIVE_PROFILE.display.groundWhiteMix
             : this.environmentProfile === "beauty-cell"
               ? 0.24
@@ -2223,7 +2334,9 @@ export class PrototypeBRenderer {
   }
 
   private cameraTargetOffsetX(): number {
-    return this.environmentProfile === "r04-live"
+    return this.presentationProfile === "r05-fram"
+      ? R05_FRAM_PROFILE.camera.targetOffsetX
+      : this.environmentProfile === "r04-live"
       ? R04_LIVE_PROFILE.camera.targetOffsetX
       : this.environmentProfile === "beauty-cell"
         ? -42
@@ -2231,7 +2344,9 @@ export class PrototypeBRenderer {
   }
 
   private cameraTargetOffsetZ(): number {
-    return this.environmentProfile === "r04-live"
+    return this.presentationProfile === "r05-fram"
+      ? R05_FRAM_PROFILE.camera.targetOffsetZ
+      : this.environmentProfile === "r04-live"
       ? R04_LIVE_PROFILE.camera.targetOffsetZ
       : this.environmentProfile === "beauty-cell"
         ? -54
@@ -2248,9 +2363,19 @@ export class PrototypeBRenderer {
       this.cameraTarget.z,
     );
     this.keyLight.position.set(
-      this.cameraTarget.x + R04_LIVE_PROFILE.lighting.keyOffsetX,
-      R04_LIVE_PROFILE.lighting.keyOffsetY,
-      this.cameraTarget.z + R04_LIVE_PROFILE.lighting.keyOffsetZ,
+      this.cameraTarget.x + (
+        this.presentationProfile === "r05-fram"
+          ? R05_FRAM_PROFILE.lighting.keyOffsetX
+          : R04_LIVE_PROFILE.lighting.keyOffsetX
+      ),
+      this.presentationProfile === "r05-fram"
+        ? R05_FRAM_PROFILE.lighting.keyOffsetY
+        : R04_LIVE_PROFILE.lighting.keyOffsetY,
+      this.cameraTarget.z + (
+        this.presentationProfile === "r05-fram"
+          ? R05_FRAM_PROFILE.lighting.keyOffsetZ
+          : R04_LIVE_PROFILE.lighting.keyOffsetZ
+      ),
     );
   }
 
@@ -2267,13 +2392,15 @@ export class PrototypeBRenderer {
     );
     this.cameraTarget.set(
       composition.targetX + this.cameraTargetOffsetX(),
-      this.environmentProfile === "r04-live"
-        ? R04_LIVE_PROFILE.camera.targetHeight
+      this.presentationProfile === "r05-fram"
+        ? R05_FRAM_PROFILE.camera.targetHeight
+        : this.environmentProfile === "r04-live"
+          ? R04_LIVE_PROFILE.camera.targetHeight
         : 28,
       composition.targetY + this.cameraTargetOffsetZ(),
     );
     this.renderer.domElement.dataset.cameraComposition = composition.mode;
-    this.camera.position.copy(this.cameraTarget).add(CAMERA_OFFSET);
+    this.camera.position.copy(this.cameraTarget).add(this.cameraOffset());
     this.camera.lookAt(this.cameraTarget);
     this.syncR04KeyLight();
     this.camera.updateProjectionMatrix();
@@ -2303,15 +2430,19 @@ export class PrototypeBRenderer {
       this.cameraCompositionProfile,
     );
     this.renderer.domElement.dataset.cameraComposition = composition.mode;
-    const followSpeed = this.environmentProfile === "r04-live"
-      ? R04_LIVE_PROFILE.camera.followSpeed
+    const followSpeed = this.presentationProfile === "r05-fram"
+      ? R05_FRAM_PROFILE.camera.followSpeed
+      : this.environmentProfile === "r04-live"
+        ? R04_LIVE_PROFILE.camera.followSpeed
       : 8;
     const follow = 1 - Math.exp(-followSpeed * deltaSeconds);
     this.cameraTarget.lerp(
       this.reusablePosition.set(
         composition.targetX + this.cameraTargetOffsetX(),
-        this.environmentProfile === "r04-live"
-          ? R04_LIVE_PROFILE.camera.targetHeight
+        this.presentationProfile === "r05-fram"
+          ? R05_FRAM_PROFILE.camera.targetHeight
+          : this.environmentProfile === "r04-live"
+            ? R04_LIVE_PROFILE.camera.targetHeight
           : 28,
         composition.targetY + this.cameraTargetOffsetZ(),
       ),
@@ -2319,7 +2450,7 @@ export class PrototypeBRenderer {
     );
     const desiredPosition = this.reusablePosition
       .copy(this.cameraTarget)
-      .add(CAMERA_OFFSET);
+      .add(this.cameraOffset());
     this.camera.position.lerp(desiredPosition, follow);
     this.cameraTrauma = Math.max(
       0,

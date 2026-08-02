@@ -303,6 +303,37 @@ body {
     radial-gradient(ellipse at 50% 48%, transparent 72%, rgb(3 16 13 / 13%) 100%);
 }
 
+.north-star-shell.r05-shell {
+  --relic-signal: #93ffe1;
+  --relic-amber: #ffc883;
+}
+
+.north-star-stage.beauty-cell-stage.r04-stage.r05-stage .relic-world canvas {
+  filter: saturate(1.07) contrast(1.14) brightness(0.97);
+}
+
+.north-star-stage.beauty-cell-stage.r04-stage.r05-stage .relic-screen-fx {
+  background:
+    radial-gradient(circle at 76% 2%, rgb(255 203 122 / 13%), transparent 30%),
+    linear-gradient(132deg, rgb(255 239 196 / 4%), transparent 34%),
+    radial-gradient(ellipse at 50% 47%, transparent 68%, rgb(3 14 14 / 17%) 100%);
+}
+
+.north-star-stage.r05-stage .relic-title h1 em {
+  display: block;
+  max-width: 12em;
+  margin-top: 0.18em;
+  font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+  font-size: 0.38em;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.08em;
+}
+
+.north-star-stage.r05-stage .relic-hud__identity strong {
+  color: var(--relic-signal);
+}
+
 .north-star-shell {
   background:
     radial-gradient(circle at 50% 10%, rgb(91 133 118 / 28%), transparent 42%),
@@ -1736,6 +1767,45 @@ body {
     border-color: rgb(162 244 215 / 70%);
     background:
       linear-gradient(90deg, rgb(12 53 41 / 84%), rgb(12 53 41 / 17%));
+  }
+
+  .north-star-stage.r05-stage .relic-hud {
+    width: clamp(270px, 23cqw, 330px);
+    grid-template-columns: minmax(110px, 0.9fr) minmax(132px, 1.1fr);
+    gap: 4px;
+  }
+
+  .north-star-stage.r05-stage .relic-hud__identity,
+  .north-star-stage.r05-stage .relic-hud__mission,
+  .north-star-stage.r05-stage .relic-hud__vitals {
+    padding: 5px 8px;
+    background:
+      linear-gradient(118deg, rgb(6 19 16 / 65%), rgb(6 19 16 / 20%));
+    box-shadow:
+      0 9px 28px rgb(2 12 10 / 13%),
+      inset 0 1px rgb(255 250 220 / 4%);
+    backdrop-filter: blur(8px) saturate(1.12);
+  }
+
+  .north-star-stage.r05-stage .relic-hud__mission {
+    padding-block: 5px;
+  }
+
+  .north-star-stage.r05-stage .relic-hud__identity strong {
+    font-size: clamp(9px, 1.28cqh, 12px);
+  }
+
+  .north-star-stage.r05-stage .relic-hud__mission strong {
+    margin-top: 2px;
+    font-size: clamp(8px, 1.15cqh, 10px);
+  }
+
+  .north-star-stage.r05-stage .relic-hud__vitals {
+    gap: 5px;
+  }
+
+  .north-star-stage.r05-stage .relic-health {
+    width: clamp(82px, 8cqw, 112px);
   }
 }
 

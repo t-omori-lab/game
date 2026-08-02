@@ -1,4 +1,5 @@
 import { R04_LIVE_PROFILE } from "./r04/R04LiveProfile";
+import { R05_FRAM_PROFILE } from "./r05/R05FramProfile";
 
 export type CameraCompositionPhase =
   | "idle"
@@ -23,7 +24,11 @@ export interface CameraComposition {
   readonly targetY: number;
 }
 
-export type CameraCompositionProfile = "baseline" | "north-star" | "r04";
+export type CameraCompositionProfile =
+  | "baseline"
+  | "north-star"
+  | "r04"
+  | "r05";
 
 export interface FixedCameraOffset {
   readonly x: number;
@@ -117,15 +122,21 @@ export function composeCameraTarget(
     input.phase !== "idle" &&
     Number.isFinite(input.targetX) &&
     Number.isFinite(input.targetY);
-  const exploreLookAhead = profile === "r04"
-    ? R04_LIVE_PROFILE.camera.exploreLookAhead
-    : EXPLORE_LOOK_AHEAD;
-  const combatTargetWeight = profile === "r04"
-    ? R04_LIVE_PROFILE.camera.combatTargetWeight
-    : COMBAT_TARGET_WEIGHT;
-  const maximumCombatOffset = profile === "r04"
-    ? R04_LIVE_PROFILE.camera.maximumCombatOffset
-    : MAX_COMBAT_OFFSET;
+  const exploreLookAhead = profile === "r05"
+    ? R05_FRAM_PROFILE.camera.exploreLookAhead
+    : profile === "r04"
+      ? R04_LIVE_PROFILE.camera.exploreLookAhead
+      : EXPLORE_LOOK_AHEAD;
+  const combatTargetWeight = profile === "r05"
+    ? R05_FRAM_PROFILE.camera.combatTargetWeight
+    : profile === "r04"
+      ? R04_LIVE_PROFILE.camera.combatTargetWeight
+      : COMBAT_TARGET_WEIGHT;
+  const maximumCombatOffset = profile === "r05"
+    ? R05_FRAM_PROFILE.camera.maximumCombatOffset
+    : profile === "r04"
+      ? R04_LIVE_PROFILE.camera.maximumCombatOffset
+      : MAX_COMBAT_OFFSET;
 
   if (!hasCombatTarget) {
     return {

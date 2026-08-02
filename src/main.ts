@@ -32,6 +32,16 @@ async function boot(applicationRoot: HTMLElement): Promise<void> {
     window.location.search,
   );
 
+  if (release === "r05") {
+    startPrototypeB(applicationRoot, {
+      experience: "r05",
+      renderQuality: "pc-ultra",
+      companionPreview: false,
+      semiAutoCombat: true,
+    });
+    return;
+  }
+
   if (release === "r04") {
     startPrototypeB(applicationRoot, {
       experience: "r04",

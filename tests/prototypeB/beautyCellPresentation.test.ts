@@ -36,10 +36,10 @@ describe("R02 Beauty Cell presentation contract", () => {
       'const beautyCell = options.experience === "beauty-cell"',
     );
     expect(applicationSource).toMatch(
-      /environmentProfile:\s*[\s\S]*?options\.experience === "r04"\s*\? "r04-live"\s*:\s*options\.experience === "beauty-cell"\s*\? "beauty-cell"/,
+      /environmentProfile:\s*[\s\S]*?options\.experience === "r04" \|\| options\.experience === "r05"\s*\? "r04-live"\s*:\s*options\.experience === "beauty-cell"\s*\? "beauty-cell"/,
     );
     expect(applicationSource).toMatch(
-      /dataset\.prototypeVersion\s*=\s*r04\s*\? "R04"\s*:\s*beautyCell\s*\? "R02"\s*:\s*"R01"/,
+      /dataset\.prototypeVersion\s*=\s*r05\s*\? "R05"\s*:\s*r04\s*\? "R04"[\s\S]*?beautyCell\s*\? "R02"\s*:\s*"R01"/,
     );
     expect(rendererSource).toContain('| "beauty-cell"');
     expect(rendererSource).toContain(

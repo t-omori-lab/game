@@ -153,3 +153,14 @@
 - Decision: Concept Cをvisual North Starとする。人物、装備、同行者、enemy、occlusion、近景の動きはhigh-density micro-voxel／grid-quantized sourceからcompileしたrealtime 3Dとし、static city density、間接光、AO、遠景はbaked assetへ分ける。被写界深度は主人公、敵予兆、interactionをsharpに保つmulti-layer方式とする。default protagonist presetは女性型だが固定heroineにはせず、appearanceをversioned `CharacterGenome`へ分離する。武器と衣装は動力、sensor、冷却、service機構の読めるpost-apocalyptic SFへ直す。keyboard／virtual stick／future gamepadはscreen-relative axisで受け、共有camera basisからsimulation world axisへ変換する。
 - Consequences: CのPNGを背景、texture、literal topologyとして使用しない。最初のproofは96-cell級女性default、SF survey cutter、別gender presentation、別humanoid species、四足同行者candidateを一つのC Beauty Cellで動かし、2560×1440 actual gameplayでCのcamera、actor scale、light、material、density、DOFを比較する。Gamepad API、click／tap-to-move、runtime character creator、C Beauty Cell、mobile tierは別実装であり、今回の方向決定だけでは完成としない。
 - Supersedes: Visual North Star Concept Set v0.4でのconcept E暫定選択。ADR-010のfixed-camera hybrid構造は継続し、人型surfaceの最終密度とcharacter creationを具体化する
+
+---
+
+## ADR-015: Name the game F.R.A.M. and make the player its embodied module
+
+- Date: 2026-08-02
+- Status: accepted
+- Context: 遺物回収、解析、world memory、character creationを一つの作品identityへ束ねる正式名称と、player characterの存在理由が必要だった。
+- Decision: 正式作品名を`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題を「辺境遺物記録モジュール」、呼称を「フラム」とする。player characterはF.R.A.M.の操作者ではなく、辺境踏査、遺物解析、記憶編纂を担う身体化module instanceである。女性型`F-01`は最初のvisual benchmarkであり、character creation後の種族、性別／gender表現、体格、顔、髪、身体拡張、装備の違いをF.R.A.M. identityと能力制限へ自動結合しない。
+- Consequences: 探索、item解析、build、帰還、拠点、world stateをF.R.A.M.の三機能へ接続できる。moduleの製造者、起源、network、法的地位、複製／継承、instance命名法は別のworld-design decisionとして未決定に残す。
+- Supersedes: 「辺境遺物録」を正式名称候補として扱う状態。prototype内の地域名・記録名としての使用は妨げない

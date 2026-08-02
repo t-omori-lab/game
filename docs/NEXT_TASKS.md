@@ -4,7 +4,19 @@ Last updated: 2026-08-02
 
 ## P0
 
-Active P0は、公開済み`R04 R02-successor`に対するユーザーvisual reviewと、Concept Cとの差を次のart-production milestoneへ変換することである。以下のcontract、world loop、生成、mobile実機項目はqueueであり、R04のvisual reviewをblockしない。
+Active release taskは、ユーザーが明示承認したR05評価版を、R01〜R04を保存したままGitHub Pagesへdeployし、公開URLで起動／操作を確認することである。visual P0は引き続き、Concept Cと同じmacro構図を持つcausal graybox、道路／停留所／facadeのbaked PBR／lightmap、同一camera／poseの高密度voxel少女三preset比較であり、公開をcommercial art合格とは扱わない。
+
+- [x] `F.R.A.M. R05`のlocal review candidateを作る。
+  - [x] 正式名称、full name、日本語副題、F-01 instanceをtitle／route／設定正本へ接続した。
+  - [x] R04 causal worldを保持したままview height 640、centered target、独立`r05-fram` presentation profileへ分離した。
+  - [x] clear gameplay bandを持つnear／far非対称banded tilt-shiftをworld-only post stackへ追加した。
+  - [x] R04 heroを再利用せず、約90 cell高／7,734 visible cell、4.8頭身、face pixel、white twin hair、split coat、coral textile、semantic rig／socketを持つ高密度voxel少女F.R.A.M. F-01へ再構築した。smooth source meshはruntimeでload／renderしない。
+  - [x] 1280×720 browserでstart、screen-relative移動、手動skill、1917×1077内部canvas、描画metadataを確認し、Concept C full viewとhero cropの同一frame comparisonを保存した。
+  - [ ] Concept C型のmacro layout、baked wet material、warm／cool light hierarchyを作り直し、同一frame QAのP0を解消する。
+  - [ ] 高密度voxel少女を同一camera／poseで三preset生成し、顔、髪、silhouette、衣装cluster、SF装備の一案を通常gameplay scaleとhero cropの両方で採択する。
+  - [x] 公開済みcommit `3cb27cd…`由来のR04をrelative bundle、scope別service worker、snapshot、SHA-256 manifestを持つ自己完結保存版へ凍結した。
+  - [x] R01〜R04 checksum、Vitest 190件、strict TypeScript、production build、production artifactのcatalog／R04／R05起動・操作をlocal確認した。
+  - [ ] R05 commitをmainへpushし、Pages workflowと公開catalog／R01〜R05／R05操作を実URLで確認する。
 
 - [x] `R04`をGitHub Pagesへ公開し、R02-derived realtime 3D次版として確認する。
   - [x] R02の連続world、決定論的simulation、collision、quest、loot、二武器、半自動通常攻撃、手動大技を同じruntime stateのまま接続した。
@@ -70,7 +82,7 @@ Active P0は、公開済み`R04 R02-successor`に対するユーザーvisual rev
 - [ ] North Star Scene v0.1の内部workstreamとして、PC Ultra masterの描画architectureとcharacter方式を決め、その後iPhone 16 Proのtierを作る。
   - [x] WebGL2上のhalf-float render target、4× MSAA、GTAO、抑制したbloom、SMAAを既存sceneで動かす技術候補を実装した。WebGPU／HDR profile比較とart採択は未実施。
   - [x] 既存24×32×16主人公をsemantic partsへ分け、weapon socketと7種poseをPC Ultra routeで動かした。これは最終hero造形ではない。
-  - C0の表現比較はユーザーによるconcept C選択で完了した。C1ではhigh-density micro-voxel authoring sourceを個別cubeではなくoptimized skinned／merged 3D surfaceへcompileし、C Beauty Cellだけをreference qualityへ仕上げる。
+  - C0の表現比較はユーザーによるconcept C選択で完了した。C1ではhigh-density micro-voxel authoring sourceを、cellの粒立ちを保持するinstanced／clustered voxel surfaceへcompileする。既知topology／rigはoffline scaffoldに限定し、runtimeをsmooth skinへ置換しない。
   - 同じC1 sceneを`pc-ultra-webgpu-hdr`／`pc-high-webgpu-sdr`／`webgl2-p3`／`webgl2-srgb`で比較する。
   - PCでは2560×1440相当を起点に、character、surface、indirect light、shadow、AA、postの知覚品質を先に詰める。次にiPhoneの実`visualViewport`、safe area、internal scale、KTX2、MSAA、shadow、限定bloomを決める。
   - Done when: PC masterのvisual方式とhero表現が決まり、同じart sourceからmobile tierへ縮退できる。
@@ -130,6 +142,7 @@ Active P0は、公開済み`R04 R02-successor`に対するユーザーvisual rev
 
 ## Recently completed
 
+- [x] F.R.A.M. R05の独立heroを約90 cell高／7,734 visible cellのarticulated高密度voxel少女へ再構築し、wide／lower camera、抑制したminiature-depth、asphalt／canal第一層、Concept C comparisonをlocal統合。representation milestoneは到達したがvisual QAはmacro layout／material／lightのP0でblocked、未deploy — 2026-08-02
 - [x] R04 commit `ab33dd8`をGitHub Pagesへ反映し、run #13成功、公開catalogのR04→R03→R02→R01順、全route／manifest／service worker／地面WebPの200応答、公開R04の依頼・武器・移動・手動大技・描画metadataを確認 — 2026-08-02
 - [x] R04 local deployment candidateへR02-derived連続world／因果、realtime 3D女性型SF hero、R04 scene compiler、camera／light／PBR／DOF、versioned shellを統合し、Vitest 184件、strict TypeScript、production build、checksum、production browser操作を合格 — 2026-08-02
 - [x] commit `79bf341`をGitHub Pagesへ反映し、run #11成功、公開R03／catalog／R02 static snapshot／service workerのHTTPS応答と実browser操作を確認 — 2026-08-02

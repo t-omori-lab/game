@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import indexHtml from "../index.html?raw";
+import r05IndexHtml from "../r05/index.html?raw";
 
 type NodeFs = {
   readFileSync(path: URL, encoding: "utf8"): string;
@@ -19,10 +20,13 @@ const styles = nodeGlobal.process
 
 describe("mobile viewport gesture policy", () => {
   it("blocks double-tap zoom without trapping the user at a fixed scale", () => {
-    expect(indexHtml).toContain(
-      "width=device-width, initial-scale=1, viewport-fit=cover",
-    );
-    expect(indexHtml).not.toContain("user-scalable=no");
+    for (const html of [indexHtml, r05IndexHtml]) {
+      expect(html).toContain(
+        "width=device-width, initial-scale=1, viewport-fit=cover",
+      );
+      expect(html).not.toContain("user-scalable=no");
+      expect(html).not.toContain("maximum-scale=1");
+    }
     expect(styles).toMatch(
       /html,\s*body,\s*#app\s*\{[^}]*touch-action:\s*manipulation;/s,
     );

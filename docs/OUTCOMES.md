@@ -31,7 +31,10 @@ Last updated: 2026-08-02
 - R04のlocal full checkは30 files／184 tests、strict TypeScript、production buildに合格した。R01／R02／R03 snapshot checksumは9／9、11／11、19／19一致し、production previewで依頼受注、手動大技cooldown、武器切替、移動、browser warning／error 0件を確認した。
 - 公開直前reviewで、継承したcolliderなしの不透明立体／旧anomalyと、初回offline precacheから地面textureが漏れる二件をP1として検出した。R04だけで旧objectを除去・全継承meshを因果分類し、simulation anomalyを正本化した。R04 HTMLへVite変換されるimage preloadを追加し、本番HTMLにhash付きWebPが現れることを確認した。R02保存版は変更していない。
 - commit `ab33dd8`のGitHub Actions run #13はtest／build／deployに成功した。公開catalog、R04、R01〜R03、R04 manifest、root service worker、hash付き地面WebPはHTTPS 200を返した。公開browserでcatalogのR04→R03→R02→R01順、各保存版の独立title、公開R04の依頼受注、武器切替、移動、手動大技cooldownとR04描画metadataを確認し、warning／errorは0件だった。
-- ユーザーはゲーム名候補として`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題「辺境遺物記録モジュール」、呼称「フラム」を提示した。正式名称への採用、logo、prototype画面名の変更は未決定である。
+- ユーザーは正式作品名として`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題「辺境遺物記録モジュール」、呼称「フラム」を採用した。player characterはF.R.A.M. module instanceである。character creationで外見、種族、性別／gender表現を変えてもこのidentityは維持する。
+- R05 local候補を実装した。R04の因果world／gameplayを維持し、cameraを広げて低くし、主人公中心の構図、near／far非対称miniature-depth、正式title／introを接続した。F.R.A.M. F-01は約90 cell高／7,734 visible cell、4.8頭身のarticulated高密度voxel少女で、white twin hair、face pixel、split sage coat、coral textile、小型archive module、weapon socketを持つ。CC0 meshはoffline anatomy scaffoldだけに使い、smooth source surfaceをruntimeでload／renderしない。
+- local browserの1280×720でstart、ArrowUp、Q、1917×1077内部buffer、`r05-fram`／`r04-live`／banded miniature-depth、Display-P3 capability path、AgX、`high-density-articulated-voxel-surface`／7,734 cellsを確認し、browser error／warningは0件だった。Vitest 32 files／190 tests、strict TypeScript、production build、`git diff --check`が合格した。Concept Cとの同一frame QAではmacro layout、surface material、warm／cool light hierarchyがP0で`final result: blocked`である。R05は未deployで、公開R04は変更していない。
+- R05 deploy候補では、公開済みcommit `3cb27cd…`由来のR04を自己完結static snapshotへ凍結し、root service workerをR01〜R05 routeへ更新した。R01〜R04のSHA-256 manifestは全件一致し、local production artifactでcatalogのR05→R04→R03→R02→R01、frozen R04の独立bundle、R05のstart／移動`430,900 → 419,889`／Q入力／7,734 cells metadata／browser warning・error 0件を確認した。main push／Pages公開は未実行である。
 - 自由放浪とworld memoryはユーザー意図に合う上位方向として確認された。
 - 世界の基層は、人類が激減し、識別可能な現代都市が植物、水、動物、新しい生活へ侵食・転用されたpost-apocalypseと確認された。崩壊原因、年代、地域、共同体密度は未決定。
 - playerは既存遺構を復旧するか条件の合う土地を選び、自分の拠点を築く方向が確認された。配置自由度、複数拠点、移転、維持、襲撃の詳細は未決定。
@@ -72,7 +75,8 @@ Last updated: 2026-08-02
 ## Pending confirmation
 
 - R04がR02の遊べる基盤を維持しつつ、ユーザーのConcept C／commercial HD-2D基準へ十分近づいたと評価されるか。local design QAのpassはユーザーacceptanceの代替ではない。
-- `F.R.A.M.`を正式名称として採用するか。採用する場合の日本語表記、logo、作中でのmodule／組織／記録systemとしての意味をどう統一するか。
+- F.R.A.M. moduleの製造者、起源、network／組織との関係、複製／継承、instance名、logoをどう定義するか。
+- local R05の高密度voxel少女F.R.A.M. F-01の顔／髪／衣装／動作を含む可愛さと、Concept C型へ再構築するmacro layout／material／lightがユーザー基準を満たすか。ordinary smooth 3Dへ戻さないことは確定したが、Concept C完全再現、commercial HD-2D同等、公開合格は未確認である。
 - R03がConcept Cの知覚品質へ十分近づいたか、ユーザーart reviewで合格するか。local independent visual QAのpassはユーザーacceptanceの代替ではない。
 - R03のplate型benchmarkをC1のdepth-aware geometry、occlusion、collision、navigation、dynamic lightingへ移しても同じ画面品質を維持できるか。
 

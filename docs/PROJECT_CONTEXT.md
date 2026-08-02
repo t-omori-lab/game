@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: R04 R02-derived Causal World Beauty Cell / publicly deployed; user visual review pending
+Phase: F.R.A.M. R05 high-density voxel-girl / Concept C causal-cell rebuild; local visual gate blocked; public R04 preserved
 
 ## Purpose
 
@@ -82,7 +82,11 @@ Phase: R04 R02-derived Causal World Beauty Cell / publicly deployed; user visual
 - Concept Cとの同一viewport QAは、R02-successorの公開候補としてP0／P1を解消した。Concept Cそのものの完全再現、commercial HD-2D同等、ユーザーart acceptance、WebGPU／true HDRの達成を意味しない。開始cellの密度を連続world全域へ展開すること、曲面植生／反射光／大気遠近／最終character rig／animationは次のart-production課題である。
 - commit `ab33dd8`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #13はtest／build／deployに成功した。公開catalog、R04、R01〜R03、R04 manifest、root service worker、hash付き地面WebPはすべてHTTPS 200を返した。
 - 公開browserでcatalogのR04→R03→R02→R01順と各link、各保存版の独立titleを確認した。公開R04では依頼`briefing → travel-to-fork`、武器`blade → impact`、移動`(430,900) → (426,896)`、手動大技cooldown `5.0s`、`r04-live`／`pc-ultra`／2556×1436／Display-P3 capability path／PMREM／AgX／half-float 4× MSAA／GTAO／bloom／SMAA／tilt-shift／ground texture `ready`を確認し、browser warning／errorは0件だった。これは公開配信と動作確認であり、ユーザーのvisual合格評価ではない。
-- ゲーム名の有力候補として`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題「辺境遺物記録モジュール」、呼称「フラム」がユーザーから提示された。遺物の収集・解析・世界記憶と親和性があるが、正式採用とprototype画面名の変更は未決定である。
+- 正式作品名として`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題「辺境遺物記録モジュール」、呼称「フラム」を採用した。player characterは辺境踏査、遺物解析、world memoryを担う身体化module instanceであり、character creation後の各身体もF.R.A.M. identityを保つ。起源、製造者、network、複製／継承は未決定である。
+- R05 local候補はR04の3,600×1,800連続world、collision、quest、loot、半自動通常攻撃、手動大技を正本として保持し、presentationだけを`r05-fram`へ分離した。cameraはR04の540から640 world-unitへ引き、R05専用offset Yを560へ下げて、周囲の可視範囲と低めの固定斜め俯瞰を両立した。
+- R05はfocus 0.57、clear band 0.30、far 6.5px、near 8.5pxの抑制したbanded miniature-depthをworldだけへ適用する。主人公AssetDNA `actor.fram.module-f01.archive-runner`のvisible surfaceは、約90 cell高／7,734個の決定的micro-voxelだけで構成する4.8頭身のarticulated少女presetへ再構築した。白いtwin-hair silhouette、分離したface pixel、細い四肢、split sage coat、coral textile、小型archive module、weapon socketを持ち、smooth source meshはruntimeでload／renderしない。
+- local browserの1280×720でR05を起動し、start、ArrowUp移動、Q手動skillを確認した。canvasは1917×1077、`presentation=r05-fram`、`environment=r04-live`、Display-P3 capability path、AgX、`tilt=banded`を観測した。Concept Cとのfull-view／hero crop comparisonを保存したが、macro layout、surface material、warm／cool light hierarchyがP0で`design-qa.md`は`final result: blocked`である。R05は未公開で、公開R04とR01〜R03は変更していない。
+- R05 deploy準備では、公開済みcommit `3cb27cd…`からR04 production bundleを再生成し、relative asset、scope別service worker、`SNAPSHOT.json`、`SHA256SUMS`を持つ自己完結版としてlocal `public/r04/`へ凍結した。R01〜R04 checksum、Vitest 190件、strict TypeScript、production build、production artifactのcatalog／R04／R05 browser起動・操作は合格した。main pushと公開Pages確認はまだ行っていない。
 
 ## Creative reference notes
 
@@ -109,13 +113,14 @@ Phase: R04 R02-derived Causal World Beauty Cell / publicly deployed; user visual
 - このdesign synthesis iterationではgame code、runtime asset、public buildを変更しておらず、deployも行っていない。
 - 上記のdoc-only design synthesisとは別に、2026-08-01のNorth Star iterationではlocal game codeを変更した。公開版とGitHub Pagesは変更しておらず、deployも行っていない。
 - 現North Star sceneはPC Ultra描画／半自動戦闘／部位animationと、recognizableな自然侵食現代都市の第一候補を同じ画面で判断できる。Surface Pass v0.2でmulti-channel高解像度面は入ったが、runtime procedural生成のlocal art candidateである。初回同期生成の停止、build-time bake／非同期preload／KTX2、高架駅の構造分節、最終hero／companion、商業HD-2D相当の密度やユーザーart acceptanceは未達。
-- 現主人公は既存semantic voxel recipeを部位化した第一段階であり、最終hero design、顔、髪／布のsurface、PBR material、deformation rig、signature motionの完成を意味しない。表示中の調査灯型robotはart review用候補で、開始時加入の仕様変更ではない。
-- Visual Fidelity Foundation v0.3でcloth／metal／signalのmaterial responseと画面占有は改善したが、24×32×16 literal voxel source自体の造形不足は残る。次は選定済みCに向け、96-cell級を開始点とするhigh-density micro-voxel sourceをoptimized skinned meshへcompileし、normal gameplay scaleで検証する。
+- 旧主人公は既存semantic voxel recipeを部位化した第一段階であり、最終hero designの正本ではない。R05ではvisible runtimeを高密度micro-voxelへ固定したが、顔、髪、衣装cluster、secondary motion、PBR material、signature motionのart acceptanceは未達である。表示中の調査灯型robotはart review用候補で、開始時加入の仕様変更ではない。
+- Concept Cに対するactor表現契約は、smooth skinned 3Dへ置換せず、約96-cell級を起点にしたquantized voxel surfaceを通常gameplay scaleでもドット表現として読ませることとする。既知topology／rig assetはoffline anatomy scaffoldとして利用できるが、runtime visible surface、装備換装、pose、LODはvoxel cell／voxel clusterの粒立ちを保つ。
 - Visual North Star concept Cは、最終画面のcamera／actor占有／detail frequency／material／light／DOF／hybrid production grammarを評価するtargetである。R02でその一部をruntime化したが、主人公のbiography／final face、選択可能な種族構成、同行者の加入条件、天候／時間／装備変化後も同品質を維持できるかは未確認。concept画像やR02をaccepted commercial artとして扱わない。
 - R02はWebGL2／SDR browser出力のcandidateであり、WebGPU、true HDR、native Steam build、iPhone 16 Pro実機性能、commercial HD-2D同等、ユーザーの最終art acceptanceを証明しない。
 - R03のenvironment plateは遠景／非接触領域とvisual benchmarkには有効だが、plate単独では正しい高さ、遮蔽、建物進入、破壊、時刻／天候による物理的更新、連続world streamingを提供しない。
 - R03の`final result: passed`は、指定された1672×941初期frameにおけるConcept Cとの知覚比較と公開候補判定である。ゲーム全体、全camera state、全装備／天候、commercial HD-2D同等の完成を意味しない。
 - R04はR02由来の因果と連続worldを保持した公開realtime 3D次版であるが、`pc-ultra`は描画profile名であってcommercial-qualityの合格評価ではない。GitHub Pages反映と公開browser動作は確認済みだが、Concept C完全再現とユーザーart acceptanceは別gateとする。
+- R05はcamera、miniature-depth、主人公identityと高密度voxel少女表現を優先したlocal presentation passである。actor方向はordinary smooth 3Dへ戻さない。一方、Concept Cと同等のmacro composition、environment microdetail、湿潤PBR、植生密度、間接光、commercial HD-2D品質、ユーザーart acceptance、public deployは未証明で、現visual gateはblockedである。
 - Git remoteとVisual Pass E中間版のGitHub Pages公開は完了している。Steam公開は行っていない。
 
 ## Canonical handoff

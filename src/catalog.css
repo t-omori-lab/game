@@ -203,6 +203,12 @@ a {
     url("./assets/r04-cover.png");
 }
 
+.release-card[data-release="r05"] .release-card__visual {
+  background-image:
+    linear-gradient(90deg, rgb(4 13 10 / 8%), transparent 76%),
+    url("/r05/og.png");
+}
+
 .release-card__visual::after {
   position: absolute;
   content: "";

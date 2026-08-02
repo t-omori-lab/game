@@ -1,7 +1,7 @@
-# World Bible: 辺境遺物録（仮）
+# World Bible: F.R.A.M.（Frontier Relics Archive Module）
 
 Last updated: 2026-08-01  
-Status: v0.2 draft
+Status: v0.3 draft。作品名とplayer characterのF.R.A.M. identityは確定、起源と制度は未決定。
 
 ## 1. この文書の役割
 
@@ -92,6 +92,7 @@ open_questions:
 
 ### 4.1 確定
 
+- `identity.product.fram`: 正式作品名は`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題は「辺境遺物記録モジュール」。player characterは辺境を歩き、遺物を解析し、世界の記憶を編む身体化module instanceである。`F-01`はprototype visual benchmarkのinstance IDであり、唯一の主人公ではない。
 - `person.product.protagonist`: 開始時は単独。移動、接敵、位置取り、撤退、大技、item、最終判断の主体。通常戦闘は装備規則により自動化する。
 - `character.product.creator`: 最初のvisual／gameplay benchmarkは女性型preset。完成版はその一人に固定せず、playerが種族、性別／gender表現、体格、顔、髪、surface／色、身体拡張、装備を選ぶ。これらの表現選択は能力、職業、装備可否へ自動的に結び付けない。
 - `visual.product.protagonist`: concept CをNorth Starとし、高密度micro-voxel／上質なpixel-artの知覚を持つrealtime 3D characterとして描く。従来の24×32×16 recipeや一辺16voxelを最終品質の上限にしない。
@@ -107,6 +108,7 @@ open_questions:
 
 ### 4.3 未決定
 
+- F.R.A.M. moduleの製造者、最初の目的、network／共同体との関係、法的地位、複製、死亡後のarchive継承、instance命名法。
 - 主人公と主要人物の固有名、年齢帯、出身、過去。character creatorの具体的な種族数、body frame数、voice／pronoun語彙、origin数、種族がgameplayへ与える差。
 - 人間以外の知性体、身体拡張、network人格の社会的地位。
 - 会話量、relationship段階数、死亡の可逆性。

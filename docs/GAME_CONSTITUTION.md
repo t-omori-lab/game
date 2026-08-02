@@ -1,7 +1,14 @@
-# 作品憲法 v0.3
+# F.R.A.M. 作品憲法 v0.4
 
 Last updated: 2026-08-01  
-Status: v0.3。`確定要求`と`設計提案`を分け、詳細未検証の案を作品設定として固定しない。
+Status: v0.4。正式名称と主人公の役割を確定し、`確定要求`と`設計提案`を分ける。
+
+## 正式名称と主人公
+
+- 正式作品名は **F.R.A.M.**。full nameは **Frontier Relics Archive Module**、日本語副題は **辺境遺物記録モジュール**、呼称は「フラム」とする。
+- player characterはF.R.A.M.という仕事をする人ではなく、辺境を歩き、遺物を解析し、世界の記憶を保存・再編集する**身体化されたmodule instance**である。
+- F.R.A.M.は一体の固定heroine名ではない。character creationで種族、性別／gender表現、体格、顔、髪、surface／色、身体拡張、装備を選び、各player characterを固有のF.R.A.M. instanceとして成立させる。
+- moduleの製造者、network、法的な身分、複製／継承の仕組みは未決定とする。prototypeの`F-01`は最初のvisual benchmark instanceであり、完成版の唯一の主人公番号ではない。
 
 ## 体験の一文
 
@@ -11,6 +18,7 @@ Status: v0.3。`確定要求`と`設計提案`を分け、詳細未検証の案�
 
 ## 確定要求
 
+- `F.R.A.M.`の三機能、すなわちfrontier traversal、relic analysis、archive／world memoryを、探索、item解析、build、帰還、拠点、world stateへ一貫して接続する。
 - visualのNorth Starは、PC playを前提に端末性能を先に制限しない先端的な最高品質master sceneとする。iPhone 16 Pro対応は必須だが、PC masterから自動／手動quality tierで縮退させ、制作時の表現上限にはしない。将来はSteam公開を視野に入れる。
 - 移動、接敵、位置取り、撤退はplayerが行い、通常戦闘は自動、大技skillは手動で発動する半自動戦闘を目標にする。
 - 固定arenaで常時自動遠隔攻撃を眺める遊びには戻さない。自動戦闘は、playerが作った位置関係、装備のtarget条件、武器build、有限resourceの判断を実行する層として使う。

@@ -1,4 +1,4 @@
-export type PrototypeReleaseId = "r01" | "r02" | "r03" | "r04";
+export type PrototypeReleaseId = "r01" | "r02" | "r03" | "r04" | "r05";
 
 export interface PrototypeRelease {
   readonly id: PrototypeReleaseId;
@@ -9,11 +9,18 @@ export interface PrototypeRelease {
 
 export const PROTOTYPE_RELEASES: readonly PrototypeRelease[] = [
   {
+    id: "r05",
+    title: "F.R.A.M. / High-density Voxel Girl",
+    summary:
+      "名称と主人公概念をF.R.A.M.へ統合し、広い固定俯瞰、miniature-depth、7,734セルの高密度ボクセル少女を検証する公開評価版。",
+    status: "latest",
+  },
+  {
     id: "r04",
     title: "Causal World Beauty Cell",
     summary:
       "R02の連続world、collision、loot、quest、半自動戦闘を保持し、画角、光、素材、人物表現を組み直したリアルタイム3D次版。",
-    status: "latest",
+    status: "archive",
   },
   {
     id: "r03",
@@ -38,7 +45,7 @@ export const PROTOTYPE_RELEASES: readonly PrototypeRelease[] = [
   },
 ] as const;
 
-const RELEASE_PATH_PATTERN = /\/(r01|r02|r03|r04)(?:\/|$)/i;
+const RELEASE_PATH_PATTERN = /\/(r01|r02|r03|r04|r05)(?:\/|$)/i;
 
 export function resolvePrototypeRelease(
   pathname: string,
@@ -56,7 +63,8 @@ export function resolvePrototypeRelease(
   return releaseId === "r01" ||
     releaseId === "r02" ||
     releaseId === "r03" ||
-    releaseId === "r04"
+    releaseId === "r04" ||
+    releaseId === "r05"
     ? releaseId
     : null;
 }
