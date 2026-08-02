@@ -87,8 +87,11 @@ describe("versioned public release shell", () => {
     expect(r05Checksums).toContain("assets/r05-DY3D0AKC.js");
     expect(viteConfig).not.toContain('r05: "r05/index.html"');
 
-    expect(r06Html).toContain('src="/src/main.ts"');
+    expect(r06Html).toContain('src="/src/r06/main.ts"');
     expect(r06Html).toContain("F.R.A.M. R06");
+    expect(r06Html).toContain('data-boot-state="shell"');
+    expect(r06Html).toContain("描画を準備しています");
+    expect(r06Html).not.toContain("reclaimed-meadow-v1.webp");
     expect(viteConfig).toContain('r06: "r06/index.html"');
     expect(r07Html).toContain('src="/src/main.ts"');
     expect(r07Html).toContain("F.R.A.M. R07");
@@ -115,6 +118,7 @@ describe("versioned public release shell", () => {
     expect((catalogHtml.match(/<img/g) ?? [])).toHaveLength(1);
     expect(catalogSource).toContain("遊べるAI開発実験");
     expect(catalogSource).toContain("TECHNICAL EPOCHS / 技術エポック");
+    expect(catalogSource).toContain('await import("./catalog.css")');
     expect(catalogSource).toContain('data-deferred-src="${thumbnail}"');
     expect(catalogSource).toContain('rootMargin: "220px 0px"');
     expect(catalogSource).not.toContain('\n            src="${thumbnail}"');

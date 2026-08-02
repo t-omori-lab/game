@@ -24,17 +24,23 @@
     <meta name="twitter:image" content="https://t-omori-lab.github.io/game/r06/og.png" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-    <link
-      rel="preload"
-      as="image"
-      type="image/webp"
-      crossorigin="anonymous"
-      href="../src/prototypeB/render/assets/reclaimed-meadow-v1.webp"
-    />
     <title>F.R.A.M. R06 - Sharp Navigation Build</title>
+    <style data-critical-boot>
+      html,body{min-width:320px;min-height:100%;margin:0;background:#0b1713;color:#edf3df;font-family:"Avenir Next","Hiragino Sans","Yu Gothic",sans-serif}.fram-boot{box-sizing:border-box;display:grid;place-items:center;min-height:100svh;padding:24px;background:radial-gradient(circle at 50% 32%,#275d4938,transparent 44%),linear-gradient(145deg,#10241b,#07100d)}.fram-boot__panel{width:min(520px,100%)}.fram-boot__eyebrow{display:block;color:#8ce5bd;font-size:9px;font-weight:700;letter-spacing:.18em}.fram-boot h1{margin:16px 0 9px;font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:clamp(52px,14vw,92px);font-weight:500;letter-spacing:-.075em;line-height:.9}.fram-boot p{margin:0;color:#b8c7b8;font-size:12px;letter-spacing:.06em}.fram-boot__track{height:1px;margin-top:30px;overflow:hidden;background:#dcebd52e}.fram-boot__track i{display:block;width:34%;height:100%;background:#8ce5bd;animation:fram-boot-progress 1.2s ease-in-out infinite}.fram-boot small{display:block;margin-top:11px;color:#84968a;font-size:9px;letter-spacing:.14em}@keyframes fram-boot-progress{0%{transform:translateX(-110%)}100%{transform:translateX(310%)}}@media(prefers-reduced-motion:reduce){.fram-boot__track i{width:100%;animation:none;opacity:.7}}
+    </style>
   </head>
   <body>
-    <main id="app" aria-label="F.R.A.M. R06 ゲーム画面"></main>
-    <script type="module" src="/src/main.ts"></script>
+    <main id="app" aria-label="F.R.A.M. R06 ゲーム画面" data-boot-state="shell">
+      <section class="fram-boot" role="status" aria-live="polite">
+        <div class="fram-boot__panel">
+          <span class="fram-boot__eyebrow">LATEST PLAYABLE / R06</span>
+          <h1>F.R.A.M.</h1>
+          <p>辺境遺物記録モジュール</p>
+          <div class="fram-boot__track" aria-hidden="true"><i></i></div>
+          <small>描画を準備しています</small>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/r06/main.ts"></script>
   </body>
 </html>

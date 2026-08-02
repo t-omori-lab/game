@@ -1,4 +1,3 @@
-import "./catalog.css";
 import {
   PROTOTYPE_RELEASES,
   createReleaseHref,
@@ -34,9 +33,19 @@ if (aliasedRelease !== null) {
     : `${import.meta.env.BASE_URL}/`;
   window.location.replace(`${baseUrl}r01/${window.location.search}`);
 } else {
-  renderCatalog(root);
-  registerDeferredImages(root);
-  registerServiceWorker();
+  void enhanceCatalog(root);
+}
+
+async function enhanceCatalog(applicationRoot: HTMLElement): Promise<void> {
+  try {
+    await import("./catalog.css");
+    renderCatalog(applicationRoot);
+    registerDeferredImages(applicationRoot);
+    registerServiceWorker();
+  } catch (error: unknown) {
+    // The static first view remains fully usable when enhancement fails.
+    console.error("F.R.A.M. catalog enhancement failed.", error);
+  }
 }
 
 function renderCatalog(applicationRoot: HTMLElement): void {
