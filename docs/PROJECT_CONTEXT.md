@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-03  
 Status: active  
-Phase: game-first catalog／load hard gate and F-01 FIELD publicly verified; F-02 follows; R01–R08 preserved
+Phase: R09 First Memory Expedition planned; world-memory loop and playable actor bridge next; R01–R08 preserved
 
 ## Purpose
 
@@ -10,6 +10,7 @@ Phase: game-first catalog／load hard gate and F-01 FIELD publicly verified; F-0
 
 ## Confirmed current state
 
+- 2026-08-03、次の主milestoneをR09 `First Memory Expedition / 最初の記憶遠征`へ整理した。R09Aでは二site×二module、回収物消費、撤退、専用namespaceのversioned save、二回目の見た目／gameplay差分を、現行actorだけでFirst Memory Logic Proofとして先に証明する。R09Bでは同じsceneへF-01をbridgeし、actual gameplayのpass／fail manifestで露呈したmoduleだけをF-02へ再構築する。character完成待ちでworld-memory実装を止めず、visualも別demoへしない。これは計画の確定であり、R09／F-02 runtime実装、user art acceptance、public deployではない。
 - 2026-08-03、公開catalogの不合格点だったidentity、copy、first paintをlocalで再構築した。JavaScript前から`F.R.A.M.`、正式名／日本語副題、世界記憶型・放浪RPG、AI-native game development project、`最新版を遊ぶ`／`AI開発実験を見る`が読めるgame-first first viewとし、actual R06 gameplay imageを主役にした。public見出しは`遊べるAI開発実験`、archive分類は`TECHNICAL EPOCHS / 技術エポック`とした。
 - catalog用R06 heroを720×405／94,317 bytesのderivativeとして追加し、正本画像は保持した。archive画像はnative lazy指定だけに頼らず、IntersectionObserver直前まで実`src`を持たないhard gateへ変更した。production buildのfirst-view transfer概算は約105 KBで、local browserのscroll前はvisible raster 1件、archive image request 0件だった。
 - Character Forge F-01へ`CLOSE / FULL / FIELD`を実装した。FIELDはmain gameと同じ固定斜めcamera方向、actor screen height target 16%、拡張floor／fog／world-scale road／structure referenceを持つ。1280×720のlocal browserで初期16.3%、CLOSEから戻した再fit 16.2%、FIELD中のview lockを確認した。

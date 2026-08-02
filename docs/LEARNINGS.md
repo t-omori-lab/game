@@ -139,3 +139,5 @@ promotion_status: observed
 - Material paletteをmesh materialとinstance colorの両方へ適用すると乗算でskin／pale clothが暗化し、detailを増やしてもgraphiteの塊に見える。paletteはmaterial、instance colorは白基準の微小value variationへ分離する。
 - 全身rootの非等方scaleを継承するsemantic headは、local head scaleの数値だけでは頭形状を判断できない。world-space合成scaleと通常camera captureでface aspectを確認し、rig motionは維持したままhead groupで補償する。
 - catalogの性能budgetは総量だけでなく、scroll前archive画像0 byte、LCPまでのrequest数、game／Forge chunk 0件で定義する。今回の約410 KB初期inventoryは500 KB基準なら通ってしまうが、その約98%が不要な画面外画像であり、体感改善を保証しない。
+- asset pipelineの技術証明をStandalone demoだけで反復すると、造形が改善してもgameへ戻せるかが未検証のままになる。次のactor版は同じcompiled packをForgeとplayable routeの両方で読み、close-up、通常gameplay distance、移動、装備、戦闘、loadingを一つのacceptance gateにする。
+- visual assetの完成待ちをplayable loopの前提にすると、game固有の因果検証まで止まる。world-memory reducerと二回遠征のlogic proofは現行actorで進め、同じsceneへasset bridgeを重ねると、gameplayとvisualを並行させながら別demo化を防げる。
