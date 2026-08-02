@@ -1,6 +1,6 @@
 # Release Report: F.R.A.M. catalog and Forge FIELD
 
-Status: local release candidate verified; public deployment pending.
+Status: deployed and publicly verified.
 
 ## Implemented
 
@@ -22,7 +22,12 @@ Status: local release candidate verified; public deployment pending.
 
 ## Public confirmation
 
-- Pending.
+- commit `026970f`を`main`へpushした。
+- GitHub Actions `Deploy GitHub Pages` run #21はbuild／deployともsuccessだった。
+- 公開`/game/`でgame-first first view、actual gameplay hero、二CTA、AI-native説明、公開試作6件、技術エポック1件を確認した。
+- 公開`/game/`のscroll前imageはhero 1件だけが実`src`を持ち、R06〜R01／F-01 archiveは全てdeferredのままだった。
+- 公開`/game/forge/f01/`でFIELDを操作し、actor screen height 16.2%、target 16%、view button 5件lockを確認した。
+- 公開catalog／Forgeのbrowser consoleはerror 0、warning 0。`/game/`、`/game/r01/`、`/game/r06/`、`/game/forge/f01/`はHTTPS 200だった。
 
 ## Remaining limits
 

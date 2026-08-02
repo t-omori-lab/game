@@ -9,8 +9,8 @@
 - [x] Phase 1: current source、dirty files、release contractを監査する
 - [x] Phase 2: catalog identity／performanceとF-01 FIELDを実装する
 - [x] Phase 3: test、production build、desktop／mobile browser QAを通す
-- [ ] Phase 4: project docs／release evidenceを更新し、scope限定commit／pushする
-- [ ] Phase 5: GitHub Pages完了と公開URLを確認する
+- [x] Phase 4: project docs／release evidenceを更新し、scope限定commit／pushする
+- [x] Phase 5: GitHub Pages完了と公開URLを確認する
 
 ## Acceptance Contract
 
@@ -38,4 +38,4 @@
 
 ## Status
 
-**Currently in Phase 4** - 全205 test、strict TypeScript、production build、desktop 1280×720／mobile 390×844 browser QA、console error／warning 0件まで完了。scope限定commitとpublic deploy evidenceを準備中。
+**Complete** - commit `026970f`をmainへpushし、GitHub Pages run #21のbuild／deploy成功、公開catalog／Forge、保存版routeを確認した。

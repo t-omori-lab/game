@@ -4,7 +4,7 @@ Last updated: 2026-08-03
 
 ## P0
 
-R06 Sharp Navigationに加え、Character Forge F-01を最初のTechnology Epochとして公開確認した。ユーザーはF-01を暫定約70%と評価した一方、current `GAME` cameraはactual gameplay-distanceではなく、公開catalogのidentity／copy／loadも不合格とした。catalog game-first rebuild＋load hard gateとF-01 FIELD cameraはlocal release candidateまで完了した。Active P0は`GitHub Pages公開確認 → F-02 hair／face module-first reconstruction`である。都市part追加はcharacter source方式の確立より後にする。
+R06 Sharp Navigationに加え、Character Forge F-01を最初のTechnology Epochとして公開確認した。catalog game-first rebuild＋load hard gateとF-01 FIELD cameraもGitHub Pagesへ反映し、公開browserで確認した。Active P0は`F-02 hair／face module-first reconstruction`である。都市part追加はcharacter source方式の確立より後にする。
 
 - [x] 公開catalogをgame-first identityと軽量first paintへ再構築する。
   - first viewで`AI-NATIVE GAME DEVELOPMENT PROJECT`、`F.R.A.M.`、正式名／日本語副題、RPGの一文、`最新版を遊ぶ`CTA、actual gameplay imageを表示する。

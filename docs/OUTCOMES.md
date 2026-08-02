@@ -1,9 +1,10 @@
 # Outcomes: ゲーム開発
 
-Last updated: 2026-08-02
+Last updated: 2026-08-03
 
 ## Confirmed
 
+- 2026-08-03、commit `026970f`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #21のbuild／deploy成功を確認した。公開`/game/`はF.R.A.M.がゲーム名、世界記憶型・放浪RPG、AI-native game development projectであること、actual R06 gameplay image、`最新版を遊ぶ`／`AI開発実験を見る`をfirst viewに表示した。scroll前はhero 1件だけが実`src`を持ち、R06〜R01／F-01 archiveはdeferredのままだった。公開ForgeはFIELD 16.2%／target 16%、view lockで動作し、catalog／Forgeともbrowser error／warning 0件だった。`/game/`、`/game/r01/`、`/game/r06/`、`/game/forge/f01/`はHTTPS 200だった。iPhone 16 Pro実機とuser visual acceptanceは別gateである。
 - Prototype 0.1はユーザー試遊で「ゲームとして一応出来上がっている」点を認められた一方、評価は約20点だった。
 - 主な不一致は、固定arena、接近や位置取りを必要としない常時自動遠隔攻撃、タワーディフェンス的な手触りだった。これは通常戦闘の自動化すべてを否定する結果ではない。
 - ユーザーは、固定俯瞰voxel、scroll探索、手動戦闘を持つPrototype Bが最低限の比較baselineとして成立したことを認めた。これは手動戦闘を製品方向として採用した評価ではない。
