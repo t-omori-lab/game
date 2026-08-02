@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: Character Forge F-01 user-reviewed at approximately 70%; technical-epoch publication in progress; R01–R08 preserved
+Phase: Character Forge F-01 technical epoch publicly verified; F-02 hair／face module reconstruction next; R01–R08 preserved
 
 ## Purpose
 
@@ -16,6 +16,7 @@ Phase: Character Forge F-01 user-reviewed at approximately 70%; technical-epoch 
 - 本編R版とは分離した`Technology Epochs`をcatalogへ設け、ユーザーが採択した生成／描画上の節目をstable URL、実runtime capture、再現入力、provenance、validation、既知差分とともに残す方針をADR-016へ記録した。F-01が最初の対象であり、GitHub Pages反映はこの時点では進行中である。
 - 公開前の追加指示を受け、catalog titleを正式名`F.R.A.M.`＋小さなfull name／日本語副題へ変更し、開発資料調だった説明を、廃都探索、遺物、world memory、各試作の遊びが自然に読めるplayer向け日本語へ改稿した。F-01をfirst viewに置くためR01〜R06 coverは全てlazy loadへ変更した。
 - F-01は毎回1.8 MBのBuild Sheetから37,990 solid cellsを再計算していた。元画像と再現compilerは開発正本として保持し、同じ結果を47,270 bytes／SHA-256 `a77a7e0…`のsurface packへ事前compileしてruntimeに渡す方式へ変更した。表示用Build Sheetは87 KBへ縮小し、3D chunk到着前に静的boot shellを表示する。local production previewでは9,454 cells／37,990 volumeを維持し、warm navigation後のapp ready markerは79〜102 msだった。cold network／実公開端末の時間は未確認である。
+- commit `2c64a5d`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #19のbuild／deploy成功を確認した。公開`/game/`は正式名、full name、日本語副題、Technology Epoch 1件、Playable Builds 6件、R cover全件lazyを実browserで表示した。公開`/game/forge/f01/`は9,454 cells、37,990 volume、7 rig partsで起動し、初回public navigationのapp ready markerは531 ms、Build Sheet previewは1151pxで後続表示された。
 
 - 既定起動をPrototype B「辺境遺物録」へ切り替えた。Prototype 0.1「境界調査録」は比較用に`?prototype=0.1`で起動できる。
 - Prototype Bは、町―三叉路―聴取廃区を連続scrollする3,600×1,800のworldと固定斜め俯瞰cameraを持つ。moving character、collision silhouette、occluder、dynamic shadowはrealtime 3Dを維持し、地面、背景、建物面は高解像度の生成／baked surfaceを併用できるhybrid HD-2Dへ移行した。playerの現行authoring gridは24×32×16。

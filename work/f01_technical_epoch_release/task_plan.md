@@ -9,8 +9,8 @@ Character Forge F-01を、既存のR版prototypeを置き換えない独立し�
 - [completed] 公開構成、catalog、build／Pages workflow、dirty worktreeを確認する
 - [completed] catalogへTechnology Epochs枠とF-01 cardを追加し、保存公開ルールをproject docsへ記録する
 - [completed] tests、strict TypeScript、production build、local browser表示を検証する
-- [in_progress] exact filesだけをcommit／pushし、GitHub Actionsと公開URLを確認する
-- [pending] confirmed outcomeとF-02のrestart pointをdocsへ反映する
+- [completed] exact filesだけをcommit／pushし、GitHub Actionsと公開URLを確認する
+- [completed] confirmed outcomeとF-02のrestart pointをdocsへ反映する
 
 ## Guardrails
 

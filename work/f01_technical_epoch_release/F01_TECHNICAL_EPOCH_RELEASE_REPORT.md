@@ -1,6 +1,6 @@
 # F-01 Technical Epoch Release Report
 
-Status: in progress  
+Status: completed  
 Date: 2026-08-02
 
 ## Scope
@@ -32,4 +32,13 @@ Character Forge F-01をprototype releaseとは分離した技術検証の保存�
 
 ### Public verification
 
-Push／GitHub Pages／public URL確認後に追記する。
+- Commit `2c64a5d36c65c4aeade58844fb00750a5589198e`を`main`へpushした。
+- GitHub Actions `Deploy GitHub Pages` run #19／ID `30751781702`はbuild／deployともsuccessだった。
+- `https://t-omori-lab.github.io/game/`、`/game/forge/f01/`、`/game/forge/f01-build-sheet.jpg`はHTTPS 200を返した。
+- Public catalogを実browserで開き、`F.R.A.M.`、full name／日本語副題、epoch 1件、release 6件、F-01 image／link、release cover全件lazyを確認した。
+- Public F-01を実browserで開き、9,454 cells、37,990 volume、7 rig parts、catalog return、app ready 531 ms、1151px Build Sheet previewを確認した。
+- 既存R01〜R08を削除せず、catalog上のlatest playableはR06のまま維持した。
+
+## Next
+
+F-02でhair＋faceをmodule別正投影から復元し、close-upと通常gameplay cameraの両方で同じ人物として読めるかを評価する。
