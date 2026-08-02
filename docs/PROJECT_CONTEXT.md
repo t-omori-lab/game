@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-02  
 Status: active  
-Phase: Character Forge F-01 local pipeline proof verified; public R06 unchanged; R01–R08 preserved
+Phase: Character Forge F-01 user-reviewed at approximately 70%; technical-epoch publication in progress; R01–R08 preserved
 
 ## Purpose
 
@@ -12,7 +12,10 @@ Phase: Character Forge F-01 local pipeline proof verified; public R06 unchanged;
 
 - 2026-08-02、R08の手書きcell増築を続けず、独立route`/game/forge/f01/`へCharacter Forge F-01をlocal実装した。選定済みBeauty Sheetからstrict four-view＋module Build Sheetを生成し、外部`f01.source.json`のcrop／palette／rig定義と画像投影から、48×92×42／37,990 solid cellsの3D volumeを再生成する。
 - F-01は全身visual hullの膨張を`fram-humanoid-compact-v1` semantic volumeで分離し、9,454 outer surface cells、9 materials、7 rig partsをrounded instancingで描画する。`idle / run / hit`、front／left／back／right／3-quarter、close／game、wireframe／turntable、Beauty／Build／R05／R08比較を同一画面で操作できる。
-- 1280×720のlocal in-app browserで3方向表示、run、hit後のidle復帰、比較tabを確認した。strict TypeScript、Vitest 37 files／202 tests、production buildに合格した。F-01 pipeline proofのdesign QAはpassだが、Beauty Sheetの髪束／顔／衣装を完全再現した商用character art、Concept C全景、ユーザー採択、public deployではない。公開R06／catalogは変更していない。
+- 1280×720のlocal in-app browserで3方向表示、run、hit後のidle復帰、比較tabを確認した。strict TypeScript、Vitest 37 files／202 tests、production buildに合格した。ユーザーは細部の矛盾を残しつつも暫定約70%と評価し、ゲーム距離ではさらに成立する可能性と、技術的エポックとしての保存公開を認めた。これはBeauty Sheet完全一致、commercial character art、Concept C全景の合格ではない。
+- 本編R版とは分離した`Technology Epochs`をcatalogへ設け、ユーザーが採択した生成／描画上の節目をstable URL、実runtime capture、再現入力、provenance、validation、既知差分とともに残す方針をADR-016へ記録した。F-01が最初の対象であり、GitHub Pages反映はこの時点では進行中である。
+- 公開前の追加指示を受け、catalog titleを正式名`F.R.A.M.`＋小さなfull name／日本語副題へ変更し、開発資料調だった説明を、廃都探索、遺物、world memory、各試作の遊びが自然に読めるplayer向け日本語へ改稿した。F-01をfirst viewに置くためR01〜R06 coverは全てlazy loadへ変更した。
+- F-01は毎回1.8 MBのBuild Sheetから37,990 solid cellsを再計算していた。元画像と再現compilerは開発正本として保持し、同じ結果を47,270 bytes／SHA-256 `a77a7e0…`のsurface packへ事前compileしてruntimeに渡す方式へ変更した。表示用Build Sheetは87 KBへ縮小し、3D chunk到着前に静的boot shellを表示する。local production previewでは9,454 cells／37,990 volumeを維持し、warm navigation後のapp ready markerは79〜102 msだった。cold network／実公開端末の時間は未確認である。
 
 - 既定起動をPrototype B「辺境遺物録」へ切り替えた。Prototype 0.1「境界調査録」は比較用に`?prototype=0.1`で起動できる。
 - Prototype Bは、町―三叉路―聴取廃区を連続scrollする3,600×1,800のworldと固定斜め俯瞰cameraを持つ。moving character、collision silhouette、occluder、dynamic shadowはrealtime 3Dを維持し、地面、背景、建物面は高解像度の生成／baked surfaceを併用できるhybrid HD-2Dへ移行した。playerの現行authoring gridは24×32×16。

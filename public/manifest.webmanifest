@@ -1,8 +1,8 @@
 {
   "id": "/game/",
-  "name": "辺境遺物録",
-  "short_name": "辺境遺物",
-  "description": "正体不明のSF遺物を拾い、手動戦闘と選択で辺境の履歴を作る固定俯瞰リアルタイム3D・ハクスラ原型。",
+  "name": "F.R.A.M. — 辺境遺物記録モジュール",
+  "short_name": "F.R.A.M.",
+  "description": "自然に侵食された現代都市を放浪し、遺物を解析して世界の記憶を編むAI-nativeハクスラRPGの開発記録。",
   "lang": "ja",
   "dir": "ltr",
   "start_url": "./",

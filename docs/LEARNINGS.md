@@ -92,6 +92,7 @@ Last updated: 2026-08-02
 
 - 全身のfront／back silhouetteとside silhouetteをそのまま直積するvisual hullは、腕の横幅とbackpackの奥行きを組み合わせ、実在しない膨らんだ胴体を作る。rig familyが持つhead／torso／arm／leg／equipmentのsemantic volumeを再構築時のgateにするとmacro形状は改善するが、Beauty Sheet完全一致にはhair／face／jacket等のmodule別復元が必要である。
 - AI生成character sheetをproduction inputにする場合、魅力を決めるBeauty Sheetと、strict orthographic／同一scale／neutral pose／module分離を持つBuild Sheetを分けると、画像の良さと3D変換条件を両立できる。raw output、crop calibration、palette、rig family、生成器、hashを一つのsource definitionへ束ねる必要がある。
+- AI生成Build Sheetからの立体再構築は制作工程として再現可能でも、公開runtimeで画像読込、pixel sampling、volume構築を毎回やり直す必要はない。元画像、compiler、source definition、input／payload hashを保持し、検証済みsurface packを配信すれば、同じ9,454-cell正本を保ちながら初回表示を軽くできる。reference imageは表示用derivativeを別に作り、原寸正本を置き換えない。
 - cell解像度を72から92へ上げると目と髪の色境界は残りやすくなったが、可愛さはcell数だけでは決まらない。front hemisphereの顔色をBeauty正面へ所有させ、side projectionの別顔が3/4で重ならないようにし、次にhair shell／face planeを別moduleへ分ける順序が有効である。
 
 - Prototype Bには二つの独立した不足がある可能性が高い。Gate Aでは条件付き自動通常攻撃、手動大技、loot比較、異なるbuildを、Gate Bでは自分で選ぶ同時目的／拠点と、一回目が二回目のloadout／routeを変える因果を別々に検証する。一方を他方の代替にしない。

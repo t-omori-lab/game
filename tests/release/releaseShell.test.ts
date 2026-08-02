@@ -36,7 +36,7 @@ import viteConfig from "../../vite.config.ts?raw";
 describe("versioned public release shell", () => {
   it("uses a dedicated catalog entry and dedicated game entries", () => {
     expect(catalogHtml).toContain('src="/src/catalog.ts"');
-    expect(catalogHtml).toContain("Prototype Archive");
+    expect(catalogHtml).toContain("F.R.A.M. — Development Archive");
 
     expect(r01Html).toContain('src="./assets/index-');
     expect(r01Html).not.toContain("/src/main.ts");
@@ -153,7 +153,7 @@ describe("versioned public release shell", () => {
   });
 
   it("caches and restores each release document independently", () => {
-    expect(serviceWorker).toContain('const CACHE_NAME = "fram-catalog-v2"');
+    expect(serviceWorker).toContain('const CACHE_NAME = "fram-catalog-v3"');
     expect(serviceWorker).not.toContain('new URL("./r01/index.html"');
     expect(serviceWorker).not.toContain('new URL("./r05/index.html"');
     expect(serviceWorker).not.toContain("cacheDocumentAndLinkedAssets");

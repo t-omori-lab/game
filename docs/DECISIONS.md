@@ -164,3 +164,14 @@
 - Decision: 正式作品名を`F.R.A.M. (Frontier Relics Archive Module)`、日本語副題を「辺境遺物記録モジュール」、呼称を「フラム」とする。player characterはF.R.A.M.の操作者ではなく、辺境踏査、遺物解析、記憶編纂を担う身体化module instanceである。女性型`F-01`は最初のvisual benchmarkであり、character creation後の種族、性別／gender表現、体格、顔、髪、身体拡張、装備の違いをF.R.A.M. identityと能力制限へ自動結合しない。
 - Consequences: 探索、item解析、build、帰還、拠点、world stateをF.R.A.M.の三機能へ接続できる。moduleの製造者、起源、network、法的地位、複製／継承、instance命名法は別のworld-design decisionとして未決定に残す。
 - Supersedes: 「辺境遺物録」を正式名称候補として扱う状態。prototype内の地域名・記録名としての使用は妨げない
+
+---
+
+## ADR-016: Preserve user-adopted technical epochs beside playable releases
+
+- Date: 2026-08-02
+- Status: accepted
+- Context: Character Forge F-01は本編のreleaseではないが、AI生成sheetから高密度voxel 3D、semantic rig、realtime animationへ至る新しい制作基盤を初めて一画面で実証した。ユーザーは暫定約70%と評価し、同種の技術的エポックを今後もGitHub Pagesへ保存公開するよう指示した。
+- Decision: ユーザーが技術的エポックとして採択した検証成果は、`/game/forge/fXX/`または同等のstable URLへ凍結し、`/game/`の`Technology Epochs`へ新しい順で追加する。RXXのplayable releaseとは番号、status、一覧を分離し、実runtime capture、再現入力、source definition、provenance、validation、既知差分を残す。削除指示がない限り過去epochを保持する。
+- Consequences: 生成／描画基盤の進歩を後から比較できる一方、技術demoを完成game、最新playable版、commercial art合格と誤認させない表示が必要になる。次epochは新しい技術契約を実証し、ユーザーが保存価値を認めた時点で同じ公開手順へ進む。
+- Supersedes: none。prototype version保存規則をtechnical milestoneへ拡張する

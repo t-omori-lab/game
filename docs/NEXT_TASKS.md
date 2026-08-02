@@ -4,16 +4,17 @@ Last updated: 2026-08-02
 
 ## P0
 
-R06 Sharp Navigationのdeploy／public確認は完了し、R07／R08に続いてCharacter Forge F-01のAI sheet→3D volume→semantic rig工程をlocal実証した。Active P0は`F-01 user review → module-first F-02へ進むか判断`である。都市part追加はcharacter source方式の判断より後にする。F-01 pipeline design QAのpassをConcept C全景／commercial character art合格とは扱わない。
+R06 Sharp Navigationのdeploy／public確認は完了し、R07／R08に続いてCharacter Forge F-01のAI sheet→3D volume→semantic rig工程をlocal実証した。ユーザーはF-01を暫定約70%と評価し、技術的エポックとして保存公開してF-02へ進む判断をした。Active P0は`F-01 public verification → F-02 hair／face module-first reconstruction → gameplay-distance integration`である。都市part追加はcharacter source方式の確立より後にする。
 
 - [x] `Character Forge F-01`でBeauty Sheetから再生成可能な3D character正本を作る。
   - [x] 同一人物のstrict four-view＋module Build Sheetを生成し、raw imageとprovenanceを保存した。
   - [x] 外部`f01.source.json`から48×92×42／37,990 solid cellsを再構築し、9,454 outer surface cells、9 materials、7 semantic rig partsへcompileした。
   - [x] 独立`/game/forge/f01/`でidle／run／hit、5視点、2距離、wireframe／turntable、Beauty／Build／R05／R08比較を操作可能にした。
   - [x] 1280×720 same-screen visual comparison、strict TypeScript、37 files／202 tests、production buildをpassした。
-  - [ ] ユーザーがF-01をreviewし、F-02を(1)hair＋face、(2)torso＋jacket、(3)full module buildのどこまで進めるか決める。
-  - [ ] F-02ではBuild Sheet下段のmodule別正投影を独立復元し、全身visual hullを置き換える。Beauty Sheet完全一致／commercial art acceptanceを別gateにする。
-  - [ ] 明示的deploy指示があるまでForgeをcatalog／GitHub Pagesへ追加しない。公開R06を維持する。
+  - [x] ユーザーは細部の矛盾を残しつつ暫定約70%と評価し、ゲーム距離での成立可能性と技術的エポックとしての保存価値を認めた。
+  - [ ] F-01をR版から独立したTechnology Epochとしてcatalog／GitHub Pagesへ追加し、push、Pages run、公開catalog、公開Forgeを別々に確認する。公開Forgeは事前compileしたsurface pack、87 KB Build Sheet preview、即時boot shellを使い、元Build Sheetからの再現compilerは開発工程として保持する。
+  - [ ] F-02ではまずhair＋faceをBuild Sheet下段のmodule別正投影から独立復元し、頭部の全身visual hullを置き換える。Beauty Sheet close-upと通常gameplay cameraを同じacceptance gateにする。
+  - [ ] F-02 hair／face合格後にtorso＋jacket、limbs、equipmentへ同じmodule compilerを広げ、full module buildへ進む。Beauty Sheet完全一致／commercial art acceptanceを別gateにする。
 
 - [x] `F.R.A.M. R08 Unified Character Art candidate`をlocal production routeとして作る。
   - [x] R07のrig／weapon socketを保持し、15 pivotのvisible surfaceを19,221-cellの統一semantic characterへ置換した。

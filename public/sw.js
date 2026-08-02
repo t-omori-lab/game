@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "fram-catalog-v2";
+const CACHE_NAME = "fram-catalog-v3";
 const SCOPE_URL = new URL("./", self.registration.scope);
 const CATALOG_URL = new URL("./index.html", SCOPE_URL).href;
 const STATIC_URLS = [

@@ -6,7 +6,6 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import beautySheetUrl from "../../work/r07_character_depth/fram-r07-character-direction.png?url";
-import buildSheetUrl from "../../work/character_forge_f01/fram-f01-production-build-sheet.png?url";
 import r08BaselineUrl from "../../work/r08_character_art/r08-unified-05-1280x720.png?url";
 import r05BaselineUrl from "./assets/fram-r05-baseline.png?url";
 import {
@@ -15,6 +14,8 @@ import {
   type ForgeView,
 } from "./F01Character";
 import "./styles.css";
+
+const buildSheetUrl = `${import.meta.env.BASE_URL}forge/f01-build-sheet.jpg`;
 
 interface ReferenceItem {
   readonly id: "build" | "beauty" | "r05" | "r08";
@@ -29,7 +30,7 @@ const REFERENCES: readonly ReferenceItem[] = [
     id: "build",
     label: "Build Sheet",
     eyebrow: "GEOMETRY INPUT",
-    detail: "同一人物の4方向投影と意味パーツ。現在の3D正本はこの画像を実測して再構築しています。",
+    detail: "同一人物を正面・左右・背面と部位別に整理した制作図。3D正本は、この原画から開発時に生成した検証済みデータで起動します。",
     url: buildSheetUrl,
   },
   {
@@ -78,15 +79,15 @@ function layout(): string {
           <span>CHARACTER FORGE</span>
           <strong>F-01 / THE ARCHIVIST</strong>
         </div>
-        <div class="forge-build-state"><span></span>LOCAL RECONSTRUCTION</div>
+        <div class="forge-build-state"><span></span>REPRODUCIBLE RECONSTRUCTION</div>
       </header>
 
       <main class="forge-workspace">
         <section class="forge-stage" aria-label="F-01 real-time 3D preview">
           <div class="forge-loading" data-loading>
             <span class="forge-loader"></span>
-            <strong>BUILDING FOUR-VIEW VOLUME</strong>
-            <small>Build Sheetの輪郭・色・意味パーツから立体セルを生成中</small>
+            <strong>LOADING F-01</strong>
+            <small>検証済みの立体セルとrigを展開しています</small>
           </div>
           <div class="forge-stage-meta">
             <span class="forge-live"><i></i>REAL-TIME 3D</span>
@@ -152,7 +153,7 @@ function layout(): string {
             <ol>
               <li class="is-complete"><span>01</span><div><strong>BEAUTY SHEET</strong><small>identity + art direction</small></div></li>
               <li class="is-complete"><span>02</span><div><strong>BUILD SHEET</strong><small>orthographic + modules</small></div></li>
-              <li class="is-active"><span>03</span><div><strong>VISUAL HULL</strong><small>live 4-view reconstruction</small></div></li>
+              <li class="is-active"><span>03</span><div><strong>SURFACE PACK</strong><small>validated 4-view reconstruction</small></div></li>
               <li class="is-complete"><span>04</span><div><strong>SEMANTIC RIG</strong><small>idle / run / hit</small></div></li>
             </ol>
           </section>
@@ -338,10 +339,18 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
   const loading = query<HTMLElement>(applicationRoot, "[data-loading]");
   const sceneState = createScene(stage);
   setCameraView(sceneState.camera, sceneState.controls, "three-quarter", "close");
-  const character = await createF01Character(buildSheetUrl);
+  const character = createF01Character();
   sceneState.scene.add(character.root);
   character.root.rotation.y = -0.09;
   loading.classList.add("is-complete");
+  const navigationStartedAt = Number(
+    document.documentElement.dataset.framNavigationStart,
+  );
+  if (Number.isFinite(navigationStartedAt)) {
+    applicationRoot.dataset.readyMs = Math.round(
+      performance.now() - navigationStartedAt,
+    ).toString();
+  }
 
   query<HTMLElement>(applicationRoot, "[data-cell-count]").textContent =
     character.stats.renderedSurfaceCells.toLocaleString("en-US");
