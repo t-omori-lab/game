@@ -4,7 +4,7 @@ Last updated: 2026-08-03
 
 ## Confirmed
 
-- 2026-08-03、commit `d553898`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #22のbuild／deploy成功を確認した。公開catalogはfull stylesheetへのrender-blocking linkを持たず、static first viewの後でenhanceする。公開R06は`data-boot-state="shell"`の起動画面を即時表示し、主要game chunkをHTMLからmodulepreloadし、452,720-byteの地面画像を初期preloadしない。公開HTMLはcatalog 5,275 bytes、R06 3,812 bytesで、no-cache確認では両route HTTPS 200だった。strict TypeScript、Vitest 38 files／205 tests、production buildも合格した。これはiPhone実機、cold低速回線、first-controllable時間の合格を意味しない。
+- 2026-08-03、commit `d553898`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #23のbuild／deploy成功を確認した。公開catalogはfull stylesheetへのrender-blocking linkを持たず、static first viewの後でenhanceする。公開R06は`data-boot-state="shell"`の起動画面を即時表示し、主要game chunkをHTMLからmodulepreloadし、452,720-byteの地面画像を初期preloadしない。公開HTMLはcatalog 5,275 bytes、R06 3,812 bytesで、no-cache確認では両route HTTPS 200だった。strict TypeScript、Vitest 38 files／205 tests、production buildも合格した。これはiPhone実機、cold低速回線、first-controllable時間の合格を意味しない。
 - 2026-08-03、commit `026970f`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #21のbuild／deploy成功を確認した。公開`/game/`はF.R.A.M.がゲーム名、世界記憶型・放浪RPG、AI-native game development projectであること、actual R06 gameplay image、`最新版を遊ぶ`／`AI開発実験を見る`をfirst viewに表示した。scroll前はhero 1件だけが実`src`を持ち、R06〜R01／F-01 archiveはdeferredのままだった。公開ForgeはFIELD 16.2%／target 16%、view lockで動作し、catalog／Forgeともbrowser error／warning 0件だった。`/game/`、`/game/r01/`、`/game/r06/`、`/game/forge/f01/`はHTTPS 200だった。iPhone 16 Pro実機とuser visual acceptanceは別gateである。
 - Prototype 0.1はユーザー試遊で「ゲームとして一応出来上がっている」点を認められた一方、評価は約20点だった。
 - 主な不一致は、固定arena、接近や位置取りを必要としない常時自動遠隔攻撃、タワーディフェンス的な手触りだった。これは通常戦闘の自動化すべてを否定する結果ではない。
