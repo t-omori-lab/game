@@ -72,6 +72,7 @@ R09 First Memory Expedition
 
 ### C. R09 guards
 
+- root catalogはService Workerによるnavigation介入を持たない。R09のroute-scoped workerはcatalog scopeへ広げず、cacheするHTMLとhash付きassetを同じrelease manifestで固定する。
 - R06の公開performance baselineは、static boot shell、route専用static entry、主要game chunkのmodulepreload、地面画像の初期preload除外を持つ。R09の比較では、この起動順と空白なしのfirst paintも回帰対象にする。
 - [ ] 現行actorのままAのlogic proofを完了できるようにし、F-02待ちで停止させない。
 - [ ] F-01 pack／adapterの失敗、timeout、disable flag時は現行actorへfallbackし、First Memory Loop、save、reloadを完走する。WorldMemoryState／save schemaにはF-01／F-02固有IDを入れない。

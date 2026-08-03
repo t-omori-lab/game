@@ -171,11 +171,14 @@ describe("versioned public release shell", () => {
     });
   });
 
-  it("caches and restores each release document independently", () => {
-    expect(serviceWorker).toContain('const CACHE_NAME = "fram-catalog-v3"');
-    expect(serviceWorker).not.toContain('new URL("./r01/index.html"');
-    expect(serviceWorker).not.toContain('new URL("./r05/index.html"');
-    expect(serviceWorker).not.toContain("cacheDocumentAndLinkedAssets");
+  it("retires the root catalog worker without touching release workers", () => {
+    expect(catalogSource).toContain("retireCatalogServiceWorker");
+    expect(catalogSource).toContain('"fram-catalog-"');
+    expect(catalogSource).not.toContain("navigator.serviceWorker.register");
+    expect(serviceWorker).toContain("self.registration.unregister()");
+    expect(serviceWorker).toContain('"fram-catalog-"');
+    expect(serviceWorker).not.toContain('addEventListener("fetch"');
+    expect(serviceWorker).not.toContain('const CACHE_NAME = "fram-catalog-v3"');
     expect(r01ServiceWorker).toContain(
       'const CACHE_PREFIX = "relic-frontier-r01-shell-"',
     );
@@ -198,6 +201,7 @@ describe("versioned public release shell", () => {
     expect(serviceWorker).not.toContain("relic-frontier-r02-shell-");
     expect(serviceWorker).not.toContain("relic-frontier-r03-shell-");
     expect(serviceWorker).not.toContain("relic-frontier-r04-shell-");
+    expect(serviceWorker).not.toContain("fram-r06-shell-");
   });
 
   it("gates the Pages artifact on tests and compilation", () => {

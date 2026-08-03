@@ -10,9 +10,17 @@ import {
 
 const root = document.querySelector<HTMLElement>("#app");
 
+const RETIRED_CATALOG_CACHE_PREFIXES = [
+  "fram-catalog-",
+  "relic-frontier-shell-",
+  "small-persistent-world-shell-",
+] as const;
+
 if (root === null) {
   throw new Error("Prototype catalog root was not found.");
 }
+
+void retireCatalogServiceWorker();
 
 const aliasedRelease = resolvePrototypeAlias(window.location.search);
 const prototypeParameter = new URLSearchParams(window.location.search).get(
@@ -41,7 +49,6 @@ async function enhanceCatalog(applicationRoot: HTMLElement): Promise<void> {
     await import("./catalog.css");
     renderCatalog(applicationRoot);
     registerDeferredImages(applicationRoot);
-    registerServiceWorker();
   } catch (error: unknown) {
     // The static first view remains fully usable when enhancement fails.
     console.error("F.R.A.M. catalog enhancement failed.", error);
@@ -215,9 +222,28 @@ function registerDeferredImages(applicationRoot: ParentNode): void {
   images.forEach((image) => observer.observe(image));
 }
 
-function registerServiceWorker(): void {
-  if (!("serviceWorker" in navigator) || !import.meta.env.PROD) return;
-  window.addEventListener("load", () => {
-    void navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`);
-  });
+async function retireCatalogServiceWorker(): Promise<void> {
+  if (!import.meta.env.PROD) return;
+
+  try {
+    if ("serviceWorker" in navigator) {
+      const registration = await navigator.serviceWorker.getRegistration(
+        import.meta.env.BASE_URL,
+      );
+      await registration?.unregister();
+    }
+
+    if ("caches" in window) {
+      const cacheNames = await window.caches.keys();
+      await Promise.all(
+        cacheNames
+          .filter((name) => (
+            RETIRED_CATALOG_CACHE_PREFIXES.some((prefix) => name.startsWith(prefix))
+          ))
+          .map((name) => window.caches.delete(name)),
+      );
+    }
+  } catch (error: unknown) {
+    console.warn("F.R.A.M. catalog cache retirement failed.", error);
+  }
 }

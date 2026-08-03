@@ -1,9 +1,10 @@
 # Learnings: ゲーム開発
 
-Last updated: 2026-08-02
+Last updated: 2026-08-03
 
 ## Validated project learnings
 
+- root landingのnavigationへtimeoutなしnetwork-first Service Workerを置き、HTMLだけをcacheしてhash付きJS／CSSを同じversionで固定しないと、回線停滞時のblank待機と更新後のasset不整合を同時に招く。入口はstatic HTMLを直接配信し、offline要件がない限りroot workerを持たせない。必要な各releaseだけをscope別・manifest固定のworkerへ閉じ込める。
 - static first viewをHTMLへ置いても、そのentryがfull CSSをstatic importするとViteはrender-blocking stylesheet linkをHTMLへ挿入する。critical styleをinlineに保ち、full catalog CSSをenhancement時にdynamic importしてからDOMを置換すると、JS／CSS障害時も入口を使えるままfirst paintを分離できる。
 - 重いWebGL routeで空のapplication root、tiny dynamic-import entry、大きなbackground preloadを同時に使うと、blank screenとnetwork waterfallが重なる。inline boot shell、route専用static entry、主要chunkのmodulepreload、非critical imageの後回しを一組で行い、描画初期化前に一taskだけyieldすると、asset総量を変えずに待機の知覚と読み込み順を改善できる。
 - post stackだけではConcept Cへ届かない。単純な構造物でも、foreground／play band／backgroundのmass composition、heroとrouteの画面占有、wet／cloth／ceramic／metal／emissiveのmaterial分離、warm key／cool shadowを同時に設計すると、part数を増やす前に画面全体の知覚品質を大きく動かせる。
