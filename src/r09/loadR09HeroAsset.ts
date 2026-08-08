@@ -11,11 +11,11 @@ export type R09HeroAssetImporter = () => Promise<R09HeroAssetModule>;
 
 class R09HeroAssetTimeoutError extends Error {}
 
-const importR09HeroAsset: R09HeroAssetImporter = () =>
-  import("../prototypeB/render/hero/F01RForgeHeroVisual");
-
 const importF01HeroAsset: R09HeroAssetImporter = () =>
   import("../prototypeB/render/hero/F01ForgeHeroVisual");
+
+const importF01RHeroAsset: R09HeroAssetImporter = () =>
+  import("../prototypeB/render/hero/F01RForgeHeroVisual");
 
 const importF02HeroAsset: R09HeroAssetImporter = () =>
   import("../prototypeB/render/hero/F02ForgeHeroVisual");
@@ -23,7 +23,7 @@ const importF02HeroAsset: R09HeroAssetImporter = () =>
 export async function loadR09HeroAsset(
   search: string,
   timeoutMs = 4_000,
-  importer: R09HeroAssetImporter = importR09HeroAsset,
+  importer: R09HeroAssetImporter = importF01HeroAsset,
 ): Promise<PrototypeBHeroAssetRequest> {
   const actor = new URLSearchParams(search).get("actor");
   if (actor === "legacy") {
@@ -31,9 +31,11 @@ export async function loadR09HeroAsset(
   }
   const selectedImporter = actor === "f01"
     ? importF01HeroAsset
-    : actor === "f02"
-      ? importF02HeroAsset
-      : importer;
+    : actor === "f01r"
+      ? importF01RHeroAsset
+      : actor === "f02"
+        ? importF02HeroAsset
+        : importer;
 
   let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_resolve, reject) => {

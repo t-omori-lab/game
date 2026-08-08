@@ -29,6 +29,19 @@ describe("R09 hero asset loader", () => {
     expect(result.runtime).toBe(runtime);
   });
 
+  it("uses the unchanged F-01 surface pack by default and keeps F-01R opt-in", async () => {
+    const canonical = await loadR09HeroAsset("");
+    const reconstructed = await loadR09HeroAsset("?actor=f01r");
+
+    expect(canonical.status).toBe("loaded");
+    expect(canonical.runtime?.id).toBe("fram.character.f01.gameplay-bridge-v1");
+    expect(canonical.runtime?.visibleVoxelCells).toBe(9_454);
+    expect(reconstructed.status).toBe("loaded");
+    expect(reconstructed.runtime?.id).toBe(
+      "fram.character.f01r.source-faithful-head-v1",
+    );
+  });
+
   it("classifies import rejection and timeout without blocking gameplay", async () => {
     const rejected = await loadR09HeroAsset("", 50, async () => {
       throw new Error("network");

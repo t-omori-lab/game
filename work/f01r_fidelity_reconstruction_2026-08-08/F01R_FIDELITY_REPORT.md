@@ -1,6 +1,6 @@
 # F-01R Source-faithful Reconstruction Cell
 
-Status: local implementation and internal QA passed; user art review pending
+Status: local technical evidence preserved; rejected as the F-01 fidelity successor; R09 default restored to canonical F-01
 
 ## 結論
 
@@ -13,7 +13,7 @@ F-02のtechnical bridgeは保持し、art patchは不採択証拠として固定
 - deterministic compilerでschema v2／6-byte strideのsurface packを生成した。各cellはpart、materialに加えてmodule indexを持つ。
 - F-01の非頭部surfaceは今回の境界内で暫定再利用した。全身の完成を装ってはいない。
 - `F01RCharacter`を正本factoryとし、Character ForgeとR09 gameplay adapterが同じfactoryを呼ぶようにした。
-- ForgeにF-01／F-02／F-01R切替を追加し、R09はF-01Rを既定generated actor、`?actor=f01`／`?actor=f02`を比較経路にした。
+- ForgeにF-01／F-02／F-01R切替を追加した。初期実装ではR09既定をF-01Rへ変更したが、ユーザーreview後に公開Forgeと同じF-01 packを既定へ戻した。F-01Rは`?actor=f01r`、F-02は`?actor=f02`の比較経路として保持する。
 
 ## Compiled contract
 

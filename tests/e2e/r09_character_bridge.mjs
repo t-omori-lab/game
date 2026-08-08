@@ -7,7 +7,7 @@ import { resolve } from "node:path";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
-const url = process.argv[2] ?? "http://127.0.0.1:4176/game/r09/";
+const url = process.argv[2] ?? "http://127.0.0.1:4176/game/r09/?actor=f01r";
 const outputDirectory = resolve("output/playwright/f01r-fidelity");
 const executablePath = existsSync(chromium.executablePath())
   ? chromium.executablePath()

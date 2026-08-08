@@ -4,9 +4,9 @@ Last updated: 2026-08-08
 
 ## 結論
 
-**Goal 0、R09A `First Memory Logic Proof`、R09Bのtechnical bridge、F-01Rの最初のsource-faithful reconstruction cellはlocal完了した。** F-02はbridge／fallback／motion／性能証拠として保持するが、art successorとしては不採択。現在はF-01Rのuser visual review待ちであり、次の優先はF-01Rを全身moduleとsource correction loopへ拡張すること。
+**Goal 0、R09A `First Memory Logic Proof`、R09Bのtechnical bridgeはlocal完了し、公開Forgeと同じF-01 compiled packをR09の既定actorへ復帰した。** F-02とF-01Rはbridge／再構築の比較証拠として保持するが、F-01の代替正本にはしない。次は同一F-01を通常gameplay cameraでuser確認し、その正本を保持したversioned derivativeとして改善loopを設計する。
 
-F-01Rは、頭・顔・髪をruntime TypeScriptの箱追加ではなく、landmark／module／material／provenanceを持つsource dataから9,065-cell packへコンパイルする。ForgeとR09はIDだけでなくsource／payload digestまで一致した。これは生成→立体化→同じgameへ反映する一本の経路を頭部で証明したもので、Beauty Sheet完全一致や全身の編集loop完了ではない。
+F-01Rはsemantic sourceから別の9,065-cell packを生成できる技術証拠だが、公開F-01の頭部を忠実に移植する方法ではなかった。既に存在する3D正本は再生成せず、Forgeとgameが同じfactory／payload digestを読む。改善時だけF-01を凍結したまま新しいsource versionを作り、同一camera比較で採否する。
 
 ```text
 Goal 0 Safe Baseline ✓
@@ -15,8 +15,9 @@ Goal 0 Safe Baseline ✓
 R09 First Memory Expedition
 ├─ A. First Memory Loop ✓
 ├─ B. F-01 bridge → F-02 technical evidence ✓ art rejected
-├─ B2. F-01R source-faithful head cell ✓ user review pending
-└─ C. F-01R full-body modules／source correction loop ← next
+├─ B2. F-01R semantic head cell ✓ technical evidence／fidelity rejected
+├─ B3. exact F-01 pack restored as R09 default ✓
+└─ C. F-01-preserving versioned correction loop ← next
 
 → R10 Relic Buildcraft
 → 20〜30分 Golden Vertical Slice
@@ -214,10 +215,10 @@ F-02はtechnical candidateとして上記を満たしたが、ユーザーvisual
 
 ## Exact restart point
 
-1. `work/f01r_fidelity_reconstruction_2026-08-08/F01R_FIDELITY_REPORT.md`と比較画像を読む。
-2. ユーザーがF-01RのForge close／front／FIELDとR09 actual gameplayを見て、頭部方向を採択またはmodule単位で修正指示する。
-3. 採択時は同じsource／compiler契約でtorso、limbs、pack、textile、toolを全身moduleへ置換する。F-01／F-02 evidenceは上書きしない。
-4. F-01R全身packの同一digest、四方向、必須motion、装備、R09A回帰、R06比performanceを再実行する。
+1. R09既定actorと公開／local Character Forge F-01が同じ9,454-cell packを読むことを、通常gameplay cameraでuser確認する。
+2. camera、light、world scale、animation adapterによる見え方の差と、F-01 geometry自体の不足を分離する。
+3. F-01正本は凍結し、採択された頭・顔・髪を失わないversioned derivativeでmodule単位のsource correctionを行う。F-01／F-02／F-01R evidenceは上書きしない。
+4. derivativeの同一digest、四方向、必須motion、装備、R09A回帰、R06比performanceを再実行する。
 5. character generation loopが成立後、最小Product ShellとR10最初の二〜三buildを同じR09 sceneへ接続する。
 
 詳細な判断理由と合格条件は、`work/next_direction_2026-08-03/NEXT_DIRECTION.md`を参照する。
@@ -226,6 +227,7 @@ Product Foundationの採用範囲と2026-08-08の優先順は、本ファイル�
 
 ## Recently completed
 
+- [x] 公開Character Forge F-01の9,454-cell packをR09既定actorへ無加工で復帰。F-01Rは`?actor=f01r`へ分離し、asset ID／payload digest／cell数をproduction Chromeで確認 — 2026-08-08
 - [x] F-01R Source-faithful Reconstruction Cell — semantic head／face／hair source、schema v2 module pack（9,065 cells／20 modules）、Forge／R09 shared digest、same-view comparison、R09移動／大技browser check — 2026-08-08
 - [x] R09B Playable Character Bridge — F-01 gameplay adapter、evidence-driven F-02（10,160 cells）、Forge／R09 shared runtime、旧actor fallback、R09A回帰、R06比performance gate — 2026-08-08
 - [x] R09A First Memory Logic Proof — WorldMemoryState v1、二site×二module、回収物消費、撤退、二回目差分、R09専用local save／reload、四分岐browser gate、R06比性能gate — 2026-08-08
