@@ -44,10 +44,16 @@
 - First performance attempt: first-controllable and transfer passed, but detailed actor shadows produced frame p95 50.0 ms and 17 frames over 50 ms.
 - Final approach: keep every visible voxel and Forge shadow, but skip the per-part detailed shadow pass in gameplay, which already has a dedicated blob shadow.
 - Final local desktop Chrome medians, three runs per route:
-  - R06: first-controllable 990.7 ms; transfer 789,795 B; frame p95 33.5 ms.
-  - R09: first-controllable 928.8 ms; transfer 832,444 B; frame p95 34.2 ms.
-  - R09/R06 ratios: 0.938, 1.054, 1.021; long frames 0; browser errors 0.
+  - R06: first-controllable 979.2 ms; transfer 789,846 B; frame p95 33.8 ms.
+  - R09: first-controllable 940.5 ms; transfer 832,495 B; frame p95 35.0 ms.
+  - R09/R06 ratios: 0.960, 1.054, 1.036; long frames 0; browser errors 0.
 - These measurements are local desktop evidence only, not iPhone 16 Pro or public-deployment acceptance.
+
+## Completion-audit strengthening
+
+- The first four-direction assertion incorrectly required collision-constrained displacement to align almost perfectly with facing. The second attempt proved the rendered yaw but reached a request-board collision edge. The final gate moved to the known-traversable central road and kept strict expected facing/yaw values.
+- At both 1280×720 and 2560×1440, W/A/S/D produced forward movement and the expected simulation facing plus rendered yaw: −135°, −45°, 45°, 135° respectively.
+- The final exact build reran the R09A 2-site × 2-module table, reload, second-expedition effects and retreat; every branch passed.
 
 ## Closure
 

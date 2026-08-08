@@ -75,6 +75,15 @@ async function captureRuntimeActor(browserInstance, viewport) {
   await page.waitForTimeout(650);
   await page.screenshot({ path: `${prefix}-front-settled.png`, type: "png" });
 
+  // The request board has deliberate collision edges. Move onto the already
+  // proven central road before measuring all four directions so collision
+  // does not masquerade as a facing failure.
+  await moveTo(page, 700, 900, 72);
+  const directionEvidence = await proveFourDirectionMovement(
+    page,
+    prefix,
+  );
+
   await page.keyboard.down("d");
   await page.waitForTimeout(180);
   await page.screenshot({ path: `${prefix}-run.png`, type: "png" });
@@ -133,10 +142,15 @@ async function captureRuntimeActor(browserInstance, viewport) {
     kind: "runtime",
     viewport,
     contract,
+    directionEvidence,
     screenshots: [
       `${viewport.label}-idle.png`,
       `${viewport.label}-front-read.png`,
       `${viewport.label}-front-settled.png`,
+      `${viewport.label}-facing-up.png`,
+      `${viewport.label}-facing-left.png`,
+      `${viewport.label}-facing-down.png`,
+      `${viewport.label}-facing-right.png`,
       `${viewport.label}-run.png`,
       `${viewport.label}-skill.png`,
       `${viewport.label}-impact-tool.png`,
@@ -145,6 +159,115 @@ async function captureRuntimeActor(browserInstance, viewport) {
     consoleErrors,
     pageErrors,
   };
+}
+
+async function proveFourDirectionMovement(page, prefix) {
+  const directions = [
+    {
+      key: "w",
+      label: "up",
+      facingX: -Math.SQRT1_2,
+      facingY: -Math.SQRT1_2,
+      renderedYaw: -Math.PI * 0.75,
+    },
+    {
+      key: "a",
+      label: "left",
+      facingX: -Math.SQRT1_2,
+      facingY: Math.SQRT1_2,
+      renderedYaw: -Math.PI * 0.25,
+    },
+    {
+      key: "s",
+      label: "down",
+      facingX: Math.SQRT1_2,
+      facingY: Math.SQRT1_2,
+      renderedYaw: Math.PI * 0.25,
+    },
+    {
+      key: "d",
+      label: "right",
+      facingX: Math.SQRT1_2,
+      facingY: -Math.SQRT1_2,
+      renderedYaw: Math.PI * 0.75,
+    },
+  ];
+  const evidence = [];
+
+  for (const direction of directions) {
+    const before = await readPoseContract(page);
+    await page.keyboard.down(direction.key);
+    await page.waitForTimeout(220);
+    const after = await readPoseContract(page);
+    await page.screenshot({
+      path: `${prefix}-facing-${direction.label}.png`,
+      type: "png",
+    });
+    await page.keyboard.up(direction.key);
+    await page.waitForTimeout(90);
+
+    const deltaX = after.playerX - before.playerX;
+    const deltaY = after.playerY - before.playerY;
+    const distance = Math.hypot(deltaX, deltaY);
+    const facingLength = Math.hypot(after.facingX, after.facingY);
+    const alignment =
+      distance > 0 && facingLength > 0
+        ? (deltaX * after.facingX + deltaY * after.facingY) /
+          (distance * facingLength)
+        : 0;
+    const movesForward =
+      deltaX * after.facingX + deltaY * after.facingY > 0;
+    const facingMatches =
+      Math.abs(after.facingX - direction.facingX) < 0.002 &&
+      Math.abs(after.facingY - direction.facingY) < 0.002;
+    const renderedYawMatches =
+      Math.abs(after.heroFacingRadians - direction.renderedYaw) < 0.002;
+    if (
+      distance < 10 ||
+      !movesForward ||
+      !facingMatches ||
+      !renderedYawMatches
+    ) {
+      throw new Error(
+        `Direction ${direction.label} did not match movement, simulation facing and rendered yaw: ${JSON.stringify({ before, after, distance, alignment, movesForward, facingMatches, renderedYawMatches })}`,
+      );
+    }
+    evidence.push({
+      ...direction,
+      before,
+      after,
+      distance: Math.round(distance * 10) / 10,
+      alignment: Math.round(alignment * 1_000) / 1_000,
+      movesForward,
+    });
+  }
+
+  const distinctRenderedDirections = new Set(
+    evidence.map((entry) => entry.after.heroFacingRadians),
+  ).size;
+  if (distinctRenderedDirections !== directions.length) {
+    throw new Error(
+      `Expected four rendered actor directions, received ${distinctRenderedDirections}.`,
+    );
+  }
+  return evidence;
+}
+
+async function readPoseContract(page) {
+  return page.evaluate(() => {
+    const stage = document.querySelector('[data-testid="game-stage"]');
+    const canvas = document.querySelector('[data-testid="game-world"] canvas');
+    if (!(stage instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) {
+      throw new Error("R09 pose contract elements are missing.");
+    }
+    return {
+      playerX: Number(stage.dataset.playerX),
+      playerY: Number(stage.dataset.playerY),
+      facingX: Number(stage.dataset.playerFacingX),
+      facingY: Number(stage.dataset.playerFacingY),
+      heroFacingRadians: Number(canvas.dataset.heroFacingRadians),
+    };
+  });
 }
 
 async function captureLegacyFallback(browserInstance, viewport) {

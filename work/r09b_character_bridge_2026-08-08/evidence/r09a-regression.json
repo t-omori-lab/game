@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "gate": "r09-first-memory-loop-browser",
   "status": "passed",
-  "measuredAt": "2026-08-08T12:34:01.643Z",
+  "measuredAt": "2026-08-08T13:02:02.148Z",
   "url": "http://127.0.0.1:4176/game/r09/",
   "viewport": {
     "width": 1280,
@@ -156,7 +156,7 @@
         "playerSpeed": 162,
         "relicCooldownMaxTicks": 150,
         "saved": "1",
-        "autoBasicEvents": 7,
+        "autoBasicEvents": 6,
         "manualSkillEvents": 5
       },
       "secondExpedition": {
@@ -219,8 +219,8 @@
         "playerSpeed": 162,
         "relicCooldownMaxTicks": 150,
         "saved": "1",
-        "autoBasicEvents": 8,
-        "manualSkillEvents": 5
+        "autoBasicEvents": 6,
+        "manualSkillEvents": 6
       },
       "secondExpedition": {
         "loadSource": "empty",

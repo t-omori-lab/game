@@ -1924,6 +1924,9 @@ export class PrototypeBRenderer {
       player.facingY,
       this.environmentProfile === "r04-live" ? "+z" : "-z",
     );
+    this.renderer.domElement.dataset.heroFacingRadians = String(
+      Math.round(this.playerGroup.rotation.y * 1_000) / 1_000,
+    );
     this.bladeMesh.visible = player.weaponId === "blade";
     this.impactMesh.visible = player.weaponId === "impact";
 

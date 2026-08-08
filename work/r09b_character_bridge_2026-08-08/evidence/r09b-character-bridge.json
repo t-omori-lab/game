@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "gate": "r09b-playable-character-bridge",
   "status": "passed",
-  "measuredAt": "2026-08-08T12:37:59.014Z",
+  "measuredAt": "2026-08-08T12:57:51.641Z",
   "url": "http://127.0.0.1:4176/game/r09/",
   "browserExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   "captures": [
@@ -22,16 +22,118 @@
         "heroVoxelCells": "10160",
         "heroCharacterPreset": "f02-evidence-corrected",
         "weapon": "impact",
-        "playerX": 833,
-        "playerY": 883,
+        "playerX": 842,
+        "playerY": 855,
         "autoBasicEvents": 1,
         "manualSkillEvents": 1,
         "internalResolution": "1278x718"
       },
+      "directionEvidence": [
+        {
+          "key": "w",
+          "label": "up",
+          "facingX": -0.7071067811865476,
+          "facingY": -0.7071067811865476,
+          "renderedYaw": -2.356194490192345,
+          "before": {
+            "playerX": 643,
+            "playerY": 919,
+            "facingX": 1,
+            "facingY": 0,
+            "heroFacingRadians": 1.571
+          },
+          "after": {
+            "playerX": 616,
+            "playerY": 892,
+            "facingX": -0.7071067811865475,
+            "facingY": -0.7071067811865475,
+            "heroFacingRadians": -2.356
+          },
+          "distance": 38.2,
+          "alignment": 1,
+          "movesForward": true
+        },
+        {
+          "key": "a",
+          "label": "left",
+          "facingX": -0.7071067811865476,
+          "facingY": 0.7071067811865476,
+          "renderedYaw": -0.7853981633974483,
+          "before": {
+            "playerX": 582,
+            "playerY": 873,
+            "facingX": -0.7071067811865475,
+            "facingY": -0.7071067811865475,
+            "heroFacingRadians": -2.356
+          },
+          "after": {
+            "playerX": 555,
+            "playerY": 900,
+            "facingX": -0.7071067811865475,
+            "facingY": 0.7071067811865475,
+            "heroFacingRadians": -0.785
+          },
+          "distance": 38.2,
+          "alignment": 1,
+          "movesForward": true
+        },
+        {
+          "key": "s",
+          "label": "down",
+          "facingX": 0.7071067811865476,
+          "facingY": 0.7071067811865476,
+          "renderedYaw": 0.7853981633974483,
+          "before": {
+            "playerX": 529,
+            "playerY": 919,
+            "facingX": -0.7071067811865475,
+            "facingY": 0.7071067811865475,
+            "heroFacingRadians": -0.785
+          },
+          "after": {
+            "playerX": 552,
+            "playerY": 919,
+            "facingX": 0.7071067811865475,
+            "facingY": 0.7071067811865475,
+            "heroFacingRadians": 0.785
+          },
+          "distance": 23,
+          "alignment": 0.707,
+          "movesForward": true
+        },
+        {
+          "key": "d",
+          "label": "right",
+          "facingX": 0.7071067811865476,
+          "facingY": -0.7071067811865476,
+          "renderedYaw": 2.356194490192345,
+          "before": {
+            "playerX": 582,
+            "playerY": 950,
+            "facingX": 0.7071067811865475,
+            "facingY": 0.7071067811865475,
+            "heroFacingRadians": 0.785
+          },
+          "after": {
+            "playerX": 605,
+            "playerY": 927,
+            "facingX": 0.7071067811865475,
+            "facingY": -0.7071067811865475,
+            "heroFacingRadians": 2.356
+          },
+          "distance": 32.5,
+          "alignment": 1,
+          "movesForward": true
+        }
+      ],
       "screenshots": [
         "1280x720-idle.png",
         "1280x720-front-read.png",
         "1280x720-front-settled.png",
+        "1280x720-facing-up.png",
+        "1280x720-facing-left.png",
+        "1280x720-facing-down.png",
+        "1280x720-facing-right.png",
         "1280x720-run.png",
         "1280x720-skill.png",
         "1280x720-impact-tool.png",
@@ -56,16 +158,118 @@
         "heroVoxelCells": "10160",
         "heroCharacterPreset": "f02-evidence-corrected",
         "weapon": "impact",
-        "playerX": 837,
-        "playerY": 866,
+        "playerX": 830,
+        "playerY": 885,
         "autoBasicEvents": 1,
         "manualSkillEvents": 1,
         "internalResolution": "2558x1438"
       },
+      "directionEvidence": [
+        {
+          "key": "w",
+          "label": "up",
+          "facingX": -0.7071067811865476,
+          "facingY": -0.7071067811865476,
+          "renderedYaw": -2.356194490192345,
+          "before": {
+            "playerX": 645,
+            "playerY": 919,
+            "facingX": 1,
+            "facingY": 0,
+            "heroFacingRadians": 1.571
+          },
+          "after": {
+            "playerX": 614,
+            "playerY": 889,
+            "facingX": -0.7071067811865475,
+            "facingY": -0.7071067811865475,
+            "heroFacingRadians": -2.356
+          },
+          "distance": 43.1,
+          "alignment": 1,
+          "movesForward": true
+        },
+        {
+          "key": "a",
+          "label": "left",
+          "facingX": -0.7071067811865476,
+          "facingY": 0.7071067811865476,
+          "renderedYaw": -0.7853981633974483,
+          "before": {
+            "playerX": 527,
+            "playerY": 873,
+            "facingX": -0.7071067811865475,
+            "facingY": -0.7071067811865475,
+            "heroFacingRadians": -2.356
+          },
+          "after": {
+            "playerX": 500,
+            "playerY": 900,
+            "facingX": -0.7071067811865475,
+            "facingY": 0.7071067811865475,
+            "heroFacingRadians": -0.785
+          },
+          "distance": 38.2,
+          "alignment": 1,
+          "movesForward": true
+        },
+        {
+          "key": "s",
+          "label": "down",
+          "facingX": 0.7071067811865476,
+          "facingY": 0.7071067811865476,
+          "renderedYaw": 0.7853981633974483,
+          "before": {
+            "playerX": 401,
+            "playerY": 965,
+            "facingX": -0.7071067811865475,
+            "facingY": 0.7071067811865475,
+            "heroFacingRadians": -0.785
+          },
+          "after": {
+            "playerX": 423,
+            "playerY": 988,
+            "facingX": 0.7071067811865475,
+            "facingY": 0.7071067811865475,
+            "heroFacingRadians": 0.785
+          },
+          "distance": 31.8,
+          "alignment": 1,
+          "movesForward": true
+        },
+        {
+          "key": "d",
+          "label": "right",
+          "facingX": 0.7071067811865476,
+          "facingY": -0.7071067811865476,
+          "renderedYaw": 2.356194490192345,
+          "before": {
+            "playerX": 450,
+            "playerY": 1015,
+            "facingX": 0.7071067811865475,
+            "facingY": 0.7071067811865475,
+            "heroFacingRadians": 0.785
+          },
+          "after": {
+            "playerX": 469,
+            "playerY": 992,
+            "facingX": 0.7071067811865475,
+            "facingY": -0.7071067811865475,
+            "heroFacingRadians": 2.356
+          },
+          "distance": 29.8,
+          "alignment": 0.995,
+          "movesForward": true
+        }
+      ],
       "screenshots": [
         "2560x1440-idle.png",
         "2560x1440-front-read.png",
         "2560x1440-front-settled.png",
+        "2560x1440-facing-up.png",
+        "2560x1440-facing-left.png",
+        "2560x1440-facing-down.png",
+        "2560x1440-facing-right.png",
         "2560x1440-run.png",
         "2560x1440-skill.png",
         "2560x1440-impact-tool.png",

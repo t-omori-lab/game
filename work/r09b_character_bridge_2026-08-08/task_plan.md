@@ -49,6 +49,7 @@ Character Forge F-01の承認済みcompiled surface packを、薄いadapter経�
 - 2026-08-08: F-02 unit tests passed under Vitest, but strict TypeScript retained the literal patch union and could not see optional `groupName` on every member. Widened the immutable table to its declared `PatchDefinition` contract.
 - 2026-08-08: first F-02 Forge browser pass rendered correctly but failed the zero-console gate on an implicit missing favicon request. Added the same project icon explicitly to the Forge document.
 - 2026-08-08: first performance runはF-02の全InstancedMeshをshadow mapへ再描画し、frame p95 50.0 ms／long frames 17で不合格。gameplay actorの詳細shadow casterだけを無効化し、既存blob shadowへ集約すると34.2 ms／0へ回復した。
+- 2026-08-08: completion auditでW/A/S/Dの実移動、simulation facing、renderer yawを同時に記録するgateを追加した。依頼板collisionを検査失敗と誤認した二試行を修正し、既知の通行可能な中央道路で4方向すべてを両解像度で合格させた。
 - 2026-08-08: bundled pnpmの配置変更と既存node_modulesのstore metadata差によりpnpm wrapperが再installを要求した。依存を変更せず、固定済みvitest／TypeScript／Viteをbundled Nodeで直接実行した。
 - 2026-08-08: standard postflightは隔離worktreeがWorkspace root外にあるため、project relative-path算出で停止した。内容を迂回せず、同じ三構成を正規projectのWorkspace audit 36/36、registry check current、隔離branch git status cleanとして個別実行し、すべて合格した。
 

@@ -49,6 +49,7 @@
   ],
   "mechanicalGates": {
     "runtimeAtBothViewports": "passed",
+    "fourDirectionMovementSimulationFacingAndRenderedYaw": "passed",
     "manualSkill": "passed",
     "autoBasicCombat": "passed",
     "forgeAndRuntimeShareAssetId": "passed",

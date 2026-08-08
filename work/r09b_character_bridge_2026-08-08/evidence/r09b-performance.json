@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "gate": "r09-vs-r06-production-preview",
   "status": "passed",
-  "measuredAt": "2026-08-08T12:37:22.088Z",
+  "measuredAt": "2026-08-08T12:59:31.325Z",
   "baseUrl": "http://127.0.0.1:4176/game/",
   "viewport": {
     "width": 1280,
@@ -16,18 +16,18 @@
     "r06": [
       {
         "route": "r06",
-        "firstControllableMs": 1351.4,
-        "appReadyMs": 833,
+        "firstControllableMs": 1245.3,
+        "appReadyMs": 818,
         "transfer": {
-          "sameOriginBytes": 789795,
-          "decodedBytes": 1577029,
+          "sameOriginBytes": 789846,
+          "decodedBytes": 1577232,
           "resourceCount": 8,
           "resources": [
             {
-              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "pathname": "/game/assets/index-G-ZaMpQ3.js",
               "initiatorType": "other",
-              "transferSize": 178971,
-              "decodedBodySize": 512388
+              "transferSize": 179020,
+              "decodedBodySize": 512591
             },
             {
               "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
@@ -36,9 +36,9 @@
               "decodedBodySize": 711
             },
             {
-              "pathname": "/game/assets/r06-BM2Mym3f.js",
+              "pathname": "/game/assets/r06-C7lxU1sX.js",
               "initiatorType": "script",
-              "transferSize": 1227,
+              "transferSize": 1229,
               "decodedBodySize": 1485
             },
             {
@@ -69,101 +69,15 @@
               "pathname": "/game/r06/icon.svg",
               "initiatorType": "other",
               "transferSize": 1214,
-              "decodedBodySize": 2084
-            }
-          ]
-        },
-        "frames": {
-          "count": 240,
-          "p95Ms": 33.4,
-          "longFrames": 0,
-          "maximumMs": 34.3
-        },
-        "input": {
-          "before": {
-            "x": 430,
-            "y": 900
-          },
-          "after": {
-            "x": 500,
-            "y": 900
-          },
-          "distance": 70,
-          "moved": true
-        },
-        "consoleErrors": [],
-        "pageErrors": []
-      },
-      {
-        "route": "r06",
-        "firstControllableMs": 990.7,
-        "appReadyMs": 716,
-        "transfer": {
-          "sameOriginBytes": 790095,
-          "decodedBytes": 1579113,
-          "resourceCount": 9,
-          "resources": [
-            {
-              "pathname": "/game/assets/index-Cb-Kl27w.js",
-              "initiatorType": "other",
-              "transferSize": 178971,
-              "decodedBodySize": 512388
-            },
-            {
-              "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
-              "initiatorType": "other",
-              "transferSize": 1011,
-              "decodedBodySize": 711
-            },
-            {
-              "pathname": "/game/assets/r06-BM2Mym3f.js",
-              "initiatorType": "script",
-              "transferSize": 1227,
-              "decodedBodySize": 1485
-            },
-            {
-              "pathname": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
-              "initiatorType": "img",
-              "transferSize": 453020,
-              "decodedBodySize": 452720
-            },
-            {
-              "pathname": "/game/assets/styles-ss_RKbFy.css",
-              "initiatorType": "link",
-              "transferSize": 9432,
-              "decodedBodySize": 40915
-            },
-            {
-              "pathname": "/game/assets/UnrealBloomPass-CUqOIqa1.js",
-              "initiatorType": "other",
-              "transferSize": 142828,
-              "decodedBodySize": 562914
-            },
-            {
-              "pathname": "/game/r06/",
-              "initiatorType": "navigation",
-              "transferSize": 2092,
-              "decodedBodySize": 3812
-            },
-            {
-              "pathname": "/game/r06/icon.svg",
-              "initiatorType": "other",
-              "transferSize": 1214,
-              "decodedBodySize": 2084
-            },
-            {
-              "pathname": "/game/r06/icon.svg",
-              "initiatorType": "other",
-              "transferSize": 300,
               "decodedBodySize": 2084
             }
           ]
         },
         "frames": {
           "count": 242,
-          "p95Ms": 33.5,
+          "p95Ms": 33.4,
           "longFrames": 0,
-          "maximumMs": 34.3
+          "maximumMs": 35.3
         },
         "input": {
           "before": {
@@ -171,10 +85,10 @@
             "y": 900
           },
           "after": {
-            "x": 500,
+            "x": 495,
             "y": 900
           },
-          "distance": 70,
+          "distance": 65,
           "moved": true
         },
         "consoleErrors": [],
@@ -182,18 +96,18 @@
       },
       {
         "route": "r06",
-        "firstControllableMs": 948.4,
-        "appReadyMs": 709,
+        "firstControllableMs": 979.2,
+        "appReadyMs": 708,
         "transfer": {
-          "sameOriginBytes": 789795,
-          "decodedBytes": 1577029,
+          "sameOriginBytes": 789846,
+          "decodedBytes": 1577232,
           "resourceCount": 8,
           "resources": [
             {
-              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "pathname": "/game/assets/index-G-ZaMpQ3.js",
               "initiatorType": "other",
-              "transferSize": 178971,
-              "decodedBodySize": 512388
+              "transferSize": 179020,
+              "decodedBodySize": 512591
             },
             {
               "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
@@ -202,9 +116,9 @@
               "decodedBodySize": 711
             },
             {
-              "pathname": "/game/assets/r06-BM2Mym3f.js",
+              "pathname": "/game/assets/r06-C7lxU1sX.js",
               "initiatorType": "script",
-              "transferSize": 1227,
+              "transferSize": 1229,
               "decodedBodySize": 1485
             },
             {
@@ -240,10 +154,10 @@
           ]
         },
         "frames": {
-          "count": 239,
-          "p95Ms": 33.7,
+          "count": 244,
+          "p95Ms": 34.2,
           "longFrames": 0,
-          "maximumMs": 34.3
+          "maximumMs": 35.3
         },
         "input": {
           "before": {
@@ -251,10 +165,90 @@
             "y": 900
           },
           "after": {
-            "x": 500,
+            "x": 495,
             "y": 900
           },
-          "distance": 70,
+          "distance": 65,
+          "moved": true
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "r06",
+        "firstControllableMs": 953.4,
+        "appReadyMs": 706,
+        "transfer": {
+          "sameOriginBytes": 789846,
+          "decodedBytes": 1577232,
+          "resourceCount": 8,
+          "resources": [
+            {
+              "pathname": "/game/assets/index-G-ZaMpQ3.js",
+              "initiatorType": "other",
+              "transferSize": 179020,
+              "decodedBodySize": 512591
+            },
+            {
+              "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
+              "initiatorType": "other",
+              "transferSize": 1011,
+              "decodedBodySize": 711
+            },
+            {
+              "pathname": "/game/assets/r06-C7lxU1sX.js",
+              "initiatorType": "script",
+              "transferSize": 1229,
+              "decodedBodySize": 1485
+            },
+            {
+              "pathname": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
+              "initiatorType": "img",
+              "transferSize": 453020,
+              "decodedBodySize": 452720
+            },
+            {
+              "pathname": "/game/assets/styles-ss_RKbFy.css",
+              "initiatorType": "link",
+              "transferSize": 9432,
+              "decodedBodySize": 40915
+            },
+            {
+              "pathname": "/game/assets/UnrealBloomPass-CUqOIqa1.js",
+              "initiatorType": "other",
+              "transferSize": 142828,
+              "decodedBodySize": 562914
+            },
+            {
+              "pathname": "/game/r06/",
+              "initiatorType": "navigation",
+              "transferSize": 2092,
+              "decodedBodySize": 3812
+            },
+            {
+              "pathname": "/game/r06/icon.svg",
+              "initiatorType": "other",
+              "transferSize": 1214,
+              "decodedBodySize": 2084
+            }
+          ]
+        },
+        "frames": {
+          "count": 245,
+          "p95Ms": 33.8,
+          "longFrames": 0,
+          "maximumMs": 35.4
+        },
+        "input": {
+          "before": {
+            "x": 430,
+            "y": 900
+          },
+          "after": {
+            "x": 495,
+            "y": 900
+          },
+          "distance": 65,
           "moved": true
         },
         "consoleErrors": [],
@@ -264,17 +258,17 @@
     "r09": [
       {
         "route": "r09",
-        "firstControllableMs": 928.8,
-        "appReadyMs": 713,
+        "firstControllableMs": 940.5,
+        "appReadyMs": 724,
         "transfer": {
-          "sameOriginBytes": 832444,
-          "decodedBytes": 1674089,
+          "sameOriginBytes": 832495,
+          "decodedBytes": 1674292,
           "resourceCount": 11,
           "resources": [
             {
-              "pathname": "/game/assets/F02ForgeHeroVisual-DnQycfjc.js",
+              "pathname": "/game/assets/F02ForgeHeroVisual-CAnbiFn1.js",
               "initiatorType": "script",
-              "transferSize": 1980,
+              "transferSize": 1981,
               "decodedBodySize": 4068
             },
             {
@@ -284,10 +278,10 @@
               "decodedBodySize": 74884
             },
             {
-              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "pathname": "/game/assets/index-G-ZaMpQ3.js",
               "initiatorType": "other",
-              "transferSize": 178971,
-              "decodedBodySize": 512388
+              "transferSize": 179020,
+              "decodedBodySize": 512591
             },
             {
               "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
@@ -302,9 +296,9 @@
               "decodedBodySize": 1115
             },
             {
-              "pathname": "/game/assets/r09-oN2qtvFN.js",
+              "pathname": "/game/assets/r09-cR9D5CwS.js",
               "initiatorType": "script",
-              "transferSize": 3442,
+              "transferSize": 3441,
               "decodedBodySize": 8666
             },
             {
@@ -334,16 +328,16 @@
             {
               "pathname": "/game/r09/",
               "initiatorType": "navigation",
-              "transferSize": 1990,
+              "transferSize": 1992,
               "decodedBodySize": 3273
             }
           ]
         },
         "frames": {
-          "count": 180,
-          "p95Ms": 34.2,
+          "count": 179,
+          "p95Ms": 35,
           "longFrames": 0,
-          "maximumMs": 34.3
+          "maximumMs": 35.3
         },
         "input": {
           "before": {
@@ -351,10 +345,10 @@
             "y": 900
           },
           "after": {
-            "x": 504,
-            "y": 904
+            "x": 495,
+            "y": 900
           },
-          "distance": 74.11,
+          "distance": 65,
           "moved": true
         },
         "consoleErrors": [],
@@ -362,17 +356,17 @@
       },
       {
         "route": "r09",
-        "firstControllableMs": 927.5,
-        "appReadyMs": 715,
+        "firstControllableMs": 973.8,
+        "appReadyMs": 702,
         "transfer": {
-          "sameOriginBytes": 832444,
-          "decodedBytes": 1674089,
+          "sameOriginBytes": 832495,
+          "decodedBytes": 1674292,
           "resourceCount": 11,
           "resources": [
             {
-              "pathname": "/game/assets/F02ForgeHeroVisual-DnQycfjc.js",
+              "pathname": "/game/assets/F02ForgeHeroVisual-CAnbiFn1.js",
               "initiatorType": "script",
-              "transferSize": 1980,
+              "transferSize": 1981,
               "decodedBodySize": 4068
             },
             {
@@ -382,10 +376,10 @@
               "decodedBodySize": 74884
             },
             {
-              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "pathname": "/game/assets/index-G-ZaMpQ3.js",
               "initiatorType": "other",
-              "transferSize": 178971,
-              "decodedBodySize": 512388
+              "transferSize": 179020,
+              "decodedBodySize": 512591
             },
             {
               "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
@@ -400,9 +394,9 @@
               "decodedBodySize": 1115
             },
             {
-              "pathname": "/game/assets/r09-oN2qtvFN.js",
+              "pathname": "/game/assets/r09-cR9D5CwS.js",
               "initiatorType": "script",
-              "transferSize": 3442,
+              "transferSize": 3441,
               "decodedBodySize": 8666
             },
             {
@@ -432,16 +426,16 @@
             {
               "pathname": "/game/r09/",
               "initiatorType": "navigation",
-              "transferSize": 1990,
+              "transferSize": 1992,
               "decodedBodySize": 3273
             }
           ]
         },
         "frames": {
-          "count": 177,
-          "p95Ms": 34.2,
+          "count": 178,
+          "p95Ms": 35.2,
           "longFrames": 0,
-          "maximumMs": 34.3
+          "maximumMs": 35.3
         },
         "input": {
           "before": {
@@ -460,17 +454,17 @@
       },
       {
         "route": "r09",
-        "firstControllableMs": 973.6,
-        "appReadyMs": 701,
+        "firstControllableMs": 913.4,
+        "appReadyMs": 700,
         "transfer": {
-          "sameOriginBytes": 832444,
-          "decodedBytes": 1674089,
+          "sameOriginBytes": 832495,
+          "decodedBytes": 1674292,
           "resourceCount": 11,
           "resources": [
             {
-              "pathname": "/game/assets/F02ForgeHeroVisual-DnQycfjc.js",
+              "pathname": "/game/assets/F02ForgeHeroVisual-CAnbiFn1.js",
               "initiatorType": "script",
-              "transferSize": 1980,
+              "transferSize": 1981,
               "decodedBodySize": 4068
             },
             {
@@ -480,10 +474,10 @@
               "decodedBodySize": 74884
             },
             {
-              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "pathname": "/game/assets/index-G-ZaMpQ3.js",
               "initiatorType": "other",
-              "transferSize": 178971,
-              "decodedBodySize": 512388
+              "transferSize": 179020,
+              "decodedBodySize": 512591
             },
             {
               "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
@@ -498,9 +492,9 @@
               "decodedBodySize": 1115
             },
             {
-              "pathname": "/game/assets/r09-oN2qtvFN.js",
+              "pathname": "/game/assets/r09-cR9D5CwS.js",
               "initiatorType": "script",
-              "transferSize": 3442,
+              "transferSize": 3441,
               "decodedBodySize": 8666
             },
             {
@@ -530,16 +524,16 @@
             {
               "pathname": "/game/r09/",
               "initiatorType": "navigation",
-              "transferSize": 1990,
+              "transferSize": 1992,
               "decodedBodySize": 3273
             }
           ]
         },
         "frames": {
-          "count": 179,
-          "p95Ms": 34.1,
+          "count": 180,
+          "p95Ms": 34.4,
           "longFrames": 0,
-          "maximumMs": 34.2
+          "maximumMs": 35.3
         },
         "input": {
           "before": {
@@ -559,33 +553,33 @@
     ]
   },
   "artifactFingerprints": {
-    "r06": "79d53600873b2863db464ef7735d2c9f835d82ee30eb89cfe2e49b043e0ec9bd",
-    "r09": "34f8365e7b594611271842f05c0b5648824ac5ff9f82a6d9744db2cd9ebd9be7"
+    "r06": "8f11772d3d2a77992e7a590f4ddb70433ec621d85cc1e0f0b2f1a2f3e552a866",
+    "r09": "92b928278427242655708c5ae2d49a9713298456a8b921869b24eadc31c3ccf5"
   },
   "summary": {
     "r06": {
-      "firstControllableMedianMs": 990.7,
-      "appReadyMedianMs": 716,
-      "sameOriginTransferMedianBytes": 789795,
-      "decodedMedianBytes": 1577029,
-      "frameP95MedianMs": 33.5,
+      "firstControllableMedianMs": 979.2,
+      "appReadyMedianMs": 708,
+      "sameOriginTransferMedianBytes": 789846,
+      "decodedMedianBytes": 1577232,
+      "frameP95MedianMs": 33.8,
       "longFramesTotal": 0,
-      "maximumFrameMs": 34.3
+      "maximumFrameMs": 35.4
     },
     "r09": {
-      "firstControllableMedianMs": 928.8,
-      "appReadyMedianMs": 713,
-      "sameOriginTransferMedianBytes": 832444,
-      "decodedMedianBytes": 1674089,
-      "frameP95MedianMs": 34.2,
+      "firstControllableMedianMs": 940.5,
+      "appReadyMedianMs": 702,
+      "sameOriginTransferMedianBytes": 832495,
+      "decodedMedianBytes": 1674292,
+      "frameP95MedianMs": 35,
       "longFramesTotal": 0,
-      "maximumFrameMs": 34.3
+      "maximumFrameMs": 35.3
     }
   },
   "ratios": {
-    "firstControllable": 0.9375189260119107,
-    "transfer": 1.054000088630594,
-    "frameP95": 1.0208955223880598
+    "firstControllable": 0.9604779411764706,
+    "transfer": 1.053996601869225,
+    "frameP95": 1.0355029585798818
   },
   "gates": {
     "firstControllableWithinTenPercent": true,

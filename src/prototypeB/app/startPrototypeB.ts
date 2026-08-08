@@ -1182,6 +1182,8 @@ function updateInterface(
   layout.stage.dataset.questPhase = state.quest.phase;
   layout.stage.dataset.playerX = String(Math.round(player.x));
   layout.stage.dataset.playerY = String(Math.round(player.y));
+  layout.stage.dataset.playerFacingX = String(player.facingX);
+  layout.stage.dataset.playerFacingY = String(player.facingY);
   layout.stage.dataset.weapon = player.weaponId;
   layout.stage.dataset.status = state.status;
   layout.zoneLabel.textContent =

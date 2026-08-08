@@ -61,7 +61,7 @@ F-01の判定は`F01_GAMEPLAY_MODULE_MANIFEST.json`、F-02の結果は`F02_GAMEP
 
 ### Actual gameplay
 
-- 1280×720 and 2560×1440: F-02 runtime loaded, 10,160 cells, manual skill ≥1, auto-basic ≥1, console/page errors 0。
+- 1280×720 and 2560×1440: F-02 runtime loaded, 10,160 cells, W/A/S/Dの移動・simulation facing・rendered yaw 4方向一致、manual skill ≥1、auto-basic ≥1、console/page errors 0。
 - Forge F-02: same asset ID and cell count, FIELD actor height 17.2%, back view captured, console/page errors 0。
 - `?actor=legacy`: built-in R05 actor starts without browser errors。
 
@@ -79,12 +79,12 @@ Local desktop Chrome、1280×720、production preview、各route 3 runsのmedian
 
 | Metric | R06 | R09B | Ratio | Gate |
 |---|---:|---:|---:|---|
-| First controllable | 990.7 ms | 928.8 ms | 0.938 | Pass |
-| Same-origin transfer | 789,795 B | 832,444 B | 1.054 | Pass |
-| Frame p95 | 33.5 ms | 34.2 ms | 1.021 | Pass |
+| First controllable | 979.2 ms | 940.5 ms | 0.960 | Pass |
+| Same-origin transfer | 789,846 B | 832,495 B | 1.054 | Pass |
+| Frame p95 | 33.8 ms | 35.0 ms | 1.036 | Pass |
 | >50 ms frames | 0 | 0 | — | Pass |
 
-最初の実装は詳細ボクセルをshadow mapにも再描画したためp95 50.0 msで不合格だった。visible surface packを減らさず、gameplayだけ既存blob shadowへ集約して34.2 msまで回復した。Forgeのauthored shadowは維持している。
+最初の実装は詳細ボクセルをshadow mapにも再描画したためp95 50.0 msで不合格だった。visible surface packを減らさず、gameplayだけ既存blob shadowへ集約し、最終計測で35.0 msまで回復した。Forgeのauthored shadowは維持している。
 
 ### Workspace closure
 
