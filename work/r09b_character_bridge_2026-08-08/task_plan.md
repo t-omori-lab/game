@@ -20,7 +20,7 @@ Character Forge F-01の承認済みcompiled surface packを、薄いadapter経�
 - [x] Phase 4: 1280×720／2560×1440 actual captureとmodule別pass／fail manifestを作成
 - [x] Phase 5: failed moduleだけをF-02へ再構築し、Forge／R09で同じpackを使用
 - [x] Phase 6: R09A回帰、loading／performance、browser、visual evidenceを検証
-- [ ] Phase 7: canonical docs、postflight、限定commit、main統合
+- [x] Phase 7: canonical docs、Workspace構成検査、限定local commit
 
 ## Key questions
 
@@ -40,6 +40,7 @@ Character Forge F-01の承認済みcompiled surface packを、薄いadapter経�
 - 2026-08-08: actual captureからF-01のpassはsurface density、scale、hair silhouette、weapon socket、locomotion、fallback。F-02対象はface、torso/jacket、limb separation、backpack signal、combat-pose readabilityだけに限定する。
 - 2026-08-08: F-02はF-01の9,454 cellsを保持し、failed 5 moduleへ706 cellsだけ追加する。ForgeとR09は同じasset ID／10,160 cellsを公開する。
 - 2026-08-08: gameplayは既存のblob shadowで接地感を維持できるため、10,160-cell actorだけ詳細shadow passを省く。visible surface packとForgeのauthored shadowは維持する。
+- 2026-08-08: 本goalは限定local commitまでとし、`main`統合やpublic deployを含めない。成果は`codex/r09-character-bridge`へ保持する。
 
 ## Errors encountered
 
@@ -49,7 +50,8 @@ Character Forge F-01の承認済みcompiled surface packを、薄いadapter経�
 - 2026-08-08: first F-02 Forge browser pass rendered correctly but failed the zero-console gate on an implicit missing favicon request. Added the same project icon explicitly to the Forge document.
 - 2026-08-08: first performance runはF-02の全InstancedMeshをshadow mapへ再描画し、frame p95 50.0 ms／long frames 17で不合格。gameplay actorの詳細shadow casterだけを無効化し、既存blob shadowへ集約すると34.2 ms／0へ回復した。
 - 2026-08-08: bundled pnpmの配置変更と既存node_modulesのstore metadata差によりpnpm wrapperが再installを要求した。依存を変更せず、固定済みvitest／TypeScript／Viteをbundled Nodeで直接実行した。
+- 2026-08-08: standard postflightは隔離worktreeがWorkspace root外にあるため、project relative-path算出で停止した。内容を迂回せず、同じ三構成を正規projectのWorkspace audit 36/36、registry check current、隔離branch git status cleanとして個別実行し、すべて合格した。
 
 ## Status
 
-**Currently in Phase 7** — canonical docs、Workspace postflight、限定ローカルcommit、main統合を行う。public deployは行わない。
+**Complete locally** — R09B実装、実画面証拠、R09A回帰、性能回復、設計文書、限定branch commitまで完了。user visual review、`main`統合、public deployは別判断とする。

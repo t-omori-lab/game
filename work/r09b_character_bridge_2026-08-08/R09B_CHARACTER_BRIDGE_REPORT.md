@@ -86,6 +86,13 @@ Local desktop Chrome、1280×720、production preview、各route 3 runsのmedian
 
 最初の実装は詳細ボクセルをshadow mapにも再描画したためp95 50.0 msで不合格だった。visible surface packを減らさず、gameplayだけ既存blob shadowへ集約して34.2 msまで回復した。Forgeのauthored shadowは維持している。
 
+### Workspace closure
+
+- Canonical Workspace audit: **36/36 passed**
+- Generated project registry check: **current**
+- Isolated branch status: **clean; staged 0 / worktree 0 / untracked 0 / conflicts 0**
+- Standard postflight wrapperはWorkspace外のGit worktreeをproject relative pathへ変換できないため、内容検査前に停止した。同じ三構成を個別実行した結果を上記に記録する。
+
 ## 5. Preserved evidence
 
 `evidence/`には、F-01／F-02比較、F-02 skill、Forge back／FIELD、browser contract、R09A regression、performance reportを保存した。全raw captureはコミット対象にせず、判断に必要な最小証拠だけを残す。

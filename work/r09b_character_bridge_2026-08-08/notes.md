@@ -48,3 +48,10 @@
   - R09: first-controllable 928.8 ms; transfer 832,444 B; frame p95 34.2 ms.
   - R09/R06 ratios: 0.938, 1.054, 1.021; long frames 0; browser errors 0.
 - These measurements are local desktop evidence only, not iPhone 16 Pro or public-deployment acceptance.
+
+## Closure
+
+- Workspace control-plane equivalent passed: canonical project audit 36/36, generated registry current, and isolated branch clean with zero staged/worktree/untracked/conflict entries.
+- The standard wrapper itself cannot accept a Git worktree outside the Workspace root; it stopped during relative-path calculation before evaluating project content. This tooling limitation is recorded rather than reported as a product pass.
+- Deliverable commit: `8e2ed35` on `codex/r09-character-bridge`, followed by the closure documentation commit.
+- `main`, GitHub, GitHub Pages, SSO/cloud and R10 remain unchanged.
