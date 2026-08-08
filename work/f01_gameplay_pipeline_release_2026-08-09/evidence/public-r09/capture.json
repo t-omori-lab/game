@@ -1,0 +1,47 @@
+{
+  "gate": "fram-character-gameplay-fidelity-capture-v1",
+  "pass": true,
+  "capturedAt": "2026-08-08T17:39:05.357Z",
+  "requestedUrl": "https://t-omori-lab.github.io/game/r09/",
+  "finalUrl": "https://t-omori-lab.github.io/game/r09/",
+  "profile": {
+    "path": "src/characterForge/f01.gameplay-profile.json",
+    "id": "fram.character.f01.gameplay-distance-v1"
+  },
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "deviceScaleFactor": 1
+  },
+  "contract": {
+    "bootState": "ready",
+    "heroAssetLoadStatus": "loaded",
+    "heroAssetSource": "runtime",
+    "heroAssetStatus": "loaded",
+    "heroAssetId": "fram.character.f01.gameplay-bridge-v1",
+    "heroSourceSurfaceCells": 9454,
+    "heroVisibleCells": 9421,
+    "heroPackDigest": "a77a7e0a15e0d3a62a95fcc87f77edbc8b972a593e41cc8cf673533af901abc1",
+    "heroSourceDigest": "unavailable",
+    "heroRepresentation": "compiled-high-density-articulated-voxel-surface",
+    "heroFacingRadians": 0.785,
+    "internalResolution": "1278x718",
+    "presentationState": "active",
+    "gameplayStatus": "playing",
+    "playerX": 453,
+    "playerY": 919
+  },
+  "expectations": {
+    "actor": "fram.character.f01.gameplay-bridge-v1",
+    "digest": "a77a7e0a15e0d3a62a95fcc87f77edbc8b972a593e41cc8cf673533af901abc1",
+    "sourceCells": 9454,
+    "visibleCells": 9421
+  },
+  "failures": [],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "screenshots": [
+    "intro-1280x720.png",
+    "gameplay-1280x720.png"
+  ]
+}

@@ -1,10 +1,10 @@
 # F-01 Gameplay Fidelity Pipeline Release Report
 
-Status: local candidate verified; commit／public deployment pending
+Status: complete
 
 ## Result
 
-canonical packを変更せず、F-01 gameplay presentationとその再現pipelineをlocalで確定した。commit、deploy、public verification後にrelease結果を確定する。
+canonical 9,454-cell packを変更せず、F-01 gameplay presentationとその再現pipelineを実装・公開した。R09は33 detached ground cellsだけをdeterministic filterで除外して9,421 cellsを描画し、sub-pixel gap／bevel／detail shadowを通常camera用に補正する。runtime、audit、browser captureは同じversioned profileを読む。
 
 ## Reproducible entry points
 
@@ -12,6 +12,17 @@ canonical packを変更せず、F-01 gameplay presentationとその再現pipelin
 - Versioned profile: `src/characterForge/f01.gameplay-profile.json`
 - Surface-pack audit: pass
 - Same-camera browser capture: pass (`evidence/local-r09/capture.json`)
+
+## Public release
+
+- Game: `https://t-omori-lab.github.io/game/r09/`
+- Character Forge F-01: `https://t-omori-lab.github.io/game/forge/f01/`
+- Catalog: `https://t-omori-lab.github.io/game/`
+- Implementation commit: `f105e09`
+- GitHub Pages run: `https://github.com/t-omori-lab/game/actions/runs/31269855944`
+- Build／deploy: success
+- Public contract capture: pass (`evidence/public-r09/capture.json`)
+- Preserved routes checked: R01／R06／R08
 
 ## Boundaries
 

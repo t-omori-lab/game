@@ -4,7 +4,7 @@ Last updated: 2026-08-09
 
 ## 結論
 
-**Goal 0、R09A `First Memory Logic Proof`、R09Bのtechnical bridgeはlocal完了し、公開Forgeと同じF-01 compiled packをR09の既定actorへ復帰した。** さらに正本packを変えず、gameplay距離で破片に見える33個の分離cellと過大な黒いcell gapを表示profileで補正した。F-02とF-01Rはbridge／再構築の比較証拠として保持するが、F-01の代替正本にはしない。次はこの通常gameplay camera候補をuser確認し、採択後に正本を保持したversioned derivative改善loopへ進む。
+**Goal 0、R09A `First Memory Logic Proof`、R09Bのtechnical bridgeは完了し、公開Forgeと同じF-01 compiled packをR09の既定actorへ復帰してgameplay-distance補正まで公開した。** 正本packを変えず、破片に見える33個の分離cellと過大な黒いcell gapをversioned表示profileで補正し、同じprofileを読むpack audit／実画面capture／project-local skillも固定した。F-02とF-01Rはbridge／再構築の比較証拠として保持するが、F-01の代替正本にはしない。次は公開版の造形判断を受け、正本を保持したversioned derivative改善loopへ進む。
 
 F-01Rはsemantic sourceから別の9,065-cell packを生成できる技術証拠だが、公開F-01の頭部を忠実に移植する方法ではなかった。既に存在する3D正本は再生成せず、Forgeとgameが同じfactory／payload digestを読む。改善時だけF-01を凍結したまま新しいsource versionを作り、同一camera比較で採否する。
 
@@ -17,7 +17,7 @@ R09 First Memory Expedition
 ├─ B. F-01 bridge → F-02 technical evidence ✓ art rejected
 ├─ B2. F-01R semantic head cell ✓ technical evidence／fidelity rejected
 ├─ B3. exact F-01 pack restored as R09 default ✓
-├─ B4. gameplay-distance seam／ground-debris cleanup ✓ local candidate
+├─ B4. gameplay-distance seam／ground-debris cleanup ✓ published
 └─ C. F-01-preserving versioned correction loop ← user review後
 
 → R10 Relic Buildcraft
@@ -216,7 +216,7 @@ F-02はtechnical candidateとして上記を満たしたが、ユーザーvisual
 
 ## Exact restart point
 
-1. canonical 9,454-cell packを読むR09の9,421-cell gameplay表示候補をuser確認し、足元の分離cell除外と黒いgrid低減を採否する。
+1. 公開R09のcanonical 9,454-cell pack／9,421-cell gameplay表示をuser確認し、足元の分離cell除外と黒いgrid低減を造形面で採否する。
 2. 採択時はcell fill／bevel／shadowのgameplay-distance profileを固定し、camera、light、world scale、animation adapterによる差と、F-01 geometry自体の不足を分離する。
 3. F-01正本は凍結し、採択された頭・顔・髪を失わないversioned derivativeでmodule単位のsource correctionを行う。F-01／F-02／F-01R evidenceは上書きしない。
 4. derivativeの同一digest、四方向、必須motion、装備、R09A回帰、R06比performanceを再実行する。

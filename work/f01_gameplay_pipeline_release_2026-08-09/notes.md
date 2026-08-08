@@ -28,11 +28,11 @@
 5. Same actor ID, source／payload digest, cell counts and same-camera screenshots are compared before human review.
 6. Machine pass does not replace the user’s same-person／cute／commercial-quality judgment.
 
-## Release evidence to collect
+## Release evidence
 
-- Exact commits and pushed `main` SHA
-- GitHub Pages workflow run and conclusion
-- Public R09 actor ID, source／visible cells and payload digest
-- Public `/game/`, `/game/r09/`, `/game/forge/f01/` HTTP responses
-- R01／R06／R08 archive route non-interference
-- Skill resource integrity and both bundled scripts’ successful execution
+- Implementation commit: `f105e09f4f7b9a771e645b16c0edf7a7e5817773`, pushed to `origin/main`
+- GitHub Pages: run 27, ID `31269855944`; build／deploy jobs both `success`
+- Public R09 capture: pass; actor `fram.character.f01.gameplay-bridge-v1`; source 9,454／visible 9,421; canonical digest matched; console／page error 0
+- Public HTTP 200: `/game/`, `/game/r09/`, `/game/forge/f01/`, `/game/r01/`, `/game/r06/`, `/game/r08/`
+- Public evidence: `evidence/public-r09/capture.json` and its two screenshots
+- Public pages reported `Last-Modified: Sat, 08 Aug 2026 17:37:46 GMT`

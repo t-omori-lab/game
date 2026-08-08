@@ -9,8 +9,8 @@ F-01のgameplay-distance surface correctionを安全にcommit／GitHub Pages dep
 - [x] Phase 1: 現在のF-01修正、正本digest、local browser、tests／buildを確認する
 - [x] Phase 2: skill contractとcanonical／gameplay derivative境界を固定する
 - [x] Phase 3: surface-pack auditとsame-camera capture scriptsを実装・検証する
-- [ ] Phase 4: exact filesだけをcommitし、mainへ安全に統合してpushする
-- [ ] Phase 5: GitHub Actions、公開R09、保存版route非干渉を確認し、outcomeを確定する
+- [x] Phase 4: exact filesだけをcommitし、mainへ安全に統合してpushする
+- [x] Phase 5: GitHub Actions、公開R09、保存版route非干渉を確認し、outcomeを確定する
 
 ## Guardrails
 
@@ -30,7 +30,8 @@ F-01のgameplay-distance surface correctionを安全にcommit／GitHub Pages dep
 
 - `pnpm run build`は非TTYでmodules purge確認により停止した。bundled Nodeからlocal TypeScript／Vite entryを直接実行して検証済み。
 - Workspace postflightは`/tmp` worktreeをWorkspace外と判定して実行不能。commit前にcanonical integration側で再実行する。
+- canonical postflightのproject auditは36項目合格。共有`PROJECT_REGISTRY.md`は今回以前から別変更がありgenerated checkだけstaleのため、このtaskでは上書きしなかった。
 
 ## Status
 
-**Currently in Phase 4** — versioned profile、project-local skill、deterministic pack audit、same-camera captureがlocal合格。exact filesをcommitし、canonical mainへ統合する。
+**Complete** — implementation commit `f105e09`をmainへpushし、Pages run 27のbuild／deploy成功、公開R09の同一profile capture、入口／Forge／R01／R06／R08の非干渉を確認した。
