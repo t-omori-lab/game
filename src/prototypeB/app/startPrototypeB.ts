@@ -32,15 +32,20 @@ import {
   type PrototypeBRenderQuality,
 } from "../render";
 import { screenMovementToWorld } from "../render/CameraComposition";
+import type { WorldMemoryEffects } from "../worldMemory";
 import {
   createPrototypeBLayout,
   type PrototypeBLayout,
 } from "./layout";
+import {
+  R09MemoryLoop,
+  type R09WorldMemoryRuntime,
+} from "./R09MemoryLoop";
 
 const FIXED_STEP_MS = 1_000 / TICK_RATE;
 const MAX_STEPS_PER_FRAME = 5;
 const SEMI_AUTO_SKILL_LOCK_TICKS = Math.ceil(TICK_RATE * 0.7);
-const RUN_SEED = "relic-frontier-b-02";
+export const PROTOTYPE_B_RUN_SEED = "relic-frontier-b-02";
 const activeApplications = new WeakMap<
   HTMLElement,
   PrototypeBApplication
@@ -73,13 +78,15 @@ export type PrototypeBExperience =
   | "r05"
   | "r06"
   | "r07"
-  | "r08";
+  | "r08"
+  | "r09";
 
 export type StartPrototypeBOptions = {
   readonly experience?: PrototypeBExperience;
   readonly renderQuality?: PrototypeBRenderQuality;
   readonly companionPreview?: boolean;
   readonly semiAutoCombat?: boolean;
+  readonly worldMemoryRuntime?: R09WorldMemoryRuntime;
 };
 
 export function isNorthStarDebugEnabled(search: string): boolean {
@@ -145,21 +152,34 @@ export function startPrototypeB(
 
   const layout = createPrototypeBLayout(root);
   configureExperience(root, layout, options);
+  if (
+    options.experience === "r09" &&
+    options.worldMemoryRuntime === undefined
+  ) {
+    throw new Error("R09 requires an explicit world memory runtime.");
+  }
+  const r09MemoryLoop =
+    options.experience === "r09" &&
+      options.worldMemoryRuntime !== undefined
+      ? new R09MemoryLoop(layout, options.worldMemoryRuntime)
+      : null;
   const controls = new PrototypeBControls(layout.stage);
   const sound = new RelicSoundscape();
   const listeners: Array<() => void> = [];
-  let state = createPrototypeBState(RUN_SEED);
+  let state = createPrototypeBState(PROTOTYPE_B_RUN_SEED);
   if (
     options.experience === "r05" ||
     options.experience === "r06" ||
     options.experience === "r07" ||
-    options.experience === "r08"
+    options.experience === "r08" ||
+    options.experience === "r09"
   ) {
     // Start in a front three-quarter read so the high-density voxel face,
     // hair silhouette and fitted coat are visible before the player moves.
     state.player.facingX = 0;
     state.player.facingY = 1;
   }
+  applyWorldMemoryEffects(state, r09MemoryLoop?.effects);
   let renderer = createRenderer(layout, state);
   let animationFrame = 0;
   let lastFrameAt = performance.now();
@@ -185,7 +205,8 @@ export function startPrototypeB(
     options.experience === "r05" ||
       options.experience === "r06" ||
       options.experience === "r07" ||
-      options.experience === "r08"
+      options.experience === "r08" ||
+      options.experience === "r09"
     ? new URLSearchParams(window.location.search).get("capture")
     : null;
   let capturedFrameCount = 0;
@@ -212,9 +233,12 @@ export function startPrototypeB(
     !portraitPaused &&
     !contextLost &&
     !document.hidden &&
+    r09MemoryLoop?.isBlocking !== true &&
     state.status === "playing";
   const currentDecisionOpen = (): boolean =>
-    isOutcomeDecisionPending(state) && !outcomeDismissed;
+    r09MemoryLoop === null &&
+    isOutcomeDecisionPending(state) &&
+    !outcomeDismissed;
 
   const applyOrientationState = (
     announceChange: boolean,
@@ -256,7 +280,8 @@ export function startPrototypeB(
       options.experience === "r05" ||
       options.experience === "r06" ||
       options.experience === "r07" ||
-      options.experience === "r08"
+      options.experience === "r08" ||
+      options.experience === "r09"
     ) {
       layout.stage.dataset.presentationState = "active";
     }
@@ -265,7 +290,9 @@ export function startPrototypeB(
     controls.setEnabled(controlsMayRun());
     lastFrameAt = performance.now();
     announceStatus(
-      "調査開始。町の依頼板に近づき、調査ボタンを押してください。",
+      options.experience === "r09"
+        ? "第一記憶遠征を開始。二つのsiteから行き先を選んでください。"
+        : "調査開始。町の依頼板に近づき、調査ボタンを押してください。",
       lastFrameAt,
     );
     if (!portraitPaused) {
@@ -292,7 +319,9 @@ export function startPrototypeB(
   };
 
   const restart = (): void => {
-    state = createPrototypeBState(RUN_SEED);
+    r09MemoryLoop?.beginNextExpedition();
+    state = createPrototypeBState(PROTOTYPE_B_RUN_SEED);
+    applyWorldMemoryEffects(state, r09MemoryLoop?.effects);
     semiAutoController = createSemiAutoCombatController();
     semiAutoSuppressionTicks = 0;
     combatPresentation = undefined;
@@ -419,6 +448,7 @@ export function startPrototypeB(
       !contextLost &&
       !document.hidden &&
       !portraitPaused &&
+      r09MemoryLoop?.isBlocking !== true &&
       state.status === "playing"
     ) {
       accumulator += delta;
@@ -443,6 +473,13 @@ export function startPrototypeB(
           );
         } else if (!decisionOpen || input.outcomeChoice !== null) {
           const command = commandFromInput(state, input, decisionOpen);
+          if (
+            r09MemoryLoop !== null &&
+            input.interact &&
+            r09MemoryLoop.ownsTownInteraction(state)
+          ) {
+            command.interact = false;
+          }
           if (options.semiAutoCombat === true && !decisionOpen) {
             const willActivateRelic =
               command.activateRelic === true &&
@@ -492,6 +529,11 @@ export function startPrototypeB(
           const result = stepPrototypeB(state, command);
           state = result.state;
           events.push(...result.events);
+          r09MemoryLoop?.observeStep(
+            state,
+            result.events,
+            input.interact,
+          );
         }
 
         accumulator -= FIXED_STEP_MS;
@@ -517,6 +559,8 @@ export function startPrototypeB(
         now >= statusMessageHoldUntil,
       combatPresentation,
     });
+    r09MemoryLoop?.updatePresentation(state);
+    controls.setEnabled(controlsMayRun());
     updateNorthStarPresentation(layout, state, combatPresentation);
     syncOverlayFocus(decisionOpen);
     sound.setDanger(
@@ -573,6 +617,7 @@ export function startPrototypeB(
       controls.destroy();
       sound.dispose();
       renderer.dispose();
+      r09MemoryLoop?.destroy();
       for (const removeListener of listeners.splice(0)) {
         removeListener();
       }
@@ -628,7 +673,8 @@ export function startPrototypeB(
           options.experience === "r05" ||
             options.experience === "r06" ||
             options.experience === "r07" ||
-            options.experience === "r08"
+            options.experience === "r08" ||
+            options.experience === "r09"
             ? "r05"
             : options.experience === "r04"
             ? "r04"
@@ -641,7 +687,8 @@ export function startPrototypeB(
             options.experience === "r05" ||
             options.experience === "r06" ||
             options.experience === "r07" ||
-            options.experience === "r08"
+            options.experience === "r08" ||
+            options.experience === "r09"
             ? "r04-live"
             : options.experience === "beauty-cell"
             ? "beauty-cell"
@@ -653,7 +700,9 @@ export function startPrototypeB(
             ? "r08-fram"
             : options.experience === "r07"
             ? "r07-fram"
-            : options.experience === "r05" || options.experience === "r06"
+            : options.experience === "r05" ||
+                options.experience === "r06" ||
+                options.experience === "r09"
             ? "r05-fram"
             : options.experience === "r04"
               ? "r04"
@@ -662,7 +711,9 @@ export function startPrototypeB(
         sharpPresentation:
           options.experience === "r06" ||
             options.experience === "r07" ||
-            options.experience === "r08",
+            options.experience === "r08" ||
+            options.experience === "r09",
+        worldMemoryEffects: r09MemoryLoop?.effects,
       },
     );
   }
@@ -877,7 +928,8 @@ function configureExperience(
     options.experience !== "r05" &&
     options.experience !== "r06" &&
     options.experience !== "r07" &&
-    options.experience !== "r08"
+    options.experience !== "r08" &&
+    options.experience !== "r09"
   ) {
     return;
   }
@@ -890,8 +942,9 @@ function configureExperience(
   const r06 = options.experience === "r06";
   const r07 = options.experience === "r07";
   const r08 = options.experience === "r08";
-  const fram = r05 || r06 || r07 || r08;
-  const sharpNavigation = r06 || r07 || r08;
+  const r09 = options.experience === "r09";
+  const fram = r05 || r06 || r07 || r08 || r09;
+  const sharpNavigation = r06 || r07 || r08 || r09;
   if (beautyCell || r04 || fram) {
     root.classList.add("beauty-cell-shell");
     layout.stage.classList.add("beauty-cell-stage");
@@ -917,7 +970,9 @@ function configureExperience(
     layout.stage.classList.add("r07-stage", "r08-stage");
   }
   layout.stage.dataset.experience = options.experience;
-  layout.stage.dataset.prototypeVersion = r08
+  layout.stage.dataset.prototypeVersion = r09
+    ? "R09"
+    : r08
     ? "R08"
     : r07
     ? "R07"
@@ -938,7 +993,7 @@ function configureExperience(
   layout.stage.setAttribute(
     "aria-label",
     fram
-      ? `F.R.A.M. ${r08 ? "R08" : r07 ? "R07" : r06 ? "R06" : "R05"}。WASDまたは画面左で移動。通常攻撃は間合いに入ると自動。Qで大技、Shiftで防御と回避、Eで調査、Rで道具を使います。`
+      ? `F.R.A.M. ${r09 ? "R09" : r08 ? "R08" : r07 ? "R07" : r06 ? "R06" : "R05"}。WASDまたは画面左で移動。通常攻撃は間合いに入ると自動。Qで大技、Shiftで防御と回避、Eで調査、Rで道具を使います。`
       : r04
       ? "R02系統 R04。方向キーまたは画面左で移動。通常攻撃は間合いに入ると自動。Qキーまたは画面右で大技、防御、道具を操作します。"
       : beautyCell
@@ -950,7 +1005,7 @@ function configureExperience(
   badge.className = "north-star-badge";
   badge.hidden = !debugEnabled;
   badge.innerHTML = fram
-    ? `<span>FRONTIER RELICS ARCHIVE MODULE</span><strong>${r08 ? "R08 / UNIFIED VOXEL GIRL" : r07 ? "R07 / SEMANTIC VOXEL GIRL" : r06 ? "R06 / SHARP NAVIGATION" : "R05 / WIDE WORLD"} / PC ULTRA</strong>`
+    ? `<span>FRONTIER RELICS ARCHIVE MODULE</span><strong>${r09 ? "R09 / FIRST MEMORY EXPEDITION" : r08 ? "R08 / UNIFIED VOXEL GIRL" : r07 ? "R07 / SEMANTIC VOXEL GIRL" : r06 ? "R06 / SHARP NAVIGATION" : "R05 / WIDE WORLD"} / PC ULTRA</strong>`
     : r04
     ? "<span>CAUSAL BEAUTY CELL</span><strong>R04 / R02 SYSTEMS / PC ULTRA</strong>"
     : beautyCell
@@ -980,7 +1035,9 @@ function configureExperience(
   );
   if (kicker !== null) {
     kicker.textContent = fram
-      ? "FRONTIER RELICS ARCHIVE MODULE / F-01"
+      ? r09
+        ? "FRONTIER RELICS ARCHIVE MODULE / FIRST MEMORY"
+        : "FRONTIER RELICS ARCHIVE MODULE / F-01"
       : r04
       ? "R02 CAUSAL WORLD / CONCEPT C VISUAL REBUILD"
       : beautyCell
@@ -998,7 +1055,9 @@ function configureExperience(
   }
   if (description !== null) {
     description.innerHTML = fram
-      ? "あなたは辺境を歩き、遺物を解析し、世界の記憶を編むモジュール。<br />滅びかけの都市は、今も明るく生きている。"
+      ? r09
+        ? "二つのsiteから行き先を選び、遺物を持ち帰る。<br />あなたの選択が、次の遠征の光と遊びを変える。"
+        : "あなたは辺境を歩き、遺物を解析し、世界の記憶を編むモジュール。<br />滅びかけの都市は、今も明るく生きている。"
       : r04
       ? "雨上がりの都市は、滅びたあとも鮮やかだ。<br />歩き、拾い、戦い、世界の記憶を自分の経路にする。"
       : beautyCell
@@ -1007,7 +1066,9 @@ function configureExperience(
   }
   if (startLabel !== null) {
     startLabel.textContent = fram
-      ? "F.R.A.M.を起動"
+      ? r09
+        ? "最初の記憶遠征へ"
+        : "F.R.A.M.を起動"
       : r04
       ? "雨庭区へ降りる"
       : beautyCell
@@ -1125,7 +1186,8 @@ function updateInterface(
       layout.stage.dataset.experience === "r05" ||
       layout.stage.dataset.experience === "r06" ||
       layout.stage.dataset.experience === "r07" ||
-      layout.stage.dataset.experience === "r08"
+      layout.stage.dataset.experience === "r08" ||
+      layout.stage.dataset.experience === "r09"
       ? "緑蝕・第07雨庭区"
       : layout.stage.dataset.experience === "beauty-cell"
       ? "緑蝕・第04交差区"
@@ -1682,6 +1744,29 @@ function pointInBounds(
     x <= bounds.x + bounds.width &&
     y >= bounds.y &&
     y <= bounds.y + bounds.height
+  );
+}
+
+function applyWorldMemoryEffects(
+  state: PrototypeBState,
+  effects: WorldMemoryEffects | undefined,
+): void {
+  if (effects === undefined) {
+    return;
+  }
+
+  state.player.speed = Math.round(
+    state.player.speed * effects.explorationSpeedMultiplier,
+  );
+  state.player.relicCooldownMaxTicks = Math.max(
+    TICK_RATE,
+    Math.round(
+      state.player.relicCooldownMaxTicks * effects.relicCooldownMultiplier,
+    ),
+  );
+  state.player.relicCooldownTicks = Math.min(
+    state.player.relicCooldownTicks,
+    state.player.relicCooldownMaxTicks,
   );
 }
 

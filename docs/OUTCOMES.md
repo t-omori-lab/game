@@ -1,9 +1,10 @@
 # Outcomes: ゲーム開発
 
-Last updated: 2026-08-03
+Last updated: 2026-08-08
 
 ## Confirmed
 
+- 2026-08-08、R09A `First Memory Logic Proof`をlocal実装した。永続world memoryを一遠征のHP／敵／位置から分離し、二site×二moduleの四分岐、回収物消費、拠点確保、撤退、二回目の視覚／gameplay差分、R09専用IndexedDB saveとreloadを同じR06由来sceneで完走した。desktop Chromeのproduction previewでは全四分岐と撤退が合格し、各routeでrange-based auto-basicと手動大技eventを確認、console／page errorは0件だった。strict TypeScript、Vitest 39 files／217 tests、production buildも合格した。R09対R06のlocal性能gateはfirst-controllable 988.0／985.0 ms、transfer 794,338／789,565 bytes、frame p95 18.5／18.6 ms、50ms超long frame 0で合格した。これはpublic deploy、iPhone 16 Pro実機、userが因果を90秒以内に理解できること、面白さ、visual acceptanceの確認ではない。
 - 2026-08-03、commit `b6cd199`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #26のbuild／deploy成功を確認した。root catalogのService Worker登録を終了し、既存root registrationと`fram-catalog-*`／旧root shell cacheだけを次回成功読込時に退役させる。R01〜R08のroute-scoped worker／cacheは保持した。公開HTML、catalog JS、retirement workerはHTTPS 200で、公開workerにfetch handlerがなく、catalog JSにroot worker登録がないことを確認した。strict TypeScript、Vitest 38 files／205 tests、production buildも合格した。これはiPhone実機のcold／warm時間や全既存利用者のcache退役完了を意味しない。
 - 2026-08-03、commit `d553898`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #23のbuild／deploy成功を確認した。公開catalogはfull stylesheetへのrender-blocking linkを持たず、static first viewの後でenhanceする。公開R06は`data-boot-state="shell"`の起動画面を即時表示し、主要game chunkをHTMLからmodulepreloadし、452,720-byteの地面画像を初期preloadしない。公開HTMLはcatalog 5,275 bytes、R06 3,812 bytesで、no-cache確認では両route HTTPS 200だった。strict TypeScript、Vitest 38 files／205 tests、production buildも合格した。これはiPhone実機、cold低速回線、first-controllable時間の合格を意味しない。
 - 2026-08-03、commit `026970f`を`main`へpushし、GitHub Actions `Deploy GitHub Pages` run #21のbuild／deploy成功を確認した。公開`/game/`はF.R.A.M.がゲーム名、世界記憶型・放浪RPG、AI-native game development projectであること、actual R06 gameplay image、`最新版を遊ぶ`／`AI開発実験を見る`をfirst viewに表示した。scroll前はhero 1件だけが実`src`を持ち、R06〜R01／F-01 archiveはdeferredのままだった。公開ForgeはFIELD 16.2%／target 16%、view lockで動作し、catalog／Forgeともbrowser error／warning 0件だった。`/game/`、`/game/r01/`、`/game/r06/`、`/game/forge/f01/`はHTTPS 200だった。iPhone 16 Pro実機とuser visual acceptanceは別gateである。
@@ -106,13 +107,13 @@ Last updated: 2026-08-03
 - [ ] iPhone 16 Pro実機で10分間の操作・performance・発熱基準を満たすか。
 - [ ] 二武器、guard／回避、遺物、三つの対処が説明なしで判別できるか。
 - [ ] 10分遊んだ本人が自発的に二回目を始めたくなるか。
-- [ ] 前回の依頼結果を次回90秒以内に認識できる永続loopが成立するか。
+- [ ] 未説明のplayerが、前回の選択結果を次回90秒以内に認識できるか。R09Aでcueが開始直後に発生する技術条件は確認済みだが、理解と面白さは未試遊である。
 - [ ] HTTPS環境でPWA install、offline再起動、IndexedDB保存が成立するか。
 - [ ] IndexedDBのatomic snapshot、quota／eviction対応、persist request、export／import、Safari版からHome Screen版への移行方針が成立するか。
 - [ ] local修正版で、iPhone 16 ProのSafari／ホーム画面PWAともdouble tap拡大が再発しないか。
 - [ ] Visual Pass E公開後の実利用、Steam審査、販売が生じた場合は別途記録する。
 - [ ] Gate Aの半自動戦闘で、target取得、位置取り、build、自動通常攻撃、手動大技がiPhone上でユーザー意図に合うか。
-- [ ] Gate Bで、拠点候補地と機能moduleの選択が自由放浪／world memoryを強め、次回90秒以内に理解できるか。
+- [ ] Gate Bで、拠点候補地と機能moduleの選択が自由放浪／world memoryを強め、未説明のplayerにも次回90秒以内で理解されるか。
 - [ ] death／succession、残響基盤、主人公形式、同行者summer scopeの設計提案がユーザー意図に合うか。
 - [ ] 選定済みconcept Cのhigh-density micro-voxel知覚を、96-cell級女性default preset、SF装備、character variation、実際のanimation／scroll／combatを持つrealtime Beauty Cellで再現し、ユーザーのart acceptanceを得られるか。
 - [ ] PC UltraのWebGPU／HDR、KTX2、Visual Benchmark Scene、AssetDNA、Causal World Cellが知覚品質、制作効率、gameplay改善へ実際につながるか。

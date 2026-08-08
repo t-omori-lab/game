@@ -9,6 +9,7 @@ import {
 describe("prototype release routing", () => {
   it("lists playable releases newest first", () => {
     expect(PROTOTYPE_RELEASES.map((release) => release.id)).toEqual([
+      "r09",
       "r06",
       "r05",
       "r04",
@@ -22,6 +23,7 @@ describe("prototype release routing", () => {
     expect(PROTOTYPE_RELEASES[3]?.status).toBe("archive");
     expect(PROTOTYPE_RELEASES[4]?.status).toBe("archive");
     expect(PROTOTYPE_RELEASES[5]?.status).toBe("archive");
+    expect(PROTOTYPE_RELEASES[6]?.status).toBe("archive");
   });
 
   it("resolves versioned paths without confusing the catalog", () => {
@@ -34,6 +36,7 @@ describe("prototype release routing", () => {
     expect(resolvePrototypeRelease("/game/r06/index.html", "")).toBe("r06");
     expect(resolvePrototypeRelease("/game/r07/index.html", "")).toBe("r07");
     expect(resolvePrototypeRelease("/game/r08/index.html", "")).toBe("r08");
+    expect(resolvePrototypeRelease("/game/r09/index.html", "")).toBe("r09");
   });
 
   it("keeps compatibility aliases pinned to their intended release", () => {
@@ -54,6 +57,7 @@ describe("prototype release routing", () => {
     expect(createReleaseHref("r06", "/game")).toBe("/game/r06/");
     expect(createReleaseHref("r07", "/game")).toBe("/game/r07/");
     expect(createReleaseHref("r08", "/game")).toBe("/game/r08/");
+    expect(createReleaseHref("r09", "/game")).toBe("/game/r09/");
     expect(createReleaseHref("r03", "/game")).toBe("/game/r03/");
     expect(createReleaseHref("r02", "/game")).toBe("/game/r02/");
     expect(

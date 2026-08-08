@@ -6,7 +6,8 @@ export type PrototypeReleaseId =
   | "r05"
   | "r06"
   | "r07"
-  | "r08";
+  | "r08"
+  | "r09";
 
 export interface PrototypeRelease {
   readonly id: PrototypeReleaseId;
@@ -17,11 +18,18 @@ export interface PrototypeRelease {
 
 export const PROTOTYPE_RELEASES: readonly PrototypeRelease[] = [
   {
+    id: "r09",
+    title: "F.R.A.M. / First Memory Expedition",
+    summary:
+      "二つのsiteを自由に歩き、遺物を持ち帰り、最初の拠点とmoduleを選ぶ。保存された選択が二回目の光と遊びを変える、世界記憶ループの実証版です。",
+    status: "latest",
+  },
+  {
     id: "r06",
     title: "F.R.A.M. / Sharp Navigation Build",
     summary:
       "視界を広く保ち、迷わず廃都を歩けるようにした現在の公開版。ミニマップ、目的地への案内、戦闘操作をひとつの画面にまとめました。",
-    status: "latest",
+    status: "archive",
   },
   {
     id: "r05",
@@ -60,7 +68,7 @@ export const PROTOTYPE_RELEASES: readonly PrototypeRelease[] = [
   },
 ] as const;
 
-const RELEASE_PATH_PATTERN = /\/(r01|r02|r03|r04|r05|r06|r07|r08)(?:\/|$)/i;
+const RELEASE_PATH_PATTERN = /\/(r01|r02|r03|r04|r05|r06|r07|r08|r09)(?:\/|$)/i;
 
 export function resolvePrototypeRelease(
   pathname: string,
@@ -82,7 +90,8 @@ export function resolvePrototypeRelease(
     releaseId === "r05" ||
     releaseId === "r06" ||
     releaseId === "r07" ||
-    releaseId === "r08"
+    releaseId === "r08" ||
+    releaseId === "r09"
     ? releaseId
     : null;
 }

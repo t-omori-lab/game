@@ -9,12 +9,13 @@
 ## Current playable
 
 - 公開最新版はR06 `Sharp Navigation Build`。連続worldを歩き、mini-mapとmarkerで目的地を探せます。
+- local最新版R09 `First Memory Expedition`は、二つのsiteを探索し、回収物を使って拠点とmoduleを選び、その結果を二回目の遠征と再読み込み後へ残せます。公開版ではありません。
 - 通常攻撃は装備条件を満たすと自動で進み、移動、位置取り、武器持替、guard／回避、有限resourceの大技、item、調査はplayerが操作します。
 - 通常敵、名付き異形、loot、遺物dossier、破壊／鎮静／接続の複数結果があります。
 - R01〜R06は比較可能なplayable archiveとして保持しています。R07／R08はlocal character比較候補で、公開最新版や完成版ではありません。
 - Character Forge F-01は、AI生成sheetから高密度voxel character、semantic rig、animationへ変換する独立した技術実験です。
 
-World Memory、R09専用save／reload、Product Shell、Google sign-in、Cloud Test Save、R10 Relic Buildcraftは未実装です。次の製品proofは、二つの拠点候補と二つのmodule選択が二回目の遠征を変えるR09Aです。
+World Memory v1とR09専用local save／reloadはlogic proofまで実装済みです。Product Shell、Google sign-in、Cloud Test Save、R10 Relic Buildcraftは未実装です。次は同じR09 sceneへF-01を接続し、実gameplayで必要な箇所だけをF-02へ直します。
 
 詳細は[`docs/GAME_BRIEF.md`](docs/GAME_BRIEF.md)、[`docs/GAME_CONSTITUTION.md`](docs/GAME_CONSTITUTION.md)、[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)を参照してください。
 
@@ -32,7 +33,7 @@ pnpm install
 pnpm dev
 ```
 
-R06はローカルでは`http://127.0.0.1:5173/game/r06/`、公開版は`https://t-omori-lab.github.io/game/r06/`です。
+R09はローカルでは`http://127.0.0.1:5173/game/r09/`です。公開最新版R06はローカルでは`http://127.0.0.1:5173/game/r06/`、公開版は`https://t-omori-lab.github.io/game/r06/`です。
 
 同じWi-Fi内のiPhoneからMacのnetwork URLを開いてbrowser試遊できます。ただしiPhone 16 Proは必須target tierであり、Safari／Home Screen PWA、offline、発熱、battery、色、audioの実機gateは未通過です。desktop browserやmobile emulationの合格を実機合格とは扱いません。
 

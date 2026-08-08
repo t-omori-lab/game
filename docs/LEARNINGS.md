@@ -114,6 +114,9 @@ Last updated: 2026-08-08
 - account／cloud saveを未安定なgame stateへ先に接続すると、schema変更、migration、conflict解決がgame loop実装を拘束する。まずlocalのversion付きWorldMemoryStateを固定し、title／profile／statusを同じlocal dataで成立させ、その後にGoogle identityとsafe-point Cloud Test Save／snapshot復旧を重ねる順がscopeとdata loss riskを抑える可能性が高い。
 - AI-native game developmentの独自性はrenderer、auth、physics、editorを全て自作することではなく、world因果、generation contract、AssetDNA、人間採否を機械可読な正本へする点に置ける。R09、最小Product Shell、R10代表buildを載せた同一sliceでcurrent runtimeと既存engineを比較すれば、browser反復とAI編集性を失わず成熟subsystemを採用できるか判断しやすい可能性が高い。
 - browser性能の基準はHTML navigation時間だけでは不十分である。production artifactのfingerprint、source dirty state、navigation＋same-origin resource全体の転送量、実際に見える入力応答、frame-time p95／long frame、Service Workerのactivated／controllerを同じJSONへ残すと、後続版を同条件で比較しつつ「warmだったはず」「同じbuildだったはず」という誤認を防げる。
+- world memoryへHP、敵、位置、cooldownを入れず、意味のあるdurable eventだけをpure reducerへ渡すと、撤退で「発見と持帰り品だけ残す」規則と、二回目を新しい一遠征として始める規則を同じtable testで固定できる。module効果もsave payloadへ描画値を埋めず、永続IDからvisual／gameplay effectを導出するとrendererを変えてもschemaを保ちやすい。
+- WebGL sceneの性能比較では、新機能版だけ別の高負荷presentation profileを選ぶと、logicの費用とrenderer差を混同する。R09AはR06と同じR05/R06 presentationを使って比較したことで、World Memory追加後もfirst-controllable、transfer、frame p95を10%以内に分離検証できた。visual profile更新はR09Bの別gateとして扱う。
+- gameplay overlayのledgerをanimation frameごとにDOM再構築すると、state量が小さくてもlayout／style負荷を継続発生させる。永続state mutationとphase遷移時だけ本文を更新し、frame中は必要最小限のdataset同期へ限定すると、検査可能性を保ったままframe pacingを戻せる。
 
 ## Improvement candidates
 

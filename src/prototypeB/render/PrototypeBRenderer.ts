@@ -9,6 +9,7 @@ import {
   type TerrainKind,
   type WeaponId,
 } from "../sim";
+import type { WorldMemoryEffects } from "../worldMemory";
 import {
   BLADE_WEAPON_RECIPE,
   CHEST_RECIPE,
@@ -206,6 +207,7 @@ export interface PrototypeBRendererOptions {
   readonly presentationProfile?: PrototypeBPresentationProfile;
   readonly qualityProfile?: PrototypeBRenderQuality;
   readonly sharpPresentation?: boolean;
+  readonly worldMemoryEffects?: WorldMemoryEffects;
 }
 
 export class PrototypeBRenderer {
@@ -221,6 +223,9 @@ export class PrototypeBRenderer {
   private readonly camera: THREE.OrthographicCamera;
   private readonly environmentArt: StartTownArtSlice;
   private readonly cameraTarget = new THREE.Vector3();
+  private readonly worldMemoryEffects: WorldMemoryEffects | null;
+  private readonly memoryPresentation = new THREE.Group();
+  private readonly memoryRelicAura = new THREE.Group();
   private readonly playerGroup = new THREE.Group();
   private readonly playerBody: HeroVoxelMesh;
   private readonly playerHeroVisual: HeroVisual | null;
@@ -296,6 +301,7 @@ export class PrototypeBRenderer {
     options: PrototypeBRendererOptions = {},
   ) {
     this.qualityProfile = options.qualityProfile ?? "baseline";
+    this.worldMemoryEffects = options.worldMemoryEffects ?? null;
     this.environmentProfile =
       options.environmentProfile ?? "start-town";
     this.presentationProfile = options.presentationProfile ??
@@ -658,6 +664,7 @@ export class PrototypeBRenderer {
     this.playerShadow = createBlobShadow(38, 22, 0.32);
     this.playerGroup.add(this.playerShadow);
     this.scene.add(this.playerGroup);
+    this.createWorldMemoryPresentation();
 
     this.targetRing = createTargetRing(0x61e5d1, 0.76);
     this.windupRing = createTargetRing(0xf4a950, 0.92);
@@ -708,6 +715,7 @@ export class PrototypeBRenderer {
     this.elapsed += deltaSeconds;
     this.handleEvents(events);
     this.syncPlayer(state, deltaSeconds, combatPresentation);
+    this.updateWorldMemoryPresentation(timeMs / 1_000);
     if (this.companionGroup.visible) {
       this.syncCompanion(state, deltaSeconds);
     }
@@ -725,6 +733,147 @@ export class PrototypeBRenderer {
       this.syncUltraPipelineDataset();
     } else {
       this.renderer.render(this.scene, this.camera);
+    }
+  }
+
+  private createWorldMemoryPresentation(): void {
+    const effects = this.worldMemoryEffects;
+    if (effects === null) {
+      this.renderer.domElement.dataset.worldMemoryVisualCue = "none";
+      return;
+    }
+
+    this.memoryPresentation.name = "r09-world-memory-presentation";
+    this.memoryRelicAura.name = "r09-relic-overdrive-aura";
+    if (effects.routeOverlay) {
+      const geometry = new THREE.BoxGeometry(7, 7, 7);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xffc36b,
+        emissive: 0xff9d45,
+        emissiveIntensity: 2.2,
+        metalness: 0.35,
+        roughness: 0.25,
+      });
+      material.toneMapped = false;
+      const route = [
+        [610, 910],
+        [760, 875],
+        [920, 850],
+        [1_080, 860],
+        [1_250, 890],
+        [1_430, 900],
+        [1_610, 900],
+        [1_790, 930],
+        [1_980, 955],
+        [2_170, 940],
+        [2_360, 915],
+        [2_560, 900],
+        [2_760, 900],
+        [2_930, 900],
+      ] as const;
+      const markers = new THREE.InstancedMesh(
+        geometry,
+        material,
+        route.length,
+      );
+      route.forEach(([x, z], index) => {
+        this.reusablePosition.set(x, 7 + (index % 2) * 2, z);
+        this.reusableQuaternion.setFromAxisAngle(
+          new THREE.Vector3(0, 1, 0),
+          Math.PI / 4,
+        );
+        this.reusableScale.setScalar(index % 3 === 0 ? 1.25 : 0.8);
+        this.reusableMatrix.compose(
+          this.reusablePosition,
+          this.reusableQuaternion,
+          this.reusableScale,
+        );
+        markers.setMatrixAt(index, this.reusableMatrix);
+      });
+      markers.instanceMatrix.needsUpdate = true;
+      markers.name = "pathfinder-array-route-markers";
+      this.memoryPresentation.add(markers);
+      this.scene.add(this.memoryPresentation);
+      this.renderer.domElement.dataset.worldMemoryVisualCue = "route-overlay";
+    }
+
+    if (effects.relicAura) {
+      const outerMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff6f7e,
+        transparent: true,
+        opacity: 0.48,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        toneMapped: false,
+      });
+      const innerMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffb36f,
+        transparent: true,
+        opacity: 0.36,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        toneMapped: false,
+      });
+      const outer = new THREE.Mesh(
+        new THREE.RingGeometry(30, 34, 32),
+        outerMaterial,
+      );
+      const inner = new THREE.Mesh(
+        new THREE.RingGeometry(19, 21, 24),
+        innerMaterial,
+      );
+      outer.rotation.x = -Math.PI / 2;
+      inner.rotation.x = -Math.PI / 2;
+      inner.rotation.z = Math.PI / 8;
+
+      const moteGeometry = new THREE.BoxGeometry(4, 4, 4);
+      const moteMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff8a7f,
+        transparent: true,
+        opacity: 0.78,
+        depthWrite: false,
+        toneMapped: false,
+      });
+      const motes = new THREE.InstancedMesh(
+        moteGeometry,
+        moteMaterial,
+        12,
+      );
+      for (let index = 0; index < 12; index += 1) {
+        const angle = (index / 12) * Math.PI * 2;
+        const radius = index % 2 === 0 ? 28 : 38;
+        this.reusablePosition.set(
+          Math.cos(angle) * radius,
+          8 + (index % 3) * 7,
+          Math.sin(angle) * radius,
+        );
+        this.reusableQuaternion.identity();
+        this.reusableScale.setScalar(index % 3 === 0 ? 1.25 : 0.75);
+        this.reusableMatrix.compose(
+          this.reusablePosition,
+          this.reusableQuaternion,
+          this.reusableScale,
+        );
+        motes.setMatrixAt(index, this.reusableMatrix);
+      }
+      motes.instanceMatrix.needsUpdate = true;
+      this.memoryRelicAura.add(outer, inner, motes);
+      this.scene.add(this.memoryRelicAura);
+      this.renderer.domElement.dataset.worldMemoryVisualCue = "relic-aura";
+    }
+  }
+
+  private updateWorldMemoryPresentation(timeSeconds: number): void {
+    if (this.worldMemoryEffects?.routeOverlay === true) {
+      const pulse = 0.94 + Math.sin(timeSeconds * 3.2) * 0.08;
+      this.memoryPresentation.scale.set(1, pulse, 1);
+    }
+    if (this.worldMemoryEffects?.relicAura === true) {
+      this.memoryRelicAura.position.copy(this.playerGroup.position);
+      this.memoryRelicAura.position.y += 3;
+      this.memoryRelicAura.rotation.y = timeSeconds * 0.5;
+      const pulse = 1 + Math.sin(timeSeconds * 4.1) * 0.06;
+      this.memoryRelicAura.scale.setScalar(pulse);
     }
   }
 

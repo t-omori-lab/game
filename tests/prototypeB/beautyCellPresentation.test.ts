@@ -39,7 +39,7 @@ describe("R02 Beauty Cell presentation contract", () => {
       /environmentProfile:\s*[\s\S]*?options\.experience === "r04"[\s\S]*?options\.experience === "r08"[\s\S]*?\? "r04-live"\s*:\s*options\.experience === "beauty-cell"\s*\? "beauty-cell"/,
     );
     expect(applicationSource).toMatch(
-      /dataset\.prototypeVersion\s*=\s*r08\s*\? "R08"\s*:\s*r07\s*\? "R07"[\s\S]*?r06\s*\? "R06"[\s\S]*?r05\s*\? "R05"[\s\S]*?r04\s*\? "R04"[\s\S]*?beautyCell\s*\? "R02"\s*:\s*"R01"/,
+      /dataset\.prototypeVersion\s*=\s*r09\s*\? "R09"\s*:\s*r08\s*\? "R08"\s*:\s*r07\s*\? "R07"[\s\S]*?r06\s*\? "R06"[\s\S]*?r05\s*\? "R05"[\s\S]*?r04\s*\? "R04"[\s\S]*?beautyCell\s*\? "R02"\s*:\s*"R01"/,
     );
     expect(rendererSource).toContain('| "beauty-cell"');
     expect(rendererSource).toContain(

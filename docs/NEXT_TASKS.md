@@ -4,17 +4,17 @@ Last updated: 2026-08-08
 
 ## 結論
 
-**Goal 0 `Safe Baseline`は完了した。** 次は、その基準から **R09 `First Memory Expedition / 最初の記憶遠征`**を作る。
+**Goal 0 `Safe Baseline`とR09A `First Memory Logic Proof`はlocal完了した。** 次は、同じR09 sceneへF-01を接続する **R09B `Playable Character Bridge`**を作る。
 
-主product gateは、一回目のsite／回収物／拠点／module選択が二回目の見た目と遊びを変える**First Memory Loop**。同じR09 sceneへF-01を接続し、通常gameplay条件で露呈した問題だけをF-02へ直す。character改善とworld-memory実装を別demoにしない。
+First Memory Loopは、二site×二module、回収物消費、撤退、save／reload、二回目差分まで技術的に成立した。次はF-01を通常camera、world light、移動、装備、戦闘で評価し、露呈した箇所だけをF-02へ直す。character改善とworld-memoryを別demoにしない。
 
 ```text
 Goal 0 Safe Baseline ✓
 └─ current R06 browser／performance gate + documentation reconciliation
 
 R09 First Memory Expedition
-├─ A. First Memory Loop（最初にlogic proof）
-├─ B. F-01 bridge → evidence-driven F-02
+├─ A. First Memory Loop ✓
+├─ B. F-01 bridge → evidence-driven F-02 ← current
 └─ C. loading／PC master／mobile tier guards
 
 → R10 Relic Buildcraft
@@ -40,26 +40,26 @@ Baseline code SHAは`1c9d355`。canonical main runはcold／warm first-controlla
 
 ### A. First Memory Loop
 
-- [ ] `WorldEvent → pure reducer → WorldMemoryState v1 → versioned save`を定義する。
+- [x] `WorldEvent → pure reducer → WorldMemoryState v1 → versioned save`を定義する。
   - `site discovered`、`item recovered`、`base claimed`、`module installed`、`expedition ended(reason)`を最低eventにする。
   - 現在遠征の`PrototypeBState`と永続world memoryを分離する。
   - 既存`SaveRepository`をR09専用namespaceで使い、R06／`WorldLegacy`を自動importせず、旧saveを保持する。
   - 厳格v1 codec、reload、deterministic fallback、将来migrationの接続点を先にtestできる形にする。
 
-- [ ] R06由来の小mapへ、性質の異なる二siteを同時配置する。
+- [x] R06由来の小mapへ、性質の異なる二siteを同時配置する。
   - 移動で行き先を選び、途中変更と撤退も正規結果にする。
   - 一本道の最後にmodal三択を出す構造にはしない。
 
-- [ ] 一方のsiteを拠点として確保し、二moduleから一つを設置できるようにする。
+- [x] 一方のsiteを拠点として確保し、二moduleから一つを設置できるようにする。
   - 一つは情報／route、もう一つは遺物／loadoutへ影響させる。
   - module設置には回収物IDを一つ消費し、入手／使用履歴をworld memoryへ残す。
   - 初版は完全自由建築ではなく、候補地とmoduleの選択で検証する。
 
-- [ ] 二回目の遠征へ因果を返す。
+- [x] 二回目の遠征へ因果を返す。
   - 二moduleの各々が、開始90秒以内に固有の見た目一件＋互いに異なるgameplay一件を示す。
   - 選ばなかったsiteはworldに残し、後続目的になり得るようにする。
 
-- [ ] 分岐と撤退をhard gateにする。
+- [x] 分岐と撤退をhard gateにする。
   - `二site × 二module`の四組合せをclean saveから完走し、それぞれreloadするtable testを作る。
   - 撤退は発見済みsiteと持ち帰った回収物を保持し、base claim／module installは成立させず、現在遠征のHP／敵／位置を破棄する。
   - 両site routeでrange-based auto-basic、手動大技event、cooldownのbrowser regressionを通す。
@@ -91,13 +91,13 @@ Baseline code SHAは`1c9d355`。canonical main runはcold／warm first-controlla
 
 - root catalogはService Workerによるnavigation介入を持たない。R09のroute-scoped workerはcatalog scopeへ広げず、cacheするHTMLとhash付きassetを同じrelease manifestで固定する。
 - R06の公開performance baselineは、static boot shell、route専用static entry、主要game chunkのmodulepreload、地面画像の初期preload除外を持つ。R09の比較では、この起動順と空白なしのfirst paintも回帰対象にする。
-- [ ] 現行actorのままAのlogic proofを完了できるようにし、F-02待ちで停止させない。
+- [x] 現行actorのままAのlogic proofを完了できるようにし、F-02待ちで停止させない。
 - [ ] F-01 pack／adapterの失敗、timeout、disable flag時は現行actorへfallbackし、First Memory Loop、save、reloadを完走する。WorldMemoryState／save schemaにはF-01／F-02固有IDを入れない。
-- [ ] R06とR09のcold startを同条件で測り、transfer、first-controllable、long taskを記録する。
-- [ ] R09をR06比10%以上悪化させない。悪化時はroute-specific import／asset分離を先に直す。
+- [x] R06とR09を同じproduction previewで測り、transfer、first-controllable、frame-time p95、50ms超long frameを記録する。
+- [x] R09をR06比10%以上悪化させない。悪化時はroute-specific import／asset分離を先に直す。
 - [ ] `/game/` first view 150 KB以下、scroll前archive画像0 byteを維持する。
 - [ ] PC masterを先にart採択し、同じsemantic sourceからmobile LODを派生する。
-- [ ] local test、local browser、public deploy、iPhone実機、user acceptanceを別々に記録する。
+- [x] local test、local browser、public deploy、iPhone実機、user acceptanceを別々に記録する。
 
 ### D. Product Foundation（R09Aを止めずに段階導入）
 
@@ -133,11 +133,13 @@ Baseline code SHAは`1c9d355`。canonical main runはcold／warm first-controlla
 
 ## Completion checkpoints
 
-### R09A: First Memory Logic Proof Done
+### R09A: First Memory Logic Proof Done ✓
 
 - F-01／F-02なしで、四分岐、回収物消費、撤退、save／reloadを完走できる。
 - 二moduleの各々が、二回目開始90秒以内に固有の見た目一件＋異なるgameplay一件を生む。
 - R06の移動、collision、mini-map、marker、auto-basic、manual skillを後退させない。
+
+Local evidenceは`work/r09a_first_memory_logic_2026-08-08/`にある。desktop Chromeで四分岐＋撤退、reload、console／page error 0、R06比10%以内の性能gateを確認した。public deploy、iPhone実機、user acceptanceは未実施である。
 
 ### R09B: Visual Review Candidate Ready
 
@@ -197,12 +199,12 @@ Baseline code SHAは`1c9d355`。canonical main runはcold／warm first-controlla
 
 ## Exact restart point
 
-1. Goal 0の二reportとbaseline code SHA `1c9d355`を比較基準として読む。
-2. `src/prototypeB/sim/types.ts`／`simulation.ts`のquest／return stateを、一遠征のauthorityとして監査する。
-3. `src/prototypeB/worldMemory/`へ`WorldMemoryState v1`、event、pure reducer、codecを作る。codecは`src/session/worldLegacy.ts`の厳格decode方式を踏襲し、`src/platform/saveRepository.ts`へR09専用namespaceで接続する。
-4. `src/prototypeB/app/startPrototypeB.ts`で、現行actorのまま二site → 回収 → 拠点確保 → module設置 → save → 二回目差分を先に通す。
-5. 四分岐、回収物消費、撤退、両routeのcombatをheadless／browserで固定する。
-6. `src/characterForge/F01Character.ts`とcompiled surface packを薄いadapter経由で`src/prototypeB/render/PrototypeBRenderer.ts`へ接続し、F-02修正用のpass／fail manifestを取る。
+1. `work/r09a_first_memory_logic_2026-08-08/R09A_FIRST_MEMORY_LOGIC_REPORT.md`とbrowser／performance JSONをR09Bの回帰基準として読む。
+2. F-01のcompiled surface pack、digest、semantic parts、rig、socketを凍結し、World Memory schemaへactor固有IDを入れない薄いadapter／fallback contractを定義する。
+3. 同じF-01 runtime packをForgeとR09へ接続し、通常camera、world light、wet surface、移動、装備、auto-basic、手動大技で動かす。pack失敗時は現行actorへ戻してR09A loopを継続する。
+4. 1280×720／2560×1440のactual gameplay captureから、hair、face、jacket、arms、legs、pack、tool、socket、motionごとのpass／fail manifestを作る。
+5. failed項目だけを再生成可能なsource／mask／deltaへ分離してF-02を作り、同一packをForgeとR09で確認する。
+6. R09A四分岐、fallback、loading、R06性能比較を再実行し、通常倍率でuser visual reviewへ渡す。
 
 詳細な判断理由と合格条件は、`work/next_direction_2026-08-03/NEXT_DIRECTION.md`を参照する。
 
@@ -210,6 +212,7 @@ Product Foundationの採用範囲と2026-08-08の優先順は、本ファイル�
 
 ## Recently completed
 
+- [x] R09A First Memory Logic Proof — WorldMemoryState v1、二site×二module、回収物消費、撤退、二回目差分、R09専用local save／reload、四分岐browser gate、R06比性能gate — 2026-08-08
 - [x] Goal 0 Safe Baseline — current R06 E2E／performance gate、Playwright固定、canonical docs整合、main統合、local postflight — 2026-08-08
 - [x] F.R.A.M. game-first catalog、軽量first view、archive image hard gate、Character Forge FIELDをGitHub Pagesへ公開確認 — 2026-08-03
 - [x] Character Forge F-01のBeauty Sheet → Build Sheet → 37,990 source voxels → 9,454 surface cells → 7-part rig pipelineを公開確認。ユーザー暫定評価約70% — 2026-08-02

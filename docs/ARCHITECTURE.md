@@ -16,6 +16,11 @@ r06/index.html
   → src/r06/main.ts                        R06 dedicated static entry
       → src/prototypeB/app/startPrototypeB.ts
 
+r09/index.html
+  → src/r09/main.ts                        R09 local First Memory entry
+      → WorldMemoryRepository
+      → src/prototypeB/app/startPrototypeB.ts
+
 r03/index.html
   → src/r03/main.ts                        R03 fixed-render concept route
 
@@ -28,7 +33,7 @@ forge/f01/index.html
       └─ ?prototype=0.1 → dynamic import Phaser legacy runtime
 ```
 
-公開最新版R06だけは、空白のないboot shellと読み込み順を固定するため専用entryからPrototype Bをstatic importする。R06のService Workerは`/game/r06/`のscopeだけを持ち、catalog navigationへ介入しない。その他のrouteではPrototype B、Forge、Phaserを必要時に分けて読み込む。R07／R08はcharacter比較候補で、R06を自動的に置き換えない。
+公開最新版R06は、空白のないboot shellと読み込み順を固定するため専用entryからPrototype Bをstatic importする。local R09も専用entryからR09 saveを読んでPrototype Bを起動するが、まだ公開releaseではない。R06のService Workerは`/game/r06/`のscopeだけを持ち、catalog navigationへ介入しない。その他のrouteではPrototype B、Forge、Phaserを必要時に分けて読み込む。R07／R08はcharacter比較候補で、R06を自動的に置き換えない。
 
 ## Prototype B components
 
@@ -40,6 +45,7 @@ forge/f01/index.html
 | Renderer | Three.js fixed orthographic camera、world、effect、resource dispose | `src/prototypeB/render/` |
 | Input | DOM pointer／keyboardを共通control frameへ変換 | `src/prototypeB/input/` |
 | Audio | Web Audioの探索／危険layerとevent cue | `src/prototypeB/audio/` |
+| World Memory | durable event、pure reducer、strict codec、derived module effect | `src/prototypeB/worldMemory/` |
 | Platform | PWA shell、A/B save、IndexedDB／memory fallback | `src/platform/` |
 | Character Forge | AI-generated sheet、source definition、compiled surface pack、semantic rig | `src/characterForge/` |
 | Legacy runtime | Prototype 0.1のPhaser scene、旧simulation、WorldLegacy | `src/app/`, `src/render/`, `src/sim/`, `src/session/` |
@@ -57,6 +63,8 @@ touch／key → `PrototypeBControlFrame` → tick付き`PrototypeBCommand` → `
 
 simulationの平面`x/y`をrenderの`x/z`へ写し、renderの`y`は高さだけに使う。camera state、effect乱数、音時刻はsimulationへ入れない。
 
+R09では、site発見、回収、拠点確保、module設置、遠征終了だけを`WorldEvent`へ変換する。pure reducerが`WorldMemoryState v1`を返し、strict codecを通した後にR09専用namespaceの`SaveRepository`へ保存する。HP、敵、位置、現在のcooldownは保存しない。二回目のrenderer／simulation設定は永続stateそのものではなく、moduleから導出したeffectを受け取る。
+
 ## Character and voxel pipelines
 
 ```text
@@ -70,9 +78,9 @@ VoxelRecipe / semantic asset source
 
 16³は背景objectに使える一つのrecipe familyであり、主人公を含む全assetの固定上限ではない。F-01はBeauty Sheet／Build Sheetとsource definitionから高密度surface packを開発時にcompileし、runtimeでは元画像のsamplingやvolume再構築を行わない。個別cellへ一つずつdraw callを割り当てず、geometry統合、instancing、rig part単位の所有を使う。
 
-## R09以降に追加する境界
+## R09Aで追加した境界と次の分離
 
-以下は目標architectureであり、2026-08-08時点では未実装である。全面refactorを先行させず、R09AとProduct Shellに必要な継ぎ目から切り出す。
+`WorldMemory`はR09Aで最初の独立境界として実装した。以下の他境界は目標architectureであり、全面refactorを先行させず、Product Shellと後続sliceに必要な継ぎ目から切り出す。
 
 ```text
 ProductShell
@@ -111,7 +119,7 @@ Game Coreへprovider SDK型を入れない。Dev Studioの生成model、raw sour
 | Vite | 開発serverとproduction build | build失敗として停止 |
 | Vitest | simulation、voxel、保存の自動検査 | release gateを不合格にする |
 | Web Audio | procedural sound | unlock失敗を通知し、無音で続行 |
-| IndexedDB | local-first save authority／旧版save | memory fallback。現在Prototype BのWorld Memoryへは未接続 |
+| IndexedDB | local-first save authority／旧版save／R09 World Memory | memory fallback。R09は専用namespaceを使い、旧schemaを暗黙importしない |
 
 ## Boundaries and invariants
 
@@ -130,7 +138,7 @@ Game Coreへprovider SDK型を入れない。Dev Studioの生成model、raw sour
 
 ## Open design questions
 
-- R09Aの二moduleが二回目90秒以内に生む最小のvisual差とgameplay差を何にするか。
+- Pathfinder Arrayのroute表示＋探索速度とRelic Overdriveのcoral aura＋大技cooldown差が、未説明のplayerにも二回目90秒以内で理解され、選択欲へつながるか。
 - guard／回避、item、target上書き、同行者命令をどこまで手動介入として残すか。
 - R10の二〜三buildを、target、間合い、周期、移動拘束、resource、副作用でどう分けるか。
 - 妖怪、電脳怪異、旧文明技術をどの比率で正式themeにするか。

@@ -175,3 +175,14 @@
 - Decision: ユーザーが技術的エポックとして採択した検証成果は、`/game/forge/fXX/`または同等のstable URLへ凍結し、`/game/`の`Technology Epochs`へ新しい順で追加する。RXXのplayable releaseとは番号、status、一覧を分離し、実runtime capture、再現入力、source definition、provenance、validation、既知差分を残す。削除指示がない限り過去epochを保持する。
 - Consequences: 生成／描画基盤の進歩を後から比較できる一方、技術demoを完成game、最新playable版、commercial art合格と誤認させない表示が必要になる。次epochは新しい技術契約を実証し、ユーザーが保存価値を認めた時点で同じ公開手順へ進む。
 - Supersedes: none。prototype version保存規則をtechnical milestoneへ拡張する
+
+---
+
+## ADR-017: Keep expedition simulation transient and reduce durable world events into local memory
+
+- Date: 2026-08-08
+- Status: accepted
+- Context: R09は、帰還／撤退の結果を次の遠征へ残しながら、現在のHP、敵、位置、cooldownまで再開saveへ固定せず、将来のProduct Shell、cloud snapshot、engine比較でも同じworld truthを使う必要がある。既存`SaveRepository`にはA/B revision、checksum、corruption recovery、post-write verificationがあり、保存機構の再発明は不要だった。
+- Decision: 一遠征のauthorityは引き続き`PrototypeBState`とする。永続対象を`site-discovered`、`item-recovered`、`base-claimed`、`module-installed`、`expedition-ended`のdurable `WorldEvent`へ限定し、pure reducerでstrict `WorldMemoryState v1`へ変換する。R09専用namespaceでlocal IndexedDBへ保存し、R06／旧`WorldLegacy`を暗黙importしない。visual／gameplay効果は保存済みmodule IDから導出し、renderer固有値をsave schemaへ入れない。
+- Consequences: 撤退は発見siteと持帰り品だけを残し、次回は新しい一遠征として開始できる。event順、重複、schema drift、seed mismatch、corruptionを自動検査できる。将来versionは明示migrationが必要で、Google identity／Cloud Test Saveはlocal authorityとv1 schemaを保ったadapterとして後付けする。F-01／F-02などactor固有IDもWorld Memoryへ入れない。
+- Supersedes: none。ADR-013のworld-memory拠点方向を実装契約へ具体化する

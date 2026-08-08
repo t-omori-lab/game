@@ -31,7 +31,9 @@ describe("F.R.A.M. R06 presentation contract", () => {
   it("keeps the R04 causal environment but selects an independent presentation", () => {
     expect(mainSource).toContain('if (release === "r06")');
     expect(mainSource).toContain('experience: "r06"');
-    expect(applicationSource).toContain('options.experience === "r05" || options.experience === "r06"');
+    expect(applicationSource).toMatch(
+      /options\.experience === "r05"\s*\|\|\s*options\.experience === "r06"\s*\|\|[\s\S]*?options\.experience === "r09"[\s\S]*?\? "r05-fram"/,
+    );
     expect(applicationSource).toContain('? "r05-fram"');
     expect(applicationSource).toMatch(
       /sharpPresentation:\s*options\.experience === "r06"[\s\S]*?options\.experience === "r08"/,
