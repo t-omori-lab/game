@@ -9,13 +9,13 @@
 ## Current playable
 
 - 公開最新版はR06 `Sharp Navigation Build`。連続worldを歩き、mini-mapとmarkerで目的地を探せます。
-- local最新版R09 `First Memory Expedition`は、二つのsiteを探索し、回収物を使って拠点とmoduleを選び、その結果を二回目の遠征と再読み込み後へ残せます。公開版ではありません。
+- local最新版R09 `First Memory Expedition`は、二つのsiteを探索し、回収物を使って拠点とmoduleを選び、その結果を二回目の遠征と再読み込み後へ残せます。F-02高密度voxel探索者を通常camera、装備、移動、半自動戦闘へ接続したvisual review candidateです。公開版ではありません。
 - 通常攻撃は装備条件を満たすと自動で進み、移動、位置取り、武器持替、guard／回避、有限resourceの大技、item、調査はplayerが操作します。
 - 通常敵、名付き異形、loot、遺物dossier、破壊／鎮静／接続の複数結果があります。
 - R01〜R06は比較可能なplayable archiveとして保持しています。R07／R08はlocal character比較候補で、公開最新版や完成版ではありません。
-- Character Forge F-01は、AI生成sheetから高密度voxel character、semantic rig、animationへ変換する独立した技術実験です。
+- Character Forge F-01／F-02は、AI生成sheetからcompiled high-density voxel character、semantic rig、animationを作り、同じruntime packをForgeと実gameplayで検証する制作pipelineです。
 
-World Memory v1とR09専用local save／reloadはlogic proofまで実装済みです。Product Shell、Google sign-in、Cloud Test Save、R10 Relic Buildcraftは未実装です。次は同じR09 sceneへF-01を接続し、実gameplayで必要な箇所だけをF-02へ直します。
+World Memory v1、R09専用local save／reload、F-01 bridge、実gameplay証拠からfailed 5 moduleだけを補正したF-02までlocal実装済みです。F-02は10,160 visible cellsで、R09Aの全四分岐、旧actor fallback、R06比performance gateを通過しました。ユーザーによる造形採択、Product Shell、Google sign-in、Cloud Test Save、R10 Relic Buildcraft、公開deployは未完了です。
 
 詳細は[`docs/GAME_BRIEF.md`](docs/GAME_BRIEF.md)、[`docs/GAME_CONSTITUTION.md`](docs/GAME_CONSTITUTION.md)、[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)を参照してください。
 

@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "gate": "r09b-playable-character-bridge",
+  "status": "passed",
+  "measuredAt": "2026-08-08T12:37:59.014Z",
+  "url": "http://127.0.0.1:4176/game/r09/",
+  "browserExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "captures": [
+    {
+      "kind": "runtime",
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "label": "1280x720"
+      },
+      "contract": {
+        "rootHeroAssetLoadStatus": "loaded",
+        "heroAssetSource": "runtime",
+        "heroAssetStatus": "loaded",
+        "heroAssetId": "fram.character.f02.gameplay-readability-v1",
+        "heroRepresentation": "compiled-high-density-voxel-surface-plus-evidence-modules",
+        "heroVoxelCells": "10160",
+        "heroCharacterPreset": "f02-evidence-corrected",
+        "weapon": "impact",
+        "playerX": 833,
+        "playerY": 883,
+        "autoBasicEvents": 1,
+        "manualSkillEvents": 1,
+        "internalResolution": "1278x718"
+      },
+      "screenshots": [
+        "1280x720-idle.png",
+        "1280x720-front-read.png",
+        "1280x720-front-settled.png",
+        "1280x720-run.png",
+        "1280x720-skill.png",
+        "1280x720-impact-tool.png",
+        "1280x720-combat.png"
+      ],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "kind": "runtime",
+      "viewport": {
+        "width": 2560,
+        "height": 1440,
+        "label": "2560x1440"
+      },
+      "contract": {
+        "rootHeroAssetLoadStatus": "loaded",
+        "heroAssetSource": "runtime",
+        "heroAssetStatus": "loaded",
+        "heroAssetId": "fram.character.f02.gameplay-readability-v1",
+        "heroRepresentation": "compiled-high-density-voxel-surface-plus-evidence-modules",
+        "heroVoxelCells": "10160",
+        "heroCharacterPreset": "f02-evidence-corrected",
+        "weapon": "impact",
+        "playerX": 837,
+        "playerY": 866,
+        "autoBasicEvents": 1,
+        "manualSkillEvents": 1,
+        "internalResolution": "2558x1438"
+      },
+      "screenshots": [
+        "2560x1440-idle.png",
+        "2560x1440-front-read.png",
+        "2560x1440-front-settled.png",
+        "2560x1440-run.png",
+        "2560x1440-skill.png",
+        "2560x1440-impact-tool.png",
+        "2560x1440-combat.png"
+      ],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "kind": "legacy-fallback",
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "label": "1280x720"
+      },
+      "contract": {
+        "rootHeroAssetLoadStatus": "disabled",
+        "heroAssetSource": "built-in",
+        "heroAssetStatus": "disabled",
+        "heroAssetId": "actor.fram.module-f01.compact-archive-runner",
+        "heroRepresentation": "high-density-articulated-voxel-surface",
+        "heroVoxelCells": "7734",
+        "weapon": "blade",
+        "playerX": 430,
+        "playerY": 900,
+        "autoBasicEvents": 0,
+        "manualSkillEvents": 0,
+        "internalResolution": "1278x718"
+      },
+      "screenshots": [
+        "1280x720-legacy-fallback.png"
+      ],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "kind": "forge-f02",
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "label": "1280x720"
+      },
+      "contract": {
+        "heroAssetSource": "forge-shared",
+        "heroAssetStatus": "f02",
+        "heroAssetId": "fram.character.f02.gameplay-readability-v1",
+        "heroVoxelCells": "10160",
+        "autoBasicEvents": 0,
+        "manualSkillEvents": 0,
+        "actorViewportHeight": "0.172"
+      },
+      "screenshots": [
+        "1280x720-forge-f02-back.png",
+        "1280x720-forge-f02-field.png"
+      ],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ]
+}

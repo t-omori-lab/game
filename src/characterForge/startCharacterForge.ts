@@ -13,6 +13,9 @@ import {
   type ForgeMotion,
   type ForgeView,
 } from "./F01Character";
+import {
+  attachF02ReadabilityModules,
+} from "./F02ReadabilityModules";
 import "./styles.css";
 
 const buildSheetUrl = `${import.meta.env.BASE_URL}forge/f01-build-sheet.jpg`;
@@ -71,7 +74,11 @@ function referenceTabs(): string {
   ).join("");
 }
 
-function layout(): string {
+function layout(candidate: "f01" | "f02"): string {
+  const candidateLabel = candidate === "f02" ? "F-02" : "F-01";
+  const candidateState = candidate === "f02"
+    ? "EVIDENCE-CORRECTED RUNTIME"
+    : "REPRODUCIBLE RECONSTRUCTION";
   return `
     <div class="forge-shell">
       <header class="forge-header">
@@ -81,16 +88,16 @@ function layout(): string {
         </a>
         <div class="forge-title">
           <span>CHARACTER FORGE</span>
-          <strong>F-01 / THE ARCHIVIST</strong>
+          <strong>${candidateLabel} / THE ARCHIVIST</strong>
         </div>
-        <div class="forge-build-state"><span></span>REPRODUCIBLE RECONSTRUCTION</div>
+        <div class="forge-build-state"><span></span>${candidateState}</div>
       </header>
 
       <main class="forge-workspace">
         <section class="forge-stage" aria-label="F-01 real-time 3D preview">
           <div class="forge-loading" data-loading>
             <span class="forge-loader"></span>
-            <strong>LOADING F-01</strong>
+            <strong>LOADING ${candidateLabel}</strong>
             <small>検証済みの立体セルとrigを展開しています</small>
           </div>
           <div class="forge-stage-meta">
@@ -158,15 +165,16 @@ function layout(): string {
             <ol>
               <li class="is-complete"><span>01</span><div><strong>BEAUTY SHEET</strong><small>identity + art direction</small></div></li>
               <li class="is-complete"><span>02</span><div><strong>BUILD SHEET</strong><small>orthographic + modules</small></div></li>
-              <li class="is-active"><span>03</span><div><strong>SURFACE PACK</strong><small>validated 4-view reconstruction</small></div></li>
+              <li class="${candidate === "f01" ? "is-active" : "is-complete"}"><span>03</span><div><strong>SURFACE PACK</strong><small>validated 4-view reconstruction</small></div></li>
               <li class="is-complete"><span>04</span><div><strong>SEMANTIC RIG</strong><small>idle / run / hit</small></div></li>
+              ${candidate === "f02" ? '<li class="is-active"><span>05</span><div><strong>READABILITY MODULES</strong><small>actual-play failed parts only</small></div></li>' : ""}
             </ol>
           </section>
         </aside>
       </main>
 
       <footer class="forge-footer">
-        <span><b>F-01</b> PRODUCTION EXPERIMENT</span>
+        <span><b>${candidateLabel}</b> PRODUCTION EXPERIMENT</span>
         <span>IMAGE → FOUR-VIEW VOLUME → SEMANTIC PARTS → REAL-TIME RIG</span>
         <span data-renderer>WEBGL / PC ULTRA</span>
       </footer>
@@ -455,13 +463,23 @@ function createScene(
 }
 
 export async function startCharacterForge(applicationRoot: HTMLElement): Promise<void> {
-  document.title = "F.R.A.M. Character Forge F-01";
+  const candidate = new URLSearchParams(window.location.search).get("candidate") === "f02"
+    ? "f02"
+    : "f01";
+  document.title = `F.R.A.M. Character Forge ${candidate === "f02" ? "F-02" : "F-01"}`;
   applicationRoot.className = "forge-app";
-  applicationRoot.innerHTML = layout();
+  applicationRoot.dataset.characterCandidate = candidate;
+  applicationRoot.innerHTML = layout(candidate);
   const stage = query<HTMLElement>(applicationRoot, ".forge-stage");
   const loading = query<HTMLElement>(applicationRoot, "[data-loading]");
   const sceneState = createScene(stage);
   const character = createF01Character();
+  const f02Modules = candidate === "f02"
+    ? attachF02ReadabilityModules({
+      root: character.root,
+      partGroups: character.partGroups,
+    })
+    : null;
   sceneState.scene.add(character.root);
   character.root.rotation.y = -0.09;
   setCameraView(sceneState.camera, sceneState.controls, "three-quarter", "close");
@@ -476,7 +494,10 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
   }
 
   query<HTMLElement>(applicationRoot, "[data-cell-count]").textContent =
-    character.stats.renderedSurfaceCells.toLocaleString("en-US");
+    (
+      character.stats.renderedSurfaceCells +
+      (f02Modules?.addedSurfaceCells ?? 0)
+    ).toLocaleString("en-US");
   query<HTMLElement>(applicationRoot, "[data-volume-count]").textContent =
     character.stats.sourceVoxels.toLocaleString("en-US");
   query<HTMLElement>(applicationRoot, "[data-rig-count]").textContent =
@@ -554,6 +575,7 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
         if (toggle === "wireframe") {
           wireframe = !wireframe;
           character.setWireframe(wireframe);
+          f02Modules?.setWireframe(wireframe);
           sceneState.grid.visible = wireframe;
           toggleButton.classList.toggle("is-active", wireframe);
           toggleButton.setAttribute("aria-pressed", wireframe ? "true" : "false");
@@ -601,6 +623,14 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
       setActiveButton(applicationRoot, "[data-motion]", idleButton);
     }
     character.update(motion, timeSeconds, motionStartedAt);
+    f02Modules?.applyPose({
+      motion,
+      timeSeconds,
+      progress: motion === "hit"
+        ? THREE.MathUtils.clamp((timeSeconds - motionStartedAt) / 0.62, 0, 1)
+        : 0,
+      moveAmount: motion === "run" ? 1 : 0,
+    });
     if (turntable) character.root.rotation.y += 0.0042;
     sceneState.controls.update();
     sceneState.composer.render();
@@ -614,6 +644,7 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
       disposed = true;
       cancelAnimationFrame(animationFrame);
       resizeObserver.disconnect();
+      f02Modules?.dispose();
       character.dispose();
       sceneState.dispose();
     },

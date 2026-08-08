@@ -19,6 +19,7 @@ r06/index.html
 r09/index.html
   → src/r09/main.ts                        R09 local First Memory entry
       → WorldMemoryRepository
+      → bounded dynamic actor-pack loader
       → src/prototypeB/app/startPrototypeB.ts
 
 r03/index.html
@@ -33,7 +34,7 @@ forge/f01/index.html
       └─ ?prototype=0.1 → dynamic import Phaser legacy runtime
 ```
 
-公開最新版R06は、空白のないboot shellと読み込み順を固定するため専用entryからPrototype Bをstatic importする。local R09も専用entryからR09 saveを読んでPrototype Bを起動するが、まだ公開releaseではない。R06のService Workerは`/game/r06/`のscopeだけを持ち、catalog navigationへ介入しない。その他のrouteではPrototype B、Forge、Phaserを必要時に分けて読み込む。R07／R08はcharacter比較候補で、R06を自動的に置き換えない。
+公開最新版R06は、空白のないboot shellと読み込み順を固定するため専用entryからPrototype Bをstatic importする。local R09はR09 saveとF-02 actor packを並行して読み、bounded dynamic loaderの結果をPrototype Bへ渡す。actor packのdisable、timeout、import／factory failureではbuilt-in R05 actorへ戻り、World Memory loopを止めない。F-01／F-02を共有rendererからstatic importしないため、R06 bundleには追加しない。R09はまだ公開releaseではない。R06のService Workerは`/game/r06/`のscopeだけを持ち、catalog navigationへ介入しない。その他のrouteではPrototype B、Forge、Phaserを必要時に分けて読み込む。R07／R08はcharacter比較候補で、R06を自動的に置き換えない。
 
 ## Prototype B components
 
@@ -47,7 +48,8 @@ forge/f01/index.html
 | Audio | Web Audioの探索／危険layerとevent cue | `src/prototypeB/audio/` |
 | World Memory | durable event、pure reducer、strict codec、derived module effect | `src/prototypeB/worldMemory/` |
 | Platform | PWA shell、A/B save、IndexedDB／memory fallback | `src/platform/` |
-| Character Forge | AI-generated sheet、source definition、compiled surface pack、semantic rig | `src/characterForge/` |
+| Character Forge | AI-generated sheet、source definition、compiled surface pack、semantic rig、evidence-driven readability modules | `src/characterForge/` |
+| Hero asset runtime | R09-only pack factory、full motion adapter、weapon socket、fallback metadata | `src/prototypeB/render/hero/`, `src/r09/loadR09HeroAsset.ts` |
 | Legacy runtime | Prototype 0.1のPhaser scene、旧simulation、WorldLegacy | `src/app/`, `src/render/`, `src/sim/`, `src/session/` |
 | Tests | 新旧simulation、voxel、保存 | `tests/` |
 
@@ -65,6 +67,8 @@ simulationの平面`x/y`をrenderの`x/z`へ写し、renderの`y`は高さだけ
 
 R09では、site発見、回収、拠点確保、module設置、遠征終了だけを`WorldEvent`へ変換する。pure reducerが`WorldMemoryState v1`を返し、strict codecを通した後にR09専用namespaceの`SaveRepository`へ保存する。HP、敵、位置、現在のcooldownは保存しない。二回目のrenderer／simulation設定は永続stateそのものではなく、moduleから導出したeffectを受け取る。
 
+R09Bのcharacterはsimulation authorityを持たない。R09 entryが返す`PrototypeBHeroAssetRuntime`をrendererがfactoryとして解決し、adapterがF-01／F-02 semantic rigを既存`HeroVisual`の全motion、tint、right-hand socketへ写す。asset ID、load status、representation、cell countは検証用datasetにだけ出し、`WorldMemoryState`／save schemaへ入れない。
+
 ## Character and voxel pipelines
 
 ```text
@@ -76,7 +80,7 @@ VoxelRecipe / semantic asset source
   → Three.js geometry／instancing／rig-owned parts
 ```
 
-16³は背景objectに使える一つのrecipe familyであり、主人公を含む全assetの固定上限ではない。F-01はBeauty Sheet／Build Sheetとsource definitionから高密度surface packを開発時にcompileし、runtimeでは元画像のsamplingやvolume再構築を行わない。個別cellへ一つずつdraw callを割り当てず、geometry統合、instancing、rig part単位の所有を使う。
+16³は背景objectに使える一つのrecipe familyであり、主人公を含む全assetの固定上限ではない。F-01はBeauty Sheet／Build Sheetとsource definitionから高密度surface packを開発時にcompileし、runtimeでは元画像のsamplingやvolume再構築を行わない。F-02はactual gameplayでfailedになった5 moduleだけを同じpackへ加えるadditive candidateである。個別cellへ一つずつdraw callを割り当てず、geometry統合、instancing、rig part単位の所有を使う。Forge close-upはvoxel-authored shadowを表示するが、gameplayは既存blob shadowで接地を保ち、詳細actor meshをshadow mapへ再描画しない。
 
 ## R09Aで追加した境界と次の分離
 

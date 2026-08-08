@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "candidate": "F-02 evidence-corrected gameplay pack v1",
+  "baseCandidate": "F-01 compiled surface pack / gameplay bridge v1",
+  "evaluatedIn": "R09 actual gameplay scene and Character Forge F-02 route",
+  "viewports": [
+    { "width": 1280, "height": 720 },
+    { "width": 2560, "height": 1440 }
+  ],
+  "runtimeAssetId": "fram.character.f02.gameplay-readability-v1",
+  "visibleSurfaceCells": 10160,
+  "addedSurfaceCells": 706,
+  "result": "local-visual-review-candidate",
+  "acceptanceBoundary": "Automated and author-side evidence passes; user art-direction approval and commercial-quality acceptance remain pending.",
+  "preservedF01Passes": [
+    "surface-density",
+    "gameplay-scale",
+    "hair-silhouette",
+    "weapon-socket-and-scale",
+    "locomotion-contract",
+    "runtime-fallback"
+  ],
+  "correctedModules": [
+    {
+      "id": "face-readability",
+      "status": "pass-for-local-review",
+      "evidence": "A larger warm skin plane, two dark/teal eyes, highlights, blush, mouth and layered fringe remain distinct in the 1280x720 front gameplay capture."
+    },
+    {
+      "id": "torso-jacket-separation",
+      "status": "pass-for-local-review",
+      "evidence": "The dark inner suit, asymmetric ivory/warm-gray coat panels, collar, belt and cyan chest signal produce separate value and color regions at gameplay scale."
+    },
+    {
+      "id": "limb-silhouette",
+      "status": "pass-for-local-review",
+      "evidence": "Dark gloves, cyan cuffs and a wider neutral arm stance keep the hands and coat edge separate during idle, run and skill captures."
+    },
+    {
+      "id": "backpack-signal",
+      "status": "pass-for-local-review",
+      "evidence": "The Forge back capture verifies a dark archive pack, cyan display and coral side rail on the same 10,160-cell runtime candidate."
+    },
+    {
+      "id": "combat-pose-readability",
+      "status": "pass-for-local-review",
+      "evidence": "The manual skill capture shows a widened two-arm silhouette, enlarged archive signal and radial effect; the browser contract also records manual skill and auto-basic events at both viewports."
+    }
+  ],
+  "mechanicalGates": {
+    "runtimeAtBothViewports": "passed",
+    "manualSkill": "passed",
+    "autoBasicCombat": "passed",
+    "forgeAndRuntimeShareAssetId": "passed",
+    "legacyFallback": "passed",
+    "browserErrors": 0,
+    "r09aFourBranchesReloadAndRetreat": "passed",
+    "r09VsR06Performance": "passed"
+  },
+  "evidenceRoot": "work/r09b_character_bridge_2026-08-08/evidence"
+}

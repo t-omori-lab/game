@@ -1,0 +1,601 @@
+{
+  "schemaVersion": 1,
+  "gate": "r09-vs-r06-production-preview",
+  "status": "passed",
+  "measuredAt": "2026-08-08T12:37:22.088Z",
+  "baseUrl": "http://127.0.0.1:4176/game/",
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "deviceScaleFactor": 1
+  },
+  "sampleMs": 5000,
+  "runsPerRoute": 3,
+  "browserExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "measurements": {
+    "r06": [
+      {
+        "route": "r06",
+        "firstControllableMs": 1351.4,
+        "appReadyMs": 833,
+        "transfer": {
+          "sameOriginBytes": 789795,
+          "decodedBytes": 1577029,
+          "resourceCount": 8,
+          "resources": [
+            {
+              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "initiatorType": "other",
+              "transferSize": 178971,
+              "decodedBodySize": 512388
+            },
+            {
+              "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
+              "initiatorType": "other",
+              "transferSize": 1011,
+              "decodedBodySize": 711
+            },
+            {
+              "pathname": "/game/assets/r06-BM2Mym3f.js",
+              "initiatorType": "script",
+              "transferSize": 1227,
+              "decodedBodySize": 1485
+            },
+            {
+              "pathname": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
+              "initiatorType": "img",
+              "transferSize": 453020,
+              "decodedBodySize": 452720
+            },
+            {
+              "pathname": "/game/assets/styles-ss_RKbFy.css",
+              "initiatorType": "link",
+              "transferSize": 9432,
+              "decodedBodySize": 40915
+            },
+            {
+              "pathname": "/game/assets/UnrealBloomPass-CUqOIqa1.js",
+              "initiatorType": "other",
+              "transferSize": 142828,
+              "decodedBodySize": 562914
+            },
+            {
+              "pathname": "/game/r06/",
+              "initiatorType": "navigation",
+              "transferSize": 2092,
+              "decodedBodySize": 3812
+            },
+            {
+              "pathname": "/game/r06/icon.svg",
+              "initiatorType": "other",
+              "transferSize": 1214,
+              "decodedBodySize": 2084
+            }
+          ]
+        },
+        "frames": {
+          "count": 240,
+          "p95Ms": 33.4,
+          "longFrames": 0,
+          "maximumMs": 34.3
+        },
+        "input": {
+          "before": {
+            "x": 430,
+            "y": 900
+          },
+          "after": {
+            "x": 500,
+            "y": 900
+          },
+          "distance": 70,
+          "moved": true
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "r06",
+        "firstControllableMs": 990.7,
+        "appReadyMs": 716,
+        "transfer": {
+          "sameOriginBytes": 790095,
+          "decodedBytes": 1579113,
+          "resourceCount": 9,
+          "resources": [
+            {
+              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "initiatorType": "other",
+              "transferSize": 178971,
+              "decodedBodySize": 512388
+            },
+            {
+              "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
+              "initiatorType": "other",
+              "transferSize": 1011,
+              "decodedBodySize": 711
+            },
+            {
+              "pathname": "/game/assets/r06-BM2Mym3f.js",
+              "initiatorType": "script",
+              "transferSize": 1227,
+              "decodedBodySize": 1485
+            },
+            {
+              "pathname": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
+              "initiatorType": "img",
+              "transferSize": 453020,
+              "decodedBodySize": 452720
+            },
+            {
+              "pathname": "/game/assets/styles-ss_RKbFy.css",
+              "initiatorType": "link",
+              "transferSize": 9432,
+              "decodedBodySize": 40915
+            },
+            {
+              "pathname": "/game/assets/UnrealBloomPass-CUqOIqa1.js",
+              "initiatorType": "other",
+              "transferSize": 142828,
+              "decodedBodySize": 562914
+            },
+            {
+              "pathname": "/game/r06/",
+              "initiatorType": "navigation",
+              "transferSize": 2092,
+              "decodedBodySize": 3812
+            },
+            {
+              "pathname": "/game/r06/icon.svg",
+              "initiatorType": "other",
+              "transferSize": 1214,
+              "decodedBodySize": 2084
+            },
+            {
+              "pathname": "/game/r06/icon.svg",
+              "initiatorType": "other",
+              "transferSize": 300,
+              "decodedBodySize": 2084
+            }
+          ]
+        },
+        "frames": {
+          "count": 242,
+          "p95Ms": 33.5,
+          "longFrames": 0,
+          "maximumMs": 34.3
+        },
+        "input": {
+          "before": {
+            "x": 430,
+            "y": 900
+          },
+          "after": {
+            "x": 500,
+            "y": 900
+          },
+          "distance": 70,
+          "moved": true
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "r06",
+        "firstControllableMs": 948.4,
+        "appReadyMs": 709,
+        "transfer": {
+          "sameOriginBytes": 789795,
+          "decodedBytes": 1577029,
+          "resourceCount": 8,
+          "resources": [
+            {
+              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "initiatorType": "other",
+              "transferSize": 178971,
+              "decodedBodySize": 512388
+            },
+            {
+              "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
+              "initiatorType": "other",
+              "transferSize": 1011,
+              "decodedBodySize": 711
+            },
+            {
+              "pathname": "/game/assets/r06-BM2Mym3f.js",
+              "initiatorType": "script",
+              "transferSize": 1227,
+              "decodedBodySize": 1485
+            },
+            {
+              "pathname": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
+              "initiatorType": "img",
+              "transferSize": 453020,
+              "decodedBodySize": 452720
+            },
+            {
+              "pathname": "/game/assets/styles-ss_RKbFy.css",
+              "initiatorType": "link",
+              "transferSize": 9432,
+              "decodedBodySize": 40915
+            },
+            {
+              "pathname": "/game/assets/UnrealBloomPass-CUqOIqa1.js",
+              "initiatorType": "other",
+              "transferSize": 142828,
+              "decodedBodySize": 562914
+            },
+            {
+              "pathname": "/game/r06/",
+              "initiatorType": "navigation",
+              "transferSize": 2092,
+              "decodedBodySize": 3812
+            },
+            {
+              "pathname": "/game/r06/icon.svg",
+              "initiatorType": "other",
+              "transferSize": 1214,
+              "decodedBodySize": 2084
+            }
+          ]
+        },
+        "frames": {
+          "count": 239,
+          "p95Ms": 33.7,
+          "longFrames": 0,
+          "maximumMs": 34.3
+        },
+        "input": {
+          "before": {
+            "x": 430,
+            "y": 900
+          },
+          "after": {
+            "x": 500,
+            "y": 900
+          },
+          "distance": 70,
+          "moved": true
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      }
+    ],
+    "r09": [
+      {
+        "route": "r09",
+        "firstControllableMs": 928.8,
+        "appReadyMs": 713,
+        "transfer": {
+          "sameOriginBytes": 832444,
+          "decodedBytes": 1674089,
+          "resourceCount": 11,
+          "resources": [
+            {
+              "pathname": "/game/assets/F02ForgeHeroVisual-DnQycfjc.js",
+              "initiatorType": "script",
+              "transferSize": 1980,
+              "decodedBodySize": 4068
+            },
+            {
+              "pathname": "/game/assets/F02ReadabilityModules-Dh8_Iacu.js",
+              "initiatorType": "script",
+              "transferSize": 34491,
+              "decodedBodySize": 74884
+            },
+            {
+              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "initiatorType": "other",
+              "transferSize": 178971,
+              "decodedBodySize": 512388
+            },
+            {
+              "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
+              "initiatorType": "other",
+              "transferSize": 1011,
+              "decodedBodySize": 711
+            },
+            {
+              "pathname": "/game/assets/preload-helper-BUwAYG9H.js",
+              "initiatorType": "other",
+              "transferSize": 954,
+              "decodedBodySize": 1115
+            },
+            {
+              "pathname": "/game/assets/r09-oN2qtvFN.js",
+              "initiatorType": "script",
+              "transferSize": 3442,
+              "decodedBodySize": 8666
+            },
+            {
+              "pathname": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
+              "initiatorType": "img",
+              "transferSize": 453020,
+              "decodedBodySize": 452720
+            },
+            {
+              "pathname": "/game/assets/storageBackend-C_GXSix6.js",
+              "initiatorType": "other",
+              "transferSize": 4325,
+              "decodedBodySize": 12435
+            },
+            {
+              "pathname": "/game/assets/styles-ss_RKbFy.css",
+              "initiatorType": "link",
+              "transferSize": 9432,
+              "decodedBodySize": 40915
+            },
+            {
+              "pathname": "/game/assets/UnrealBloomPass-CUqOIqa1.js",
+              "initiatorType": "other",
+              "transferSize": 142828,
+              "decodedBodySize": 562914
+            },
+            {
+              "pathname": "/game/r09/",
+              "initiatorType": "navigation",
+              "transferSize": 1990,
+              "decodedBodySize": 3273
+            }
+          ]
+        },
+        "frames": {
+          "count": 180,
+          "p95Ms": 34.2,
+          "longFrames": 0,
+          "maximumMs": 34.3
+        },
+        "input": {
+          "before": {
+            "x": 430,
+            "y": 900
+          },
+          "after": {
+            "x": 504,
+            "y": 904
+          },
+          "distance": 74.11,
+          "moved": true
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "r09",
+        "firstControllableMs": 927.5,
+        "appReadyMs": 715,
+        "transfer": {
+          "sameOriginBytes": 832444,
+          "decodedBytes": 1674089,
+          "resourceCount": 11,
+          "resources": [
+            {
+              "pathname": "/game/assets/F02ForgeHeroVisual-DnQycfjc.js",
+              "initiatorType": "script",
+              "transferSize": 1980,
+              "decodedBodySize": 4068
+            },
+            {
+              "pathname": "/game/assets/F02ReadabilityModules-Dh8_Iacu.js",
+              "initiatorType": "script",
+              "transferSize": 34491,
+              "decodedBodySize": 74884
+            },
+            {
+              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "initiatorType": "other",
+              "transferSize": 178971,
+              "decodedBodySize": 512388
+            },
+            {
+              "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
+              "initiatorType": "other",
+              "transferSize": 1011,
+              "decodedBodySize": 711
+            },
+            {
+              "pathname": "/game/assets/preload-helper-BUwAYG9H.js",
+              "initiatorType": "other",
+              "transferSize": 954,
+              "decodedBodySize": 1115
+            },
+            {
+              "pathname": "/game/assets/r09-oN2qtvFN.js",
+              "initiatorType": "script",
+              "transferSize": 3442,
+              "decodedBodySize": 8666
+            },
+            {
+              "pathname": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
+              "initiatorType": "img",
+              "transferSize": 453020,
+              "decodedBodySize": 452720
+            },
+            {
+              "pathname": "/game/assets/storageBackend-C_GXSix6.js",
+              "initiatorType": "other",
+              "transferSize": 4325,
+              "decodedBodySize": 12435
+            },
+            {
+              "pathname": "/game/assets/styles-ss_RKbFy.css",
+              "initiatorType": "link",
+              "transferSize": 9432,
+              "decodedBodySize": 40915
+            },
+            {
+              "pathname": "/game/assets/UnrealBloomPass-CUqOIqa1.js",
+              "initiatorType": "other",
+              "transferSize": 142828,
+              "decodedBodySize": 562914
+            },
+            {
+              "pathname": "/game/r09/",
+              "initiatorType": "navigation",
+              "transferSize": 1990,
+              "decodedBodySize": 3273
+            }
+          ]
+        },
+        "frames": {
+          "count": 177,
+          "p95Ms": 34.2,
+          "longFrames": 0,
+          "maximumMs": 34.3
+        },
+        "input": {
+          "before": {
+            "x": 430,
+            "y": 900
+          },
+          "after": {
+            "x": 500,
+            "y": 900
+          },
+          "distance": 70,
+          "moved": true
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "r09",
+        "firstControllableMs": 973.6,
+        "appReadyMs": 701,
+        "transfer": {
+          "sameOriginBytes": 832444,
+          "decodedBytes": 1674089,
+          "resourceCount": 11,
+          "resources": [
+            {
+              "pathname": "/game/assets/F02ForgeHeroVisual-DnQycfjc.js",
+              "initiatorType": "script",
+              "transferSize": 1980,
+              "decodedBodySize": 4068
+            },
+            {
+              "pathname": "/game/assets/F02ReadabilityModules-Dh8_Iacu.js",
+              "initiatorType": "script",
+              "transferSize": 34491,
+              "decodedBodySize": 74884
+            },
+            {
+              "pathname": "/game/assets/index-Cb-Kl27w.js",
+              "initiatorType": "other",
+              "transferSize": 178971,
+              "decodedBodySize": 512388
+            },
+            {
+              "pathname": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
+              "initiatorType": "other",
+              "transferSize": 1011,
+              "decodedBodySize": 711
+            },
+            {
+              "pathname": "/game/assets/preload-helper-BUwAYG9H.js",
+              "initiatorType": "other",
+              "transferSize": 954,
+              "decodedBodySize": 1115
+            },
+            {
+              "pathname": "/game/assets/r09-oN2qtvFN.js",
+              "initiatorType": "script",
+              "transferSize": 3442,
+              "decodedBodySize": 8666
+            },
+            {
+              "pathname": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
+              "initiatorType": "img",
+              "transferSize": 453020,
+              "decodedBodySize": 452720
+            },
+            {
+              "pathname": "/game/assets/storageBackend-C_GXSix6.js",
+              "initiatorType": "other",
+              "transferSize": 4325,
+              "decodedBodySize": 12435
+            },
+            {
+              "pathname": "/game/assets/styles-ss_RKbFy.css",
+              "initiatorType": "link",
+              "transferSize": 9432,
+              "decodedBodySize": 40915
+            },
+            {
+              "pathname": "/game/assets/UnrealBloomPass-CUqOIqa1.js",
+              "initiatorType": "other",
+              "transferSize": 142828,
+              "decodedBodySize": 562914
+            },
+            {
+              "pathname": "/game/r09/",
+              "initiatorType": "navigation",
+              "transferSize": 1990,
+              "decodedBodySize": 3273
+            }
+          ]
+        },
+        "frames": {
+          "count": 179,
+          "p95Ms": 34.1,
+          "longFrames": 0,
+          "maximumMs": 34.2
+        },
+        "input": {
+          "before": {
+            "x": 430,
+            "y": 900
+          },
+          "after": {
+            "x": 500,
+            "y": 900
+          },
+          "distance": 70,
+          "moved": true
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      }
+    ]
+  },
+  "artifactFingerprints": {
+    "r06": "79d53600873b2863db464ef7735d2c9f835d82ee30eb89cfe2e49b043e0ec9bd",
+    "r09": "34f8365e7b594611271842f05c0b5648824ac5ff9f82a6d9744db2cd9ebd9be7"
+  },
+  "summary": {
+    "r06": {
+      "firstControllableMedianMs": 990.7,
+      "appReadyMedianMs": 716,
+      "sameOriginTransferMedianBytes": 789795,
+      "decodedMedianBytes": 1577029,
+      "frameP95MedianMs": 33.5,
+      "longFramesTotal": 0,
+      "maximumFrameMs": 34.3
+    },
+    "r09": {
+      "firstControllableMedianMs": 928.8,
+      "appReadyMedianMs": 713,
+      "sameOriginTransferMedianBytes": 832444,
+      "decodedMedianBytes": 1674089,
+      "frameP95MedianMs": 34.2,
+      "longFramesTotal": 0,
+      "maximumFrameMs": 34.3
+    }
+  },
+  "ratios": {
+    "firstControllable": 0.9375189260119107,
+    "transfer": 1.054000088630594,
+    "frameP95": 1.0208955223880598
+  },
+  "gates": {
+    "firstControllableWithinTenPercent": true,
+    "transferWithinTenPercent": true,
+    "frameP95WithinTenPercent": true,
+    "r09InputResponded": true,
+    "noBrowserErrors": true
+  },
+  "limits": {
+    "relativeRegressionMaximum": 1.1,
+    "note": "Local desktop Chrome evidence only. This is not iPhone 16 Pro or public deployment acceptance."
+  }
+}

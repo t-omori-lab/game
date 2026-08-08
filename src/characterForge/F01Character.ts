@@ -6,7 +6,7 @@ import surfacePackDefinition from "./f01.surface-pack.json";
 export type ForgeMotion = "idle" | "run" | "hit";
 export type ForgeView = "front" | "left" | "back" | "right" | "three-quarter";
 
-type PartId =
+export type F01PartId =
   | "head"
   | "torso"
   | "left-arm"
@@ -25,7 +25,7 @@ interface SurfaceCell {
   readonly x: number;
   readonly y: number;
   readonly z: number;
-  readonly part: PartId;
+  readonly part: F01PartId;
   readonly palette: PaletteEntry;
 }
 
@@ -59,10 +59,22 @@ export interface F01CharacterStats {
 export interface F01Character {
   readonly root: THREE.Group;
   readonly motionRoot: THREE.Group;
+  readonly partGroups: Readonly<Record<F01PartId, THREE.Group>>;
+  readonly materials: ReadonlyMap<string, THREE.MeshPhysicalMaterial>;
   readonly stats: F01CharacterStats;
   update(motion: ForgeMotion, timeSeconds: number, motionStartedAt: number): void;
   setWireframe(enabled: boolean): void;
   dispose(): void;
+}
+
+export interface F01CharacterRenderOptions {
+  /**
+   * Forge defaults to authored voxel shadows. Gameplay already renders a
+   * dedicated blob shadow, so its bridge can skip the expensive per-part
+   * shadow pass without changing the visible surface pack.
+   */
+  readonly castShadow?: boolean;
+  readonly receiveShadow?: boolean;
 }
 
 const PART_IDS = [
@@ -73,7 +85,7 @@ const PART_IDS = [
   "left-leg",
   "right-leg",
   "equipment",
-] as const satisfies readonly PartId[];
+] as const satisfies readonly F01PartId[];
 
 const source = sourceDefinition;
 const palette = source.palette as readonly PaletteEntry[];
@@ -101,14 +113,14 @@ function decodeSurfaceCells(): readonly SurfaceCell[] {
   for (let offset = 0; offset < binary.length; offset += surfacePack.stride) {
     const partId = surfacePack.partIds[binary.charCodeAt(offset + 3)];
     const paletteId = surfacePack.paletteIds[binary.charCodeAt(offset + 4)];
-    if (!PART_IDS.includes(partId as PartId) || paletteId === undefined) {
+    if (!PART_IDS.includes(partId as F01PartId) || paletteId === undefined) {
       throw new Error("F-01 surface pack contains an unknown semantic index.");
     }
     cells.push({
       x: binary.charCodeAt(offset),
       y: binary.charCodeAt(offset + 1),
       z: binary.charCodeAt(offset + 2),
-      part: partId as PartId,
+      part: partId as F01PartId,
       palette: paletteById(paletteId),
     });
   }
@@ -132,7 +144,7 @@ function createMaterial(entry: PaletteEntry): THREE.MeshPhysicalMaterial {
   });
 }
 
-function pivotForPart(part: PartId): THREE.Vector3 {
+function pivotForPart(part: F01PartId): THREE.Vector3 {
   const { width, height, depth, cellSize } = source.grid;
   const xCenter = (width - 1) / 2;
   const zCenter = (depth - 1) / 2;
@@ -180,7 +192,7 @@ function resetPart(part: PartState): void {
 }
 
 function updatePose(
-  parts: Readonly<Record<PartId, PartState>>,
+  parts: Readonly<Record<F01PartId, PartState>>,
   motionRoot: THREE.Group,
   motion: ForgeMotion,
   timeSeconds: number,
@@ -229,7 +241,9 @@ function updatePose(
   }
 }
 
-export function createF01Character(): F01Character {
+export function createF01Character(
+  options: F01CharacterRenderOptions = {},
+): F01Character {
   const surfaceCells = decodeSurfaceCells();
   const root = new THREE.Group();
   root.name = source.id;
@@ -246,7 +260,7 @@ export function createF01Character(): F01Character {
       motionRoot.add(group);
       return [partId, { group, restPosition: pivot.clone() } satisfies PartState];
     }),
-  ) as Record<PartId, PartState>;
+  ) as Record<F01PartId, PartState>;
   const materials = new Map(
     palette.map((entry) => [entry.id, createMaterial(entry)] as const),
   );
@@ -262,14 +276,14 @@ export function createF01Character(): F01Character {
   const matrix = new THREE.Matrix4();
 
   for (const [key, cells] of groupCells(surfaceCells)) {
-    const [partId, paletteId] = key.split(":") as [PartId, string];
+    const [partId, paletteId] = key.split(":") as [F01PartId, string];
     const material = materials.get(paletteId);
     const part = parts[partId];
     if (material === undefined || part === undefined) continue;
     const mesh = new THREE.InstancedMesh(geometry, material, cells.length);
     mesh.name = `${source.id}:${key}`;
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
+    mesh.castShadow = options.castShadow ?? true;
+    mesh.receiveShadow = options.receiveShadow ?? true;
     mesh.frustumCulled = false;
     const pivot = part.restPosition;
     cells.forEach((cell, index) => {
@@ -288,6 +302,10 @@ export function createF01Character(): F01Character {
   return {
     root,
     motionRoot,
+    partGroups: Object.fromEntries(
+      PART_IDS.map((partId) => [partId, parts[partId].group]),
+    ) as Record<F01PartId, THREE.Group>,
+    materials,
     stats: {
       sourceVoxels: surfacePack.sourceVoxels,
       renderedSurfaceCells: surfaceCells.length,

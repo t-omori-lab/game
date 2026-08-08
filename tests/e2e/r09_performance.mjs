@@ -10,7 +10,8 @@ const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
 const baseUrl = process.argv[2] ?? "http://127.0.0.1:4174/game/";
 const outputDirectory = resolve(
-  "work/r09a_first_memory_logic_2026-08-08/evidence/performance",
+  process.argv[3] ??
+    "work/r09a_first_memory_logic_2026-08-08/evidence/performance",
 );
 const executablePath = existsSync(chromium.executablePath())
   ? chromium.executablePath()

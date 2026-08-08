@@ -31,6 +31,7 @@ import {
   type CombatPresentationState,
   type PrototypeBRenderQuality,
 } from "../render";
+import type { PrototypeBHeroAssetRequest } from "../render/hero";
 import { screenMovementToWorld } from "../render/CameraComposition";
 import type { WorldMemoryEffects } from "../worldMemory";
 import {
@@ -87,6 +88,7 @@ export type StartPrototypeBOptions = {
   readonly companionPreview?: boolean;
   readonly semiAutoCombat?: boolean;
   readonly worldMemoryRuntime?: R09WorldMemoryRuntime;
+  readonly heroAssetRequest?: PrototypeBHeroAssetRequest;
 };
 
 export function isNorthStarDebugEnabled(search: string): boolean {
@@ -714,6 +716,7 @@ export function startPrototypeB(
             options.experience === "r08" ||
             options.experience === "r09",
         worldMemoryEffects: r09MemoryLoop?.effects,
+        heroAssetRequest: options.heroAssetRequest,
       },
     );
   }

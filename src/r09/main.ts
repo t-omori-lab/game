@@ -15,6 +15,7 @@ import {
   ResilientStorageBackend,
   type StorageBackend,
 } from "../platform/storageBackend";
+import { loadR09HeroAsset } from "./loadR09HeroAsset";
 
 const root = document.querySelector<HTMLElement>("#app");
 
@@ -30,14 +31,19 @@ const repository = createWorldMemoryRepository(storage);
 root.dataset.bootState = "loading-memory";
 
 try {
-  const loaded = await loadWorldMemory(repository, worldSeed);
+  const [loaded, heroAssetRequest] = await Promise.all([
+    loadWorldMemory(repository, worldSeed),
+    loadR09HeroAsset(window.location.search),
+  ]);
   root.dataset.memoryLoadSource = loaded.source;
   root.dataset.memoryPersistence = storage.persistence;
+  root.dataset.heroAssetLoadStatus = heroAssetRequest.status;
   startPrototypeB(root, {
     experience: "r09",
     renderQuality: "pc-ultra",
     companionPreview: false,
     semiAutoCombat: true,
+    heroAssetRequest,
     worldMemoryRuntime: {
       initialState: loaded.state,
       loadSource: loaded.source,

@@ -51,7 +51,9 @@ import {
 import {
   alignObjectGripToSocket,
   createHeroVisual,
+  resolvePrototypeBHeroAsset,
   type HeroMotion,
+  type PrototypeBHeroAssetRequest,
   type HeroVisual,
 } from "./hero";
 import {
@@ -208,6 +210,8 @@ export interface PrototypeBRendererOptions {
   readonly qualityProfile?: PrototypeBRenderQuality;
   readonly sharpPresentation?: boolean;
   readonly worldMemoryEffects?: WorldMemoryEffects;
+  /** Optional generated/compiled actor. Resolution always retains built-in fallback. */
+  readonly heroAssetRequest?: PrototypeBHeroAssetRequest;
 }
 
 export class PrototypeBRenderer {
@@ -569,23 +573,32 @@ export class PrototypeBRenderer {
     this.playerGroup.add(this.playerBody);
     this.playerBody.castShadow = true;
     this.playerBody.receiveShadow = true;
-    this.playerHeroVisual =
-      this.presentationProfile === "r08-fram"
-        ? createR08FramHeroVisual()
-        : this.presentationProfile === "r07-fram"
-        ? createR07FramHeroVisual()
-        : this.presentationProfile === "r05-fram"
-        ? createR05FramHeroVisual()
-        : this.environmentProfile === "r04-live"
-        ? createR04HeroVisual()
-        : this.environmentProfile === "beauty-cell"
-        ? createBeautyHeroVisual()
-        : this.qualityProfile === "pc-ultra"
-          ? createHeroVisual({ mode: "articulated" })
-          : null;
+    const heroAsset = resolvePrototypeBHeroAsset(
+      options.heroAssetRequest,
+      () =>
+        this.presentationProfile === "r08-fram"
+          ? createR08FramHeroVisual()
+          : this.presentationProfile === "r07-fram"
+          ? createR07FramHeroVisual()
+          : this.presentationProfile === "r05-fram"
+          ? createR05FramHeroVisual()
+          : this.environmentProfile === "r04-live"
+          ? createR04HeroVisual()
+          : this.environmentProfile === "beauty-cell"
+          ? createBeautyHeroVisual()
+          : this.qualityProfile === "pc-ultra"
+            ? createHeroVisual({ mode: "articulated" })
+            : null,
+    );
+    this.playerHeroVisual = heroAsset.visual;
+    this.renderer.domElement.dataset.heroAssetSource = heroAsset.source;
+    this.renderer.domElement.dataset.heroAssetStatus = heroAsset.status;
+    this.renderer.domElement.dataset.heroAssetId = heroAsset.assetId ?? "none";
     if (this.playerHeroVisual !== null) {
       this.playerBody.visible = false;
-      if (this.environmentProfile === "beauty-cell") {
+      if (heroAsset.worldScale !== undefined) {
+        this.playerHeroVisual.root.scale.setScalar(heroAsset.worldScale);
+      } else if (this.environmentProfile === "beauty-cell") {
         this.playerHeroVisual.root.scale.setScalar(1.28);
       } else if (this.presentationProfile === "r08-fram") {
         this.playerHeroVisual.root.scale.setScalar(
@@ -605,7 +618,10 @@ export class PrototypeBRenderer {
         );
       }
       this.playerGroup.add(this.playerHeroVisual.root);
-      if (isFramPresentation(this.presentationProfile)) {
+      if (
+        isFramPresentation(this.presentationProfile) ||
+        heroAsset.source === "runtime"
+      ) {
         this.renderer.domElement.dataset.heroRepresentation = String(
           this.playerHeroVisual.root.userData.runtimeRepresentation ?? "unknown",
         );

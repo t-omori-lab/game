@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "candidate": "F-01 compiled surface pack / gameplay bridge v1",
+  "evaluatedIn": "R09 actual gameplay scene",
+  "viewports": [
+    { "width": 1280, "height": 720 },
+    { "width": 2560, "height": 1440 }
+  ],
+  "evidenceRoot": "output/playwright/r09b-character-bridge-f01-baseline",
+  "result": "failed-modules-only-to-f02",
+  "modules": [
+    {
+      "id": "surface-density",
+      "status": "pass",
+      "evidence": "9,454 compiled visible cells read as a coherent high-density voxel actor at both gameplay resolutions."
+    },
+    {
+      "id": "gameplay-scale",
+      "status": "pass",
+      "evidence": "24x authored-unit bridge produces an approximately 16 percent screen-height actor without changing the R09 camera."
+    },
+    {
+      "id": "hair-silhouette",
+      "status": "pass",
+      "evidence": "The pale asymmetric bob and oversized compact head remain identifiable from front and three-quarter play views."
+    },
+    {
+      "id": "face-readability",
+      "status": "fail",
+      "evidence": "Skin, large teal eyes, fringe framing and expression from the Beauty/Build Sheet collapse into small dark noise at 1280x720."
+    },
+    {
+      "id": "torso-jacket-separation",
+      "status": "fail",
+      "evidence": "The white technical coat, dark inner suit and front harness merge into a mostly gray vertical mass."
+    },
+    {
+      "id": "limb-silhouette",
+      "status": "conditional-fail",
+      "evidence": "Semantic arms and legs animate correctly, but gloves, coat edge and leg separation are weak during motion."
+    },
+    {
+      "id": "backpack-signal",
+      "status": "fail",
+      "evidence": "The archive pack and cyan status panel do not produce a reliable gameplay-scale identity read."
+    },
+    {
+      "id": "weapon-socket-and-scale",
+      "status": "pass-after-bridge-fix",
+      "evidence": "The right-arm socket follows animation and inverse actor-scale compensation keeps both world-unit tools at gameplay size."
+    },
+    {
+      "id": "locomotion-contract",
+      "status": "pass",
+      "evidence": "Idle and run are synchronized with authoritative movement and all four facing directions remain available through normal controls."
+    },
+    {
+      "id": "combat-pose-readability",
+      "status": "fail",
+      "evidence": "Windup, hit, recovery, hurt and skill are mechanically distinct, but their silhouettes are not yet strong enough at normal camera distance."
+    },
+    {
+      "id": "runtime-fallback",
+      "status": "pass",
+      "evidence": "?actor=legacy bypasses the dynamic pack and starts R09A with the built-in R05 actor without browser errors."
+    }
+  ],
+  "f02Scope": [
+    "face-readability",
+    "torso-jacket-separation",
+    "limb-silhouette",
+    "backpack-signal",
+    "combat-pose-readability"
+  ]
+}

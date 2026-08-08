@@ -4,9 +4,9 @@ Last updated: 2026-08-08
 
 ## 結論
 
-**Goal 0 `Safe Baseline`とR09A `First Memory Logic Proof`はlocal完了した。** 次は、同じR09 sceneへF-01を接続する **R09B `Playable Character Bridge`**を作る。
+**Goal 0、R09A `First Memory Logic Proof`、R09B `Playable Character Bridge`はlocal完了した。** 現在はF-02のuser visual review待ちである。採択なら最小Product Shellへ進み、不採択ならF-01正本を壊さずF-03造形補正を一回だけ行う。
 
-First Memory Loopは、二site×二module、回収物消費、撤退、save／reload、二回目差分まで技術的に成立した。次はF-01を通常camera、world light、移動、装備、戦闘で評価し、露呈した箇所だけをF-02へ直す。character改善とworld-memoryを別demoにしない。
+First Memory Loopに加え、F-01を通常camera、world light、移動、装備、戦闘で評価し、露呈した5項目だけをF-02へ直すloopも成立した。F-02はForgeとR09で同じ10,160-cell packを使い、R09A回帰とR06比性能gateを通過している。local自動合格を、可愛さやcommercial qualityのユーザー採択とは扱わない。
 
 ```text
 Goal 0 Safe Baseline ✓
@@ -14,8 +14,8 @@ Goal 0 Safe Baseline ✓
 
 R09 First Memory Expedition
 ├─ A. First Memory Loop ✓
-├─ B. F-01 bridge → evidence-driven F-02 ← current
-└─ C. loading／PC master／mobile tier guards
+├─ B. F-01 bridge → evidence-driven F-02 ✓ user review pending
+└─ C. loading／PC master／mobile tier guards ← next if adopted
 
 → R10 Relic Buildcraft
 → 20〜30分 Golden Vertical Slice
@@ -66,19 +66,19 @@ Baseline code SHAは`1c9d355`。canonical main runはcold／warm first-controlla
 
 ### B. Playable Character Bridge
 
-- [ ] F-01を凍結し、薄いactor adapterで同じR09 sceneへ接続する。
+- [x] F-01を凍結し、薄いactor adapterで同じR09 sceneへ接続する。
   - 通常camera、world light、wet surface、移動、combat、装備で評価する。
   - 1280×720／2560×1440、actor高14〜17%、既存idle／run／hitを記録する。
   - 未実装のattack／skill専用motionはF-02の不合格証拠とし、F-01 bridgeの前提にはしない。
 
-- [ ] 実gameplay captureからF-02の修正範囲を決める。
+- [x] 実gameplay captureからF-02の修正範囲を決める。
   - module、socket、motionごとのpass／fail manifestを作る。
   - hair、face、torso／jacket、arms、legs、pack、toolのうちfailed moduleだけを独立sourceへ再構築する。
   - head、hand、back、weapon、utility、effect socketとmotionは、実clip／missingの項目だけを修正する。
   - code内の場当たり的な箱追加ではなく、再生成可能なsource／mask／deltaへ残す。
   - attack timing、damage、cooldownのauthorityはsimulation側から動かさない。
 
-- [ ] 同じF-02 runtime packをForgeとR09で使う。
+- [x] 同じF-02 runtime packをForgeとR09で使う。
   - gameplay routeではBeauty／Build Sheet、画像sampling、volume再構築、LLM推論をload／実行しない。
   - ForgeとR09で同一人物、同一palette、同一装備として読めることを確認する。
 
@@ -92,7 +92,7 @@ Baseline code SHAは`1c9d355`。canonical main runはcold／warm first-controlla
 - root catalogはService Workerによるnavigation介入を持たない。R09のroute-scoped workerはcatalog scopeへ広げず、cacheするHTMLとhash付きassetを同じrelease manifestで固定する。
 - R06の公開performance baselineは、static boot shell、route専用static entry、主要game chunkのmodulepreload、地面画像の初期preload除外を持つ。R09の比較では、この起動順と空白なしのfirst paintも回帰対象にする。
 - [x] 現行actorのままAのlogic proofを完了できるようにし、F-02待ちで停止させない。
-- [ ] F-01 pack／adapterの失敗、timeout、disable flag時は現行actorへfallbackし、First Memory Loop、save、reloadを完走する。WorldMemoryState／save schemaにはF-01／F-02固有IDを入れない。
+- [x] F-01 pack／adapterの失敗、timeout、disable flag時は現行actorへfallbackし、First Memory Loop、save、reloadを完走する。WorldMemoryState／save schemaにはF-01／F-02固有IDを入れない。
 - [x] R06とR09を同じproduction previewで測り、transfer、first-controllable、frame-time p95、50ms超long frameを記録する。
 - [x] R09をR06比10%以上悪化させない。悪化時はroute-specific import／asset分離を先に直す。
 - [ ] `/game/` first view 150 KB以下、scroll前archive画像0 byteを維持する。
@@ -199,12 +199,11 @@ Local evidenceは`work/r09a_first_memory_logic_2026-08-08/`にある。desktop C
 
 ## Exact restart point
 
-1. `work/r09a_first_memory_logic_2026-08-08/R09A_FIRST_MEMORY_LOGIC_REPORT.md`とbrowser／performance JSONをR09Bの回帰基準として読む。
-2. F-01のcompiled surface pack、digest、semantic parts、rig、socketを凍結し、World Memory schemaへactor固有IDを入れない薄いadapter／fallback contractを定義する。
-3. 同じF-01 runtime packをForgeとR09へ接続し、通常camera、world light、wet surface、移動、装備、auto-basic、手動大技で動かす。pack失敗時は現行actorへ戻してR09A loopを継続する。
-4. 1280×720／2560×1440のactual gameplay captureから、hair、face、jacket、arms、legs、pack、tool、socket、motionごとのpass／fail manifestを作る。
-5. failed項目だけを再生成可能なsource／mask／deltaへ分離してF-02を作り、同一packをForgeとR09で確認する。
-6. R09A四分岐、fallback、loading、R06性能比較を再実行し、通常倍率でuser visual reviewへ渡す。
+1. `work/r09b_character_bridge_2026-08-08/R09B_CHARACTER_BRIDGE_REPORT.md`、F-01／F-02 manifests、`evidence/`の通常倍率captureを読む。
+2. ユーザーがR09B actual gameplayを見て、F-02を暫定actorとして採択するか、F-03造形補正が必要かを判断する。
+3. 採択時はR09の同じlocal dataで`Boot → Loading → Title → local Profile → Continue／New Expedition → Game`の最小Shellを作る。Google sign-in／cloudはこのsliceをblockしない。
+4. F-03が必要な場合は、F-02のmodule別証拠から不合格項目だけを再authoringし、R09A／fallback／性能gateを再実行する。F-01とF-02 evidenceを上書きしない。
+5. 最小Shell統合後、R10最初の二〜三buildを同じR09 sceneへ接続する。
 
 詳細な判断理由と合格条件は、`work/next_direction_2026-08-03/NEXT_DIRECTION.md`を参照する。
 
@@ -212,6 +211,7 @@ Product Foundationの採用範囲と2026-08-08の優先順は、本ファイル�
 
 ## Recently completed
 
+- [x] R09B Playable Character Bridge — F-01 gameplay adapter、evidence-driven F-02（10,160 cells）、Forge／R09 shared runtime、旧actor fallback、R09A回帰、R06比performance gate — 2026-08-08
 - [x] R09A First Memory Logic Proof — WorldMemoryState v1、二site×二module、回収物消費、撤退、二回目差分、R09専用local save／reload、四分岐browser gate、R06比性能gate — 2026-08-08
 - [x] Goal 0 Safe Baseline — current R06 E2E／performance gate、Playwright固定、canonical docs整合、main統合、local postflight — 2026-08-08
 - [x] F.R.A.M. game-first catalog、軽量first view、archive image hard gate、Character Forge FIELDをGitHub Pagesへ公開確認 — 2026-08-03
