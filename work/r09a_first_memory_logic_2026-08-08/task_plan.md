@@ -18,7 +18,7 @@ F.R.A.M.の一回目の遠征結果を、二回目の世界の見た目と遊び
 - [x] 二site、回収、base claim、二module、撤退を一遠征のsimulation／UIへ接続
 - [x] 二回目開始90秒以内のmodule別visual／gameplay差分を接続
 - [x] 四分岐、撤退、reload、両route combatのheadless／browser gate
-- [ ] R06比較、documentation、postflight、限定commit、main統合
+- [x] R06比較、documentation、postflight、限定commit、main統合
 
 ## Acceptance evidence
 
@@ -35,6 +35,7 @@ F.R.A.M.の一回目の遠征結果を、二回目の世界の見た目と遊び
 - 2026-08-08: 永続状態はeventからのみ更新し、`PrototypeBState`をsave payloadへ混在させない。
 - 2026-08-08: module効果は初版から互いに別系統とする。Pathfinder Arrayはroute表示＋探索速度、Relic Overdriveはcoral aura＋大技cooldownへ作用する。
 - 2026-08-08: R09AはR06と同じR05/R06 presentation profileで性能比較する。R08 character／depth profileはR09Bのvisual gateへ分離する。
+- 2026-08-08: verified implementation commit `b24f3c9`を`main`へfast-forward統合し、Workspace postflight 36/36を通過した。GitHub push／deployは行っていない。
 
 ## Errors / blockers
 
