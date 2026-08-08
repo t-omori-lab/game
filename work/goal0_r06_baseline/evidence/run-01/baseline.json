@@ -1,9 +1,48 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "gate": "goal0-current-r06-browser-baseline",
   "status": "passed",
-  "measuredAt": "2026-08-08T08:10:30.590Z",
-  "buildSha": "0bf397c9cf9e3d988358569daa9c7a24142aa7e4",
+  "measuredAt": "2026-08-08T08:43:23.843Z",
+  "sourceState": {
+    "head": "fc4268644ec4e9d1b5ca42917aafeb7a55c85464",
+    "dirty": true,
+    "statusPorcelain": [
+      " M package.json",
+      " M pnpm-lock.yaml",
+      " M tests/e2e/r06_baseline.mjs",
+      " M work/goal0_r06_baseline/REPORT.md",
+      " M work/goal0_r06_baseline/evidence/run-01/baseline.json",
+      " M work/goal0_r06_baseline/evidence/run-01/verified-r06.png",
+      " M work/goal0_r06_baseline/evidence/run-02/baseline.json",
+      " D work/goal0_r06_baseline/evidence/run-02/verified-r06.png",
+      " M work/goal0_r06_baseline/notes.md",
+      " M work/goal0_r06_baseline/task_plan.md"
+    ],
+    "statement": "The measured production artifact was built from a dirty source tree; HEAD alone does not identify its contents."
+  },
+  "build": {
+    "performedByGate": true,
+    "provenanceStrength": "source-state-plus-production-artifact-fingerprint",
+    "commands": [
+      {
+        "command": "tsc --noEmit",
+        "exitCode": 0,
+        "durationMs": 1252
+      },
+      {
+        "command": "vite build --configLoader runner",
+        "exitCode": 0,
+        "durationMs": 2242
+      }
+    ],
+    "artifactFingerprint": {
+      "algorithm": "sha256-tree-v1",
+      "root": "dist/client",
+      "digest": "3b486613dc8bef95f432e9e635ba10763092cd2cb85febcb1b5c970fbc6b5053",
+      "fileCount": 109,
+      "totalBytes": 35937569
+    }
+  },
   "url": "http://127.0.0.1:4173/game/r06/",
   "viewport": {
     "width": 1280,
@@ -24,22 +63,101 @@
   "server": {
     "kind": "vite-production-preview",
     "startedByGate": true,
+    "localOnly": true,
+    "provenanceStrength": "gate-started Vite preview serving the just-built fingerprinted dist/client",
     "command": "vite preview --configLoader runner --host 127.0.0.1 --port 4173 --strictPort"
   },
   "frameSample": {
     "durationMs": 10000,
     "longFrameThresholdMs": 50
   },
+  "errorCoverage": {
+    "claim": "Fails on page errors and error-level console messages surfaced by Playwright BrowserContext, including service-worker-origin console messages when Playwright surfaces them.",
+    "limitation": "Playwright does not expose a separate exhaustive service-worker exception event; activated registration and controller identity are proved independently.",
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  "serviceWorkerProof": {
+    "expectedScopePath": "/game/r06/",
+    "expectedScriptPath": "/game/r06/sw.js",
+    "observedWorkers": [
+      {
+        "phase": "cold",
+        "url": "http://127.0.0.1:4173/game/r06/sw.js",
+        "observedAt": "2026-08-08T08:43:28.635Z"
+      }
+    ],
+    "afterCold": {
+      "checkedAt": "2026-08-08T08:43:40.551Z",
+      "pageUrl": "http://127.0.0.1:4173/game/r06/",
+      "controllerRequired": false,
+      "registration": {
+        "scope": "http://127.0.0.1:4173/game/r06/",
+        "matchesExpectedScope": true,
+        "active": {
+          "scriptURL": "http://127.0.0.1:4173/game/r06/sw.js",
+          "state": "activated",
+          "matchesExpectedScript": true
+        }
+      },
+      "controller": {
+        "scriptURL": "http://127.0.0.1:4173/game/r06/sw.js",
+        "state": "activated",
+        "matchesExpectedScript": true
+      }
+    },
+    "beforeWarmNavigation": {
+      "checkedAt": "2026-08-08T08:43:40.553Z",
+      "pageUrl": "http://127.0.0.1:4173/game/r06/",
+      "controllerRequired": true,
+      "registration": {
+        "scope": "http://127.0.0.1:4173/game/r06/",
+        "matchesExpectedScope": true,
+        "active": {
+          "scriptURL": "http://127.0.0.1:4173/game/r06/sw.js",
+          "state": "activated",
+          "matchesExpectedScript": true
+        }
+      },
+      "controller": {
+        "scriptURL": "http://127.0.0.1:4173/game/r06/sw.js",
+        "state": "activated",
+        "matchesExpectedScript": true
+      }
+    },
+    "afterWarmNavigation": {
+      "checkedAt": "2026-08-08T08:43:41.346Z",
+      "timing": "immediately after warm page.goto reached DOMContentLoaded, before R06 boot/playability waits",
+      "pageUrl": "http://127.0.0.1:4173/game/r06/",
+      "controllerRequired": true,
+      "registration": {
+        "scope": "http://127.0.0.1:4173/game/r06/",
+        "matchesExpectedScope": true,
+        "active": {
+          "scriptURL": "http://127.0.0.1:4173/game/r06/sw.js",
+          "state": "activated",
+          "matchesExpectedScript": true
+        }
+      },
+      "controller": {
+        "scriptURL": "http://127.0.0.1:4173/game/r06/sw.js",
+        "state": "activated",
+        "matchesExpectedScript": true
+      }
+    }
+  },
   "runs": [
     {
       "cacheState": "cold",
       "responseStatus": 200,
       "finalUrl": "http://127.0.0.1:4173/game/r06/",
-      "firstControllableMs": 1278,
-      "appReadyMs": 786,
-      "domContentLoadedMs": 80.3,
-      "loadEventMs": 80.4,
-      "transferSizeBytes": 2095,
+      "firstControllableMs": 1252.3,
+      "firstControllableDefinition": "R06 boot ready; start activated; stage active/playing; visible WASD guide; nonblank WebGL canvas and painted minimap verified.",
+      "appReadyMs": 757,
+      "navigationTiming": {
+        "domContentLoadedMs": 76.7,
+        "loadEventMs": 78.6
+      },
       "player": {
         "x": 430,
         "y": 900
@@ -50,6 +168,16 @@
         "presentationState": "active",
         "status": "playing",
         "questPhase": "briefing"
+      },
+      "controlGuide": {
+        "visible": true,
+        "ariaLabel": "PC操作ガイド",
+        "text": "WASD移動 AUTO通常攻撃 Q大技 SHIFT防御 / 回避 E調査 R道具",
+        "containsWasd": true,
+        "bounds": {
+          "width": 422.23,
+          "height": 25
+        }
       },
       "canvas": {
         "css": {
@@ -65,7 +193,7 @@
           "cssHeight": 103.55,
           "bufferWidth": 320,
           "bufferHeight": 168,
-          "lastPaintAt": 1274.7
+          "lastPaintAt": 1205.6
         },
         "contextLost": false,
         "sampledPixels": 24,
@@ -75,79 +203,11 @@
         "vendor": "Google Inc. (Apple)"
       },
       "input": {
-        "control": "ArrowDown",
+        "control": "KeyS",
+        "advertisedControl": "WASD",
+        "keySent": "s",
         "holdMs": 600,
-        "before": {
-          "x": 430,
-          "y": 900
-        },
-        "after": {
-          "x": 495,
-          "y": 919
-        },
-        "distance": 67.72
-      },
-      "frameTiming": {
-        "targetDurationMs": 10000,
-        "actualDurationMs": 10005.6,
-        "frameCount": 467,
-        "meanMs": 21.43,
-        "p95Ms": 33.4,
-        "maxMs": 35.4,
-        "longFrameThresholdMs": 50,
-        "longFrameCount": 0
-      },
-      "errors": {
-        "console": [],
-        "page": []
-      }
-    },
-    {
-      "cacheState": "warm",
-      "responseStatus": 200,
-      "finalUrl": "http://127.0.0.1:4173/game/r06/",
-      "firstControllableMs": 918.9,
-      "appReadyMs": 581,
-      "domContentLoadedMs": 152.8,
-      "loadEventMs": 152.9,
-      "transferSizeBytes": 4112,
-      "player": {
-        "x": 430,
-        "y": 900
-      },
-      "metadata": {
-        "experience": "r06",
-        "prototypeVersion": "R06",
-        "presentationState": "active",
-        "status": "playing",
-        "questPhase": "briefing"
-      },
-      "canvas": {
-        "css": {
-          "width": 1278,
-          "height": 718
-        },
-        "buffer": {
-          "width": 1278,
-          "height": 718
-        },
-        "minimap": {
-          "cssWidth": 197.25,
-          "cssHeight": 103.55,
-          "bufferWidth": 320,
-          "bufferHeight": 168,
-          "lastPaintAt": 952.8
-        },
-        "contextLost": false,
-        "sampledPixels": 24,
-        "nonTransparentSamples": 24,
-        "uniqueSampledColors": 24,
-        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3, Unspecified Version)",
-        "vendor": "Google Inc. (Apple)"
-      },
-      "input": {
-        "control": "ArrowDown",
-        "holdMs": 600,
+        "observedContract": "data-player-x/y",
         "before": {
           "x": 430,
           "y": 900
@@ -160,13 +220,354 @@
       },
       "frameTiming": {
         "targetDurationMs": 10000,
-        "actualDurationMs": 10018.8,
-        "frameCount": 469,
-        "meanMs": 21.36,
-        "p95Ms": 33.4,
-        "maxMs": 35.3,
+        "actualDurationMs": 10000.3,
+        "frameCount": 601,
+        "meanMs": 16.64,
+        "p95Ms": 18.6,
+        "maxMs": 18.8,
         "longFrameThresholdMs": 50,
         "longFrameCount": 0
+      },
+      "routeResources": {
+        "scope": "Same-origin navigation and PerformanceResourceTiming entries observed through the end of the fixed active-gameplay sample.",
+        "totals": {
+          "count": 9,
+          "transferSizeBytes": 779580,
+          "encodedBodySizeBytes": 781648,
+          "decodedBodySizeBytes": 1545751
+        },
+        "groups": {
+          "navigation": {
+            "count": 1,
+            "transferSizeBytes": 2095,
+            "encodedBodySizeBytes": 1795,
+            "decodedBodySizeBytes": 3812
+          },
+          "script": {
+            "count": 4,
+            "transferSizeBytes": 315736,
+            "encodedBodySizeBytes": 314536,
+            "decodedBodySizeBytes": 1048142
+          },
+          "stylesheet": {
+            "count": 1,
+            "transferSizeBytes": 8729,
+            "encodedBodySizeBytes": 8429,
+            "decodedBodySizeBytes": 36909
+          },
+          "image": {
+            "count": 3,
+            "transferSizeBytes": 453020,
+            "encodedBodySizeBytes": 456888,
+            "decodedBodySizeBytes": 456888
+          }
+        },
+        "entries": [
+          {
+            "group": "navigation",
+            "entryType": "navigation",
+            "initiatorType": "navigation",
+            "url": "/game/r06/",
+            "transferSizeBytes": 2095,
+            "encodedBodySizeBytes": 1795,
+            "decodedBodySizeBytes": 3812,
+            "durationMs": 78.6
+          },
+          {
+            "group": "script",
+            "entryType": "resource",
+            "initiatorType": "script",
+            "url": "/game/assets/r06-CLG8Vk6m.js",
+            "transferSizeBytes": 1240,
+            "encodedBodySizeBytes": 940,
+            "decodedBodySizeBytes": 1499,
+            "durationMs": 5.2
+          },
+          {
+            "group": "script",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
+            "transferSizeBytes": 1011,
+            "encodedBodySizeBytes": 711,
+            "decodedBodySizeBytes": 711,
+            "durationMs": 4.8
+          },
+          {
+            "group": "script",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/assets/index-D958w3JL.js",
+            "transferSizeBytes": 170658,
+            "encodedBodySizeBytes": 170358,
+            "decodedBodySizeBytes": 483018,
+            "durationMs": 20.6
+          },
+          {
+            "group": "script",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/assets/UnrealBloomPass-Df6MHZ3R.js",
+            "transferSizeBytes": 142827,
+            "encodedBodySizeBytes": 142527,
+            "decodedBodySizeBytes": 562914,
+            "durationMs": 20
+          },
+          {
+            "group": "stylesheet",
+            "entryType": "resource",
+            "initiatorType": "link",
+            "url": "/game/assets/styles-SB_POs57.css",
+            "transferSizeBytes": 8729,
+            "encodedBodySizeBytes": 8429,
+            "decodedBodySizeBytes": 36909,
+            "durationMs": 6.5
+          },
+          {
+            "group": "image",
+            "entryType": "resource",
+            "initiatorType": "img",
+            "url": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
+            "transferSizeBytes": 453020,
+            "encodedBodySizeBytes": 452720,
+            "decodedBodySizeBytes": 452720,
+            "durationMs": 5.4
+          },
+          {
+            "group": "image",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/r06/icon.svg",
+            "transferSizeBytes": 0,
+            "encodedBodySizeBytes": 2084,
+            "decodedBodySizeBytes": 2084,
+            "durationMs": 3.4
+          },
+          {
+            "group": "image",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/r06/icon.svg",
+            "transferSizeBytes": 0,
+            "encodedBodySizeBytes": 2084,
+            "decodedBodySizeBytes": 2084,
+            "durationMs": 0.4
+          }
+        ]
+      },
+      "serviceWorkerAfterNavigation": null,
+      "errors": {
+        "console": [],
+        "page": []
+      }
+    },
+    {
+      "cacheState": "warm",
+      "responseStatus": 200,
+      "finalUrl": "http://127.0.0.1:4173/game/r06/",
+      "firstControllableMs": 1034.6,
+      "firstControllableDefinition": "R06 boot ready; start activated; stage active/playing; visible WASD guide; nonblank WebGL canvas and painted minimap verified.",
+      "appReadyMs": 586,
+      "navigationTiming": {
+        "domContentLoadedMs": 156,
+        "loadEventMs": 156.1
+      },
+      "player": {
+        "x": 430,
+        "y": 900
+      },
+      "metadata": {
+        "experience": "r06",
+        "prototypeVersion": "R06",
+        "presentationState": "active",
+        "status": "playing",
+        "questPhase": "briefing"
+      },
+      "controlGuide": {
+        "visible": true,
+        "ariaLabel": "PC操作ガイド",
+        "text": "WASD移動 AUTO通常攻撃 Q大技 SHIFT防御 / 回避 E調査 R道具",
+        "containsWasd": true,
+        "bounds": {
+          "width": 422.23,
+          "height": 25
+        }
+      },
+      "canvas": {
+        "css": {
+          "width": 1278,
+          "height": 718
+        },
+        "buffer": {
+          "width": 1278,
+          "height": 718
+        },
+        "minimap": {
+          "cssWidth": 197.25,
+          "cssHeight": 103.55,
+          "bufferWidth": 320,
+          "bufferHeight": 168,
+          "lastPaintAt": 957.5
+        },
+        "contextLost": false,
+        "sampledPixels": 24,
+        "nonTransparentSamples": 24,
+        "uniqueSampledColors": 24,
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)"
+      },
+      "input": {
+        "control": "KeyS",
+        "advertisedControl": "WASD",
+        "keySent": "s",
+        "holdMs": 600,
+        "observedContract": "data-player-x/y",
+        "before": {
+          "x": 430,
+          "y": 900
+        },
+        "after": {
+          "x": 499,
+          "y": 919
+        },
+        "distance": 71.57
+      },
+      "frameTiming": {
+        "targetDurationMs": 10000,
+        "actualDurationMs": 10008.1,
+        "frameCount": 601,
+        "meanMs": 16.65,
+        "p95Ms": 18.6,
+        "maxMs": 18.7,
+        "longFrameThresholdMs": 50,
+        "longFrameCount": 0
+      },
+      "routeResources": {
+        "scope": "Same-origin navigation and PerformanceResourceTiming entries observed through the end of the fixed active-gameplay sample.",
+        "totals": {
+          "count": 9,
+          "transferSizeBytes": 5912,
+          "encodedBodySizeBytes": 783665,
+          "decodedBodySizeBytes": 1545751
+        },
+        "groups": {
+          "navigation": {
+            "count": 1,
+            "transferSizeBytes": 4112,
+            "encodedBodySizeBytes": 3812,
+            "decodedBodySizeBytes": 3812
+          },
+          "script": {
+            "count": 4,
+            "transferSizeBytes": 1200,
+            "encodedBodySizeBytes": 314536,
+            "decodedBodySizeBytes": 1048142
+          },
+          "stylesheet": {
+            "count": 1,
+            "transferSizeBytes": 300,
+            "encodedBodySizeBytes": 8429,
+            "decodedBodySizeBytes": 36909
+          },
+          "image": {
+            "count": 3,
+            "transferSizeBytes": 300,
+            "encodedBodySizeBytes": 456888,
+            "decodedBodySizeBytes": 456888
+          }
+        },
+        "entries": [
+          {
+            "group": "navigation",
+            "entryType": "navigation",
+            "initiatorType": "navigation",
+            "url": "/game/r06/",
+            "transferSizeBytes": 4112,
+            "encodedBodySizeBytes": 3812,
+            "decodedBodySizeBytes": 3812,
+            "durationMs": 156.1
+          },
+          {
+            "group": "script",
+            "entryType": "resource",
+            "initiatorType": "script",
+            "url": "/game/assets/r06-CLG8Vk6m.js",
+            "transferSizeBytes": 300,
+            "encodedBodySizeBytes": 940,
+            "decodedBodySizeBytes": 1499,
+            "durationMs": 4.8
+          },
+          {
+            "group": "stylesheet",
+            "entryType": "resource",
+            "initiatorType": "link",
+            "url": "/game/assets/styles-SB_POs57.css",
+            "transferSizeBytes": 300,
+            "encodedBodySizeBytes": 8429,
+            "decodedBodySizeBytes": 36909,
+            "durationMs": 6.8
+          },
+          {
+            "group": "script",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/assets/modulepreload-polyfill-B5Qt9EMX.js",
+            "transferSizeBytes": 300,
+            "encodedBodySizeBytes": 711,
+            "decodedBodySizeBytes": 711,
+            "durationMs": 5.5
+          },
+          {
+            "group": "script",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/assets/index-D958w3JL.js",
+            "transferSizeBytes": 300,
+            "encodedBodySizeBytes": 170358,
+            "decodedBodySizeBytes": 483018,
+            "durationMs": 7.8
+          },
+          {
+            "group": "script",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/assets/UnrealBloomPass-Df6MHZ3R.js",
+            "transferSizeBytes": 300,
+            "encodedBodySizeBytes": 142527,
+            "decodedBodySizeBytes": 562914,
+            "durationMs": 6.6
+          },
+          {
+            "group": "image",
+            "entryType": "resource",
+            "initiatorType": "img",
+            "url": "/game/assets/reclaimed-meadow-v1-CgTL2cqk.webp",
+            "transferSizeBytes": 300,
+            "encodedBodySizeBytes": 452720,
+            "decodedBodySizeBytes": 452720,
+            "durationMs": 5.8
+          },
+          {
+            "group": "image",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/r06/icon.svg",
+            "transferSizeBytes": 0,
+            "encodedBodySizeBytes": 2084,
+            "decodedBodySizeBytes": 2084,
+            "durationMs": 2.7
+          },
+          {
+            "group": "image",
+            "entryType": "resource",
+            "initiatorType": "other",
+            "url": "/game/r06/icon.svg",
+            "transferSizeBytes": 0,
+            "encodedBodySizeBytes": 2084,
+            "decodedBodySizeBytes": 2084,
+            "durationMs": 0.5
+          }
+        ]
       },
       "errors": {
         "console": [],

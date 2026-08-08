@@ -15,27 +15,37 @@
 - The visible start action is `[data-testid="start-game"]`. Activating it changes the stage to active and enables controls.
 - `PrototypeBControls` listens to visible keyboard movement and the stage dataset is refreshed from the actual simulation state, so coordinate change proves current game response without adding instrumentation.
 - Existing `tests/e2e/smoke.py` is a legacy Phaser/mobile test against the old root flow. It stays unchanged and available.
-- No repository-local browser dependency exists. No install is authorized. The Codex bundled Node runtime provides Playwright and the machine already has Google Chrome; the gate can accept explicit module/browser paths with safe local fallbacks.
-- The main checkout already has the exact package dependencies in `node_modules`; this isolated worktree can use a temporary ignored symlink for verification without installing or modifying the main checkout.
+- Playwright `1.62.0` is now an exact repository-local development dependency and `test:e2e:r06` is a narrow package script. Standard setup is `pnpm install --frozen-lockfile` followed by `pnpm exec playwright install chromium`; this validation run used the existing system Chrome as an explicit override.
+- A real isolated-worktree `node_modules` was installed only for verification. It must be removed before the final scope audit and commit; no symlink is used.
 - Forced SwiftShader is functionally reproducible but too slow on this R06 scene to be a useful local R09 comparison baseline. Headless Chrome's normal path resolves to `ANGLE Metal Renderer: Apple M3`; the gate therefore lets Chrome select the system path and records the actual WebGL renderer/vendor in every run.
+
+## Independent QA revision (`fc426864`)
+
+- The original `transferSizeBytes` field came only from `PerformanceNavigationTiming` and therefore described the HTML navigation, not the full route. The revision must aggregate same-origin navigation and resource entries and group scripts, styles, images, fonts, manifest/service-worker, and other resources.
+- A bounded wait for `navigator.serviceWorker.ready` was insufficient proof. The revision must fail unless the `/game/r06/` registration is activated with `/game/r06/sw.js`, and the page controller matches that script before and after warm navigation.
+- The visible desktop guide advertises `WASD`; the response proof must assert that guide and use KeyS rather than ArrowDown.
+- Repository-local evidence as a default dirtied the checkout. Temporary output is now the default, while explicit retained evidence is restricted to the project-relative Goal-0 evidence root.
+- Production-preview provenance must include a gate-run build, `HEAD`, porcelain dirty state, and an artifact tree fingerprint. Measurements made while developing this revision are expected to say `dirty: true`.
+- The repository must own a locked Playwright development dependency and a narrow `test:e2e:r06` script. Standard browser installation will be documented as `pnpm exec playwright install chromium`; this validation run may use the already-installed system Chrome.
 
 ## Verification Evidence
 
-- Production route inspection: `/game/r06/` returned HTTP 200; `/r06/` returned the Vite base warning with HTTP 404.
+- Local-only production route: `/game/r06/` returned HTTP 200. Unsafe output and URL variants were rejected before build/preview.
 - Strict TypeScript: PASS.
 - Vitest: PASS, 38 files and 205 tests.
 - Production build: PASS, 119 modules transformed. Existing chunk-size warnings remain informational.
 - Browser gate run 01: PASS.
-  - cold first-controllable 1,278.0 ms; frame p95 33.4 ms; >50 ms frames 0.
-  - warm first-controllable 918.9 ms; frame p95 33.4 ms; >50 ms frames 0.
-  - input movement 67.72 / 71.57 world units; console errors 0; page errors 0.
+  - cold first-controllable 1,252.3 ms; frame p95 18.6 ms; >50 ms frames 0; route transfer 779,580 bytes / 9 entries.
+  - warm first-controllable 1,034.6 ms; frame p95 18.6 ms; >50 ms frames 0; route transfer 5,912 bytes / 9 entries.
+  - KeyS movement 71.57 / 71.57 world units; console errors 0; page errors 0.
 - Browser gate run 02: PASS.
-  - cold first-controllable 1,185.5 ms; frame p95 33.4 ms; >50 ms frames 0.
-  - warm first-controllable 895.4 ms; frame p95 34.3 ms; >50 ms frames 0.
-  - input movement 71.57 / 67.72 world units; console errors 0; page errors 0.
-- Both runs used 1,280×720 / DPR 1, headless Chrome 151.0.7922.76, Playwright 1.62.0, and the Apple M3 Metal WebGL renderer.
+  - cold first-controllable 1,338.6 ms; frame p95 18.5 ms; >50 ms frames 0; route transfer 779,580 bytes / 9 entries.
+  - warm first-controllable 936.2 ms; frame p95 18.7 ms; >50 ms frames 0; route transfer 5,912 bytes / 9 entries.
+  - KeyS movement 71.57 / 75.43 world units; console errors 0; page errors 0.
+- Both runs used 1,280×720 / DPR 1, headless Chrome 151.0.7922.76, Playwright 1.62.0, and the Apple M3 Metal WebGL renderer. Both recorded the same production-tree fingerprint `3b486613…b5053` and explicitly labelled the source tree dirty at `fc426864...`.
+- Both runs proved the R06 service worker active after cold and the expected `/game/r06/sw.js` controller immediately before warm navigation and at DOMContentLoaded immediately after it, before R06 boot/playability waits.
 - Both runs sampled 24 nontransparent / 24 unique WebGL pixels, a live 320×168 minimap, and a non-lost WebGL context.
-- Temporary dependency symlink removed before final diff; `node_modules` is absent from Git status.
+- One representative screenshot is retained; run-02 records `screenshot: null`.
 - Official postflight boundary:
   - isolated-worktree invocation: tool path-assumption failure before checks (`Path.relative_to`);
   - canonical project audit: PASS=36, WARNING=0, FAIL=0;
@@ -44,4 +54,3 @@
   - `work/goal0_r06_baseline/evidence/run-01/baseline.json`
   - `work/goal0_r06_baseline/evidence/run-01/verified-r06.png`
   - `work/goal0_r06_baseline/evidence/run-02/baseline.json`
-  - `work/goal0_r06_baseline/evidence/run-02/verified-r06.png`
