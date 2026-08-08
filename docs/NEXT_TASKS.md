@@ -1,23 +1,40 @@
 # Next Tasks: ゲーム開発
 
-Last updated: 2026-08-03
+Last updated: 2026-08-08
 
 ## 結論
 
-次は **R09 `First Memory Expedition / 最初の記憶遠征`**を作る。
+**Goal 0 `Safe Baseline`は完了した。** 次は、その基準から **R09 `First Memory Expedition / 最初の記憶遠征`**を作る。
 
 主product gateは、一回目のsite／回収物／拠点／module選択が二回目の見た目と遊びを変える**First Memory Loop**。同じR09 sceneへF-01を接続し、通常gameplay条件で露呈した問題だけをF-02へ直す。character改善とworld-memory実装を別demoにしない。
 
 ```text
+Goal 0 Safe Baseline ✓
+└─ current R06 browser／performance gate + documentation reconciliation
+
 R09 First Memory Expedition
 ├─ A. First Memory Loop（最初にlogic proof）
 ├─ B. F-01 bridge → evidence-driven F-02
 └─ C. loading／PC master／mobile tier guards
 
 → R10 Relic Buildcraft
+→ 20〜30分 Golden Vertical Slice
+→ Engine Decision Gate
 → R11 First Companion
 → R12 Causal World Cell
 ```
+
+## Completed — Goal 0: Safe Baseline
+
+- [x] current branch、基準SHA、staged／modified／untrackedとpublic mainとの差を記録する。
+- [x] 現行R06のbrowser gateを旧Phaser smokeから分離する。
+  - production previewでcold／warm first-controllable、frame-time p95、50ms超long frame、visible input response、consoleを同条件で記録する。
+  - machine、browser、viewport、build SHAをmachine-readable resultへ残す。
+  - desktop browserの結果をiPhone 16 Pro実機合格として扱わない。
+- [x] README、ARCHITECTURE、PROJECT_CONTEXT、NEXT_TASKS、LEARNINGSを2026-08-08 briefへ整合する。
+- [x] strict TypeScript、Vitest、production build、R06 browser gate、project postflightへ合格し、R09Aへbaselineを渡す。
+
+Baseline code SHAは`1c9d355`。canonical main runはcold／warm first-controllable 1,448.3／988.9 ms、frame p95 18.6／18.6 ms、50ms超1／0、same-origin route transfer 779,580／5,912 bytes、page console／page error 0だった。詳細は`work/goal0_safe_baseline_2026-08-08/GOAL0_SAFE_BASELINE_REPORT.md`と`work/goal0_r06_baseline/REPORT.md`を参照する。
 
 ## P0 — Active milestone: R09
 
@@ -82,6 +99,38 @@ R09 First Memory Expedition
 - [ ] PC masterを先にart採択し、同じsemantic sourceからmobile LODを派生する。
 - [ ] local test、local browser、public deploy、iPhone実機、user acceptanceを別々に記録する。
 
+### D. Product Foundation（R09Aを止めずに段階導入）
+
+- [ ] 実load phaseを持つProduct Shellを作る。
+  - `Boot → Loading → Title → Google sign-in → Profile setup → Continue／New expedition → Game`を明示stateにする。
+  - loadingは`account → save → core data → visual pack → playable`の完了phaseを表示し、error／retry／offline／fallbackを正規stateにする。
+
+- [ ] title、player name、statusをlocal dataで先に成立させる。
+  - titleはContinue、New Expedition、Account、Settingsを持つ。
+  - Google表示名、game内player name、character identityを分離する。
+  - statusはidentity、HP／resource、装備、遺物、derived stat、状態、module効果を表示する。
+
+- [ ] R09AのWorldMemoryState v1固定後に、closed playtest用Google sign-inとCloud Test Saveを接続する。
+  - provider／backendはFirebase、Supabase等をGitHub Pages／PWA、Steam、offline、料金、export、lock-inで比較するADRを先に作る。
+  - local saveを即時authorityとし、cloudはsafe pointのsnapshot、backup、復旧、別browser／別端末継続に限定する。
+  - revision／checksum／build／schema versionを持ち、非互換saveはarchiveして説明後にnew gameへ進める。無言上書きはしない。
+  - 複雑merge、完全な双方向sync、offline queue、provider間account linkは初期scopeに含めない。
+
+- [ ] rendering qualityの計測と手動profileを先に作る。
+  - PC Ultraをart正本にし、PC High、Mobile High、Mobile Safeを同じasset sourceから派生する。
+  - playerはquality、resolution scale、shadow、DOF、effectを上書きできる。
+  - first-controllable、gameplay frame-time p95、long frame、input latencyを記録する。
+  - auto selectionはtarget deviceの実測後に追加し、hysteresis／cooldownで頻繁な切替を防ぐ。
+
+- [ ] Game Core、Game Web、Player Service、Dev Studioの責務境界を固定する。
+  - Dev Studio／生成用referenceをpublic game bundleへ入れない。
+  - provider SDK型をGame Coreへ漏らさず、最初はfolder／entry／build分離から始める。
+  - 実行taskはmemory loop、product shell、account save、runtime quality、engine evaluationのchat／`codex/*` branchへ分ける。branch作成は各task開始時に行う。
+
+- [ ] Engine Decision Gateに備えてportable contractを維持する。
+  - R09A直後の全面移行は行わず、R09＋最小Product Shell＋R10代表buildが同じsliceへ載るまで比較を開始しない。
+  - auth、database、physics、animation、navigation、compression等の成熟技術は、独自実装をdefaultにしない。
+
 ## Completion checkpoints
 
 ### R09A: First Memory Logic Proof Done
@@ -97,6 +146,14 @@ R09 First Memory Expedition
 - loading regression、desktop browser、現行actor fallbackを通す。
 - これはcommercial-quality達成、iPhone実機合格、public deploy完了を自動的には意味しない。
 
+### R09C: Product Foundation Candidate Ready
+
+- blankなしのloading、title、初回name設定、Continue、status、settingsが実runtime stateへ接続される。
+- Google sign-in後にplayer profileとworld saveを復旧でき、offline時はlocal saveでplayを継続できる。
+- 手動quality profileがPC masterのidentity／telegraphを保ち、input latencyとframe pacingを計測できる。auto selectionは完成条件に含めない。
+- Game Core、Game Web、Player Service、Dev Studioの依存方向をtest／buildで検査できる。
+- これはbackend providerの永久固定、全端末性能合格、engine移行決定を意味しない。
+
 ## P1 — R09後
 
 ### R10: Relic Buildcraft
@@ -105,6 +162,12 @@ R09 First Memory Expedition
 - [ ] loot比較、装備、分解、強化を一遠征へ接続する。
 - [ ] itemの作用原理、性能budget、合成可否、flavor textを同じschemaから生成する。
 - [ ] 名付き敵は静止／manual skillなしで安定勝利できないことをhard gateにする。
+
+### Golden Vertical Slice / Engine Decision Gate
+
+- [ ] R09、最小Product Shell、R10代表buildを20〜30分の同一sliceへ結合する。
+- [ ] 現行Three.js＋desktop wrapper、最有力engine候補一つ、必要ならhybridを同じasset／操作／測定条件でtime-box比較する。
+- [ ] Concept C、input、frame pacing、browser反復、AI編集性、save、controller、iPhone／Steam、license／保守costからstay／hybrid／migrationをADR化する。
 
 ### R11: First Companion
 
@@ -126,21 +189,28 @@ R09 First Memory Expedition
 - runtime LLM、都度scenario／map生成。
 - 巨大seamless world、全NPC生活simulation、自由建築system。
 - WebGPU／HDR移行そのものを目的にすること。
+- Local trial／匿名auth、複雑なcloud merge、完全な双方向sync。
+- target deviceの実測前にauto qualityをblack box化すること。
+- R09＋最小Product Shell＋R10代表buildより前のengine全面移行。
 - Steam包装、課金、App Store申請。
 - catalog改装を再び主作業にすること。
 
 ## Exact restart point
 
-1. `src/prototypeB/sim/types.ts`／`simulation.ts`のquest／return stateを、一遠征のauthorityとして監査する。
-2. `src/prototypeB/worldMemory/`へ`WorldMemoryState v1`、event、pure reducer、codecを作る。codecは`src/session/worldLegacy.ts`の厳格decode方式を踏襲し、`src/platform/saveRepository.ts`へR09専用namespaceで接続する。
-3. `src/prototypeB/app/startPrototypeB.ts`で、現行actorのまま二site → 回収 → 拠点確保 → module設置 → save → 二回目差分を先に通す。
-4. 四分岐、回収物消費、撤退、両routeのcombatをheadless／browserで固定する。
-5. `src/characterForge/F01Character.ts`とcompiled surface packを薄いadapter経由で`src/prototypeB/render/PrototypeBRenderer.ts`へ接続し、F-02修正用のpass／fail manifestを取る。
+1. Goal 0の二reportとbaseline code SHA `1c9d355`を比較基準として読む。
+2. `src/prototypeB/sim/types.ts`／`simulation.ts`のquest／return stateを、一遠征のauthorityとして監査する。
+3. `src/prototypeB/worldMemory/`へ`WorldMemoryState v1`、event、pure reducer、codecを作る。codecは`src/session/worldLegacy.ts`の厳格decode方式を踏襲し、`src/platform/saveRepository.ts`へR09専用namespaceで接続する。
+4. `src/prototypeB/app/startPrototypeB.ts`で、現行actorのまま二site → 回収 → 拠点確保 → module設置 → save → 二回目差分を先に通す。
+5. 四分岐、回収物消費、撤退、両routeのcombatをheadless／browserで固定する。
+6. `src/characterForge/F01Character.ts`とcompiled surface packを薄いadapter経由で`src/prototypeB/render/PrototypeBRenderer.ts`へ接続し、F-02修正用のpass／fail manifestを取る。
 
 詳細な判断理由と合格条件は、`work/next_direction_2026-08-03/NEXT_DIRECTION.md`を参照する。
 
+Product Foundationの採用範囲と2026-08-08の優先順は、本ファイルのD節と`docs/ARCHITECTURE.md`を再開時の正本とする。元の検討資料はlocal work artifactとして保持するが、R09A taskの入力契約にはしない。
+
 ## Recently completed
 
+- [x] Goal 0 Safe Baseline — current R06 E2E／performance gate、Playwright固定、canonical docs整合、main統合、local postflight — 2026-08-08
 - [x] F.R.A.M. game-first catalog、軽量first view、archive image hard gate、Character Forge FIELDをGitHub Pagesへ公開確認 — 2026-08-03
 - [x] Character Forge F-01のBeauty Sheet → Build Sheet → 37,990 source voxels → 9,454 surface cells → 7-part rig pipelineを公開確認。ユーザー暫定評価約70% — 2026-08-02
 - [x] R06 Sharp NavigationをR01〜R05保持のまま公開し、mini-map、marker、操作guide、半自動通常攻撃、手動大技を確認 — 2026-08-02

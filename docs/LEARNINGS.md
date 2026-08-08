@@ -1,6 +1,6 @@
 # Learnings: ゲーム開発
 
-Last updated: 2026-08-03
+Last updated: 2026-08-08
 
 ## Validated project learnings
 
@@ -111,6 +111,9 @@ Last updated: 2026-08-03
 - 最高品質層はPC Ultra masterで比較し、iPhoneは同じsceneから派生するmobile tierとしてWebGPU／HDRを試す。Three.js WebGPURendererはexperimentalであり、API移行だけでは美しさを保証しない。同一Visual Benchmark SceneをWebGPU／WebGL2、HDR／SDR、複数render scaleで実機比較し、baked hybrid、KTX2、character qualityの寄与を分離する。half-float内部照明、P3、HDR outputは別能力として測る。
 - fixed cameraでは、moving character、collision、occlusion、dynamic shadowだけをrealtime 3Dへ残し、地面、道、背景、建物面を高解像度生成／baked layerへ分けることで、見える面へquality budgetを集中できる可能性が高い。まだユーザーのart acceptanceは得ていない。light direction、palette、scale、contact shadowを同一camera previewで検査し、2D／3Dの貼り合わせ感が出ないか確かめる。
 - MSAA、高い内部解像度、AgX、生成textureの組合せがVisual Pass Dより商業HD-2D基準へ近づくかは未確認である。公開後のユーザーreviewをquality gateにする。
+- account／cloud saveを未安定なgame stateへ先に接続すると、schema変更、migration、conflict解決がgame loop実装を拘束する。まずlocalのversion付きWorldMemoryStateを固定し、title／profile／statusを同じlocal dataで成立させ、その後にGoogle identityとsafe-point Cloud Test Save／snapshot復旧を重ねる順がscopeとdata loss riskを抑える可能性が高い。
+- AI-native game developmentの独自性はrenderer、auth、physics、editorを全て自作することではなく、world因果、generation contract、AssetDNA、人間採否を機械可読な正本へする点に置ける。R09、最小Product Shell、R10代表buildを載せた同一sliceでcurrent runtimeと既存engineを比較すれば、browser反復とAI編集性を失わず成熟subsystemを採用できるか判断しやすい可能性が高い。
+- browser性能の基準はHTML navigation時間だけでは不十分である。production artifactのfingerprint、source dirty state、navigation＋same-origin resource全体の転送量、実際に見える入力応答、frame-time p95／long frame、Service Workerのactivated／controllerを同じJSONへ残すと、後続版を同条件で比較しつつ「warmだったはず」「同じbuildだったはず」という誤認を防げる。
 
 ## Improvement candidates
 

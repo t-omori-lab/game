@@ -1,8 +1,8 @@
 # Project Context: ゲーム開発
 
-Last updated: 2026-08-03  
+Last updated: 2026-08-08  
 Status: active  
-Phase: R09 First Memory Expedition planned; world-memory loop and playable actor bridge next; R01–R08 preserved
+Phase: R09A First Memory Logic Proof next; Goal 0 Safe Baseline complete; R01–R08 preserved
 
 ## Purpose
 
@@ -10,6 +10,9 @@ Phase: R09 First Memory Expedition planned; world-memory loop and playable actor
 
 ## Confirmed current state
 
+- 2026-08-08、Goal 0 `Safe Baseline`をlocal完了した。開始HEAD `0bf397c`から既存modified docs／未追跡資料を保持したまま、QA済みR06 gateをcommits `7166c82`／`1c9d355`として`main`へ統合した。repository-local Playwright 1.62.0と`pnpm test:e2e:r06`は、production build、artifact fingerprint、cold／warm first-controllable、full-route transfer、frame-time p95／50ms超long frame、visible WASD／KeyS response、nonblank WebGL／mini-map、R06 Service Workerのactivated＋warm前後controller、page console／page errorを一つのlocal-only gateで検査する。canonical main runはcold／warm 1,448.3／988.9 ms、frame p95 18.6／18.6 ms、50ms超1／0、route transfer 779,580／5,912 bytes、error 0で合格し、strict TypeScript、Vitest 38 files／205 tests、production buildも合格した。README／ARCHITECTURE／PROJECT_CONTEXT／NEXT_TASKS／LEARNINGSの独立reviewはP0／P1なし。これはlocal desktop Chrome基準であり、R09、iPhone実機、public deploy、Google sign-in、Cloud Test Save、engine比較の完了ではない。
+- 2026-08-08 briefにより、8/5 Product Foundation案の三点を更新した。初期closed playtestはGoogle sign-inを使い、Local trial／匿名authは初期要件外とする。cloudはlocal authorityを保つsafe-point snapshot／backup／復旧へ限定し、複雑merge／完全syncは作らない。Engine Decision GateはR09A直後ではなく、R09＋最小Product Shell＋R10代表buildが同じsliceへ載った後に行う。manual quality profileと計測をauto selectionより先に作る。
+- 2026-08-05、product化に必要な追加要求として、実load phaseを持つloading screen、title screen、Google SSO、cloud play data、初回player name、status screen、軽快な操作感、自動／手動render quality、Game Core／Game Web／Player Service／Dev Studio分離、task／branch分離、既存game engineの継続評価を記録した。当時はR09AのWorldMemoryState v1とlocal saveを先に固定し、Product Shell、Google account／cloud syncの順に重ね、同一R09 sliceでengine比較する案だった。cloudの範囲とengine gateの時期は、上記2026-08-08 briefによりCloud Test SaveとR09＋最小Shell＋R10後へ更新済みである。これは要求と導入順の履歴であり、SSO／backend／quality auto-tuning／engine比較の実装、provider採択、branch作成、public deployではない。
 - 2026-08-03、公開`/game/`で断続的に長い待機やblank表示が起きる経路を監査した。root Service Workerがnetwork-firstかつtimeoutなしでnavigationへ介入し、HTMLだけを旧cacheへ保持する一方、更新されたhash付きJS／CSSを同じcache contractで扱っていなかった。catalogではroot workerの新規登録を終了し、旧root registrationと`fram-catalog-*`／旧root shell cacheだけを次回成功読込時に退役させた。R01〜R08のroute-scoped worker／cacheは対象外である。strict TypeScript、Vitest 38 files／205 tests、production buildに合格し、commit `b6cd199`のGitHub Pages run #26は成功した。公開HTML、catalog JS、retirement workerはHTTPS 200で、公開workerにfetch handlerがなく、catalog JSにroot worker登録がないことを確認した。実端末のcold／warm時間は別gateである。
 - 2026-08-03、公開`/game/`とR06の起動経路を軽量化した。catalogはfull CSSをdynamic enhancementへ回し、static first viewをstylesheet待ちから分離した。R06は空のrootを廃止してinline critical boot shellを先に表示し、専用static entryからThree.js／prototype chunkをmodulepreloadし、452,720-byteの地面画像を初期preload競合から外した。strict TypeScript、Vitest 38 files／205 tests、production buildに合格し、commit `d553898`のGitHub Pages run #23は成功した。公開HTMLはcatalog 5,275 bytes、R06 3,812 bytesで、no-cache HTTP確認は両route 200だった。iPhone実機、cold低速回線、first-controllable時間は別gateである。
 - 2026-08-03、次の主milestoneをR09 `First Memory Expedition / 最初の記憶遠征`へ整理した。R09Aでは二site×二module、回収物消費、撤退、専用namespaceのversioned save、二回目の見た目／gameplay差分を、現行actorだけでFirst Memory Logic Proofとして先に証明する。R09Bでは同じsceneへF-01をbridgeし、actual gameplayのpass／fail manifestで露呈したmoduleだけをF-02へ再構築する。character完成待ちでworld-memory実装を止めず、visualも別demoへしない。これは計画の確定であり、R09／F-02 runtime実装、user art acceptance、public deployではない。

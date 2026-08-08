@@ -55,4 +55,4 @@ Create the smallest reproducible production-preview browser and performance gate
 
 ## Status
 
-**Verified and ready for the scope-limited local commit** - final SHA is reported in the handoff; gameplay/runtime/project docs remained out of scope.
+**Integrated and reverified on canonical main** - implementation commits are `7166c82` and `1c9d355`; final documentation commit SHA is reported in the Control Room handoff. Gameplay／runtime remained unchanged.

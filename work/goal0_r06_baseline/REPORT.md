@@ -1,12 +1,18 @@
 # Goal 0 / R06 Baseline Report
 
-Status: P1 revision verified locally; final commit SHA is reported in the handoff because a commit cannot contain its own SHA.
+Status: integrated into canonical `main` and reverified locally; final documentation commit SHA is reported in the handoff because a commit cannot contain its own SHA.
 
 ## Conclusion
 
 The current R06 has a repository-reproducible, local-only production-preview gate at `tests/e2e/r06_baseline.mjs`. The normal command builds production itself, fingerprints `dist/client`, starts the local preview, verifies an active/controllable/nonblank R06, proves the visible desktop `WASD` control with KeyS and `data-player-x/y`, records cold/warm timing and full same-origin route resources, and requires the R06 service worker to control the warm navigation.
 
 No gameplay, simulation, renderer, save, service-worker, or visual-asset source changed. The legacy `tests/e2e/smoke.py` remains unchanged.
+
+## Canonical main integration
+
+The reviewed series was integrated onto canonical `main` as `7166c82` and `1c9d355`. From `1c9d355`, the canonical checkout passed strict TypeScript, Vitest 38 files／205 tests, production build, and the current-R06 gate. The browser run reported cold／warm first-controllable 1,448.3／988.9 ms, frame p95 18.6／18.6 ms, >50 ms frames 1／0, full-route transfer 779,580／5,912 bytes, KeyS movement 75.43／71.57, and page console／page errors 0. Its artifact fingerprint remained `3b486613dc8bef95f432e9e635ba10763092cd2cb85febcb1b5c970fbc6b5053`.
+
+The canonical run correctly labelled the source dirty because pre-existing／Goal-0 documentation and untracked art／planning files remained in the checkout. A separate clean exact-commit run at source commit `c325d2f` had already passed with the same artifact fingerprint, so the retained runtime artifact has clean-source provenance as well as canonical-main integration evidence.
 
 ## Observable contract
 
@@ -108,4 +114,4 @@ This validation machine used its existing Chrome by adding `--browser-executable
 - No pass/fail performance budget was invented. Functional observability, resource coverage, and warm service-worker control are gated; measured timing is a comparison baseline for R09 under the same environment.
 - `transferSize` follows the browser Resource Timing API and may include protocol/header accounting or report cache/service-worker effects differently from encoded body size. Entry-level and grouped values are retained for interpretation.
 - Vite's existing chunk-size warnings remain. This task did not change production chunks or gameplay.
-- Workspace audit tooling still assumes the project is physically under the Workspace root; the isolated worktree fails its `relative_to` path check. The separately tracked stale Workspace registry is not changed.
+- The isolated writer worktree was outside the Workspace audit tool's supported path. Canonical-main postflight is the authoritative finish gate and is recorded in the Goal 0 handoff report.
