@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "gate": "goal0-current-r06-browser-baseline",
+  "status": "passed",
+  "measuredAt": "2026-08-08T08:11:18.487Z",
+  "buildSha": "0bf397c9cf9e3d988358569daa9c7a24142aa7e4",
+  "url": "http://127.0.0.1:4173/game/r06/",
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "deviceScaleFactor": 1
+  },
+  "environment": {
+    "platform": "darwin",
+    "release": "25.5.0",
+    "architecture": "arm64",
+    "node": "v24.14.0",
+    "playwright": "1.62.0",
+    "browserExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "browserVersion": "151.0.7922.76",
+    "headless": true,
+    "graphicsMode": "system-auto"
+  },
+  "server": {
+    "kind": "vite-production-preview",
+    "startedByGate": true,
+    "command": "vite preview --configLoader runner --host 127.0.0.1 --port 4173 --strictPort"
+  },
+  "frameSample": {
+    "durationMs": 10000,
+    "longFrameThresholdMs": 50
+  },
+  "runs": [
+    {
+      "cacheState": "cold",
+      "responseStatus": 200,
+      "finalUrl": "http://127.0.0.1:4173/game/r06/",
+      "firstControllableMs": 1185.5,
+      "appReadyMs": 759,
+      "domContentLoadedMs": 71.4,
+      "loadEventMs": 71.5,
+      "transferSizeBytes": 2095,
+      "player": {
+        "x": 430,
+        "y": 900
+      },
+      "metadata": {
+        "experience": "r06",
+        "prototypeVersion": "R06",
+        "presentationState": "active",
+        "status": "playing",
+        "questPhase": "briefing"
+      },
+      "canvas": {
+        "css": {
+          "width": 1278,
+          "height": 718
+        },
+        "buffer": {
+          "width": 1278,
+          "height": 718
+        },
+        "minimap": {
+          "cssWidth": 197.25,
+          "cssHeight": 103.55,
+          "bufferWidth": 320,
+          "bufferHeight": 168,
+          "lastPaintAt": 1216.1
+        },
+        "contextLost": false,
+        "sampledPixels": 24,
+        "nonTransparentSamples": 24,
+        "uniqueSampledColors": 24,
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)"
+      },
+      "input": {
+        "control": "ArrowDown",
+        "holdMs": 600,
+        "before": {
+          "x": 430,
+          "y": 900
+        },
+        "after": {
+          "x": 499,
+          "y": 919
+        },
+        "distance": 71.57
+      },
+      "frameTiming": {
+        "targetDurationMs": 10000,
+        "actualDurationMs": 10012.9,
+        "frameCount": 473,
+        "meanMs": 21.18,
+        "p95Ms": 33.4,
+        "maxMs": 34.2,
+        "longFrameThresholdMs": 50,
+        "longFrameCount": 0
+      },
+      "errors": {
+        "console": [],
+        "page": []
+      }
+    },
+    {
+      "cacheState": "warm",
+      "responseStatus": 200,
+      "finalUrl": "http://127.0.0.1:4173/game/r06/",
+      "firstControllableMs": 895.4,
+      "appReadyMs": 583,
+      "domContentLoadedMs": 125.6,
+      "loadEventMs": 126.1,
+      "transferSizeBytes": 4112,
+      "player": {
+        "x": 430,
+        "y": 900
+      },
+      "metadata": {
+        "experience": "r06",
+        "prototypeVersion": "R06",
+        "presentationState": "active",
+        "status": "playing",
+        "questPhase": "briefing"
+      },
+      "canvas": {
+        "css": {
+          "width": 1278,
+          "height": 718
+        },
+        "buffer": {
+          "width": 1278,
+          "height": 718
+        },
+        "minimap": {
+          "cssWidth": 197.25,
+          "cssHeight": 103.55,
+          "bufferWidth": 320,
+          "bufferHeight": 168,
+          "lastPaintAt": 912.6
+        },
+        "contextLost": false,
+        "sampledPixels": 24,
+        "nonTransparentSamples": 24,
+        "uniqueSampledColors": 24,
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)"
+      },
+      "input": {
+        "control": "ArrowDown",
+        "holdMs": 600,
+        "before": {
+          "x": 430,
+          "y": 900
+        },
+        "after": {
+          "x": 495,
+          "y": 919
+        },
+        "distance": 67.72
+      },
+      "frameTiming": {
+        "targetDurationMs": 10000,
+        "actualDurationMs": 10009.5,
+        "frameCount": 470,
+        "meanMs": 21.3,
+        "p95Ms": 34.3,
+        "maxMs": 35.4,
+        "longFrameThresholdMs": 50,
+        "longFrameCount": 0
+      },
+      "errors": {
+        "console": [],
+        "page": []
+      }
+    }
+  ],
+  "artifacts": {
+    "json": "work/goal0_r06_baseline/evidence/run-02/baseline.json",
+    "screenshot": "work/goal0_r06_baseline/evidence/run-02/verified-r06.png"
+  }
+}
