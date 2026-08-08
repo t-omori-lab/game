@@ -6,17 +6,22 @@ import {
 import type { HeroVisual } from "./HeroVisual";
 import {
   F01_FORGE_HERO_ASSET_RUNTIME,
+  F01_GAMEPLAY_VISIBLE_SURFACE_CELLS,
   createF01ForgeHeroVisual,
 } from "./F01ForgeHeroVisual";
 import type { PrototypeBHeroAssetRuntime } from "./HeroAssetRuntime";
 
 const F02_VISIBLE_SURFACE_CELLS =
-  F01_FORGE_HERO_ASSET_RUNTIME.visibleVoxelCells + F02_ADDED_SURFACE_CELLS;
+  F01_GAMEPLAY_VISIBLE_SURFACE_CELLS + F02_ADDED_SURFACE_CELLS;
+const F02_SOURCE_SURFACE_CELLS =
+  (F01_FORGE_HERO_ASSET_RUNTIME.sourceSurfaceCells ??
+    F01_FORGE_HERO_ASSET_RUNTIME.visibleVoxelCells) + F02_ADDED_SURFACE_CELLS;
 
 export const F02_FORGE_HERO_ASSET_RUNTIME = Object.freeze({
   id: "fram.character.f02.gameplay-readability-v1",
   representation: "compiled-high-density-voxel-surface-plus-evidence-modules",
   characterPreset: "f02-evidence-corrected",
+  sourceSurfaceCells: F02_SOURCE_SURFACE_CELLS,
   visibleVoxelCells: F02_VISIBLE_SURFACE_CELLS,
   worldScale: F01_FORGE_HERO_ASSET_RUNTIME.worldScale,
   createVisual: createF02ForgeHeroVisual,

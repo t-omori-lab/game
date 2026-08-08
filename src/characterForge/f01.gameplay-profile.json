@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "fram.character.f01.gameplay-distance-v1",
+  "actorId": "fram.character.f01.gameplay-bridge-v1",
+  "sourcePack": "src/characterForge/f01.surface-pack.json",
+  "sourceSurfaceCells": 9454,
+  "sourcePayloadSha256": "a77a7e0a15e0d3a62a95fcc87f77edbc8b972a593e41cc8cf673533af901abc1",
+  "visibleSurfaceCells": 9421,
+  "worldScale": 24,
+  "topologyFilter": {
+    "kind": "six-neighbor-detached-ground-components",
+    "maximumGridY": 1,
+    "maximumComponentCells": 64,
+    "excludedCells": 33
+  },
+  "render": {
+    "surfaceFill": 1.01,
+    "edgeRadiusRatio": 0.012,
+    "castShadow": false,
+    "receiveShadow": false
+  },
+  "capture": {
+    "width": 1280,
+    "height": 720,
+    "deviceScaleFactor": 1
+  },
+  "routes": {
+    "forge": "/game/forge/f01/",
+    "gameplay": "/game/r09/"
+  }
+}

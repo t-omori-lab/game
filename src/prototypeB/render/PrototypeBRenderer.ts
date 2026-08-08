@@ -628,6 +628,16 @@ export class PrototypeBRenderer {
         this.renderer.domElement.dataset.heroVoxelCells = String(
           this.playerHeroVisual.root.userData.visibleVoxelCells ?? "unknown",
         );
+        const sourceSurfaceCells =
+          this.playerHeroVisual.root.userData.sourceSurfaceCells;
+        if (
+          typeof sourceSurfaceCells === "number" ||
+          typeof sourceSurfaceCells === "string"
+        ) {
+          this.renderer.domElement.dataset.heroSourceSurfaceCells = String(
+            sourceSurfaceCells,
+          );
+        }
         const characterPreset = this.playerHeroVisual.root.userData.characterPreset;
         if (typeof characterPreset === "string") {
           this.renderer.domElement.dataset.heroCharacterPreset = characterPreset;

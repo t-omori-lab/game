@@ -35,7 +35,8 @@ describe("R09 hero asset loader", () => {
 
     expect(canonical.status).toBe("loaded");
     expect(canonical.runtime?.id).toBe("fram.character.f01.gameplay-bridge-v1");
-    expect(canonical.runtime?.visibleVoxelCells).toBe(9_454);
+    expect(canonical.runtime?.sourceSurfaceCells).toBe(9_454);
+    expect(canonical.runtime?.visibleVoxelCells).toBe(9_421);
     expect(reconstructed.status).toBe("loaded");
     expect(reconstructed.runtime?.id).toBe(
       "fram.character.f01r.source-faithful-head-v1",

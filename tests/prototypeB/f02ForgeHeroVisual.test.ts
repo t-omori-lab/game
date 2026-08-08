@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import * as THREE from "three";
 import {
+  F01_GAMEPLAY_VISIBLE_SURFACE_CELLS,
+} from "../../src/prototypeB/render/hero/F01ForgeHeroVisual";
+import {
   F02_FORGE_HERO_ASSET_RUNTIME,
   createF02ForgeHeroVisual,
 } from "../../src/prototypeB/render/hero/F02ForgeHeroVisual";
@@ -30,7 +33,7 @@ describe("F-02 evidence-driven gameplay correction", () => {
     expect(F02_ADDED_SURFACE_CELLS).toBeGreaterThan(300);
     expect(F02_ADDED_SURFACE_CELLS).toBeLessThan(1_500);
     expect(visual.root.userData.visibleVoxelCells).toBe(
-      9_454 + F02_ADDED_SURFACE_CELLS,
+      F01_GAMEPLAY_VISIBLE_SURFACE_CELLS + F02_ADDED_SURFACE_CELLS,
     );
     expect(visual.root.userData.characterPreset).toBe(
       "f02-evidence-corrected",
@@ -85,7 +88,7 @@ describe("F-02 evidence-driven gameplay correction", () => {
       "fram.character.f02.gameplay-readability-v1",
     );
     expect(F02_FORGE_HERO_ASSET_RUNTIME.visibleVoxelCells).toBe(
-      9_454 + F02_ADDED_SURFACE_CELLS,
+      F01_GAMEPLAY_VISIBLE_SURFACE_CELLS + F02_ADDED_SURFACE_CELLS,
     );
     expect(F02_FORGE_HERO_ASSET_RUNTIME.worldScale).toBe(24);
     const visual = F02_FORGE_HERO_ASSET_RUNTIME.createVisual();

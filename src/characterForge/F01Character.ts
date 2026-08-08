@@ -103,7 +103,36 @@ export interface F01CharacterRenderOptions {
    */
   readonly castShadow?: boolean;
   readonly receiveShadow?: boolean;
+  /**
+   * Multiplies the authored cell size without moving cell centers. The Forge
+   * keeps the source gap; distant gameplay can close sub-pixel black seams.
+   */
+  readonly surfaceFill?: number;
+  /**
+   * Rounded edge radius as a ratio of one authored cell. Distant gameplay
+   * needs a much smaller bevel than the close-up Forge inspection view.
+   */
+  readonly edgeRadiusRatio?: number;
+  /**
+   * Drops tiny, disconnected components that live entirely on the two lowest
+   * grid layers. This removes visual-hull floor shards without changing the
+   * canonical compiled pack or its digest.
+   */
+  readonly removeDetachedGroundDebris?: boolean;
+  readonly detachedGroundMaximumY?: number;
+  readonly detachedGroundMaximumCells?: number;
 }
+
+const CELL_NEIGHBORS = [
+  [1, 0, 0],
+  [-1, 0, 0],
+  [0, 1, 0],
+  [0, -1, 0],
+  [0, 0, 1],
+  [0, 0, -1],
+] as const;
+const MAX_GROUND_DEBRIS_Y = 1;
+const MAX_GROUND_DEBRIS_CELLS = 64;
 
 const PART_IDS = [
   "head",
@@ -257,6 +286,58 @@ function groupCells(
   return groups;
 }
 
+function surfaceCellKey(cell: Pick<SurfaceCell, "x" | "y" | "z">): string {
+  return `${cell.x},${cell.y},${cell.z}`;
+}
+
+function removeDetachedGroundDebris(
+  cells: readonly SurfaceCell[],
+  maximumGroundY: number,
+  maximumComponentCells: number,
+): readonly SurfaceCell[] {
+  const cellByPosition = new Map(
+    cells.map((cell) => [surfaceCellKey(cell), cell] as const),
+  );
+  const visited = new Set<string>();
+  const rejected = new Set<string>();
+
+  for (const initial of cells) {
+    const initialKey = surfaceCellKey(initial);
+    if (visited.has(initialKey)) continue;
+
+    const component: SurfaceCell[] = [];
+    const pending = [initial];
+    visited.add(initialKey);
+    let maximumY = initial.y;
+
+    while (pending.length > 0) {
+      const cell = pending.pop();
+      if (cell === undefined) break;
+      component.push(cell);
+      maximumY = Math.max(maximumY, cell.y);
+
+      for (const [offsetX, offsetY, offsetZ] of CELL_NEIGHBORS) {
+        const neighborKey = `${cell.x + offsetX},${cell.y + offsetY},${cell.z + offsetZ}`;
+        const neighbor = cellByPosition.get(neighborKey);
+        if (neighbor === undefined || visited.has(neighborKey)) continue;
+        visited.add(neighborKey);
+        pending.push(neighbor);
+      }
+    }
+
+    if (
+      maximumY <= maximumGroundY &&
+      component.length <= maximumComponentCells
+    ) {
+      for (const cell of component) rejected.add(surfaceCellKey(cell));
+    }
+  }
+
+  return rejected.size === 0
+    ? cells
+    : cells.filter((cell) => !rejected.has(surfaceCellKey(cell)));
+}
+
 function resetPart(part: PartState): void {
   part.group.position.copy(part.restPosition);
   part.group.rotation.set(0, 0, 0);
@@ -325,7 +406,22 @@ export function createCompiledCharacter(
   const sourceDefinitionValue = options.source;
   const pack = options.surfacePack;
   const palette = sourceDefinitionValue.palette;
-  const surfaceCells = decodeSurfaceCells(sourceDefinitionValue, pack);
+  const decodedSurfaceCells = decodeSurfaceCells(sourceDefinitionValue, pack);
+  const surfaceCells = options.removeDetachedGroundDebris
+    ? removeDetachedGroundDebris(
+        decodedSurfaceCells,
+        Math.max(
+          0,
+          Math.floor(options.detachedGroundMaximumY ?? MAX_GROUND_DEBRIS_Y),
+        ),
+        Math.max(
+          1,
+          Math.floor(
+            options.detachedGroundMaximumCells ?? MAX_GROUND_DEBRIS_CELLS,
+          ),
+        ),
+      )
+    : decodedSurfaceCells;
   const root = new THREE.Group();
   root.name = sourceDefinitionValue.id;
   root.userData.sourceSha256 = pack.sourceSha256 ?? "unavailable";
@@ -348,12 +444,22 @@ export function createCompiledCharacter(
   const materials = new Map(
     palette.map((entry) => [entry.id, createMaterial(entry)] as const),
   );
+  const surfaceFill = THREE.MathUtils.clamp(
+    options.surfaceFill ?? sourceDefinitionValue.grid.surfaceGap,
+    0.82,
+    1.02,
+  );
+  const edgeRadiusRatio = THREE.MathUtils.clamp(
+    options.edgeRadiusRatio ?? 0.075,
+    0.008,
+    0.12,
+  );
   const geometry = new RoundedBoxGeometry(
-    sourceDefinitionValue.grid.cellSize * sourceDefinitionValue.grid.surfaceGap,
-    sourceDefinitionValue.grid.cellSize * sourceDefinitionValue.grid.surfaceGap,
-    sourceDefinitionValue.grid.cellSize * sourceDefinitionValue.grid.surfaceGap,
+    sourceDefinitionValue.grid.cellSize * surfaceFill,
+    sourceDefinitionValue.grid.cellSize * surfaceFill,
+    sourceDefinitionValue.grid.cellSize * surfaceFill,
     2,
-    sourceDefinitionValue.grid.cellSize * 0.075,
+    sourceDefinitionValue.grid.cellSize * edgeRadiusRatio,
   );
   const xCenter = (sourceDefinitionValue.grid.width - 1) / 2;
   const zCenter = (sourceDefinitionValue.grid.depth - 1) / 2;

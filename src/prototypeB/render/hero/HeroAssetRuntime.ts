@@ -10,6 +10,9 @@ export interface PrototypeBHeroAssetRuntime {
   readonly id: string;
   readonly representation: string;
   readonly characterPreset: string;
+  /** Cells in the immutable compiled source before distance-specific filtering. */
+  readonly sourceSurfaceCells?: number;
+  /** Cells actually submitted by this gameplay presentation. */
   readonly visibleVoxelCells: number;
   /** Uniform scale from the asset's authored units into PrototypeB world units. */
   readonly worldScale: number;

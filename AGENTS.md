@@ -15,6 +15,7 @@
 
 - Add only rules that are specific to this project.
 - Local rules may refine commands and deliverables, but must not weaken source protection, evidence requirements, external-operation approval, or verification.
+- Character Forge、生成ボクセルキャラクター、surface packの本編反映、実画面での見た目補正を扱う場合は、作業前に`skills/fram-character-gameplay-fidelity/SKILL.md`を全文読み、その正本／派生物境界と実画面capture gateに従う。
 
 ## Work and handoff
 

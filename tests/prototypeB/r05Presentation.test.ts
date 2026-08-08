@@ -43,6 +43,7 @@ describe("F.R.A.M. R06 presentation contract", () => {
     expect(rendererSource).toContain("createR05FramHeroVisual()");
     expect(rendererSource).toContain("dataset.heroRepresentation");
     expect(rendererSource).toContain("dataset.heroVoxelCells");
+    expect(rendererSource).toContain("dataset.heroSourceSurfaceCells");
   });
 
   it("uses a wide playable field with a sharp R06 baseline", () => {

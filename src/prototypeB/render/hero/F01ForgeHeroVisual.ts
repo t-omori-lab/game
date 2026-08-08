@@ -4,6 +4,7 @@ import {
   type F01Character,
   type F01PartId,
 } from "../../../characterForge/F01Character";
+import gameplayProfileDefinition from "../../../characterForge/f01.gameplay-profile.json";
 import type { VoxelMaterialRole, VoxelPoint } from "../../voxel";
 import {
   HERO_PART_IDS,
@@ -14,12 +15,34 @@ import {
 } from "./HeroVisual";
 import type { PrototypeBHeroAssetRuntime } from "./HeroAssetRuntime";
 
-export const F01_GAMEPLAY_WORLD_SCALE = 24;
+interface F01GameplayProfile {
+  readonly actorId: string;
+  readonly sourceSurfaceCells: number;
+  readonly visibleSurfaceCells: number;
+  readonly worldScale: number;
+  readonly topologyFilter: {
+    readonly maximumGridY: number;
+    readonly maximumComponentCells: number;
+  };
+  readonly render: {
+    readonly surfaceFill: number;
+    readonly edgeRadiusRatio: number;
+    readonly castShadow: boolean;
+    readonly receiveShadow: boolean;
+  };
+}
+
+const gameplayProfile = gameplayProfileDefinition as F01GameplayProfile;
+
+export const F01_GAMEPLAY_WORLD_SCALE = gameplayProfile.worldScale;
+export const F01_GAMEPLAY_VISIBLE_SURFACE_CELLS =
+  gameplayProfile.visibleSurfaceCells;
 
 export interface CompiledForgeHeroDescriptor {
   readonly id: string;
   readonly representation: string;
   readonly characterPreset: string;
+  readonly sourceSurfaceCells?: number;
   readonly visibleVoxelCells: number;
   readonly worldScale: number;
   readonly payloadSha256?: string;
@@ -27,10 +50,11 @@ export interface CompiledForgeHeroDescriptor {
 }
 
 export const F01_FORGE_HERO_ASSET_RUNTIME = Object.freeze({
-  id: "fram.character.f01.gameplay-bridge-v1",
+  id: gameplayProfile.actorId,
   representation: "compiled-high-density-articulated-voxel-surface",
   characterPreset: "f01-build-sheet",
-  visibleVoxelCells: 9_454,
+  sourceSurfaceCells: gameplayProfile.sourceSurfaceCells,
+  visibleVoxelCells: F01_GAMEPLAY_VISIBLE_SURFACE_CELLS,
   worldScale: F01_GAMEPLAY_WORLD_SCALE,
   createVisual: createF01ForgeHeroVisual,
 } satisfies PrototypeBHeroAssetRuntime);
@@ -63,7 +87,16 @@ function asHeroPartGroups(
 export function createF01ForgeHeroVisual(): HeroVisual {
   return createCompiledForgeHeroVisual(
     F01_FORGE_HERO_ASSET_RUNTIME,
-    () => createF01Character({ castShadow: false }),
+    () => createF01Character({
+      castShadow: gameplayProfile.render.castShadow,
+      receiveShadow: gameplayProfile.render.receiveShadow,
+      surfaceFill: gameplayProfile.render.surfaceFill,
+      edgeRadiusRatio: gameplayProfile.render.edgeRadiusRatio,
+      removeDetachedGroundDebris: true,
+      detachedGroundMaximumY: gameplayProfile.topologyFilter.maximumGridY,
+      detachedGroundMaximumCells:
+        gameplayProfile.topologyFilter.maximumComponentCells,
+    }),
   );
 }
 
@@ -84,8 +117,10 @@ export function createCompiledForgeHeroVisual(
   character.root.userData.frontAxis = "+z";
   character.root.userData.runtimeRepresentation =
     descriptor.representation;
+  character.root.userData.sourceSurfaceCells =
+    descriptor.sourceSurfaceCells ?? descriptor.visibleVoxelCells;
   character.root.userData.visibleVoxelCells =
-    descriptor.visibleVoxelCells;
+    character.stats.renderedSurfaceCells;
   character.root.userData.characterPreset =
     descriptor.characterPreset;
   character.root.userData.packDigest =

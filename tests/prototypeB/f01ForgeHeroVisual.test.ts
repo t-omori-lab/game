@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as THREE from "three";
 import {
   F01_FORGE_HERO_ASSET_RUNTIME,
+  F01_GAMEPLAY_VISIBLE_SURFACE_CELLS,
   createF01ForgeHeroVisual,
 } from "../../src/prototypeB/render/hero/F01ForgeHeroVisual";
 
@@ -16,20 +17,30 @@ describe("F-01 Character Forge gameplay adapter", () => {
     expect(visual.root.userData.runtimeRepresentation).toBe(
       F01_FORGE_HERO_ASSET_RUNTIME.representation,
     );
-    expect(visual.root.userData.visibleVoxelCells).toBe(9_454);
+    expect(visual.root.userData.sourceSurfaceCells).toBe(9_454);
+    expect(visual.root.userData.visibleVoxelCells).toBe(
+      F01_GAMEPLAY_VISIBLE_SURFACE_CELLS,
+    );
     expect(visual.root.userData.characterPreset).toBe("f01-build-sheet");
     expect(visual.root.userData.frontAxis).toBe("+z");
     expect(size.y).toBeGreaterThan(5);
     expect(size.y).toBeLessThan(6);
     expect(visual.weaponSocket.parent).toBe(visual.partGroups["right-arm"]);
     expect(F01_FORGE_HERO_ASSET_RUNTIME.worldScale).toBeGreaterThan(20);
-    const detailedShadowCasters: THREE.InstancedMesh[] = [];
+    expect(F01_FORGE_HERO_ASSET_RUNTIME.sourceSurfaceCells).toBe(9_454);
+    expect(F01_FORGE_HERO_ASSET_RUNTIME.visibleVoxelCells).toBe(9_421);
+    const detailedCells: THREE.InstancedMesh[] = [];
     visual.root.traverse((object) => {
-      if (object instanceof THREE.InstancedMesh && object.castShadow) {
-        detailedShadowCasters.push(object);
-      }
+      if (object instanceof THREE.InstancedMesh) detailedCells.push(object);
     });
-    expect(detailedShadowCasters).toHaveLength(0);
+    expect(detailedCells.length).toBeGreaterThan(0);
+    expect(detailedCells.every((mesh) => !mesh.castShadow)).toBe(true);
+    expect(detailedCells.every((mesh) => !mesh.receiveShadow)).toBe(true);
+    detailedCells[0]?.geometry.computeBoundingBox();
+    const gameplayCellSize = detailedCells[0]?.geometry.boundingBox?.getSize(
+      new THREE.Vector3(),
+    );
+    expect(gameplayCellSize?.x).toBeCloseTo(0.058 * 1.01, 6);
     visual.dispose();
   });
 

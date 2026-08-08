@@ -8,11 +8,13 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "build:character:f01r": "python3 scripts/compile-f01r-semantic-pack.py",
+    "audit:character:f01": "node skills/fram-character-gameplay-fidelity/scripts/audit-surface-pack.mjs --profile src/characterForge/f01.gameplay-profile.json",
+    "capture:character:r09": "node skills/fram-character-gameplay-fidelity/scripts/capture-gameplay-fidelity.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
     "test:e2e:r06": "node tests/e2e/r06_baseline.mjs",
     "test:watch": "vitest",
-    "check": "pnpm test && pnpm build"
+    "check": "pnpm test && pnpm audit:character:f01 && pnpm build"
   },
   "dependencies": {
     "phaser": "4.2.0",

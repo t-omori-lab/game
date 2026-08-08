@@ -1,10 +1,10 @@
 # Next Tasks: ゲーム開発
 
-Last updated: 2026-08-08
+Last updated: 2026-08-09
 
 ## 結論
 
-**Goal 0、R09A `First Memory Logic Proof`、R09Bのtechnical bridgeはlocal完了し、公開Forgeと同じF-01 compiled packをR09の既定actorへ復帰した。** F-02とF-01Rはbridge／再構築の比較証拠として保持するが、F-01の代替正本にはしない。次は同一F-01を通常gameplay cameraでuser確認し、その正本を保持したversioned derivativeとして改善loopを設計する。
+**Goal 0、R09A `First Memory Logic Proof`、R09Bのtechnical bridgeはlocal完了し、公開Forgeと同じF-01 compiled packをR09の既定actorへ復帰した。** さらに正本packを変えず、gameplay距離で破片に見える33個の分離cellと過大な黒いcell gapを表示profileで補正した。F-02とF-01Rはbridge／再構築の比較証拠として保持するが、F-01の代替正本にはしない。次はこの通常gameplay camera候補をuser確認し、採択後に正本を保持したversioned derivative改善loopへ進む。
 
 F-01Rはsemantic sourceから別の9,065-cell packを生成できる技術証拠だが、公開F-01の頭部を忠実に移植する方法ではなかった。既に存在する3D正本は再生成せず、Forgeとgameが同じfactory／payload digestを読む。改善時だけF-01を凍結したまま新しいsource versionを作り、同一camera比較で採否する。
 
@@ -17,7 +17,8 @@ R09 First Memory Expedition
 ├─ B. F-01 bridge → F-02 technical evidence ✓ art rejected
 ├─ B2. F-01R semantic head cell ✓ technical evidence／fidelity rejected
 ├─ B3. exact F-01 pack restored as R09 default ✓
-└─ C. F-01-preserving versioned correction loop ← next
+├─ B4. gameplay-distance seam／ground-debris cleanup ✓ local candidate
+└─ C. F-01-preserving versioned correction loop ← user review後
 
 → R10 Relic Buildcraft
 → 20〜30分 Golden Vertical Slice
@@ -215,8 +216,8 @@ F-02はtechnical candidateとして上記を満たしたが、ユーザーvisual
 
 ## Exact restart point
 
-1. R09既定actorと公開／local Character Forge F-01が同じ9,454-cell packを読むことを、通常gameplay cameraでuser確認する。
-2. camera、light、world scale、animation adapterによる見え方の差と、F-01 geometry自体の不足を分離する。
+1. canonical 9,454-cell packを読むR09の9,421-cell gameplay表示候補をuser確認し、足元の分離cell除外と黒いgrid低減を採否する。
+2. 採択時はcell fill／bevel／shadowのgameplay-distance profileを固定し、camera、light、world scale、animation adapterによる差と、F-01 geometry自体の不足を分離する。
 3. F-01正本は凍結し、採択された頭・顔・髪を失わないversioned derivativeでmodule単位のsource correctionを行う。F-01／F-02／F-01R evidenceは上書きしない。
 4. derivativeの同一digest、四方向、必須motion、装備、R09A回帰、R06比performanceを再実行する。
 5. character generation loopが成立後、最小Product ShellとR10最初の二〜三buildを同じR09 sceneへ接続する。
@@ -227,6 +228,7 @@ Product Foundationの採用範囲と2026-08-08の優先順は、本ファイル�
 
 ## Recently completed
 
+- [x] F-01 gameplay-distance surface cleanup／再現pipeline — canonical 9,454-cell pack／digestを維持し、R09表示だけ33 detached ground cellsを除外。cell gap／bevel／detail shadowを通常画角用に調整し、versioned profile、pack audit、固定camera capture、project-local skillへ固定。9,421 cells、console／page error 0、238 tests／build合格を確認 — 2026-08-09
 - [x] 公開Character Forge F-01の9,454-cell packをR09既定actorへ無加工で復帰。F-01Rは`?actor=f01r`へ分離し、asset ID／payload digest／cell数をproduction Chromeで確認 — 2026-08-08
 - [x] F-01R Source-faithful Reconstruction Cell — semantic head／face／hair source、schema v2 module pack（9,065 cells／20 modules）、Forge／R09 shared digest、same-view comparison、R09移動／大技browser check — 2026-08-08
 - [x] R09B Playable Character Bridge — F-01 gameplay adapter、evidence-driven F-02（10,160 cells）、Forge／R09 shared runtime、旧actor fallback、R09A回帰、R06比performance gate — 2026-08-08
