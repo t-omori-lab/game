@@ -4,6 +4,7 @@ Last updated: 2026-08-09
 
 ## Validated project learnings
 
+- release一覧へ新しいRXXを追加すると、routeと説明が正しくても`public/catalog/<id>.jpg`がなければdeferred imageだけが404になり、カード背景が空のまま残る。release manifestとthumbnailを同じ変更単位にし、全宣言IDの画像存在と最低sizeをtestすると、最新版カードだけの欠落をbuild時に止められる。
 - close-up用の高密度RoundedBox surfaceを通常gameplay距離へそのまま縮小すると、10%のcell gapと大きなbevelがsub-pixelの黒い格子／縦筋へ変わる。GTAOを切るだけでは解消しない。canonical cell center／palette／digestは凍結し、距離別render profileでcell fill、edge radius、detail shadowを変え、visual-hull由来の最下層小片は連結成分で限定除外すると、voxelの粒立ちを保ったまま画面ノイズを減らせる。source／visible cell数、filter閾値、render値、viewport、routeを一つのversioned profileに束ね、runtime／audit／captureが同じprofileを読むと、magic numberのずれを防げる。
 - root landingのnavigationへtimeoutなしnetwork-first Service Workerを置き、HTMLだけをcacheしてhash付きJS／CSSを同じversionで固定しないと、回線停滞時のblank待機と更新後のasset不整合を同時に招く。入口はstatic HTMLを直接配信し、offline要件がない限りroot workerを持たせない。必要な各releaseだけをscope別・manifest固定のworkerへ閉じ込める。
 - static first viewをHTMLへ置いても、そのentryがfull CSSをstatic importするとViteはrender-blocking stylesheet linkをHTMLへ挿入する。critical styleをinlineに保ち、full catalog CSSをenhancement時にdynamic importしてからDOMを置換すると、JS／CSS障害時も入口を使えるままfirst paintを分離できる。

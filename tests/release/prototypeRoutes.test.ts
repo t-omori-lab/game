@@ -6,6 +6,18 @@ import {
   resolvePrototypeRelease,
 } from "../../src/prototypeRoutes";
 
+type NodeFs = {
+  statSync(path: URL): { isFile(): boolean; readonly size: number };
+};
+
+type NodeProcess = {
+  getBuiltinModule(name: "fs"): NodeFs;
+};
+
+const fileSystem = (globalThis as typeof globalThis & {
+  readonly process: NodeProcess;
+}).process.getBuiltinModule("fs");
+
 describe("prototype release routing", () => {
   it("lists playable releases newest first", () => {
     expect(PROTOTYPE_RELEASES.map((release) => release.id)).toEqual([
@@ -24,6 +36,17 @@ describe("prototype release routing", () => {
     expect(PROTOTYPE_RELEASES[4]?.status).toBe("archive");
     expect(PROTOTYPE_RELEASES[5]?.status).toBe("archive");
     expect(PROTOTYPE_RELEASES[6]?.status).toBe("archive");
+  });
+
+  it("ships a non-empty catalog thumbnail for every listed release", () => {
+    for (const release of PROTOTYPE_RELEASES) {
+      const thumbnail = fileSystem.statSync(
+        new URL(`../../public/catalog/${release.id}.jpg`, import.meta.url),
+      );
+
+      expect(thumbnail.isFile(), `${release.id} thumbnail`).toBe(true);
+      expect(thumbnail.size, `${release.id} thumbnail bytes`).toBeGreaterThan(1024);
+    }
   });
 
   it("resolves versioned paths without confusing the catalog", () => {

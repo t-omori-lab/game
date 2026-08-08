@@ -6,6 +6,8 @@ Last updated: 2026-08-09
 
 **Goal 0、R09A `First Memory Logic Proof`、R09Bのtechnical bridgeは完了し、公開Forgeと同じF-01 compiled packをR09の既定actorへ復帰してgameplay-distance補正まで公開した。** 正本packを変えず、破片に見える33個の分離cellと過大な黒いcell gapをversioned表示profileで補正し、同じprofileを読むpack audit／実画面capture／project-local skillも固定した。F-02とF-01Rはbridge／再構築の比較証拠として保持するが、F-01の代替正本にはしない。次は公開版の造形判断を受け、正本を保持したversioned derivative改善loopへ進む。
 
+catalog先頭の「01」カードはR09 thumbnail欠落をlocal修正済みで、全releaseの画像存在検査も追加した。次の外部操作は、この二ファイルと記録だけを公開へ反映し、GitHub Pages上でもR09画像の200応答と可視表示を確認することである。
+
 F-01Rはsemantic sourceから別の9,065-cell packを生成できる技術証拠だが、公開F-01の頭部を忠実に移植する方法ではなかった。既に存在する3D正本は再生成せず、Forgeとgameが同じfactory／payload digestを読む。改善時だけF-01を凍結したまま新しいsource versionを作り、同一camera比較で採否する。
 
 ```text
@@ -26,6 +28,13 @@ R09 First Memory Expedition
 → R11 First Companion
 → R12 Causal World Cell
 ```
+
+## P0 — Catalog 01 thumbnail
+
+- [x] 公開R09の実gameplay captureから720×405の`public/catalog/r09.jpg`を作る。
+- [x] release一覧へ追加した全RXXに対応thumbnailが存在することを回帰testにする。
+- [x] production buildとlocal 4177の実browserでR09画像の可視表示を確認する。
+- [ ] 明示承認後にscope限定commitをpushし、GitHub Pagesの`/game/`で01カードと画像応答を確認する。
 
 ## Completed — Goal 0: Safe Baseline
 
