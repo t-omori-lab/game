@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import {
   createF01Character,
+  type F01Character,
   type F01PartId,
 } from "../../../characterForge/F01Character";
 import type { VoxelMaterialRole, VoxelPoint } from "../../voxel";
@@ -13,7 +14,17 @@ import {
 } from "./HeroVisual";
 import type { PrototypeBHeroAssetRuntime } from "./HeroAssetRuntime";
 
-const F01_GAMEPLAY_WORLD_SCALE = 24;
+export const F01_GAMEPLAY_WORLD_SCALE = 24;
+
+export interface CompiledForgeHeroDescriptor {
+  readonly id: string;
+  readonly representation: string;
+  readonly characterPreset: string;
+  readonly visibleVoxelCells: number;
+  readonly worldScale: number;
+  readonly payloadSha256?: string;
+  readonly sourceSha256?: string;
+}
 
 export const F01_FORGE_HERO_ASSET_RUNTIME = Object.freeze({
   id: "fram.character.f01.gameplay-bridge-v1",
@@ -23,6 +34,9 @@ export const F01_FORGE_HERO_ASSET_RUNTIME = Object.freeze({
   worldScale: F01_GAMEPLAY_WORLD_SCALE,
   createVisual: createF01ForgeHeroVisual,
 } satisfies PrototypeBHeroAssetRuntime);
+
+/** Comparison export used when R09 is opened with `?actor=f01`. */
+export const R09_HERO_ASSET_RUNTIME = F01_FORGE_HERO_ASSET_RUNTIME;
 
 const emptyPartMeshes = Object.fromEntries(
   HERO_PART_IDS.map((partId) => [partId, null]),
@@ -47,23 +61,37 @@ function asHeroPartGroups(
 }
 
 export function createF01ForgeHeroVisual(): HeroVisual {
-  const character = createF01Character({ castShadow: false });
+  return createCompiledForgeHeroVisual(
+    F01_FORGE_HERO_ASSET_RUNTIME,
+    () => createF01Character({ castShadow: false }),
+  );
+}
+
+export function createCompiledForgeHeroVisual(
+  descriptor: CompiledForgeHeroDescriptor,
+  createCharacter: () => F01Character,
+): HeroVisual {
+  const character = createCharacter();
   const partGroups = asHeroPartGroups(character.partGroups);
   const weaponSocket = new THREE.Group();
-  weaponSocket.name = "fram-f01-forge-right-hand-socket";
+  weaponSocket.name = `${descriptor.id}:right-hand-socket`;
   // F-01 arm geometry extends from its shoulder pivot toward +X and -Y.
   // The socket stays in those authored units and follows the whole arm rig.
   weaponSocket.position.set(0.52, -1.02, 0.06);
   partGroups["right-arm"].add(weaponSocket);
 
-  character.root.userData.assetDNA = F01_FORGE_HERO_ASSET_RUNTIME.id;
+  character.root.userData.assetDNA = descriptor.id;
   character.root.userData.frontAxis = "+z";
   character.root.userData.runtimeRepresentation =
-    F01_FORGE_HERO_ASSET_RUNTIME.representation;
+    descriptor.representation;
   character.root.userData.visibleVoxelCells =
-    F01_FORGE_HERO_ASSET_RUNTIME.visibleVoxelCells;
+    descriptor.visibleVoxelCells;
   character.root.userData.characterPreset =
-    F01_FORGE_HERO_ASSET_RUNTIME.characterPreset;
+    descriptor.characterPreset;
+  character.root.userData.packDigest =
+    descriptor.payloadSha256 ?? character.stats.payloadSha256;
+  character.root.userData.sourceDigest =
+    descriptor.sourceSha256 ?? character.stats.sourceSha256 ?? "unavailable";
 
   const materialById = character.materials;
   const materialContract = {
@@ -183,7 +211,7 @@ export function createF01ForgeHeroVisual(): HeroVisual {
       // PrototypeB tools are already authored in world units. They become a
       // child of F-01's authored-unit root, so cancel only the actor's bridge
       // scale to keep the tool at its original gameplay size.
-      object.scale.multiplyScalar(1 / F01_GAMEPLAY_WORLD_SCALE);
+      object.scale.multiplyScalar(1 / descriptor.worldScale);
       alignObjectGripToSocket(object, gripLocal);
     },
     setTint(color: THREE.ColorRepresentation): void {

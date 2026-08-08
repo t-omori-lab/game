@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>F-01R Fidelity Comparison</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #111615;
+        color: #e8efeb;
+        font-family: "Hiragino Sans", sans-serif;
+      }
+      header { padding: 24px 28px 16px; }
+      h1 { margin: 0 0 6px; font-size: 24px; }
+      p { margin: 0; color: #9eaaa4; font-size: 13px; }
+      main {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        padding: 0 28px 28px;
+      }
+      figure {
+        margin: 0;
+        overflow: hidden;
+        border: 1px solid #33413b;
+        background: #0b0f0e;
+      }
+      img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; }
+      figcaption {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border-top: 1px solid #33413b;
+        padding: 9px 12px;
+        color: #aeb9b4;
+        font-size: 11px;
+      }
+      strong { color: #7deadd; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>F-01R / source-faithful head reconstruction</h1>
+      <p>Beauty Sheetを人物性の正本とし、F-01・F-02・F-01Rを同じForgeカメラで比較。</p>
+    </header>
+    <main>
+      <figure>
+        <img src="../r07_character_depth/fram-r07-character-direction.png" alt="F-01 Beauty Sheet" />
+        <figcaption><strong>ART AUTHORITY</strong><span>F-01 Beauty Sheet</span></figcaption>
+      </figure>
+      <figure>
+        <img src="evidence/forge-f01-three-quarter.png" alt="F-01 visual hull" />
+        <figcaption><strong>BASELINE</strong><span>F-01 visual hull</span></figcaption>
+      </figure>
+      <figure>
+        <img src="evidence/forge-f02-three-quarter.png" alt="F-02 rejected art patch" />
+        <figcaption><strong>TECH EVIDENCE</strong><span>F-02 rejected art patch</span></figcaption>
+      </figure>
+      <figure>
+        <img src="evidence/forge-f01r-three-quarter.png" alt="F-01R semantic module candidate" />
+        <figcaption><strong>NEW CANDIDATE</strong><span>F-01R semantic modules</span></figcaption>
+      </figure>
+    </main>
+  </body>
+</html>

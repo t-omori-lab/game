@@ -632,6 +632,20 @@ export class PrototypeBRenderer {
         if (typeof characterPreset === "string") {
           this.renderer.domElement.dataset.heroCharacterPreset = characterPreset;
         }
+        const packDigest = this.playerHeroVisual.root.userData.packDigest;
+        if (typeof packDigest === "string") {
+          this.renderer.domElement.dataset.heroPackDigest = packDigest;
+        }
+        const sourceDigest = this.playerHeroVisual.root.userData.sourceDigest;
+        if (typeof sourceDigest === "string") {
+          this.renderer.domElement.dataset.heroSourceDigest = sourceDigest;
+        }
+        const moduleIds = this.playerHeroVisual.root.userData.moduleIds;
+        if (Array.isArray(moduleIds)) {
+          this.renderer.domElement.dataset.heroModuleCount = String(
+            moduleIds.length,
+          );
+        }
       }
     }
     if (

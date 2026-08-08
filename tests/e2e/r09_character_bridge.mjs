@@ -8,7 +8,7 @@ import { resolve } from "node:path";
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
 const url = process.argv[2] ?? "http://127.0.0.1:4176/game/r09/";
-const outputDirectory = resolve("output/playwright/r09b-character-bridge");
+const outputDirectory = resolve("output/playwright/f01r-fidelity");
 const executablePath = existsSync(chromium.executablePath())
   ? chromium.executablePath()
   : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -26,12 +26,18 @@ try {
     captures.push(await captureRuntimeActor(browser, viewport));
   }
   captures.push(await captureLegacyFallback(browser, viewports[0]));
-  captures.push(await captureForgeF02(browser, viewports[0]));
+  captures.push(await captureForgeF01R(browser, viewports[0]));
 } finally {
   await browser.close();
 }
 
-const status = captures.every(
+const runtimeCapture = captures.find((capture) => capture.kind === "runtime");
+const forgeCapture = captures.find((capture) => capture.kind === "forge-f01r");
+const sameCompiledPack =
+  runtimeCapture?.contract.heroAssetId === forgeCapture?.contract.heroAssetId &&
+  runtimeCapture?.contract.heroPackDigest === forgeCapture?.contract.heroPackDigest &&
+  runtimeCapture?.contract.heroSourceDigest === forgeCapture?.contract.heroSourceDigest;
+const status = sameCompiledPack && captures.every(
   (capture) =>
     capture.consoleErrors.length === 0 && capture.pageErrors.length === 0,
 )
@@ -39,15 +45,16 @@ const status = captures.every(
   : "failed";
 const report = {
   schemaVersion: 1,
-  gate: "r09b-playable-character-bridge",
+  gate: "f01r-source-faithful-character-bridge",
   status,
   measuredAt: new Date().toISOString(),
   url,
   browserExecutable: executablePath,
+  sameCompiledPack,
   captures,
 };
 await writeFile(
-  `${outputDirectory}/r09b-character-bridge.json`,
+  `${outputDirectory}/f01r-fidelity.json`,
   `${JSON.stringify(report, null, 2)}\n`,
   "utf8",
 );
@@ -122,13 +129,20 @@ async function captureRuntimeActor(browserInstance, viewport) {
   assertEqual(contract.heroAssetStatus, "loaded", "runtime status");
   assertEqual(
     contract.heroAssetId,
-    "fram.character.f02.gameplay-readability-v1",
+    "fram.character.f01r.source-faithful-head-v1",
     "runtime asset id",
   );
-  if (Number(contract.heroVoxelCells) <= 9_454) {
+  if (Number(contract.heroVoxelCells) < 8_000) {
     throw new Error(
-      `F-02 readability cells are missing: ${contract.heroVoxelCells}`,
+      `F-01R semantic surface is incomplete: ${contract.heroVoxelCells}`,
     );
+  }
+  if (
+    contract.heroPackDigest?.length !== 64 ||
+    contract.heroSourceDigest?.length !== 64 ||
+    Number(contract.heroModuleCount) < 15
+  ) {
+    throw new Error(`F-01R provenance contract is incomplete: ${JSON.stringify(contract)}`);
   }
   if (contract.autoBasicEvents < 1 || contract.manualSkillEvents < 1) {
     throw new Error(`Combat evidence missing: ${JSON.stringify(contract)}`);
@@ -304,9 +318,9 @@ async function captureLegacyFallback(browserInstance, viewport) {
   };
 }
 
-async function captureForgeF02(browserInstance, viewport) {
+async function captureForgeF01R(browserInstance, viewport) {
   const forgeUrl = new URL("../forge/f01/", url);
-  forgeUrl.searchParams.set("candidate", "f02");
+  forgeUrl.searchParams.set("candidate", "f01r");
   const context = await browserInstance.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     screen: { width: viewport.width, height: viewport.height },
@@ -326,7 +340,7 @@ async function captureForgeF02(browserInstance, viewport) {
     () =>
       document.querySelector("#app")?.getAttribute(
         "data-character-candidate",
-      ) === "f02" &&
+      ) === "f01r" &&
       document.querySelector("[data-loading]")?.classList.contains(
         "is-complete",
       ) === true,
@@ -336,25 +350,28 @@ async function captureForgeF02(browserInstance, viewport) {
   await page.locator('[data-view="back"]').click();
   await page.waitForTimeout(500);
   await page.screenshot({
-    path: `${outputDirectory}/${viewport.label}-forge-f02-back.png`,
+    path: `${outputDirectory}/${viewport.label}-forge-f01r-back.png`,
     type: "png",
   });
   await page.locator('[data-distance="field"]').click();
   await page.waitForTimeout(700);
   await page.screenshot({
-    path: `${outputDirectory}/${viewport.label}-forge-f02-field.png`,
+    path: `${outputDirectory}/${viewport.label}-forge-f01r-field.png`,
     type: "png",
   });
   const contract = await page.evaluate(() => {
     const root = document.querySelector("#app");
     const cellCount = document.querySelector("[data-cell-count]")?.textContent;
     if (!(root instanceof HTMLElement) || cellCount === null || cellCount === undefined) {
-      throw new Error("F-02 Forge contract elements are missing.");
+      throw new Error("F-01R Forge contract elements are missing.");
     }
     return {
       heroAssetSource: "forge-shared",
       heroAssetStatus: root.dataset.characterCandidate,
-      heroAssetId: "fram.character.f02.gameplay-readability-v1",
+      heroAssetId: root.dataset.assetId,
+      heroPackDigest: root.dataset.packDigest,
+      heroSourceDigest: root.dataset.sourceDigest,
+      heroModuleCount: root.dataset.moduleCount,
       heroVoxelCells: cellCount.replaceAll(",", ""),
       autoBasicEvents: 0,
       manualSkillEvents: 0,
@@ -362,21 +379,27 @@ async function captureForgeF02(browserInstance, viewport) {
     };
   });
   await context.close();
-  if (Number(contract.heroVoxelCells) <= 9_454) {
-    throw new Error(`Forge did not expose F-02 cells: ${contract.heroVoxelCells}`);
+  if (
+    contract.heroAssetId !== "fram.character.f01r.source-faithful-head-v1" ||
+    Number(contract.heroVoxelCells) < 8_000 ||
+    contract.heroPackDigest?.length !== 64 ||
+    contract.heroSourceDigest?.length !== 64 ||
+    Number(contract.heroModuleCount) < 15
+  ) {
+    throw new Error(`Forge did not expose the F-01R pack: ${JSON.stringify(contract)}`);
   }
   if (consoleErrors.length > 0 || pageErrors.length > 0) {
     throw new Error(
-      `F-02 Forge browser errors: ${JSON.stringify({ consoleErrors, pageErrors })}`,
+      `F-01R Forge browser errors: ${JSON.stringify({ consoleErrors, pageErrors })}`,
     );
   }
   return {
-    kind: "forge-f02",
+    kind: "forge-f01r",
     viewport,
     contract,
     screenshots: [
-      `${viewport.label}-forge-f02-back.png`,
-      `${viewport.label}-forge-f02-field.png`,
+      `${viewport.label}-forge-f01r-back.png`,
+      `${viewport.label}-forge-f01r-field.png`,
     ],
     consoleErrors,
     pageErrors,
@@ -481,6 +504,9 @@ async function readContract(page) {
       heroAssetSource: canvas.dataset.heroAssetSource,
       heroAssetStatus: canvas.dataset.heroAssetStatus,
       heroAssetId: canvas.dataset.heroAssetId,
+      heroPackDigest: canvas.dataset.heroPackDigest,
+      heroSourceDigest: canvas.dataset.heroSourceDigest,
+      heroModuleCount: canvas.dataset.heroModuleCount,
       heroRepresentation: canvas.dataset.heroRepresentation,
       heroVoxelCells: canvas.dataset.heroVoxelCells,
       heroCharacterPreset: canvas.dataset.heroCharacterPreset,
@@ -501,6 +527,7 @@ function compactCapture(capture) {
     heroAssetSource: capture.contract.heroAssetSource,
     heroAssetStatus: capture.contract.heroAssetStatus,
     heroAssetId: capture.contract.heroAssetId,
+    heroPackDigest: capture.contract.heroPackDigest,
     autoBasicEvents: capture.contract.autoBasicEvents,
     manualSkillEvents: capture.contract.manualSkillEvents,
     consoleErrors: capture.consoleErrors.length,

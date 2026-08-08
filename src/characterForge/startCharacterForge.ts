@@ -10,9 +10,14 @@ import r08BaselineUrl from "../../work/r08_character_art/r08-unified-05-1280x720
 import r05BaselineUrl from "./assets/fram-r05-baseline.png?url";
 import {
   createF01Character,
+  type F01Character,
   type ForgeMotion,
   type ForgeView,
 } from "./F01Character";
+import {
+  F01R_ASSET_CONTRACT,
+  createF01RCharacter,
+} from "./F01RCharacter";
 import {
   attachF02ReadabilityModules,
 } from "./F02ReadabilityModules";
@@ -20,6 +25,7 @@ import "./styles.css";
 
 const buildSheetUrl = `${import.meta.env.BASE_URL}forge/f01-build-sheet.jpg`;
 type ForgeDistance = "close" | "full" | "field";
+type ForgeCandidate = "f01" | "f02" | "f01r";
 
 const FIELD_TARGET_OCCUPANCY = 0.16;
 const FIELD_CAMERA_DIRECTION = new THREE.Vector3(510, 680, 510).normalize();
@@ -74,11 +80,26 @@ function referenceTabs(): string {
   ).join("");
 }
 
-function layout(candidate: "f01" | "f02"): string {
-  const candidateLabel = candidate === "f02" ? "F-02" : "F-01";
-  const candidateState = candidate === "f02"
-    ? "EVIDENCE-CORRECTED RUNTIME"
-    : "REPRODUCIBLE RECONSTRUCTION";
+function layout(candidate: ForgeCandidate): string {
+  const candidateLabel = candidate === "f01r"
+    ? "F-01R"
+    : candidate === "f02"
+      ? "F-02"
+      : "F-01";
+  const candidateState = candidate === "f01r"
+    ? "SOURCE-FAITHFUL CANDIDATE"
+    : candidate === "f02"
+      ? "REJECTED ART / TECH EVIDENCE"
+      : "VISUAL-HULL BASELINE";
+  const sourceMetricLabel = candidate === "f01r"
+    ? "SOURCE CELLS"
+    : "SOURCE VOLUME";
+  const packLabel = candidate === "f01r"
+    ? "SEMANTIC MODULE PACK"
+    : "SURFACE PACK";
+  const packDetail = candidate === "f01r"
+    ? "source + payload digest"
+    : "validated 4-view reconstruction";
   return `
     <div class="forge-shell">
       <header class="forge-header">
@@ -89,6 +110,11 @@ function layout(candidate: "f01" | "f02"): string {
         <div class="forge-title">
           <span>CHARACTER FORGE</span>
           <strong>${candidateLabel} / THE ARCHIVIST</strong>
+          <nav class="forge-candidates" aria-label="Reconstruction candidates">
+            <a href="?candidate=f01"${candidate === "f01" ? ' aria-current="page"' : ""}>F-01</a>
+            <a href="?candidate=f02"${candidate === "f02" ? ' aria-current="page"' : ""}>F-02</a>
+            <a href="?candidate=f01r"${candidate === "f01r" ? ' aria-current="page"' : ""}>F-01R</a>
+          </nav>
         </div>
         <div class="forge-build-state"><span></span>${candidateState}</div>
       </header>
@@ -155,7 +181,7 @@ function layout(candidate: "f01" | "f02"): string {
 
           <section class="forge-metrics" aria-label="Reconstruction metrics">
             <div><small>RENDER CELLS</small><strong data-cell-count>—</strong></div>
-            <div><small>SOURCE VOLUME</small><strong data-volume-count>—</strong></div>
+            <div><small>${sourceMetricLabel}</small><strong data-volume-count>—</strong></div>
             <div><small>RIG</small><strong data-rig-count>—</strong></div>
             <div><small>MATERIALS</small><strong data-material-count>—</strong></div>
           </section>
@@ -165,9 +191,10 @@ function layout(candidate: "f01" | "f02"): string {
             <ol>
               <li class="is-complete"><span>01</span><div><strong>BEAUTY SHEET</strong><small>identity + art direction</small></div></li>
               <li class="is-complete"><span>02</span><div><strong>BUILD SHEET</strong><small>orthographic + modules</small></div></li>
-              <li class="${candidate === "f01" ? "is-active" : "is-complete"}"><span>03</span><div><strong>SURFACE PACK</strong><small>validated 4-view reconstruction</small></div></li>
+              <li class="${candidate === "f01" ? "is-active" : "is-complete"}"><span>03</span><div><strong>${packLabel}</strong><small>${packDetail}</small></div></li>
               <li class="is-complete"><span>04</span><div><strong>SEMANTIC RIG</strong><small>idle / run / hit</small></div></li>
               ${candidate === "f02" ? '<li class="is-active"><span>05</span><div><strong>READABILITY MODULES</strong><small>actual-play failed parts only</small></div></li>' : ""}
+              ${candidate === "f01r" ? '<li class="is-active"><span>05</span><div><strong>GAME BRIDGE</strong><small>same compiled pack in Forge + R09</small></div></li>' : ""}
             </ol>
           </section>
         </aside>
@@ -175,7 +202,7 @@ function layout(candidate: "f01" | "f02"): string {
 
       <footer class="forge-footer">
         <span><b>${candidateLabel}</b> PRODUCTION EXPERIMENT</span>
-        <span>IMAGE → FOUR-VIEW VOLUME → SEMANTIC PARTS → REAL-TIME RIG</span>
+        <span>${candidate === "f01r" ? "BEAUTY → MODULE SOURCE → COMPILED PACK → FORGE / R09" : "IMAGE → FOUR-VIEW VOLUME → SEMANTIC PARTS → REAL-TIME RIG"}</span>
         <span data-renderer>WEBGL / PC ULTRA</span>
       </footer>
     </div>
@@ -463,17 +490,27 @@ function createScene(
 }
 
 export async function startCharacterForge(applicationRoot: HTMLElement): Promise<void> {
-  const candidate = new URLSearchParams(window.location.search).get("candidate") === "f02"
+  const requestedCandidate = new URLSearchParams(window.location.search).get("candidate");
+  const candidate: ForgeCandidate = requestedCandidate === "f02"
     ? "f02"
-    : "f01";
-  document.title = `F.R.A.M. Character Forge ${candidate === "f02" ? "F-02" : "F-01"}`;
+    : requestedCandidate === "f01r"
+      ? "f01r"
+      : "f01";
+  const candidateLabel = candidate === "f01r"
+    ? "F-01R"
+    : candidate === "f02"
+      ? "F-02"
+      : "F-01";
+  document.title = `F.R.A.M. Character Forge ${candidateLabel}`;
   applicationRoot.className = "forge-app";
   applicationRoot.dataset.characterCandidate = candidate;
   applicationRoot.innerHTML = layout(candidate);
   const stage = query<HTMLElement>(applicationRoot, ".forge-stage");
   const loading = query<HTMLElement>(applicationRoot, "[data-loading]");
   const sceneState = createScene(stage);
-  const character = createF01Character();
+  const character: F01Character = candidate === "f01r"
+    ? createF01RCharacter()
+    : createF01Character();
   const f02Modules = candidate === "f02"
     ? attachF02ReadabilityModules({
       root: character.root,
@@ -481,6 +518,15 @@ export async function startCharacterForge(applicationRoot: HTMLElement): Promise
     })
     : null;
   sceneState.scene.add(character.root);
+  const assetId = candidate === "f01r"
+    ? F01R_ASSET_CONTRACT.id
+    : candidate === "f02"
+      ? "fram.character.f02.gameplay-readability-v1"
+      : "fram.character.f01.gameplay-bridge-v1";
+  applicationRoot.dataset.assetId = assetId;
+  applicationRoot.dataset.packDigest = character.stats.payloadSha256;
+  applicationRoot.dataset.sourceDigest = character.stats.sourceSha256 ?? "unavailable";
+  applicationRoot.dataset.moduleCount = character.stats.moduleCount.toString();
   character.root.rotation.y = -0.09;
   setCameraView(sceneState.camera, sceneState.controls, "three-quarter", "close");
   loading.classList.add("is-complete");

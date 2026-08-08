@@ -4,9 +4,9 @@ Last updated: 2026-08-08
 
 ## 結論
 
-**Goal 0、R09A `First Memory Logic Proof`、R09B `Playable Character Bridge`はlocal完了した。** 現在はF-02のuser visual review待ちである。採択なら最小Product Shellへ進み、不採択ならF-01正本を壊さずF-03造形補正を一回だけ行う。
+**Goal 0、R09A `First Memory Logic Proof`、R09Bのtechnical bridge、F-01Rの最初のsource-faithful reconstruction cellはlocal完了した。** F-02はbridge／fallback／motion／性能証拠として保持するが、art successorとしては不採択。現在はF-01Rのuser visual review待ちであり、次の優先はF-01Rを全身moduleとsource correction loopへ拡張すること。
 
-First Memory Loopに加え、F-01を通常camera、world light、移動、装備、戦闘で評価し、露呈した5項目だけをF-02へ直すloopも成立した。F-02はForgeとR09で同じ10,160-cell packを使い、R09A回帰とR06比性能gateを通過している。local自動合格を、可愛さやcommercial qualityのユーザー採択とは扱わない。
+F-01Rは、頭・顔・髪をruntime TypeScriptの箱追加ではなく、landmark／module／material／provenanceを持つsource dataから9,065-cell packへコンパイルする。ForgeとR09はIDだけでなくsource／payload digestまで一致した。これは生成→立体化→同じgameへ反映する一本の経路を頭部で証明したもので、Beauty Sheet完全一致や全身の編集loop完了ではない。
 
 ```text
 Goal 0 Safe Baseline ✓
@@ -14,8 +14,9 @@ Goal 0 Safe Baseline ✓
 
 R09 First Memory Expedition
 ├─ A. First Memory Loop ✓
-├─ B. F-01 bridge → evidence-driven F-02 ✓ user review pending
-└─ C. loading／PC master／mobile tier guards ← next if adopted
+├─ B. F-01 bridge → F-02 technical evidence ✓ art rejected
+├─ B2. F-01R source-faithful head cell ✓ user review pending
+└─ C. F-01R full-body modules／source correction loop ← next
 
 → R10 Relic Buildcraft
 → 20〜30分 Golden Vertical Slice
@@ -71,16 +72,28 @@ Baseline code SHAは`1c9d355`。canonical main runはcold／warm first-controlla
   - 1280×720／2560×1440、actor高14〜17%、既存idle／run／hitを記録する。
   - 未実装のattack／skill専用motionはF-02の不合格証拠とし、F-01 bridgeの前提にはしない。
 
-- [x] 実gameplay captureからF-02の修正範囲を決める。
+- [x] 実gameplay captureからF-02の技術的な修正範囲を決める。
   - module、socket、motionごとのpass／fail manifestを作る。
   - hair、face、torso／jacket、arms、legs、pack、toolのうちfailed moduleだけを独立sourceへ再構築する。
   - head、hand、back、weapon、utility、effect socketとmotionは、実clip／missingの項目だけを修正する。
-  - code内の場当たり的な箱追加ではなく、再生成可能なsource／mask／deltaへ残す。
+  - F-02はcode内の固定cell patchだったため、この条件はart pipelineとして不合格。比較証拠として凍結し、F-01Rでsource dataへ戻す。
   - attack timing、damage、cooldownのauthorityはsimulation側から動かさない。
 
 - [x] 同じF-02 runtime packをForgeとR09で使う。
   - gameplay routeではBeauty／Build Sheet、画像sampling、volume再構築、LLM推論をload／実行しない。
   - ForgeとR09で同一人物、同一palette、同一装備として読めることを確認する。
+
+- [x] F-01Rの頭・顔・髪をsource-faithful moduleとして再構築する。
+  - Beauty Sheetをart authority、Build Sheetをmachine-facing referenceとして分離する。
+  - 頭蓋、顔面、hair shell、前髪、左右横髪、目、口、blush、clip、collarをversion付きsource dataにする。
+  - schema v2 packへmodule index、source digest、payload digestを保存し、runtime TypeScript geometry patchを使わない。
+  - ForgeとR09が同じfactory／packを読み、ID、digest、cell数、module数が一致することを確認する。
+
+- [ ] F-01Rを全身moduleと編集loopへ拡張する。
+  - torso／jacket、arms／gloves、legs／boots、backpack、coral textile、toolをBuild Sheet下段の独立moduleへする。
+  - 現在agent-authoredのlandmark／parameterを、Build Sheet module画像のmask／depth／order抽出へ接続し、画像入力からsource dataを半自動生成できるようにする。
+  - Beauty→Build→source correction→compile→Forge／R09→same-view comparisonを一操作単位で再実行できるようにする。
+  - module別mask／depth／order／bone／socketと、human accept／revise履歴をasset contractへ加える。
 
 - [ ] 通常倍率でvisual gateを通す。
   - hair silhouette、face window、jacket、脚、pack、coral textile、tool、向きが分離して読める。
@@ -148,6 +161,8 @@ Local evidenceは`work/r09a_first_memory_logic_2026-08-08/`にある。desktop C
 - loading regression、desktop browser、現行actor fallbackを通す。
 - これはcommercial-quality達成、iPhone実機合格、public deploy完了を自動的には意味しない。
 
+F-02はtechnical candidateとして上記を満たしたが、ユーザーvisual reviewでart successorとして不採択。現在のvisual review candidateはF-01Rであり、`work/f01r_fidelity_reconstruction_2026-08-08/`を参照する。
+
 ### R09C: Product Foundation Candidate Ready
 
 - blankなしのloading、title、初回name設定、Continue、status、settingsが実runtime stateへ接続される。
@@ -199,11 +214,11 @@ Local evidenceは`work/r09a_first_memory_logic_2026-08-08/`にある。desktop C
 
 ## Exact restart point
 
-1. `work/r09b_character_bridge_2026-08-08/R09B_CHARACTER_BRIDGE_REPORT.md`、F-01／F-02 manifests、`evidence/`の通常倍率captureを読む。
-2. ユーザーがR09B actual gameplayを見て、F-02を暫定actorとして採択するか、F-03造形補正が必要かを判断する。
-3. 採択時はR09の同じlocal dataで`Boot → Loading → Title → local Profile → Continue／New Expedition → Game`の最小Shellを作る。Google sign-in／cloudはこのsliceをblockしない。
-4. F-03が必要な場合は、F-02のmodule別証拠から不合格項目だけを再authoringし、R09A／fallback／性能gateを再実行する。F-01とF-02 evidenceを上書きしない。
-5. 最小Shell統合後、R10最初の二〜三buildを同じR09 sceneへ接続する。
+1. `work/f01r_fidelity_reconstruction_2026-08-08/F01R_FIDELITY_REPORT.md`と比較画像を読む。
+2. ユーザーがF-01RのForge close／front／FIELDとR09 actual gameplayを見て、頭部方向を採択またはmodule単位で修正指示する。
+3. 採択時は同じsource／compiler契約でtorso、limbs、pack、textile、toolを全身moduleへ置換する。F-01／F-02 evidenceは上書きしない。
+4. F-01R全身packの同一digest、四方向、必須motion、装備、R09A回帰、R06比performanceを再実行する。
+5. character generation loopが成立後、最小Product ShellとR10最初の二〜三buildを同じR09 sceneへ接続する。
 
 詳細な判断理由と合格条件は、`work/next_direction_2026-08-03/NEXT_DIRECTION.md`を参照する。
 
@@ -211,6 +226,7 @@ Product Foundationの採用範囲と2026-08-08の優先順は、本ファイル�
 
 ## Recently completed
 
+- [x] F-01R Source-faithful Reconstruction Cell — semantic head／face／hair source、schema v2 module pack（9,065 cells／20 modules）、Forge／R09 shared digest、same-view comparison、R09移動／大技browser check — 2026-08-08
 - [x] R09B Playable Character Bridge — F-01 gameplay adapter、evidence-driven F-02（10,160 cells）、Forge／R09 shared runtime、旧actor fallback、R09A回帰、R06比performance gate — 2026-08-08
 - [x] R09A First Memory Logic Proof — WorldMemoryState v1、二site×二module、回収物消費、撤退、二回目差分、R09専用local save／reload、四分岐browser gate、R06比性能gate — 2026-08-08
 - [x] Goal 0 Safe Baseline — current R06 E2E／performance gate、Playwright固定、canonical docs整合、main統合、local postflight — 2026-08-08

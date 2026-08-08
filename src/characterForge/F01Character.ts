@@ -15,7 +15,7 @@ export type F01PartId =
   | "right-leg"
   | "equipment";
 
-interface PaletteEntry {
+export interface PaletteEntry {
   readonly id: string;
   readonly hex: string;
   readonly surface: "cloth" | "polymer" | "emissive" | "skin" | "glass";
@@ -27,9 +27,10 @@ interface SurfaceCell {
   readonly z: number;
   readonly part: F01PartId;
   readonly palette: PaletteEntry;
+  readonly module?: string;
 }
 
-interface SurfacePack {
+export interface SurfacePack {
   readonly schemaVersion: number;
   readonly compilerVersion: string;
   readonly sourceId: string;
@@ -38,9 +39,32 @@ interface SurfacePack {
   readonly stride: number;
   readonly partIds: readonly string[];
   readonly paletteIds: readonly string[];
-  readonly buildSheetSha256: string;
+  readonly moduleIds?: readonly string[];
+  readonly buildSheetSha256?: string;
+  readonly sourceSha256?: string;
   readonly payloadSha256: string;
   readonly cellsBase64: string;
+}
+
+export interface CompiledCharacterSource {
+  readonly schemaVersion: number;
+  readonly id: string;
+  readonly grid: {
+    readonly width: number;
+    readonly height: number;
+    readonly depth: number;
+    readonly cellSize: number;
+    readonly surfaceGap: number;
+  };
+  readonly rig: {
+    readonly family: string;
+    readonly headStart: number;
+    readonly hipHeight: number;
+    readonly shoulderHeight: number;
+    readonly armOuterStart: number;
+    readonly backEquipmentDepth: number;
+  };
+  readonly palette: readonly PaletteEntry[];
 }
 
 interface PartState {
@@ -49,11 +73,15 @@ interface PartState {
 }
 
 export interface F01CharacterStats {
+  readonly sourceId: string;
   readonly sourceVoxels: number;
   readonly renderedSurfaceCells: number;
   readonly materialCount: number;
   readonly rigParts: number;
-  readonly reconstruction: "compiled four-view visual hull";
+  readonly moduleCount: number;
+  readonly sourceSha256?: string;
+  readonly payloadSha256: string;
+  readonly reconstruction: string;
 }
 
 export interface F01Character {
@@ -87,32 +115,48 @@ const PART_IDS = [
   "equipment",
 ] as const satisfies readonly F01PartId[];
 
-const source = sourceDefinition;
-const palette = source.palette as readonly PaletteEntry[];
+const source = sourceDefinition as CompiledCharacterSource;
 const surfacePack = surfacePackDefinition as SurfacePack;
 
-function paletteById(id: string): PaletteEntry {
+function paletteById(
+  palette: readonly PaletteEntry[],
+  id: string,
+): PaletteEntry {
   const entry = palette.find((candidate) => candidate.id === id);
   if (entry === undefined) throw new Error(`Unknown F-01 palette entry: ${id}`);
   return entry;
 }
 
-function decodeSurfaceCells(): readonly SurfaceCell[] {
+function decodeSurfaceCells(
+  sourceDefinitionValue: CompiledCharacterSource,
+  surfacePackValue: SurfacePack,
+): readonly SurfaceCell[] {
   if (
-    surfacePack.schemaVersion !== 1 ||
-    surfacePack.sourceId !== source.id ||
-    surfacePack.stride !== 5
+    ![1, 2].includes(surfacePackValue.schemaVersion) ||
+    surfacePackValue.sourceId !== sourceDefinitionValue.id ||
+    ![5, 6].includes(surfacePackValue.stride) ||
+    (surfacePackValue.stride === 6 && surfacePackValue.moduleIds === undefined)
   ) {
-    throw new Error("F-01 surface pack does not match the canonical source.");
+    throw new Error("Compiled surface pack does not match its canonical source.");
   }
-  const binary = atob(surfacePack.cellsBase64);
-  if (binary.length !== surfacePack.renderedSurfaceCells * surfacePack.stride) {
-    throw new Error("F-01 surface pack length is invalid.");
+  const binary = atob(surfacePackValue.cellsBase64);
+  if (
+    binary.length !==
+    surfacePackValue.renderedSurfaceCells * surfacePackValue.stride
+  ) {
+    throw new Error("Compiled surface pack length is invalid.");
   }
   const cells: SurfaceCell[] = [];
-  for (let offset = 0; offset < binary.length; offset += surfacePack.stride) {
-    const partId = surfacePack.partIds[binary.charCodeAt(offset + 3)];
-    const paletteId = surfacePack.paletteIds[binary.charCodeAt(offset + 4)];
+  for (
+    let offset = 0;
+    offset < binary.length;
+    offset += surfacePackValue.stride
+  ) {
+    const partId = surfacePackValue.partIds[binary.charCodeAt(offset + 3)];
+    const paletteId = surfacePackValue.paletteIds[binary.charCodeAt(offset + 4)];
+    const moduleId = surfacePackValue.moduleIds?.[
+      binary.charCodeAt(offset + 5)
+    ];
     if (!PART_IDS.includes(partId as F01PartId) || paletteId === undefined) {
       throw new Error("F-01 surface pack contains an unknown semantic index.");
     }
@@ -121,7 +165,8 @@ function decodeSurfaceCells(): readonly SurfaceCell[] {
       y: binary.charCodeAt(offset + 1),
       z: binary.charCodeAt(offset + 2),
       part: partId as F01PartId,
-      palette: paletteById(paletteId),
+      palette: paletteById(sourceDefinitionValue.palette, paletteId),
+      module: moduleId,
     });
   }
   return cells;
@@ -144,8 +189,11 @@ function createMaterial(entry: PaletteEntry): THREE.MeshPhysicalMaterial {
   });
 }
 
-function pivotForPart(part: F01PartId): THREE.Vector3 {
-  const { width, height, depth, cellSize } = source.grid;
+function pivotForPart(
+  sourceDefinitionValue: CompiledCharacterSource,
+  part: F01PartId,
+): THREE.Vector3 {
+  const { width, height, depth, cellSize } = sourceDefinitionValue.grid;
   const xCenter = (width - 1) / 2;
   const zCenter = (depth - 1) / 2;
   const point = (x: number, y: number, z: number): THREE.Vector3 =>
@@ -156,17 +204,41 @@ function pivotForPart(part: F01PartId): THREE.Vector3 {
     );
   switch (part) {
     case "head":
-      return point(xCenter, height * source.rig.headStart, zCenter);
+      return point(
+        xCenter,
+        height * sourceDefinitionValue.rig.headStart,
+        zCenter,
+      );
     case "torso":
-      return point(xCenter, height * source.rig.hipHeight, zCenter);
+      return point(
+        xCenter,
+        height * sourceDefinitionValue.rig.hipHeight,
+        zCenter,
+      );
     case "left-arm":
-      return point(width * 0.25, height * source.rig.shoulderHeight, zCenter);
+      return point(
+        width * 0.25,
+        height * sourceDefinitionValue.rig.shoulderHeight,
+        zCenter,
+      );
     case "right-arm":
-      return point(width * 0.75, height * source.rig.shoulderHeight, zCenter);
+      return point(
+        width * 0.75,
+        height * sourceDefinitionValue.rig.shoulderHeight,
+        zCenter,
+      );
     case "left-leg":
-      return point(width * 0.39, height * source.rig.hipHeight, zCenter);
+      return point(
+        width * 0.39,
+        height * sourceDefinitionValue.rig.hipHeight,
+        zCenter,
+      );
     case "right-leg":
-      return point(width * 0.61, height * source.rig.hipHeight, zCenter);
+      return point(
+        width * 0.61,
+        height * sourceDefinitionValue.rig.hipHeight,
+        zCenter,
+      );
     case "equipment":
       return point(xCenter, height * 0.49, depth * 0.32);
   }
@@ -241,21 +313,33 @@ function updatePose(
   }
 }
 
-export function createF01Character(
-  options: F01CharacterRenderOptions = {},
+export interface CompiledCharacterOptions extends F01CharacterRenderOptions {
+  readonly source: CompiledCharacterSource;
+  readonly surfacePack: SurfacePack;
+  readonly reconstruction: string;
+}
+
+export function createCompiledCharacter(
+  options: CompiledCharacterOptions,
 ): F01Character {
-  const surfaceCells = decodeSurfaceCells();
+  const sourceDefinitionValue = options.source;
+  const pack = options.surfacePack;
+  const palette = sourceDefinitionValue.palette;
+  const surfaceCells = decodeSurfaceCells(sourceDefinitionValue, pack);
   const root = new THREE.Group();
-  root.name = source.id;
+  root.name = sourceDefinitionValue.id;
+  root.userData.sourceSha256 = pack.sourceSha256 ?? "unavailable";
+  root.userData.payloadSha256 = pack.payloadSha256;
+  root.userData.moduleIds = pack.moduleIds ?? [];
   const motionRoot = new THREE.Group();
-  motionRoot.name = `${source.id}:motion-root`;
+  motionRoot.name = `${sourceDefinitionValue.id}:motion-root`;
   root.add(motionRoot);
 
   const parts = Object.fromEntries(
     PART_IDS.map((partId) => {
       const group = new THREE.Group();
-      const pivot = pivotForPart(partId);
-      group.name = `${source.id}:${partId}`;
+      const pivot = pivotForPart(sourceDefinitionValue, partId);
+      group.name = `${sourceDefinitionValue.id}:${partId}`;
       group.position.copy(pivot);
       motionRoot.add(group);
       return [partId, { group, restPosition: pivot.clone() } satisfies PartState];
@@ -265,14 +349,14 @@ export function createF01Character(
     palette.map((entry) => [entry.id, createMaterial(entry)] as const),
   );
   const geometry = new RoundedBoxGeometry(
-    source.grid.cellSize * source.grid.surfaceGap,
-    source.grid.cellSize * source.grid.surfaceGap,
-    source.grid.cellSize * source.grid.surfaceGap,
+    sourceDefinitionValue.grid.cellSize * sourceDefinitionValue.grid.surfaceGap,
+    sourceDefinitionValue.grid.cellSize * sourceDefinitionValue.grid.surfaceGap,
+    sourceDefinitionValue.grid.cellSize * sourceDefinitionValue.grid.surfaceGap,
     2,
-    source.grid.cellSize * 0.075,
+    sourceDefinitionValue.grid.cellSize * 0.075,
   );
-  const xCenter = (source.grid.width - 1) / 2;
-  const zCenter = (source.grid.depth - 1) / 2;
+  const xCenter = (sourceDefinitionValue.grid.width - 1) / 2;
+  const zCenter = (sourceDefinitionValue.grid.depth - 1) / 2;
   const matrix = new THREE.Matrix4();
 
   for (const [key, cells] of groupCells(surfaceCells)) {
@@ -281,16 +365,16 @@ export function createF01Character(
     const part = parts[partId];
     if (material === undefined || part === undefined) continue;
     const mesh = new THREE.InstancedMesh(geometry, material, cells.length);
-    mesh.name = `${source.id}:${key}`;
+    mesh.name = `${sourceDefinitionValue.id}:${key}`;
     mesh.castShadow = options.castShadow ?? true;
     mesh.receiveShadow = options.receiveShadow ?? true;
     mesh.frustumCulled = false;
     const pivot = part.restPosition;
     cells.forEach((cell, index) => {
       matrix.makeTranslation(
-        (cell.x - xCenter) * source.grid.cellSize - pivot.x,
-        cell.y * source.grid.cellSize - pivot.y,
-        (cell.z - zCenter) * source.grid.cellSize - pivot.z,
+        (cell.x - xCenter) * sourceDefinitionValue.grid.cellSize - pivot.x,
+        cell.y * sourceDefinitionValue.grid.cellSize - pivot.y,
+        (cell.z - zCenter) * sourceDefinitionValue.grid.cellSize - pivot.z,
       );
       mesh.setMatrixAt(index, matrix);
     });
@@ -307,11 +391,15 @@ export function createF01Character(
     ) as Record<F01PartId, THREE.Group>,
     materials,
     stats: {
-      sourceVoxels: surfacePack.sourceVoxels,
+      sourceId: pack.sourceId,
+      sourceVoxels: pack.sourceVoxels,
       renderedSurfaceCells: surfaceCells.length,
       materialCount: materials.size,
       rigParts: PART_IDS.length,
-      reconstruction: "compiled four-view visual hull",
+      moduleCount: pack.moduleIds?.length ?? 0,
+      sourceSha256: pack.sourceSha256,
+      payloadSha256: pack.payloadSha256,
+      reconstruction: options.reconstruction,
     },
     update(motion, timeSeconds, motionStartedAt) {
       updatePose(parts, motionRoot, motion, timeSeconds, motionStartedAt);
@@ -327,4 +415,15 @@ export function createF01Character(
       root.removeFromParent();
     },
   };
+}
+
+export function createF01Character(
+  options: F01CharacterRenderOptions = {},
+): F01Character {
+  return createCompiledCharacter({
+    ...options,
+    source,
+    surfacePack,
+    reconstruction: "compiled four-view visual hull",
+  });
 }

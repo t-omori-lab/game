@@ -705,3 +705,23 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+.forge-candidates {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.forge-candidates a {
+  border: 1px solid rgba(198, 215, 207, 0.22);
+  color: rgba(230, 238, 233, 0.55);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  padding: 2px 7px;
+  text-decoration: none;
+}
+
+.forge-candidates a[aria-current="page"] {
+  border-color: rgba(125, 234, 221, 0.72);
+  color: #7deadd;
+}

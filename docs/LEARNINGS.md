@@ -94,6 +94,10 @@ Last updated: 2026-08-08
 - miniature softnessはscreen vertical positionから作ると、地面やUIを横帯状に汚す。scene depth、actor focus、CoC、depth-edge rejectionを使い、1〜2px未満から比較すると、sharp baselineを失わず効果を評価できる。
 - PC Ultra canvasをbrowserで動かしたままCPU-heavy生成testを並列実行すると、値の回帰がなくてもtest timeoutを起こす。release testでは描画tabを一時停止してからsuiteを実行し、失敗は値不一致とtimeoutを分けて再確認する。
 
+- generated actorの`assetId`がForgeとgameで同じでも、別経路でgeometryを足せば同一正本は保証できない。source digest、payload digest、module count、cell countを両画面へ出し、同じfactoryから生成したことを自動比較すると、名前だけ同じ実装を防げる。
+- readabilityだけを合格条件にすると、平面face、巨大eye、白黒のvalue separationでもtestを通り、Beauty Sheetの可愛さや人物性を悪化させ得る。art authorityとのsame-view比較、module別fidelity、人間の「同じ人物／可愛い」の採否をmachine gateと分離する。
+- 全身visual hullを一度に補正するより、人物性への寄与が大きいhead／face／hairをversion付きsemantic sourceへ差し替え、既存bodyへ接続すると、生成→compile→Forge／game反映の一本化を小さく証明できる。ただし成功した頭部を理由に、torso／limbs／equipmentのmodule化完了を主張しない。
+
 ## Working hypotheses to validate
 
 - 全身のfront／back silhouetteとside silhouetteをそのまま直積するvisual hullは、腕の横幅とbackpackの奥行きを組み合わせ、実在しない膨らんだ胴体を作る。rig familyが持つhead／torso／arm／leg／equipmentのsemantic volumeを再構築時のgateにするとmacro形状は改善するが、Beauty Sheet完全一致にはhair／face／jacket等のmodule別復元が必要である。
