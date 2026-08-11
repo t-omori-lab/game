@@ -1,0 +1,23 @@
+{
+  "id": "/game/r04/",
+  "name": "辺境遺物録 R04",
+  "short_name": "辺境遺物 R04",
+  "description": "R02の因果とゲームプレイを継承し、Concept C方向のリアルタイム3D表現を追求する試作版。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "/game/r04/",
+  "scope": "/game/r04/",
+  "display": "standalone",
+  "orientation": "landscape-primary",
+  "background_color": "#07110e",
+  "theme_color": "#10251c",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

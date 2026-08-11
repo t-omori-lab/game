@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">境界調査録</title>
+  <desc id="description">暗い地図の上で、旅人の菱形と赤い異形を結ぶ金色の軌跡</desc>
+  <defs>
+    <radialGradient id="ground" cx="38%" cy="28%" r="80%">
+      <stop offset="0" stop-color="#17352f"/>
+      <stop offset="1" stop-color="#07110f"/>
+    </radialGradient>
+    <linearGradient id="trail" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#f2bb53"/>
+      <stop offset="1" stop-color="#ffe9a3"/>
+    </linearGradient>
+    <filter id="soft-glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="116" fill="url(#ground)"/>
+  <circle cx="256" cy="256" r="174" fill="none" stroke="#376c5d" stroke-width="10" stroke-dasharray="4 22"/>
+  <path d="M82 318c62-7 77-69 132-69 56 0 64 64 123 49 40-10 50-55 94-68" fill="none" stroke="#10231f" stroke-width="48" stroke-linecap="round"/>
+  <path d="M82 318c62-7 77-69 132-69 56 0 64 64 123 49 40-10 50-55 94-68" fill="none" stroke="url(#trail)" stroke-width="17" stroke-linecap="round" stroke-dasharray="2 35"/>
+
+  <circle cx="120" cy="312" r="48" fill="#f2bb53" opacity=".23" filter="url(#soft-glow)"/>
+  <path d="M120 254l58 58-58 58-58-58z" fill="#f2bb53" stroke="#fff3c4" stroke-width="9"/>
+  <path d="M120 275l37 37-37 37-37-37z" fill="#17352f"/>
+  <circle cx="120" cy="312" r="10" fill="#fff3c4"/>
+
+  <circle cx="397" cy="213" r="54" fill="#ed6a5a" opacity=".27" filter="url(#soft-glow)"/>
+  <path d="M397 150l16 34 37-7-18 33 27 27-38 4-6 38-29-25-31 22-2-39-38-8 29-25-15-36 37 10z" fill="#ed6a5a" stroke="#ffb8a9" stroke-width="8" stroke-linejoin="round"/>
+  <circle cx="382" cy="211" r="8" fill="#07110f"/>
+  <circle cx="414" cy="211" r="8" fill="#07110f"/>
+
+  <path d="M256 74v42M256 396v42M74 256h42M396 256h42" stroke="#8dd2bc" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="13" fill="#8dd2bc"/>
+</svg>

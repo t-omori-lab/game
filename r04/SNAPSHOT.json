@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "release": "R04",
+  "source_commit": "3cb27cd3630071b90ae6264e10e84d85f7bf929d",
+  "built_on": "2026-08-02",
+  "base": "./",
+  "default_experience": "r04-causal-world-beauty-cell",
+  "entry_bundle": "assets/r04-IriE60sk.js",
+  "frozen": true,
+  "notes": "Self-contained production archive built from the last public R04 commit. Future shared runtime changes do not alter this release."
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "release": "R03",
+  "source_commit": "79bf341696e015ece815e40eefdd6e5d8cb2adb6",
+  "built_on": "2026-08-02",
+  "base": "./",
+  "default_experience": "concept-c-beauty-benchmark",
+  "entry_bundle": "assets/r03-B-jNzUXL.js",
+  "frozen": true,
+  "notes": "Self-contained production archive with relative bundle paths. Future runtime source changes do not alter this release."
+}
