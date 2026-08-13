@@ -1,8 +1,8 @@
 {
   "id": "/game/",
-  "name": "F.R.A.M. — 辺境遺物記録モジュール",
-  "short_name": "F.R.A.M.",
-  "description": "自然に侵食された現代都市を放浪し、遺物を解析して世界の記憶を編むAI-nativeハクスラRPGの開発記録。",
+  "name": "廃都渡りのフラム",
+  "short_name": "廃都渡り",
+  "description": "水と稼働機械、人々の暮らしが残る廃都を渡り、遺物を解析して世界の記憶を編むAI-nativeハクスラRPG。F.R.A.M.は作中モジュール名です。",
   "lang": "ja",
   "dir": "ltr",
   "start_url": "./",

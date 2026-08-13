@@ -1,10 +1,11 @@
 {
-  "schemaVersion": 1,
-  "product": "F.R.A.M.",
+  "schemaVersion": 2,
+  "product": "廃都渡りのフラム",
+  "module": "F.R.A.M.",
   "sourceRepository": "t-omori-lab/game-source",
-  "sourceCommit": "a6a61e74a800e35a0c96aff8f601a0dd6dd438c6",
-  "runtimeQualityImplementation": "ee6454b",
-  "evidenceCorrection": "a49ee25a569971e2b35945b57f1b7c3c333b17e3",
+  "sourceCommit": "70faed657352937a894546eb392a7b47744a772f",
+  "runtimeArtifactSha256": "39cdb8c42efe9eefd197923052dfd3b7a6c2336181df340c7623b0421c63832f",
+  "r10ThumbnailSha256": "d21f3a168f305fc95a1271bdfc44c77b0712e6255f8515004544241bc3fb1bb2",
   "publicPath": "/game/",
-  "publishedAt": "2026-08-11"
+  "publishedAt": "2026-08-14"
 }
