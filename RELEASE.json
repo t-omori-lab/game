@@ -1,18 +1,13 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "product": "廃都渡りのフラム",
-  "module": "F.R.A.M.",
+  "release": "R11",
   "sourceRepository": "t-omori-lab/game-source",
-  "sourceCommit": "48d2f10a103b112d9e95b508ea5f186b625ae51c",
-  "runtimeArtifactSha256": "c1e53c5b4287bc88cd8d27745d2edec203cc8ed32fd55d840686135260c3045b",
-  "r10ThumbnailSha256": "d21f3a168f305fc95a1271bdfc44c77b0712e6255f8515004544241bc3fb1bb2",
-  "r00SourceCommit": "6c4253887b9952e9db7286cf1668c904f6dea6d3",
-  "r00ThumbnailSha256": "989fb753459ab4cf5aea71b6d00ec9e867adf5aa1c2063ca658cd647b9735e9f",
-  "r01ThumbnailSha256": "9de66ea4f361d7061c2df979a3ef86c5b3e9da503595b030e77df20c896091a8",
-  "r02ThumbnailSha256": "1f6fc3a8d14abcbb2713053c14fef8e7b80d9a656b6e4702665b726f33f490b9",
-  "r03ThumbnailSha256": "b8323f9c1c90b3735fb67bbbf933f075c66ea69fd4dbc78c4049b6c1728f3940",
-  "waf01ThumbnailSha256": "0bf61079e470e84f79be28fa3c78ce302e8520529c03036cebb8aa302afbbc16",
-  "publicPath": "/game/",
+  "sourceCommit": "7095281fbf2b60da31aa64de2b3be6fd3bc1e723",
+  "sourceBranch": "codex/fram-first-stage-mvp-r01",
+  "runtimeArtifactSha256": "9ab1e0c76420df6dbb583fb8718659c648293c0469594cb71f2a2e8e7c950c26",
+  "r11ThumbnailSha256": "c6676fb8de732502334d87706ee38af14666c8bcb9070cf0f76aacd595caf801",
+  "acceptedLandmarkSha256": "97ba7b4ae895424f12635c674596d322b30d74cc569f37bfc2a3088c9d90143c",
+  "publicPath": "/game/r11/",
   "publishedAt": "2026-08-20"
 }
-
