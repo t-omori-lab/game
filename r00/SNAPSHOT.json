@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "release": "R00",
+  "source_commit": "6c4253887b9952e9db7286cf1668c904f6dea6d3",
+  "source_tree": "83274d946a7e655c4b0f3659f845261045357f6c",
+  "built_on": "2026-08-20",
+  "base": "./",
+  "default_experience": "prototype-0.1",
+  "toolchain": {
+    "node": "24.19.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.6"
+  },
+  "frozen": true,
+  "source_edits": false,
+  "notes": "Exact historical source built in an isolated temporary directory with the already available local toolchain. No historical source, package or lockfile was edited."
+}

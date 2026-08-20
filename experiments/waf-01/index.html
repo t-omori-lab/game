@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="廃都渡りのフラムの建物生成パイプライン WAF-01。採択済み実画面と生成結果を記録した非プレイアブル事例です。"
+    />
+    <link rel="icon" href="../../catalog/waf-01.jpg" type="image/jpeg" />
+    <title>WAF-01 — World Asset Forge Pipeline Case</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Avenir Next", "Hiragino Sans", "Yu Gothic", sans-serif;
+        color: #edf0df;
+        background: #09130f;
+        --gold: #efc270;
+        --green: #8ce5bd;
+        --muted: #aab8a7;
+        --line: rgb(221 235 211 / 17%);
+      }
+
+      * { box-sizing: border-box; }
+      html { min-width: 320px; background: #09130f; }
+      body {
+        min-width: 320px;
+        margin: 0;
+        overflow-x: hidden;
+        background:
+          radial-gradient(circle at 84% 5%, rgb(82 152 114 / 18%), transparent 34rem),
+          linear-gradient(150deg, #10241b 0%, #09130f 52%, #070d0b 100%);
+      }
+
+      main {
+        width: min(100%, 1440px);
+        min-height: 100vh;
+        padding: clamp(22px, 5vw, 74px);
+        margin: 0 auto;
+      }
+
+      a { color: inherit; }
+      .back {
+        display: inline-flex;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgb(140 229 189 / 52%);
+        color: var(--green);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-decoration: none;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.55fr);
+        align-items: end;
+        padding: clamp(58px, 9vw, 130px) 0 clamp(38px, 5vw, 70px);
+        border-bottom: 1px solid var(--line);
+        gap: clamp(30px, 6vw, 90px);
+      }
+
+      .eyebrow,
+      .state,
+      dt,
+      figcaption,
+      footer {
+        font-family: "Avenir Next Condensed", "DIN Condensed", sans-serif;
+        letter-spacing: 0.17em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow { color: var(--gold); font-size: 9px; font-weight: 700; }
+      h1 {
+        max-width: 900px;
+        margin: 18px 0 0;
+        font-size: clamp(42px, 7vw, 104px);
+        font-weight: 520;
+        letter-spacing: -0.06em;
+        line-height: 0.94;
+      }
+      h1 span { display: block; margin-top: 15px; color: var(--gold); font-size: 0.27em; letter-spacing: 0.03em; }
+
+      .state {
+        display: grid;
+        padding: 24px;
+        border: 1px solid rgb(239 194 112 / 38%);
+        color: var(--gold);
+        background: rgb(20 34 28 / 74%);
+        font-size: 9px;
+        line-height: 1.8;
+      }
+      .state strong { color: #f4e7c4; font-size: 13px; letter-spacing: 0.08em; }
+
+      .intro {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.6fr);
+        padding: clamp(38px, 6vw, 86px) 0;
+        border-bottom: 1px solid var(--line);
+        gap: clamp(30px, 7vw, 110px);
+      }
+      .intro p { margin: 0; color: #d8dfd0; font-size: clamp(14px, 1.5vw, 20px); line-height: 2; }
+      .intro p + p { margin-top: 16px; color: var(--muted); font-size: 12px; }
+      dl { display: grid; grid-template-columns: 1fr 1fr; margin: 0; gap: 22px 28px; }
+      dt { color: rgb(239 194 112 / 64%); font-size: 7px; }
+      dd { margin: 7px 0 0; color: #f0f1e3; font-size: 15px; font-weight: 650; }
+
+      .captures { display: grid; padding-top: clamp(42px, 7vw, 98px); gap: clamp(28px, 5vw, 70px); }
+      figure { margin: 0; }
+      figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        background: #13231c;
+      }
+      figcaption { display: flex; justify-content: space-between; margin-top: 12px; color: rgb(219 229 210 / 52%); font-size: 7px; gap: 20px; }
+      figcaption strong { color: var(--gold); font-weight: 700; }
+      footer { margin-top: clamp(54px, 8vw, 110px); padding-top: 22px; border-top: 1px solid var(--line); color: rgb(219 229 210 / 35%); font-size: 7px; line-height: 1.8; }
+
+      @media (max-width: 720px) {
+        header,
+        .intro { grid-template-columns: 1fr; }
+        header { align-items: start; }
+        dl { grid-template-columns: 1fr 1fr; }
+        figcaption { display: grid; }
+      }
+    </style>
+  </head>
+  <body data-publication-mode="pipeline-case-not-playable">
+    <main>
+      <a class="back" href="/game/#experiments">← AI開発実験へ戻る</a>
+      <header>
+        <div>
+          <span class="eyebrow">WORLD ASSET FORGE / PIPELINE CASE 01</span>
+          <h1>WAF-01<span>雨水管制塔の生成パイプライン</span></h1>
+        </div>
+        <div class="state">
+          <strong>PIPELINE CASE / NOT PLAYABLE</strong>
+          RUNTIME UNMERGED / UNPUBLISHED<br />
+          CANDIDATE 9fb4eed
+        </div>
+      </header>
+
+      <section class="intro" aria-labelledby="case-summary">
+        <div>
+          <p id="case-summary">建物の意味、配置、通行領域を保ったまま、BlenderとGeometry Nodesから視覚・衝突・遮蔽用の出力を組み立てるWorld Asset Forgeの制作事例です。</p>
+          <p>掲載しているのは採択済みcandidateの実画面記録です。このページは操作demoではありません。runtime、GLB、生成sourceは未統合・未公開のまま保持しています。</p>
+        </div>
+        <dl aria-label="採択済み生成結果">
+          <div><dt>OUTPUT</dt><dd>830,684 bytes</dd></div>
+          <div><dt>GEOMETRY</dt><dd>3,454 triangles</dd></div>
+          <div><dt>RUNTIME</dt><dd>7 draws</dd></div>
+          <div><dt>MATERIALS</dt><dd>5 materials</dd></div>
+          <div><dt>ATLAS</dt><dd>1 × 512px</dd></div>
+          <div><dt>AUTHORITY</dt><dd>Development accepted</dd></div>
+        </dl>
+      </section>
+
+      <section class="captures" aria-label="採択済み実画面">
+        <figure>
+          <img
+            src="./desktop-actual.png"
+            alt="PC Ultra画面で、植生に覆われた雨水管制塔と周辺建物を見下ろした採択済み実画面"
+            width="1280"
+            height="720"
+          />
+          <figcaption><strong>PC ULTRA / ACTUAL VIEW</strong><span>1280 × 720 · UNGRADED CAPTURE</span></figcaption>
+        </figure>
+        <figure>
+          <img
+            src="./mobile-actual.png"
+            alt="390px Mobile Safe画面で確認した雨水管制塔の採択済み実画面"
+            width="390"
+            height="220"
+          />
+          <figcaption><strong>MOBILE SAFE / TRUE 390</strong><span>390 × 220 · UNGRADED CAPTURE</span></figcaption>
+        </figure>
+      </section>
+
+      <footer>
+        SOURCE CANDIDATE 9fb4eed4e55067813c4aa164622a0cb1c7fe1e94 · STATIC EVIDENCE ONLY · NO RUNTIME AUTHORITY PROMOTION
+      </footer>
+    </main>
+  </body>
+</html>
