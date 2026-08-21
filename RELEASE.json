@@ -1,13 +1,16 @@
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "product": "廃都渡りのフラム",
-  "release": "R11",
+  "release": "R12",
   "sourceRepository": "t-omori-lab/game-source",
-  "sourceCommit": "7095281fbf2b60da31aa64de2b3be6fd3bc1e723",
-  "sourceBranch": "codex/fram-first-stage-mvp-r01",
-  "runtimeArtifactSha256": "9ab1e0c76420df6dbb583fb8718659c648293c0469594cb71f2a2e8e7c950c26",
-  "r11ThumbnailSha256": "c6676fb8de732502334d87706ee38af14666c8bcb9070cf0f76aacd595caf801",
-  "acceptedLandmarkSha256": "97ba7b4ae895424f12635c674596d322b30d74cc569f37bfc2a3088c9d90143c",
-  "publicPath": "/game/r11/",
-  "publishedAt": "2026-08-20"
+  "sourceCommit": "9c035d592ba49d46626830592b339936584228fa",
+  "productPayloadCommit": "bf6771b5f4734129bc91f765cad474c8e33a41eb",
+  "sourceBranch": "codex/fram-r10-product-shell-release",
+  "r12ThumbnailSha256": "211a2803c2960883e88245dbf85719e341036c953831779b275557d78e3e73a6",
+  "selectedBgm": "audio/first-stage-mvp/r11-hybrid/static-in-the-static.mp3",
+  "selectedBgmSha256": "126fe8891a3397a341b26e9cbf0b8a197c0c6abd6ed156775b18dfca30dfb753",
+  "duplicateExcluded": true,
+  "previousPublicCommit": "3714a5a22cc624932f4028140a9a1d8eb5ca7583",
+  "publicPath": "/game/r12/",
+  "publishedAt": "2026-08-22"
 }

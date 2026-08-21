@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "status": "user-authorized-personally-produced-suno-game-use",
+  "source": "user-generated Suno exports from original prompts, authorized by the user for this personally produced public game",
+  "preservation": {
+    "originalsChanged": false,
+    "duplicateChanged": false,
+    "reencoded": false
+  },
+  "candidates": [
+    {
+      "id": "suno-candidate-a",
+      "runtimeFile": "fragile-motif.mp3",
+      "sourceName": "Fragile Motif.mp3",
+      "sha256": "b10e15efa97ff5b303a84643e5bc42995e31d1ab796d7e8126514616f39f758c",
+      "durationSeconds": 258.696,
+      "channels": 2,
+      "sampleRateHz": 48000
+    },
+    {
+      "id": "suno-candidate-b",
+      "runtimeFile": "static-in-the-static.mp3",
+      "sourceName": "Static in the Static.mp3",
+      "sha256": "126fe8891a3397a341b26e9cbf0b8a197c0c6abd6ed156775b18dfca30dfb753",
+      "durationSeconds": 275.04,
+      "channels": 2,
+      "sampleRateHz": 48000
+    }
+  ],
+  "excludedExactDuplicate": {
+    "sourceName": "Static in the Static 2.mp3",
+    "sameAs": "suno-candidate-b"
+  },
+  "rights": {
+    "authority": "user-stated original-prompt generation and personally-produced public-game use authorization",
+    "independentLegalClearance": "not-claimed",
+    "localIntegration": "authorized",
+    "remotePushDeployPublish": "out-of-scope"
+  }
+}
