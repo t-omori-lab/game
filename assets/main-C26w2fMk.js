@@ -2,7 +2,7 @@
       <section class="product-shell product-shell--loading" aria-labelledby="shell-loading-title">
         ${this.brandRail("BOOT / LOCAL PRODUCT CELL")}
         <div class="shell-loading-card">
-          <span class="shell-kicker">廃都渡りのフラム / SYSTEM LINK</span>
+          <span class="shell-kicker">F.R.A.M. / SYSTEM LINK</span>
           <h1 id="shell-loading-title">Loading the next expedition.</h1>
           <p>profile、R09 world memory、R10 rules、F-01 packを別々に確認します。</p>
           <ol class="shell-load-list">
@@ -20,8 +20,8 @@
       <section class="product-shell product-shell--title" aria-labelledby="shell-title">
         ${this.brandRail("LOCAL / OFFLINE AUTHORITY")}
         <header class="shell-title-copy">
-          <span class="shell-kicker">F.R.A.M. / FRONTIER RELICS ARCHIVE MODULE / フラム</span>
-          <h1 id="shell-title" style="font-size:clamp(34px,7vw,96px);line-height:.9">廃都渡りのフラム</h1>
+          <span class="shell-kicker">F.R.A.M. / FRONTIER RELICS ARCHIVE MODULE / 辺境遺物記録モジュール</span>
+          <h1 id="shell-title" style="font-size:clamp(34px,7vw,96px);line-height:.9">F.R.A.M.</h1>
           <p>水と機械が動き、人の暮らしが続く廃都を渡る。<br />記録に残るのは、選んだ場所と、持ち帰った理由だ。</p>
         </header>
         <div class="shell-title-grid">
@@ -179,6 +179,6 @@
       </section>
     `,this.bind("retry",()=>{this.boot()})}bind(t,s){this.root.querySelector(`[data-action="${t}"]`)?.addEventListener("click",s)}bindRuntimeZoomControls(t,s,e){const o=c=>{const f=this.application;if(f===null)return;const B=f.getCameraZoomMultiplier(),b=f.setCameraZoomMultiplier(dt(B+c)),N=s.querySelector("[data-runtime-zoom]");N!==null&&(N.value=`${b.toFixed(2)}×`),s.dataset.cameraZoom=String(b);const R=e.querySelector("small");R!==null&&(R.textContent=R.textContent?.replace(/ZOOM\s+\d+(?:\.\d+)?×/,`ZOOM ${b.toFixed(2)}×`)??""),this.persistRuntimeZoom(b)},l=s.querySelector('[data-camera-zoom="out"]'),i=s.querySelector('[data-camera-zoom="in"]'),n=()=>o(-h),r=()=>o(h),u=c=>{c.preventDefault(),o(c.deltaY<0?h:-h)},m=c=>{["Equal","NumpadAdd","BracketRight"].includes(c.code)?(c.preventDefault(),o(h)):["Minus","NumpadSubtract","BracketLeft"].includes(c.code)&&(c.preventDefault(),o(-h))};l?.addEventListener("click",n),i?.addEventListener("click",r),t.addEventListener("wheel",u,{passive:!1}),window.addEventListener("keydown",m),this.runtimeZoomCleanup.push(()=>l?.removeEventListener("click",n),()=>i?.removeEventListener("click",r),()=>t.removeEventListener("wheel",u),()=>window.removeEventListener("keydown",m))}persistRuntimeZoom(t){const s=this.context,e=this.localRepository;if(s===null||e===null)return;const o={...s.local.settings,cameraZoom:t};this.context={...s,local:{...s.local,settings:o,settingsSource:"loaded"}},this.syncRootDataset(),e.saveSettings(o)}clearRuntimeZoomControls(){for(const t of this.runtimeZoomCleanup.splice(0))t()}currentMemory(){return this.sessionMemory??this.requireContext().memory.state}requireContext(){if(this.context===null)throw new Error("Product Shell context is not ready.");return this.context}failInjectedPhase(t){if(new URLSearchParams(this.search).get("shellFail")===t&&!this.injectedFailures.has(t))throw this.injectedFailures.add(t),new Error(`Injected ${t} failure for retry verification.`)}syncRootDataset(t){this.root.dataset.productShellState=this.screen,this.root.dataset.profileStatus=this.context?.local.profile===null?"missing":this.context?.local.profile===void 0?"loading":"ready",this.root.dataset.memoryLoadSource=this.context?.memory.source??"loading",this.root.dataset.profilePersistence=this.profilePersistence,this.root.dataset.worldPersistence=this.worldPersistence,this.root.dataset.manualQuality=this.context?.local.settings.quality??A.quality,this.root.dataset.cameraZoom=String(this.context?.local.settings.cameraZoom??A.cameraZoom),this.root.dataset.loadFailedPhase=this.failedPhase??"none",t!==void 0&&(this.root.dataset.expeditionMode=t)}brandRail(t){return`
       <aside class="shell-brand-rail" aria-hidden="true">
-        <b>廃.</b><span>${d(t)}</span><i></i><small>F.R.A.M. MODULE ↔ R10 BUILDCRAFT</small>
+        <b>F.</b><span>${d(t)}</span><i></i><small>F.R.A.M. MODULE ↔ R10 BUILDCRAFT</small>
       </aside>
     `}}function vt(a){if(a.expeditionHistory.length===0)return"まだ世界にはあなたの帰還記録がない。最初の遠征から始められます。";const t=a.installedModule?.moduleId;return`${a.discoveredSites.length} site発見 · ${a.recoveredItems.length}回収 · ${t===void 0?"module未設置":t}`}function St(a){switch(a){case"complete":return"READY";case"fallback":return"FALLBACK";case"failed":return"FAILED";case"active":return"LOADING";default:return"PENDING"}}function d(a){return a.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}const Z=document.querySelector("#app");if(Z===null)throw new Error("F.R.A.M. Product Shell root was not found.");const Et=new bt(Z);Et.boot();

@@ -1,8 +1,8 @@
 {
   "id": "/game/",
-  "name": "廃都渡りのフラム",
-  "short_name": "廃都渡り",
-  "description": "水と稼働機械、人々の暮らしが残る廃都を渡り、遺物を解析して世界の記憶を編むAI-nativeハクスラRPG。F.R.A.M.は作中モジュール名です。",
+  "name": "F.R.A.M.",
+  "short_name": "F.R.A.M.",
+  "description": "自然に侵食された旧世界を放浪し、遺物を回収して装備と遠征を組み替える世界記憶型・放浪ローグライク。F.R.A.M.は作中モジュール名でもあります。",
   "lang": "ja",
   "dir": "ltr",
   "start_url": "./",

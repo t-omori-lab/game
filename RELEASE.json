@@ -1,16 +1,19 @@
 {
   "schemaVersion": 5,
-  "product": "廃都渡りのフラム",
+  "product": "F.R.A.M.",
+  "fullName": "FRONTIER RELICS ARCHIVE MODULE / 辺境遺物記録モジュール",
+  "productTitle": "TBD",
+  "trademarkClearance": "NOT COMPLETED",
   "release": "R12",
   "sourceRepository": "t-omori-lab/game-source",
-  "sourceCommit": "9c035d592ba49d46626830592b339936584228fa",
-  "productPayloadCommit": "bf6771b5f4734129bc91f765cad474c8e33a41eb",
+  "sourceCommit": "5cea1632c93351c216c40a7f9cf30db01975b70f",
+  "productPayloadCommit": "c9f941fb5f630242e7d1edb50d680682d3c758fd",
   "sourceBranch": "codex/fram-r10-product-shell-release",
   "r12ThumbnailSha256": "211a2803c2960883e88245dbf85719e341036c953831779b275557d78e3e73a6",
   "selectedBgm": "audio/first-stage-mvp/r11-hybrid/static-in-the-static.mp3",
   "selectedBgmSha256": "126fe8891a3397a341b26e9cbf0b8a197c0c6abd6ed156775b18dfca30dfb753",
   "duplicateExcluded": true,
-  "previousPublicCommit": "3714a5a22cc624932f4028140a9a1d8eb5ca7583",
+  "previousPublicCommit": "d73efeb4f34c8b8cdf345b8d42a23012dec2d8f7",
   "publicPath": "/game/r12/",
-  "publishedAt": "2026-08-22"
+  "publishedAt": "2026-08-23"
 }
