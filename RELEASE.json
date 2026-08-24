@@ -6,7 +6,7 @@
   "trademarkClearance": "NOT COMPLETED",
   "release": "R13",
   "sourceRepository": "t-omori-lab/game-source",
-  "sourceCommit": "d17e19724bc5cb4debe5959909fd6032d2fd3056",
+  "sourceCommit": "fa017914d28c549a6c522ae10da2aa49182c2180",
   "productPayloadCommit": "acb0712a5d0743b076eed70def4177d85a79913d",
   "sourceBranch": "codex/fram-r10-product-shell-release",
   "r13ThumbnailSha256": "876919f17564cf92e91672ebfee02d7e547cf25d6e0531f3289c8b2e346edb16",
@@ -15,7 +15,8 @@
   "selectedBgm": "audio/first-stage-mvp/r11-hybrid/static-in-the-static.mp3",
   "selectedBgmSha256": "126fe8891a3397a341b26e9cbf0b8a197c0c6abd6ed156775b18dfca30dfb753",
   "duplicateExcluded": true,
-  "previousPublicCommit": "2d0d14bd0bd94c11e3f1090158ffe5e058ec1f0a",
+  "previousPublicCommit": "888c0838bdc61101214e6a1381c295ff923b1d9a",
   "publicPath": "/game/r13/",
-  "publishedAt": "2026-08-23"
+  "publishedAt": "2026-08-25",
+  "copyOnlyCanonicalization": "public-genre-copy-alignment-r01"
 }

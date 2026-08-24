@@ -72,10 +72,10 @@ import{_ as $}from"./preload-helper-CeUGa9z8.js";import{a as y,c as o,P as d}fro
     <header class="catalog-hero" data-testid="catalog-hero">
       <div class="catalog-hero__copy">
         <span class="catalog-eyebrow">AI-NATIVE GAME DEVELOPMENT PROJECT</span>
-        <p class="catalog-genre">AIとつくる、世界記憶型・放浪ローグライク</p>
+        <p class="catalog-genre">AIとつくる、世界記憶型・放浪ハクスラ</p>
         <h1 class="catalog-public-title">F.R.A.M.</h1>
         <p class="catalog-fullname">F.R.A.M. / FRONTIER RELICS ARCHIVE MODULE <span>/ 辺境遺物記録モジュール</span></p>
-        <p class="catalog-lede">自然に侵食された旧世界を放浪し、遺物を回収して装備と遠征を組み替える。帰還や選択の結果が次の旅へ残る、世界記憶型の放浪ローグライク。</p>
+        <p class="catalog-lede">自然に侵食された旧世界を放浪し、遺物を回収して装備と遠征を組み替える。帰還や選択の結果が次の旅と世界に残る、世界記憶型のアクションRPG。</p>
         <div class="catalog-actions">
           <a class="catalog-button catalog-button--primary" href="${r}"><span>最新版を遊ぶ</span><small>${a.id.toUpperCase()} / BROWSER PLAY</small></a>
           <a class="catalog-button catalog-button--secondary" href="#experiments"><span>AI開発実験を見る</span><small>CHARACTER FORGE F-01</small></a>
