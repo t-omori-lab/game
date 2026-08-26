@@ -21,5 +21,6 @@
   "runtimePresentation": "r14",
   "commercialSlice": "ws2-r01",
   "commercialStage": "ws3-r01",
-  "menuSystem": "r01"
+  "menuSystem": "r01",
+  "pagesStartupRetryOf": 32985032256
 }
