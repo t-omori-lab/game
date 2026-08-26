@@ -1,9 +1,9 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/catalog-oM4iiSgg.css"])))=>i.map(i=>d[i]);
-import{_ as b}from"./preload-helper-CeUGa9z8.js";import{a as y,c as o,P as d}from"./prototypeRoutes-D9gehOQ0.js";const p=[{id:"f01",eyebrow:"CHARACTER FORGE / 2026-08-02",title:"F-01 / Image-to-3D Character Forge",summary:"一枚絵だった主人公を、どの方向から見ても崩れずに動く高密度ボクセルモデルへ。髪、衣装、装備を組み替えられる制作法の最初の形です。",review:"USER REVIEW · APPROX. 70%",path:"forge/f01/"}];function _(t,a){return`${a.endsWith("/")?a:`${a}/`}${t.path}`}const m=[{id:"waf-01",eyebrow:"WORLD ASSET FORGE / 2026-08-14",title:"WAF-01 / 雨水管制塔の生成パイプライン",summary:"建物の意味と配置を保ったまま、BlenderとGeometry Nodesから視覚・衝突・遮蔽用の出力を組み立てる制作事例です。採択済み実画面のみを記録し、runtimeは未統合・未公開のまま保持します。",status:"not-playable",path:"experiments/waf-01/",candidateCommit:"9fb4eed4e55067813c4aa164622a0cb1c7fe1e94",metrics:"830,684 bytes · 3,454 triangles · 7 draws · 5 materials · 512px atlas"}];function L(t,a){return`${a.endsWith("/")?a:`${a}/`}${t.path}`}const h=document.querySelector("#app"),w=["fram-catalog-","relic-frontier-shell-","small-persistent-world-shell-"];if(h===null)throw new Error("Prototype catalog root was not found.");I();const E=y(window.location.search);E!==null?window.location.replace(o(E,"/game/",window.location.search)):(R(h),P(h));function u(){const t=d.find(a=>a.status==="latest")??d[0];if(t===void 0)throw new Error("F.R.A.M. catalog requires a playable build.");return t}function R(t){const a=u(),i=o(a.id,"/game/");t.querySelector(".catalog-static__actions a:first-child")?.setAttribute("href",i);const r=t.querySelector(".catalog-static figure img");r!==null&&(r.src=`/game/catalog/${a.id}.jpg`,r.alt=`${a.title} の実画面`);const s=t.querySelector(".catalog-static figcaption");s!==null&&(s.textContent=`LATEST PLAYABLE / ${a.id.toUpperCase()} — 現在のゲーム画面`)}async function P(t){try{await b(()=>Promise.resolve({}),__vite__mapDeps([0])),T(t),C(t)}catch(a){console.error("F.R.A.M. catalog enhancement failed.",a)}}function T(t){const a=u(),i=p[0];if(a===void 0||i===void 0)throw new Error("F.R.A.M. catalog requires a playable build and a technical epoch.");t.className="prototype-catalog",t.dataset.releaseCount=String(d.length),t.dataset.epochCount=String(p.length),t.dataset.pipelineCaseCount=String(m.length);const r=o(a.id,"/game/"),s=`/game/catalog/${a.id}.jpg`,c=d.map((e,n)=>{const g=e.status==="latest",v=g?"LATEST / PLAYABLE":"ARCHIVE / PLAYABLE",A=`/game/catalog/${e.id}.jpg`;return`
+import{_ as A}from"./preload-helper-CeUGa9z8.js";import{a as y,c as o,P as d}from"./prototypeRoutes-Dz52SadL.js";const p=[{id:"f01",eyebrow:"CHARACTER FORGE / 2026-08-02",title:"F-01 / Image-to-3D Character Forge",summary:"一枚絵だった主人公を、どの方向から見ても崩れずに動く高密度ボクセルモデルへ。髪、衣装、装備を組み替えられる制作法の最初の形です。",review:"USER REVIEW · APPROX. 70%",path:"forge/f01/"}];function _(t,a){return`${a.endsWith("/")?a:`${a}/`}${t.path}`}const m=[{id:"waf-01",eyebrow:"WORLD ASSET FORGE / 2026-08-14",title:"WAF-01 / 雨水管制塔の生成パイプライン",summary:"建物の意味と配置を保ったまま、BlenderとGeometry Nodesから視覚・衝突・遮蔽用の出力を組み立てる制作事例です。採択済み実画面のみを記録し、runtimeは未統合・未公開のまま保持します。",status:"not-playable",path:"experiments/waf-01/",candidateCommit:"9fb4eed4e55067813c4aa164622a0cb1c7fe1e94",metrics:"830,684 bytes · 3,454 triangles · 7 draws · 5 materials · 512px atlas"}];function L(t,a){return`${a.endsWith("/")?a:`${a}/`}${t.path}`}const h=document.querySelector("#app"),w=["fram-catalog-","relic-frontier-shell-","small-persistent-world-shell-"];if(h===null)throw new Error("Prototype catalog root was not found.");I();const E=y(window.location.search);E!==null?window.location.replace(o(E,"/game/",window.location.search)):(R(h),P(h));function u(){const t=d.find(a=>a.status==="latest")??d[0];if(t===void 0)throw new Error("F.R.A.M. catalog requires a playable build.");return t}function R(t){const a=u(),i=o(a.id,"/game/");t.querySelector(".catalog-static__actions a:first-child")?.setAttribute("href",i);const r=t.querySelector(".catalog-static figure img");r!==null&&(r.src=`/game/catalog/${a.id}.jpg`,r.alt=`${a.title} の実画面`);const s=t.querySelector(".catalog-static figcaption");s!==null&&(s.textContent=`LATEST PLAYABLE / ${a.id.toUpperCase()} — 現在のゲーム画面`)}async function P(t){try{await A(()=>Promise.resolve({}),__vite__mapDeps([0])),T(t),C(t)}catch(a){console.error("F.R.A.M. catalog enhancement failed.",a)}}function T(t){const a=u(),i=p[0];if(a===void 0||i===void 0)throw new Error("F.R.A.M. catalog requires a playable build and a technical epoch.");t.className="prototype-catalog",t.dataset.releaseCount=String(d.length),t.dataset.epochCount=String(p.length),t.dataset.pipelineCaseCount=String(m.length);const r=o(a.id,"/game/"),s=`/game/catalog/${a.id}.jpg`,c=d.map((e,n)=>{const g=e.status==="latest",v=g?"LATEST / PLAYABLE":"ARCHIVE / PLAYABLE",$=`/game/catalog/${e.id}.jpg`;return`
       <article class="release-card ${g?"release-card--latest":""}" data-release="${e.id}">
         <div class="release-card__visual">
           <img
-            data-deferred-src="${A}"
+            data-deferred-src="${$}"
             alt="${e.title} のプレイ画面"
             width="720"
             height="405"
@@ -19,7 +19,7 @@ import{_ as b}from"./preload-helper-CeUGa9z8.js";import{a as y,c as o,P as d}fro
           <p class="release-card__summary">${e.summary}</p>
           <div class="release-card__changes">
             <span>この版で試したこと</span>
-            <ul>${e.changes.map($=>`<li>${$}</li>`).join("")}</ul>
+            <ul>${e.changes.map(b=>`<li>${b}</li>`).join("")}</ul>
           </div>
           <p class="release-card__playable"><span>遊べる内容</span>${e.playable}</p>
           <a class="release-card__action" href="${o(e.id,"/game/")}">${e.id.toUpperCase()}を遊ぶ</a>
@@ -101,7 +101,7 @@ import{_ as b}from"./preload-helper-CeUGa9z8.js";import{a as y,c as o,P as d}fro
         <span class="section-index">DEVELOPMENT NOTES</span>
         <div>
           <h2 id="research-heading">つくって、遊んで、<br><em>選び直す。</em></h2>
-          <p>AIエージェントがつくった実装候補を、実際に遊べる形で確かめる。手応え、操作、景観、遊びの流れを見ながら、採用・修正・見送りを重ねて、F.R.A.M.を開発している。</p>
+          <p>『F.R.A.M.』は、AIエージェントがつくった実装候補を実際に遊べる形で確かめる開発実験です。手応え、操作、景観、遊びの流れを見ながら、採用・修正・見送りを重ねています。</p>
         </div>
         <a href="#experiments">開発の試作を見る <span>↓</span></a>
       </section>
@@ -116,11 +116,11 @@ import{_ as b}from"./preload-helper-CeUGa9z8.js";import{a as y,c as o,P as d}fro
 
       <section class="epoch-section" id="experiments" aria-labelledby="epoch-heading">
         <div class="collection-heading collection-heading--epoch">
-          <div><span>AI DEVELOPMENT EXPERIMENTS</span><h2 id="epoch-heading">AI開発の試作</h2></div>
+          <div><span>AI DEVELOPMENT EXPERIMENTS</span><h2 id="epoch-heading">遊べるAI開発実験</h2></div>
           <p>実際に操作できる試作と、まだゲーム本体へ入っていない生成パイプラインの事例を分けて記録しています。</p>
         </div>
         <div class="experiment-group" aria-labelledby="playable-epoch-heading">
-          <h3 id="playable-epoch-heading">PLAYABLE TECHNICAL EPOCH</h3>
+          <h3 id="playable-epoch-heading">TECHNICAL EPOCHS / 技術エポック</h3>
           <div class="epoch-list">${l}</div>
         </div>
         <div class="experiment-group" aria-labelledby="pipeline-case-heading">
